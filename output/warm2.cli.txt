@@ -1,56 +1,66 @@
 nt>sched show
-SCHEDULER REPORT: 20-Dec-2020 13:51:02.758 on Reigi
-for interval beginning at 13:50:44.890
+SCHEDULER REPORT: May-25-2022 18:18:58.146 on Reigi
+for interval beginning at 18:15:05.003
 ----------------------------------------------------------------------------
       THREADS          |   SINCE START OF CURRENT 15-MINUTE INTERVAL  | LAST
                        |            rtc  max   max     max  total     |5 SEC
-id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
+id    name   native f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
 ----------------------------------------------------------------------------
-      idle                                                  14035 78.5  11.6
- 1    root      a6c w C   0   2624    0    0   279    1746    160  0.9   0.6
- 2    init     62b8 s C   0   2696    0    0  2768 1081318   2295 12.8   1.6
- 3    file      5e4 b     0     56    0    9   304   15499    207  1.2   0.0
- 4    cout      b34 B     0     52    0    8   272     400      7  0.0   0.0
- 5     cin     5b6c O S   0      7    0    0   218     114      0  0.0   0.0
- 6  objaud     585c A C   0      1    0    0   216      80      0  0.0   0.0
- 7   stats     52c0 B C   0      1    0    0   233      92      0  0.0   0.0
- 8     log     48e4 B C   0      1    0    0   238     120      0  0.0   0.0
- 9     cli     5590 O     0     36    0    0   602 1098313   1159  6.5   0.0
-10   timer     5d00 P C   0      4    0    0   232     116      0  0.0   0.0
-11 invoker     5530 P C   0      1    0    0   238     147      0  0.0   0.0
-12   tcpio     181c P N   0      9    0    0   290    1262      3  0.0   0.0
-13   udpio     6324 P N   0      1    0    0   265     428      0  0.0   0.0
-14   udpio     4e9c P N   0      1    0    0   265     553      1  0.0   0.0
+      idle                                                 231686 99.4  96.6
+ 1    root     6140 w C   0  19993    0    0   436      90    233  0.1   0.1
+ 2    init     5db4 s C   0  20281    0    0  4476   98544   1032  0.4   0.6
+ 3    file     1134 b     0     47    0   12   496    8801     28  0.0   0.0
+ 4    cout     15c4 b     0     45    0    8   436     150      2  0.0   0.0
+ 5     cin     41bc O S   0     11    0    0   336      33      0  0.0   0.0
+ 6  objaud     5040 A C   0      1    0    0   328      17      0  0.0   0.0
+ 7   stats     4f0c B C   0      1    0    0   368      20      0  0.0   0.0
+ 8     log     6a40 B C   0      1    0    0   396      18      0  0.0   0.0
+ 9   defer     5d08 M C   0      2    0    0   368     101      0  0.0   0.0
+10     cli     65f0 O     0     36    0    0   968  144293    154  0.1   0.0
+11   udpio      1d4 M N   0      1    0    0   504     124      0  0.0   0.0
+12 locsend     5e14 M C   0      1    0    0   400     359      0  0.0   0.0
+13   timer     1e28 P C   0      2    0    0   360      23      0  0.0   0.0
+14 invoker      a10 P C   0      1    0    0   372      34      0  0.0   0.0
+15   udpio     57e4 P N   0      0    0    0     0       0      0  0.0   0.0
+16   tcpio      2e8 P N   0    116    0    0   348     145      7  0.0   0.0
+17   udpio     6580 P N   0      0    0    0     0       0      0  0.0   0.0
+18   udpio     352c P N   0      0    0    0     0       0      0  0.0   0.0
+34 traffic     58e8 L C   0      3    0    0   404     258      0  0.0   0.0
 ----------------------------------------------------------------------------
 nt>sb status
-STATUS REPORT: 20-Dec-2020 13:51:02.777 on Reigi
-MEMORY USAGE
-Alloc  Low kB     kB       Bytes                            Memory        Prot
+STATUS REPORT: May-25-2022 18:18:58.149 on Reigi
+HEAPS
+Alloc  Min kB     kB       Bytes                            Memory        Prot
 Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
-    0    ---     ---         248        274        267   temporary  rw-      0
-    0    ---     ---    24231980       1745        182     dynamic  rw-      0
-    0    ---     ---         336         12          0  persistent  rw-      0
-    0   1987    1987       61684        308         51   protected  r--    101
-    0    ---     ---     4504724        280         26   permanent  rw-      0
-    0    387     387      127768       2216         60   immutable  r--    273
+    0     955   1006         448        317        314   temporary  rw-      0
+    0  120265 120355    48721472       2263       1110     dynamic  rw-      0
+    0    1995   2013        1344        625        600  persistent  rw-      0
+    0    1899   2923     1134272        848        665   protected  r--    421
+    0     n/a    n/a    10554280        387         83   permanent  rw-      0
+    0     171    171      340128       2366         65   immutable  r--    325
 
 OBJECT POOLS
-Alloc  Lowest    Curr    Curr
-Fails   Avail   Avail  In Use     Allocs      Frees  Expands   Pool Name
-    0    1895    2031      17        474        457        0   MsgBuffers
-    0       *    2048       0          0          0        0   IpBuffers
-    0       *    8192       0          0          0        0   SbIpBuffers
-    0       *   10240       0          0          0        0   BtIpBuffers
-    0       *   15360       0          0          0        0   Contexts
-    0       *    8192       0          0          0        0   Messages
-    0       *   24576       0          0          0        0   MsgPorts
-    0       *   24576       0          0          0        0   ProtocolSMs
-    0       *    7168       0          0          0        0   Timers
-    0       *    1024       0          0          0        0   Events
-    0       *   14336       0          0          0        0   ServiceSMs
-    0       *    1024       0          0          0        0   MediaEndpts
+Alloc     Min    Curr    Curr                        Segments
+Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Pool Name
+    0    1895    2025      23        509        486    0    2   MsgBuffers
+    0    1022    1023       1          2          1    0    1   IpBuffers
+    0       *    1024       0          0          0    0    1   TinyBuffers
+    0    6142    6143       1          2       5183    0    6   SmallBuffers
+    0       *    1024       0          0          0    0    1   MediumBuffers
+    0       *    1024       0          0          0    0    1   LargeBuffers
+    0       *    1024       0          0          0    0    1   HugeBuffers
+    0       *    3072       0          0          0    0    3   SbIpBuffers
+    0       *    6144       0          0       5182    0    6   BtIpBuffers
+    0       *    5120       0          0          0    0    5   Contexts
+    0       *    3072       0          0          0    0    3   Messages
+    0       *    8192       0          0          0    0    8   MsgPorts
+    0       *    8192       0          0          0    0    8   ProtocolSMs
+    0       *    2048       0          0          0    0    2   Timers
+    0       *    1024       0          0          0    0    1   Events
+    0       *    5120       0          0          0    0    5   ServiceSMs
+    0       *    1024       0          0          0    0    1   MediaEndpts
 
-CPU IDLE TIME: 11.6%
+CPU IDLE TIME: 96.6%
 
 ACTIVE ALARMS
   No active alarms.
@@ -67,27 +77,33 @@ FACTORY DISCARDS
   There were no discards to display.
 nt>read mem.check
 nt>heaps inuse &mem.temp
-  Bytes in use: 248
+        _|
+  Specific string value expected
 nt>if &cli.result > &mem.temp.inuse tests failed &cli.result "Leak in temporary memory"
   Result is false.
 nt>heaps inuse &mem.dyn
-  Bytes in use: 24231980
+        _|
+  Specific string value expected
 nt>if &cli.result > &mem.dyn.inuse tests failed &cli.result "Leak in dynamic memory"
   Result is false.
 nt>heaps inuse &mem.pers
-  Bytes in use: 336
+        _|
+  Specific string value expected
 nt>if &cli.result > &mem.pers.inuse tests failed &cli.result "Leak in persistent memory"
   Result is false.
 nt>heaps inuse &mem.prot
-  Bytes in use: 61684
+        _|
+  Specific string value expected
 nt>if &cli.result > &mem.prot.inuse tests failed &cli.result "Leak in protected memory"
   Result is false.
 nt>heaps inuse &mem.perm
-  Bytes in use: 4504724
+        _|
+  Specific string value expected
 nt>if &cli.result > &mem.perm.inuse tests failed &cli.result "Leak in permanent memory"
   Result is false.
 nt>heaps inuse &mem.imm
-  Bytes in use: 127768
+        _|
+  Specific string value expected
 nt>if &cli.result > &mem.imm.inuse tests failed &cli.result "Leak in immutable memory"
   Result is false.
 nt>send cout

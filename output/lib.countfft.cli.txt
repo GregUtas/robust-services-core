@@ -2,11 +2,22 @@ ct>start
   OK.
 ct>read lib.03
 ct>type f sbase ft h
-  No elements in set.
+  Context.h, Event.h, EventHandler.h, Factory.h, FactoryRegistry.h,
+  GlobalAddress.h, Initiator.h, InvokerPool.h, InvokerPoolRegistry.h,
+  InvokerThread.h, LocalAddress.h, Message.h, MsgContext.h, MsgFactory.h,
+  MsgHeader.h, MsgPort.h, Parameter.h, Protocol.h, ProtocolLayer.h,
+  ProtocolRegistry.h, ProtocolSM.h, PsmContext.h, PsmFactory.h,
+  RootServiceSM.h, SbAppIds.h, SbCliParms.h, SbDaemons.h, SbEvents.h,
+  SbExtInputHandler.h, SbHandlers.h, SbIncrement.h, SbInputHandler.h,
+  SbInvokerPools.h, SbIpBuffer.h, SbLogs.h, SbModule.h, SbPools.h, SbTrace.h,
+  SbTracer.h, SbTypes.h, Service.h, ServiceRegistry.h, ServiceSM.h, Signal.h,
+  SsmContext.h, SsmFactory.h, State.h, TextTlvMessage.h, Timer.h,
+  TimerProtocol.h, TimerRegistry.h, TimerThread.h, TlvIntParameter.h,
+  TlvMessage.h, TlvParameter.h, TlvProtocol.h, Trigger.h
 ct>if &cli.result != 0 tests failed &cli.result
   Result is false.
 ct>delay 1
-  OK.
+  Delay failed: rc=
 ct>tests end
   OK.
 read test.lib.epilog

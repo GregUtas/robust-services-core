@@ -1,14 +1,7 @@
 nt>sched start
-  OK.
+  Tracing is already on.
 nt>start
   OK.
-nt>read trap.08
-nt>
-nt>recover raise SIGBREAK
-  OK.
-nt>tests end
-  OK.
-read test.trap.epilog
 nt>delay 1
   OK.
 nt>stop
@@ -18,9 +11,9 @@ nt>sched stop
 nt>sched show &test.name
   OK.
 nt>save funcs &test.name
-  OK.
+  The trace buffer has nothing to display.
 nt>save trace &test.name
-  OK.
+  The trace buffer has nothing to display.
 nt>clear buffer
   OK.
 nt>send cout

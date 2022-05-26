@@ -1,258 +1,371 @@
-For reporting period beginning at 14:38:07.203
+For reporting period beginning at 18:15:05.003
 ----------------------------------------------------------------------------
-Object Pools [ObjectPoolId]                       Curr      Prev         All
-  Threads [1]
-                     fewest remaining blocks      1009         *        1009
-                      successful allocations        15         0          15
-          size of block minus largest object        56         *          56
-  MsgBuffers [2]
-                     fewest remaining blocks      3992         *        3992
-                      successful allocations       275         0         275
-                               deallocations       268         0         268
-          size of block minus largest object        48         *          48
-  IpBuffers [3]
-  SbIpBuffers [4]
-                     fewest remaining blocks      2010         *        2010
-                      successful allocations   2164283         0     2164283
-                               deallocations   2164283         0     2164283
-          size of block minus largest object         0         *           0
-  Contexts [5]
-                     fewest remaining blocks      3175         *        3175
-                      successful allocations    623457         0      623457
-                               deallocations    623457         0      623457
-          size of block minus largest object         0         *           0
-  MsgPorts [6]
-                     fewest remaining blocks      3198         *        3198
-                      successful allocations    245003         0      245003
-                               deallocations    245003         0      245003
-          size of block minus largest object         0         *           0
-  Messages [7]
-                     fewest remaining blocks       986         *         986
-                      successful allocations   2131651         0     2131651
-                               deallocations   2131651         0     2131651
-          size of block minus largest object       160         *         160
-  ProtocolSMs [8]
-                     fewest remaining blocks      3873         *        3873
-                      successful allocations    235386         0      235386
-                               deallocations    235386         0      235386
-          size of block minus largest object       200         *         200
-  Timers [9]
-                     fewest remaining blocks      2498         *        2498
-                      successful allocations    302624         0      302624
-                               deallocations    302624         0      302624
-          size of block minus largest object         0         *           0
-                       timeout messages sent     17513         0       17513
-  ServiceSMs [10]
-                     fewest remaining blocks      2851         *        2851
-                      successful allocations    137060         0      137060
-                               deallocations    137060         0      137060
-          size of block minus largest object       180         *         180
-  Events [11]
-                     fewest remaining blocks      2045         *        2045
-                      successful allocations   2162274         0     2162274
-                               deallocations   2162274         0     2162274
-          size of block minus largest object        56         *          56
-  BtIpBuffers [12]
-  MediaEndpts [13]
-----------------------------------------------------------------------------
-Threads [Thread::Id]                              Curr      Prev         All
+Threads [ThreadId]                                Curr      Prev         All
   root [1]
-                                      yields     17045         0       17045
-                 highest stack usage (words)       185         *         185
-                 longest time locked (usecs)    326636         *      326636
-                total execution time (msecs)      1256         0        1256
+                                      yields      4206    136487      349318
+                                  interrupts      4287    140930      357345
+                 highest stack usage (words)       436       436         436
+           longest time scheduled in (usecs)        88       526         847
+                total execution time (msecs)        70      1557        3867
   init [2]
-                                      yields     17046         0       17046
-                 highest stack usage (words)      1464         *        1464
-                 longest time locked (usecs)    422095         *      422095
-                total execution time (msecs)      1649         0        1649
+                                       traps         0         0           3
+                                      yields      4287    140930      357352
+                                  interrupts      1595    123602      292524
+                 highest stack usage (words)       340       340        5064
+           longest time scheduled in (usecs)       197       559      110862
+                total execution time (msecs)       234      5333       13453
   file [3]
-                                      yields       312         0         312
-             longest length of message queue        59         *          59
-                 highest stack usage (words)       219         *         219
-                 longest time locked (usecs)       173         *         173
-                total execution time (msecs)       448         0         448
+                                      yields        46     21556       53655
+                                  interrupts        53      8026       23569
+             longest length of message queue        31        50         100
+                 highest stack usage (words)       496       496         496
+           longest time scheduled in (usecs)      7451    321823      375209
+                total execution time (msecs)        26     10730       22595
   cout [4]
-                                      yields       260         0         260
-             longest length of message queue        45         *          45
-                 highest stack usage (words)       190         *         190
-                 longest time locked (usecs)       175         *         175
-                total execution time (msecs)       105         0         105
+                                      yields        42     19331       37241
+                                  interrupts        27      6880       15222
+             longest length of message queue         7        36          59
+                 highest stack usage (words)       436       436         436
+           longest time scheduled in (usecs)       173       443        3024
+                total execution time (msecs)         1       840        1465
   cin [5]
-                                      yields        11         0          11
-                 highest stack usage (words)       152         *         152
-                 longest time locked (usecs)        48         *          48
+                                      yields         0        15          23
+                                  interrupts         0         7          10
+                 highest stack usage (words)         *       336         336
+           longest time scheduled in (usecs)         *        74          74
                 total execution time (msecs)         0         0           0
   objaud [6]
-                                      yields      3707         0        3707
-                 highest stack usage (words)       463         *         463
-                 longest time locked (usecs)     38833         *       38833
-                total execution time (msecs)     16599         0       16599
+                                      yields       520      9152       25533
+                 highest stack usage (words)       380       388         388
+           longest time scheduled in (usecs)     24397     33047       33047
+                total execution time (msecs)       361      1425        2845
   stats [7]
-                                      yields       109         0         109
-                 highest stack usage (words)       183         *         183
-                 longest time locked (usecs)       117         *         117
-                total execution time (msecs)         2         0           2
+                                      yields        11       180         498
+                 highest stack usage (words)       368       368         368
+           longest time scheduled in (usecs)      3702      1494        3702
+                total execution time (msecs)         4         5          21
   log [8]
-                                      yields        25         0          25
-                 highest stack usage (words)       335         *         335
-                 longest time locked (usecs)       312         *         312
-                total execution time (msecs)         3         0           3
-  cli [9]
-                                      yields       145         0         145
-                 highest stack usage (words)       666         *         666
-                 longest time locked (usecs)     37220         *       37220
-                total execution time (msecs)      1791         0        1791
-  invoker [10]
-                                      yields      9415         0        9415
-                 highest stack usage (words)       524         *         524
-                 longest time locked (usecs)     37425         *       37425
-                total execution time (msecs)    224609         0      224609
-  timer [11]
-                                      yields       530         0         530
-                 highest stack usage (words)       273         *         273
-                 longest time locked (usecs)      9032         *        9032
-                total execution time (msecs)      1355         0        1355
-  tcpio [12]
-                                      yields       267         0         267
-                 highest stack usage (words)       192         *         192
-                 longest time locked (usecs)     36420         *       36420
-                total execution time (msecs)      3512         0        3512
-  udpio [13]
-                                      yields      5758         0        5758
-                 highest stack usage (words)       444         *         444
-                 longest time locked (usecs)     31936         *       31936
-                total execution time (msecs)     34922         0       34922
-  udpio [14]
-                                      yields      7265         0        7265
-                 highest stack usage (words)       424         *         424
-                 longest time locked (usecs)     13924         *       13924
-                total execution time (msecs)     31017         0       31017
-  traffic [15]
-                                      yields      4141         0        4141
-                     running locked too long         2         0           2
-                 highest stack usage (words)       383         *         383
-                 longest time locked (usecs)    250389         *      250389
-                total execution time (msecs)     48200         0       48200
+                                      yields         5        30         121
+                                  interrupts         2        15          75
+                 highest stack usage (words)       552       552         552
+           longest time scheduled in (usecs)       517       219        2362
+                total execution time (msecs)         1         2          10
+  defer [9]
+                                      yields        50       861        2428
+                 highest stack usage (words)       368       368         368
+           longest time scheduled in (usecs)        69        99         135
+                total execution time (msecs)         2        16          72
+  cli [10]
+                                      yields        43     11058       23706
+                                  interrupts         0         7          10
+                 highest stack usage (words)      1028      6388        6388
+           longest time scheduled in (usecs)     11967   9183684     9183684
+                total execution time (msecs)        21    168778      175154
+  udpio [11]
+                                      yields         0         0           2
+                 highest stack usage (words)         *         *         504
+           longest time scheduled in (usecs)         *         *        4105
+                total execution time (msecs)         0         0           4
+  timer [13]
+                                      yields        50       861        2428
+                 highest stack usage (words)       360       736         736
+           longest time scheduled in (usecs)        92       676        1015
+                total execution time (msecs)         2        24          99
+  invoker [14]
+                                       traps         0         0           1
+                                      yields         0      1743        2980
+                                  interrupts         0      1786        3187
+                 highest stack usage (words)         *      1360        3680
+           longest time scheduled in (usecs)         *     11011       11011
+                total execution time (msecs)         0      1327        2239
+  udpio [15]
+                                      yields         0       590         919
+                 highest stack usage (words)         *       980         980
+           longest time scheduled in (usecs)         *      2773        2773
+                total execution time (msecs)         0       118         170
+  tcpio [16]
+                                      yields        25       436        1225
+                 highest stack usage (words)       348       348         460
+           longest time scheduled in (usecs)       139       208         339
+                total execution time (msecs)         2        30         106
+  udpio [17]
+                                      yields         0       635        1057
+                 highest stack usage (words)         *      1024        1024
+           longest time scheduled in (usecs)         *      1400        1400
+                total execution time (msecs)         0       181         271
+  udpio [18]
+                                      yields         0       923        1585
+                 highest stack usage (words)         *      1032        1032
+           longest time scheduled in (usecs)         *      2460        2460
+                total execution time (msecs)         0       211         324
+  recover [33]
+                                      yields        10       178         465
+                 highest stack usage (words)       348       348         348
+           longest time scheduled in (usecs)        68        78         125
+                total execution time (msecs)         0         3          13
+  traffic [34]
+                                      yields         0      1029        1029
+                                  interrupts         0         1           1
+                 highest stack usage (words)         *      1020        1020
+           longest time scheduled in (usecs)         *     18076       18076
+                total execution time (msecs)         0       312         312
 ----------------------------------------------------------------------------
 Logs [group id_t]                                 Curr      Prev         All
   NODE group [1]
     500
-                                    buffered         1         0           1
+                                    buffered         0         0           1
   SW group [2]
+    900
+                                    buffered         0         0          10
   CFG group [3]
   STATS group [4]
+    400
+                                    buffered         0         1           3
   THR group [5]
+    300
+                                    buffered         0         0           4
+    900
+                                    buffered         0         0           5
+    901
+                                    buffered         0         0           4
+    902
+                                    buffered         0         0          22
+    903
+                                    buffered         0         0           5
+    905
+                                    buffered         0         0           1
+    906
+                                    buffered         0         0           2
+    907
+                                    buffered         0         0           2
   OBJ group [6]
     200
-                                    buffered         4         0           4
+                                    buffered         2         6           8
+    300
+                                    buffered         0         6           6
   NET group [7]
-    500
-                                    buffered         1         0           1
   SESS group [8]
-    200
-                                    buffered         2         0           2
-    500
-                                    buffered         2         0           2
+    900
+                                    buffered         0         0           1
   POTS group [9]
     500
-                                    buffered         4         0           4
+                                    buffered         0         2           2
+----------------------------------------------------------------------------
+Object Pools [ObjectPoolId]                       Curr      Prev         All
+  MsgBuffers [1]
+                     fewest remaining blocks      2010      1972        1930
+                      successful allocations        80     14906       38791
+                               deallocations        44     14906       38755
+          size of block minus largest object        96        96          96
+  IpBuffers [2]
+                     fewest remaining blocks         *         *        1022
+                      successful allocations         0         0           2
+                               deallocations         0         0           2
+          size of block minus largest object         *         *           0
+  TinyBuffers [3]
+  SmallBuffers [4]
+                     fewest remaining blocks         *        22          22
+                      successful allocations         0     10827       16432
+                               deallocations      5182      5672       16432
+          size of block minus largest object         *         0           0
+  MediumBuffers [5]
+  LargeBuffers [6]
+  HugeBuffers [7]
+  SbIpBuffers [8]
+                     fewest remaining blocks         *      2975        2975
+                      successful allocations         0      5496        8687
+                               deallocations         0      5496        8687
+          size of block minus largest object         *         0           0
+  BtIpBuffers [9]
+                     fewest remaining blocks         *        22          22
+                      successful allocations         0      5331        7743
+                               deallocations      5182       176        7743
+          size of block minus largest object         *         0           0
+  Contexts [10]
+                     fewest remaining blocks         *      4905        4905
+                      successful allocations         0      1467        2354
+                               deallocations         0      1467        2354
+          size of block minus largest object         *         0           0
+  Messages [11]
+                     fewest remaining blocks         *      2975        2975
+                      successful allocations         0      5530        9246
+                               deallocations         0      5530        9246
+          size of block minus largest object         *       320         296
+  MsgPorts [12]
+                     fewest remaining blocks         *      7798        7798
+                      successful allocations         0       571         954
+                               deallocations         0       571         954
+          size of block minus largest object         *         0           0
+  ProtocolSMs [13]
+                     fewest remaining blocks         *      7798        7798
+                      successful allocations         0       571         954
+                               deallocations         0       571         954
+          size of block minus largest object         *       408         408
+  Timers [14]
+                     fewest remaining blocks         *      1939        1939
+                      successful allocations         0       767        1248
+                               deallocations         0       767        1248
+          size of block minus largest object         *         0           0
+                       timeout messages sent         0        31         102
+  Events [15]
+                     fewest remaining blocks         *      1020        1020
+                      successful allocations         0      5444        9180
+                               deallocations         0      5444        9180
+          size of block minus largest object         *       112         112
+  ServiceSMs [16]
+                     fewest remaining blocks         *      4907        4907
+                      successful allocations         0       327         621
+                               deallocations         0       327         621
+          size of block minus largest object         *       384         384
+  MediaEndpts [17]
 ----------------------------------------------------------------------------
 Threads (all)                                     Curr      Prev         All
-                                   creations        13         0          13
-                            context switches     66032         0       66032
-                       RTC lock acquisitions     31674         0       31674
-                                  interrupts   1200760         0     1200760
+                                   creations         0         1          18
+                                   deletions         0         0          17
+                                  interrupts      5964    281254      691951
+                            context switches      9295    345995      861612
+                     scheduled to run locked       753     53406      114820
+                                 preemptions         0        43         314
+                     scheduled after timeout        62      4853        7583
+                       resignaled to proceed         1        59         119
+     scheduling interrupt when thread locked         0         9          41
+                       selected to run again         0        70         249
+                                       traps         0         0          22
+                             trap recoveries         0         0          14
+                                re-creations         0         0          13
+                           orphan detections         0         0           6
+                                       kills         0         0           4
+                    running thread not found         0         0        4133
 ----------------------------------------------------------------------------
 IpPorts [ipport_t]                                Curr      Prev         All
+  Local Address Test [30000]
+                          receive operations         0         0           1
+                              bytes received         0         0          96
+                         most bytes received         *         *          96
+               most receives before yielding         *         *           1
+                             send operations         0         0           1
+                                  bytes sent         0         0          96
+                             most bytes sent         *         *          96
   Call Interworking [40000]
-         messages discarded by input handler      3632         0        3632
+                          receive operations         0       673        1033
+                              bytes received         0     29184       45352
+                         most bytes received         *        76          92
+               most receives before yielding         *         4           4
+         messages discarded by input handler         0        13          13
+                             send operations         0       673        1033
+                                  bytes sent         0     29184       45352
+                             most bytes sent         *        76          92
+  Call Interworking [40000]
   POTS Shelf [40001]
-                          receive operations    476780         0      476780
-                              bytes received   9381080         0     9381080
-                         most bytes received        32         *          32
-               most receives before yielding       137         *         137
-                             send operations    467820         0      467820
-                                  bytes sent   4934944         0     4934944
-                             most bytes sent        24         *          24
+                          receive operations         0      1157        1848
+                              bytes received         0     27364       43816
+                         most bytes received         *        36          36
+               most receives before yielding         *         4           4
+                             send operations         0       887        1308
+                                  bytes sent         0     13652       20208
+                             most bytes sent         *        28          28
   POTS Call [40002]
-                          receive operations    467820         0      467820
-                              bytes received   4934944         0     4934944
-                         most bytes received        24         *          24
-               most receives before yielding       309         *         309
-      ingress work rejected by input handler     32632         0       32632
-                             send operations    476780         0      476780
-                                  bytes sent   9381080         0     9381080
-                             most bytes sent        32         *          32
+                          receive operations         0       887        1308
+                              bytes received         0     13652       20208
+                         most bytes received         *        28          28
+               most receives before yielding         *         5           5
+                             send operations         0      1157        1848
+                                  bytes sent         0     27364       43816
+                             most bytes sent         *        36          36
 ----------------------------------------------------------------------------
 Factories [Factory::Id]                           Curr      Prev         All
   Test Sessions [1]
+            incoming intraprocessor messages         0         0           5
+            outgoing intraprocessor messages         0         0           5
+                            contexts created         0         0           1
   Outgoing CIP Calls [2]
-            incoming intraprocessor messages    156688         0      156688
-                    longest incoming message        16         *          16
-            outgoing intraprocessor messages     97250         0       97250
-                    longest outgoing message        52         *          52
+            incoming intraprocessor messages         0         0           1
+            incoming interprocessor messages         0       411         628
+                    longest incoming message         *        16          32
+            outgoing intraprocessor messages         0         0           1
+            outgoing interprocessor messages         0       249         392
+                    longest outgoing message         *        52          68
   Incoming CIP Calls [3]
-            incoming intraprocessor messages     97681         0       97681
-                    longest incoming message        52         *          52
-            outgoing intraprocessor messages    157119         0      157119
-                    longest outgoing message        16         *          16
-                            contexts created     55254         0       55254
+            incoming intraprocessor messages         0         0           3
+            incoming interprocessor messages         0       249         392
+                    longest incoming message         *        52          68
+            outgoing intraprocessor messages         0         0           3
+            outgoing interprocessor messages         0       424         641
+                    longest outgoing message         *        16          32
+                            contexts created         0       130         202
   Proxy Calls [4]
+            incoming intraprocessor messages         0         0          25
+                    longest incoming message         *         *          68
+            outgoing intraprocessor messages         0         0          25
+                    longest outgoing message         *         *          68
+                            contexts created         0         0           5
   CIP Test Calls [5]
   POTS Shelf [6]
-            incoming interprocessor messages    476780         0      476780
-                    longest incoming message        32         *          32
-            outgoing interprocessor messages    467820         0      467820
-                    longest outgoing message        24         *          24
-                            contexts created    476780         0      476780
+            incoming interprocessor messages         0      1157        1848
+                    longest incoming message         *        36          36
+            outgoing interprocessor messages         0       887        1308
+                    longest outgoing message         *        28          28
+                            contexts created         0      1157        1848
   POTS Basic Call [7]
-            incoming intraprocessor messages     17082         0       17082
-            incoming interprocessor messages    435188         0      435188
-                    longest incoming message        24         *          24
-            outgoing intraprocessor messages     17082         0       17082
-            outgoing interprocessor messages    476780         0      476780
-                    longest outgoing message        32         *          32
-                            contexts created     91423         0       91423
-              retransmitted messages deleted     38561         0       38561
-            contexts freed on request-cancel      9617         0        9617
+            incoming intraprocessor messages         0        54         254
+            incoming interprocessor messages         0       887        1308
+                    longest incoming message         *        28          28
+            outgoing intraprocessor messages         0        55         250
+            outgoing interprocessor messages         0      1157        1848
+                    longest outgoing message         *        36          36
+                            contexts created         0       177         275
   POTS Multiplexer [8]
+            incoming intraprocessor messages         0        24         152
+                    longest incoming message         *        28          28
+            outgoing intraprocessor messages         0        23         156
+                    longest outgoing message         *        28          28
+                            contexts created         0         3          23
 ----------------------------------------------------------------------------
 Invoker Pools [Faction]                           Curr      Prev         All
   Payload [5]
     ingress work queue:
-                           contexts dequeued     81806         0       81806
-                longest length of work queue      1374         *        1374
-                longest queue delay in msecs      7850         *        7850
+                           contexts dequeued         0       177         272
+                longest length of work queue         *         1           1
+                longest queue delay in msecs         *        15          15
     egress work queue:
-                           contexts dequeued     55254         0       55254
-                longest length of work queue       460         *         460
-                longest queue delay in msecs      2021         *        2021
+                           contexts dequeued         0       130         201
+                longest length of work queue         *         1           1
+                longest queue delay in msecs         *         4           4
     progress work queue:
-                           contexts dequeued    537321         0      537321
-                longest length of work queue       306         *         306
-                longest queue delay in msecs       228         *         228
+                           contexts dequeued         0      1785        3170
+                longest length of work queue         *         8           8
+                longest queue delay in msecs         *         4          13
     immediate work queue:
-                           contexts dequeued    444089         0      444089
-                longest length of work queue       137         *         137
-                longest queue delay in msecs        53         *          53
+                           contexts dequeued         0       687         952
+                longest length of work queue         *         4           4
+                longest queue delay in msecs         *         1           2
     pool statistics:
-           most transactions before yielding       294         *         294
+           most transactions before yielding         *         8           8
 ----------------------------------------------------------------------------
 POTS Calls                                        Curr      Prev         All
   Basic Calls
-                      originations attempted     72325         0       72325
-                      originations abandoned      7149         0        7149
-                      terminations attempted     55254         0       55254
-                      terminations abandoned      5053         0        5053
-                               calls alerted     42598         0       42598
-                              calls answered     37588         0       37588
-                               calls resumed      4117         0        4117
+                      originations attempted         0       176         273
+                      originations abandoned         0        25          34
+                      terminations attempted         0       130         201
+                      terminations abandoned         0        15          24
+                               calls alerted         0       119         182
+                              calls answered         0       104         156
+                               calls resumed         0        11          13
+                       proxy calls attempted         0         0           5
+                        proxy calls answered         0         0           5
   Treatments (by Cause)
-                          Unallocated Number      2173         0        2173
-                             Address Timeout      5628         0        5628
-                        Normal Call Clearing     22663         0       22663
-                                   User Busy     12182         0       12182
-                              Answer Timeout       431         0         431
-                             Invalid Address      2121         0        2121
+                          Unallocated Number         0         1           2
+                                Confirmation         0         0           7
+                             Address Timeout         0        13          17
+                        Normal Call Clearing         0        59          90
+                                   User Busy         0        11          15
+                            Alerting Timeout         0         0           1
+                              Answer Timeout         0         0           3
+                    Destination Out Of Order         0         0           2
+                             Invalid Address         0         7           9
+                           Facility Rejected         0         0           2
+                           Temporary Failure         0         0           1
+                       Outgoing Calls Barred         0         0           1
+                       Incoming Calls Barred         0         0           1
+                      Protocol Timer Expired         0         0           1
 ----------------------------------------------------------------------------

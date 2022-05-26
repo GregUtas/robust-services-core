@@ -1,75 +1,76 @@
+an>save funcs &test.name
+  OK.
+an>clear buffer
+  OK.
+an>send cout
+  OK.
 an>status
-STATUS REPORT: 2-Aug-2019 14:47:11.832 on Reigi
-MEMORY USAGE
-  Alloc                            Bytes        Max     Memory  Heap
-  Fails     Allocs      Frees     In Use     In Use       Type  Address
-      0         11          2       1640      13984  temporary  03E70000
-      0    2259202    2257122   29336048   32976756    dynamic  01CD0000
-      0      30346      28064     326288    1670288  protected  01230000
-      0         48          1    9781692    9781692  permanent  01280000
-      0         31          2       2916       2916  immutable  001E0000
+STATUS REPORT: May-25-2022 18:15:55.330 on Reigi
+HEAPS
+Alloc  Min kB     kB       Bytes                            Memory        Prot
+Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
+    0     912   1002        4800      39595      39586   temporary  rw-      0
+    0  120265 120355    48721472       2123        970     dynamic  rw-      0
+    0    1995   2013        1344        625        600  persistent  rw-      0
+    0    1899   2923     1134272        848        665   protected  r--    265
+    0     n/a    n/a    10553704        348         50   permanent  rw-      0
+    0     171    171      340128       2366         65   immutable  r--     33
 
 OBJECT POOLS
-  Alloc  Lowest    Curr    Curr
-  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
-      0    1009    1009      15       15        0   Threads
-      0    3992    4079      17      288      271   MsgBuffers
-      0       *    2048       0        0        0   IpBuffers
-      0    2010    9216       0  2164283  2164283   SbIpBuffers
-      0    3175   18432       0   623457   623457   Contexts
-      0    3198   30720       0   245003   245003   MsgPorts
-      0     986    8192       0  2131651  2131651   Messages
-      0    3873   30720       0   235386   235386   ProtocolSMs
-      0    2498    9216       0   302624   302624   Timers
-      0    2851   17408       0   137060   137060   ServiceSMs
-      0    2045    2048       0  2162274  2162274   Events
-      0       *   10240       0        0        0   BtIpBuffers
-      0       *    1024       0        0        0   MediaEndpts
+Alloc     Min    Curr    Curr                        Segments
+Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Pool Name
+    0    2004    2005      43         93         50    0    2   MsgBuffers
+    0       *    1024       0          0          0    0    1   IpBuffers
+    0       *    1024       0          0          0    0    1   TinyBuffers
+    0       *    6144       0          0       5182    0    6   SmallBuffers
+    0       *    1024       0          0          0    0    1   MediumBuffers
+    0       *    1024       0          0          0    0    1   LargeBuffers
+    0       *    1024       0          0          0    0    1   HugeBuffers
+    0       *    3072       0          0          0    0    3   SbIpBuffers
+    0       *    6144       0          0       5182    0    6   BtIpBuffers
+    0       *    5120       0          0          0    0    5   Contexts
+    0       *    3072       0          0          0    0    3   Messages
+    0       *    8192       0          0          0    0    8   MsgPorts
+    0       *    8192       0          0          0    0    8   ProtocolSMs
+    0       *    2048       0          0          0    0    2   Timers
+    0       *    1024       0          0          0    0    1   Events
+    0       *    5120       0          0          0    0    5   ServiceSMs
+    0       *    1024       0          0          0    0    1   MediaEndpts
 
-CPU IDLE TIME: 98.9%
+CPU IDLE TIME: 98.5%
 
 ACTIVE ALARMS
   No active alarms.
 
 IP PORT DISCARDS
-   Msgs  IP Port
-  32632  POTS Call
+  There were no discards to display.
 
 INGRESS WORK QUEUES
     Curr     Max     Max
   Length  Length   Delay   Faction
-       0    1374    7850   Payload
+       0       0       0   Payload
 
 FACTORY DISCARDS
-   Msgs   Ctxs  Factory
-  38561   9617  POTS Basic Call
+  There were no discards to display.
 an>traffic query
 Number of timewheel slots    1201
 Timewheel interval (msecs)   infinite
-Maximum calls per minute     48460
+Maximum calls per minute     84490
 Traffic rate (calls/min)     0
-Maximum calls per tick       80
+Maximum calls per tick       2
 Millicalls per tick          0
 First DN added for traffic   0
 Last DN added for traffic    0
-Current timeslot             535
-Total calls created          95153
+Current timeslot             1025
+Total calls created          167
 Number of active calls       0
 Number of DN overflows       0
-Total holding time reports   137751
-Average holding time (secs)  32
-Average DNs/call * 100       144
+Number of calls aborted      0
+Total holding time reports   280
+Average holding time (secs)  33 ***
+Average DNs/call * 100       167 ***
 an>traffic profile
-Basic call states:
-          AO   CI   AI   SR   AS   SC   OA        RS
-     Nu    0    0    0    0    0    0    0   Ac    0   Di   Ex
-      0   AT             SF        PC   TA    0   LS    0    0
-           0              0         0    0         0
-POTS circuit states:
-    Idle  Actv  Orig  Term  Lock
-       0     0     0     0     0
-Traffic call states:
-    Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
-       0     0     0     0     0     0     0     0
+          _|
+  Specific string value expected
 an>send cout
   OK.

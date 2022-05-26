@@ -1,56 +1,65 @@
 nt>sched show
-SCHEDULER REPORT: 20-Dec-2020 13:51:13.867 on Reigi
-for interval beginning at 13:50:44.890
+SCHEDULER REPORT: May-25-2022 18:19:02.948 on Reigi
+for interval beginning at 18:15:05.003
 ----------------------------------------------------------------------------
       THREADS          |   SINCE START OF CURRENT 15-MINUTE INTERVAL  | LAST
                        |            rtc  max   max     max  total     |5 SEC
-id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
+id    name   native f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
 ----------------------------------------------------------------------------
-      idle                                                  23678 81.7  98.6
- 1    root      a6c w C   0   3961    0    0   279    1746    232  0.8   0.3
- 2    init     62b8 s C   0   4033    0    0  2768 1081318   2474  8.5   0.8
- 3    file      5e4 b     0    275    0   61   304   15499   1066  3.7   0.0
- 4    cout      b34 b     0    171    0   21   272     400     22  0.1   0.0
- 5     cin     5b6c O S   0      9    0    0   218     114      1  0.0   0.0
- 6  objaud     585c A C   0     75    0    0   241    2793     27  0.1   0.3
- 7   stats     52c0 B C   0      3    0    0   233     109      0  0.0   0.0
- 8     log     48e4 B C   0      1    0    0   238     120      0  0.0   0.0
- 9     cli     5590 O     0    140    0    0   667 1098313   1473  5.1   0.0
-10   timer     5d00 P C   0     15    0    0   232     116      1  0.0   0.0
-11 invoker     5530 P C   0      1    0    0   238     147      0  0.0   0.0
-12   tcpio     181c P N   0     14    0    0   290    1262      3  0.0   0.0
-13   udpio     6324 P N   0      1    0    0   265     428      0  0.0   0.0
-14   udpio     4e9c P N   0      1    0    0   265     553      1  0.0   0.0
+      idle                                                 236350 99.3  91.5
+ 1    root     6140 w C   0  20912    0    0   436      90    239  0.1   0.2
+ 2    init     5db4 s C   0  21212    0    0  4476   98544   1055  0.4   2.8
+ 3    file     1134 b     0    272    0   64   496    8801    100  0.0   1.7
+ 4    cout     15c4 b     0    169    0   21   436     150      4  0.0   0.1
+ 5     cin     41bc O S   0     13    0    0   336      33      0  0.0   0.0
+ 6  objaud     5040 A C   0     53    0    0   380     625      3  0.0   0.0
+ 7   stats     4f0c B C   0      2    0    0   368      20      0  0.0   0.0
+ 8     log     6a40 B C   0      1    0    0   396      18      0  0.0   0.0
+ 9   defer     5d08 M C   0      7    0    0   368     101      0  0.0   0.0
+10     cli     65f0 O     0    142    0    0  1144  144293    185  0.1   3.7
+11   udpio      1d4 M N   0      1    0    0   504     124      0  0.0   0.0
+13   timer     1e28 P C   0      7    0    0   360      23      0  0.0   0.0
+14 invoker      a10 P C   0      1    0    0   372      34      0  0.0   0.0
+15   udpio     57e4 P N   0      0    0    0     0       0      0  0.0   0.0
+16   tcpio      2e8 P N   0    119    0    0   348     145      7  0.0   0.0
+17   udpio     6580 P N   0      0    0    0     0       0      0  0.0   0.0
+18   udpio     352c P N   0      0    0    0     0       0      0  0.0   0.0
+34 traffic     58e8 L C   0      3    0    0   404     258      0  0.0   0.0
 ----------------------------------------------------------------------------
 nt>sb status
-STATUS REPORT: 20-Dec-2020 13:51:13.886 on Reigi
-MEMORY USAGE
-Alloc  Low kB     kB       Bytes                            Memory        Prot
+STATUS REPORT: May-25-2022 18:19:02.950 on Reigi
+HEAPS
+Alloc  Min kB     kB       Bytes                            Memory        Prot
 Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
-    0    ---     ---         268        280        272   temporary  rw-      0
-    0    ---     ---    24231980       1745        182     dynamic  rw-      0
-    0    ---     ---         336         12          0  persistent  rw-      0
-    0   1987    1987       61684        308         51   protected  r--    101
-    0    ---     ---     4504724        280         26   permanent  rw-      0
-    0    387     387      127768       2216         60   immutable  r--    273
+    0     955   1006         480        319        315   temporary  rw-      0
+    0  120265 120356    48720128       2263       1124     dynamic  rw-      0
+    0    1995   2013        1344        625        600  persistent  rw-      0
+    0    1899   2923     1134272        848        665   protected  r--    421
+    0     n/a    n/a    10553616        387         86   permanent  rw-      0
+    0     171    171      340128       2366         65   immutable  r--    325
 
 OBJECT POOLS
-Alloc  Lowest    Curr    Curr
-Fails   Avail   Avail  In Use     Allocs      Frees  Expands   Pool Name
-    0    1895    2001      47        670        623        0   MsgBuffers
-    0       *    2048       0          0          0        0   IpBuffers
-    0       *    8192       0          0          0        0   SbIpBuffers
-    0       *   10240       0          0          0        0   BtIpBuffers
-    0       *   15360       0          0          0        0   Contexts
-    0       *    8192       0          0          0        0   Messages
-    0       *   24576       0          0          0        0   MsgPorts
-    0       *   24576       0          0          0        0   ProtocolSMs
-    0       *    7168       0          0          0        0   Timers
-    0       *    1024       0          0          0        0   Events
-    0       *   14336       0          0          0        0   ServiceSMs
-    0       *    1024       0          0          0        0   MediaEndpts
+Alloc     Min    Curr    Curr                        Segments
+Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Pool Name
+    0    1895    2001      47        705        658    0    2   MsgBuffers
+    0    1022    1024       0          2          2    0    1   IpBuffers
+    0       *    1024       0          0          0    0    1   TinyBuffers
+    0    6142    6144       0          2       5184    0    6   SmallBuffers
+    0       *    1024       0          0          0    0    1   MediumBuffers
+    0       *    1024       0          0          0    0    1   LargeBuffers
+    0       *    1024       0          0          0    0    1   HugeBuffers
+    0       *    3072       0          0          0    0    3   SbIpBuffers
+    0       *    6144       0          0       5182    0    6   BtIpBuffers
+    0       *    5120       0          0          0    0    5   Contexts
+    0       *    3072       0          0          0    0    3   Messages
+    0       *    8192       0          0          0    0    8   MsgPorts
+    0       *    8192       0          0          0    0    8   ProtocolSMs
+    0       *    2048       0          0          0    0    2   Timers
+    0       *    1024       0          0          0    0    1   Events
+    0       *    5120       0          0          0    0    5   ServiceSMs
+    0       *    1024       0          0          0    0    1   MediaEndpts
 
-CPU IDLE TIME: 98.6%
+CPU IDLE TIME: 91.5%
 
 ACTIVE ALARMS
   No active alarms.
@@ -67,52 +76,64 @@ FACTORY DISCARDS
   There were no discards to display.
 nt>read mem.inuse
 nt>heaps inuse &mem.temp
-  Bytes in use: 268
+        _|
+  Specific string value expected
 nt>symbols set mem.temp.inuse &cli.result
   OK.
 nt>heaps inuse &mem.dyn
-  Bytes in use: 24231980
+        _|
+  Specific string value expected
 nt>symbols set mem.dyn.inuse &cli.result
   OK.
 nt>heaps inuse &mem.pers
-  Bytes in use: 336
+        _|
+  Specific string value expected
 nt>symbols set mem.pers.inuse &cli.result
   OK.
 nt>heaps inuse &mem.prot
-  Bytes in use: 61684
+        _|
+  Specific string value expected
 nt>symbols set mem.prot.inuse &cli.result
   OK.
 nt>heaps inuse &mem.perm
-  Bytes in use: 4504724
+        _|
+  Specific string value expected
 nt>symbols set mem.perm.inuse &cli.result
   OK.
 nt>heaps inuse &mem.imm
-  Bytes in use: 127768
+        _|
+  Specific string value expected
 nt>symbols set mem.imm.inuse &cli.result
   OK.
 nt>read mem.inuse  
 nt>heaps inuse &mem.temp
-  Bytes in use: 268
+        _|
+  Specific string value expected
 nt>symbols set mem.temp.inuse &cli.result
   OK.
 nt>heaps inuse &mem.dyn
-  Bytes in use: 24231980
+        _|
+  Specific string value expected
 nt>symbols set mem.dyn.inuse &cli.result
   OK.
 nt>heaps inuse &mem.pers
-  Bytes in use: 336
+        _|
+  Specific string value expected
 nt>symbols set mem.pers.inuse &cli.result
   OK.
 nt>heaps inuse &mem.prot
-  Bytes in use: 61684
+        _|
+  Specific string value expected
 nt>symbols set mem.prot.inuse &cli.result
   OK.
 nt>heaps inuse &mem.perm
-  Bytes in use: 4504724
+        _|
+  Specific string value expected
 nt>symbols set mem.perm.inuse &cli.result
   OK.
 nt>heaps inuse &mem.imm
-  Bytes in use: 127768
+        _|
+  Specific string value expected
 nt>symbols set mem.imm.inuse &cli.result
   OK.
 nt>send cout

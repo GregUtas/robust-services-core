@@ -46,7 +46,8 @@ that an article discusses.
 
 RSC is targeted at Windows but has an abstraction layer that should allow it
 to be ported to other platforms with modest effort. The Windows targets (in
-_*.win.cpp_ files) run to about 3K lines of code.
+_*.win.cpp_ files) total less than 1600 lines of code, excluding comments
+and blanks.
 
 ## Using RSC
 

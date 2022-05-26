@@ -93,7 +93,7 @@ _../rsc/input/element.config.txt_.
 If you don't want to build RSC, debug and release
 [executables](docs/RSC-Executables.md) are provided with each release.
 
-RSC requires C\++11 and is implemented on Windows, where it runs as a console
+RSC requires C\++17 and is implemented on Windows, where it runs as a console
 application. However, it defines an abstraction layer, in the form of generic
 C++ _.h_'s and platform-specific _.cpp_'s, that should allow it to be ported
 to other systems fairly easily. The targets for Linux are currently being

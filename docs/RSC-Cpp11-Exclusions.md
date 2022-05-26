@@ -14,13 +14,15 @@ supported, and you are even _more_ than welcome to implement them.
 
 Enhancing the parser to support a language feature is not enough. It would
 be more accurate to say that `>parse` actually _compiles_ the code; there is
-much that happens outside _Parser.h_. The `>parse` command
+a lot that happens outside _Parser.h_. The `>parse` command
 actually has an option that causes it to emit pseudo-code for a stack machine,
 which is useful for checking whether the code was properly understood. Many
 static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
 ### Recently Implemented
+- [x] constant expressions as template arguments
+- [x] brace initialization of members in a constructor's initialization list
 - [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`,
   `thread_local`, `volatile`
 - [x] `#pragma once` as alternative to `#include` guard
@@ -199,11 +201,6 @@ that appear within it as `static`.
 - [ ] `typedef struct` (`Parser.GetTypedef`)
 
 ### Templates
-- [ ] template arguments other than qualified names
-
-  For example, `std::bitset<sizeof(uint8_t)>` would have to be written as
-  `std::bitset<bytesize>` following
-  `constexpr size_t bytesize = sizeof(uint8_t)`.
 - [ ] a constructor call that requires template argument deduction when a
   template is a base class
 

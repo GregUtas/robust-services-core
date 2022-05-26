@@ -193,18 +193,23 @@ singletons        : Displays the singletons registry.
 
 heaps             : Displays all heaps.
 (                 : subcommand...
-  list            : displays all heaps
-  inuse           : displays the number of bytes allocated
+  list            : lists all heaps
+  setsize         : sets the desired size
     (1:6)         : memory type (see mem.* symbols)
+    (1:1023)      : size
+    [k|||m|||g]   : 'k'=kB 'm'=MB 'g'=GB
+  validate        : validates all heaps
+  show            : displays a heap
+    (1:6)         : memory type (see mem.* symbols)
+    [b|v]         : 'b'=brief 'v'=verbose (default='b')
   trace           : controls heap trace tool
     (1:6)         : memory type (see mem.* symbols)
   (               : tracing subcommand...
-    reset         : clears allocated blocks
+    reset         : clears the list of allocated blocks
     start         : starts tracing of allocated blocks
     stop          : stops tracing of allocated blocks
     display       : displays allocated blocks
   )
-  validate        : validates all heaps
 )
 
 status            : Displays system statistics.

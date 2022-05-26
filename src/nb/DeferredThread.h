@@ -34,7 +34,7 @@ namespace NodeBase
 //
 class DeferredThread : public Thread
 {
-   friend class Singleton< DeferredThread >;
+   friend class Singleton<DeferredThread>;
 public:
    //  Overridden for patching.
    //

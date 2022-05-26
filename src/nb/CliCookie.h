@@ -83,7 +83,7 @@ public:
 private:
    //  The current location at each level in the parameter tree.
    //
-   std::vector< uint32_t > index_;
+   std::vector<uint32_t> index_;
 };
 }
 #endif

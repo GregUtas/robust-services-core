@@ -65,7 +65,7 @@ NbModule::NbModule() : Module()
 {
    Debug::ft("NbModule.ctor");
 
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -88,24 +88,24 @@ void NbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("NbModule.Shutdown");
 
-   Singleton< NbIncrement >::Instance()->Shutdown(level);
-   Singleton< SymbolRegistry >::Instance()->Shutdown(level);
-   Singleton< CliRegistry >::Instance()->Shutdown(level);
-   Singleton< Element >::Instance()->Shutdown(level);
-   Singleton< ClassRegistry >::Instance()->Shutdown(level);
-   Singleton< ThreadAdmin >::Instance()->Shutdown(level);
-   Singleton< ThreadRegistry >::Instance()->Shutdown(level);
-   Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);
-   Singleton< DeferredRegistry >::Instance()->Shutdown(level);
-   Singleton< DaemonRegistry >::Instance()->Shutdown(level);
-   Singleton< CfgParmRegistry >::Instance()->Shutdown(level);
-   Singleton< LogGroupRegistry >::Instance()->Shutdown(level);
-   Singleton< AlarmRegistry >::Instance()->Shutdown(level);
-   Singleton< StatisticsRegistry >::Instance()->Shutdown(level);
-   Singleton< LogBufferRegistry >::Instance()->Shutdown(level);
-   Singleton< PosixSignalRegistry >::Instance()->Shutdown(level);
+   Singleton<NbIncrement>::Instance()->Shutdown(level);
+   Singleton<SymbolRegistry>::Instance()->Shutdown(level);
+   Singleton<CliRegistry>::Instance()->Shutdown(level);
+   Singleton<Element>::Instance()->Shutdown(level);
+   Singleton<ClassRegistry>::Instance()->Shutdown(level);
+   Singleton<ThreadAdmin>::Instance()->Shutdown(level);
+   Singleton<ThreadRegistry>::Instance()->Shutdown(level);
+   Singleton<ObjectPoolRegistry>::Instance()->Shutdown(level);
+   Singleton<DeferredRegistry>::Instance()->Shutdown(level);
+   Singleton<DaemonRegistry>::Instance()->Shutdown(level);
+   Singleton<CfgParmRegistry>::Instance()->Shutdown(level);
+   Singleton<LogGroupRegistry>::Instance()->Shutdown(level);
+   Singleton<AlarmRegistry>::Instance()->Shutdown(level);
+   Singleton<StatisticsRegistry>::Instance()->Shutdown(level);
+   Singleton<LogBufferRegistry>::Instance()->Shutdown(level);
+   Singleton<PosixSignalRegistry>::Instance()->Shutdown(level);
 
-   Singleton< TraceBuffer >::Instance()->Shutdown(level);
+   Singleton<TraceBuffer>::Instance()->Shutdown(level);
    SysThreadStack::Shutdown(level);
    Memory::Shutdown();
    Singletons::Instance()->Shutdown(level);
@@ -121,24 +121,24 @@ void NbModule::Startup(RestartLevel level)
    //  result of creating RootThread, but their Startup functions
    //  must be invoked.
    //
-   Singleton< PosixSignalRegistry >::Instance()->Startup(level);
-   Singleton< LogBufferRegistry >::Instance()->Startup(level);
-   Singleton< StatisticsRegistry >::Instance()->Startup(level);
-   Singleton< AlarmRegistry >::Instance()->Startup(level);
-   Singleton< LogGroupRegistry >::Instance()->Startup(level);
+   Singleton<PosixSignalRegistry>::Instance()->Startup(level);
+   Singleton<LogBufferRegistry>::Instance()->Startup(level);
+   Singleton<StatisticsRegistry>::Instance()->Startup(level);
+   Singleton<AlarmRegistry>::Instance()->Startup(level);
+   Singleton<LogGroupRegistry>::Instance()->Startup(level);
    CreateNbLogs(level);
-   Singleton< CfgParmRegistry >::Instance()->Startup(level);
-   Singleton< DaemonRegistry >::Instance()->Startup(level);
-   Singleton< DeferredRegistry >::Instance()->Startup(level);
-   Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
-   Singleton< ThreadRegistry >::Instance()->Startup(level);
-   Singleton< ThreadAdmin >::Instance()->Startup(level);
-   Singleton< MsgBufferPool >::Instance()->Startup(level);
-   Singleton< ClassRegistry >::Instance()->Startup(level);
-   Singleton< Element >::Instance()->Startup(level);
-   Singleton< CliRegistry >::Instance()->Startup(level);
-   Singleton< SymbolRegistry >::Instance()->Startup(level);
-   Singleton< NbIncrement >::Instance()->Startup(level);
+   Singleton<CfgParmRegistry>::Instance()->Startup(level);
+   Singleton<DaemonRegistry>::Instance()->Startup(level);
+   Singleton<DeferredRegistry>::Instance()->Startup(level);
+   Singleton<ObjectPoolRegistry>::Instance()->Startup(level);
+   Singleton<ThreadRegistry>::Instance()->Startup(level);
+   Singleton<ThreadAdmin>::Instance()->Startup(level);
+   Singleton<MsgBufferPool>::Instance()->Startup(level);
+   Singleton<ClassRegistry>::Instance()->Startup(level);
+   Singleton<Element>::Instance()->Startup(level);
+   Singleton<CliRegistry>::Instance()->Startup(level);
+   Singleton<SymbolRegistry>::Instance()->Startup(level);
+   Singleton<NbIncrement>::Instance()->Startup(level);
 
    //  See if we're supposed to cause an initialization timeout.
    //
@@ -149,13 +149,13 @@ void NbModule::Startup(RestartLevel level)
 
    //  Create/start threads.
    //
-   Singleton< FileThread >::Instance()->Startup(level);
-   Singleton< CoutThread >::Instance()->Startup(level);
-   Singleton< CinThread >::Instance()->Startup(level);
-   Singleton< ObjectPoolAudit >::Instance()->Startup(level);
-   Singleton< StatisticsThread >::Instance()->Startup(level);
-   Singleton< LogThread >::Instance()->Startup(level);
-   Singleton< DeferredThread >::Instance()->Startup(level);
-   Singleton< CliThread >::Instance()->Startup(level);
+   Singleton<FileThread>::Instance()->Startup(level);
+   Singleton<CoutThread>::Instance()->Startup(level);
+   Singleton<CinThread>::Instance()->Startup(level);
+   Singleton<ObjectPoolAudit>::Instance()->Startup(level);
+   Singleton<StatisticsThread>::Instance()->Startup(level);
+   Singleton<LogThread>::Instance()->Startup(level);
+   Singleton<DeferredThread>::Instance()->Startup(level);
+   Singleton<CliThread>::Instance()->Startup(level);
 }
 }

@@ -47,7 +47,7 @@ namespace SessionBase
 //
 class ServiceSM : public NodeBase::Pooled
 {
-   friend class NodeBase::Q1Way< ServiceSM >;
+   friend class NodeBase::Q1Way<ServiceSM>;
    friend class Event;
    friend class SbInitiationReq;
    friend class SsmContext;
@@ -149,7 +149,7 @@ public:
 
    //  Overridden to enumerate all objects that the SSM owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Overridden for patching.
    //
@@ -293,7 +293,7 @@ private:
 
    //  The queue of modifiers.
    //
-   NodeBase::Q1Way< ServiceSM > ssmq_;
+   NodeBase::Q1Way<ServiceSM> ssmq_;
 
    //  The parent SSM, if this SSM is a modifier.
    //
@@ -301,7 +301,7 @@ private:
 
    //  The events currently owned by the SSM.
    //
-   NodeBase::Q1Way< Event > eventq_[Event::Location_N];
+   NodeBase::Q1Way<Event> eventq_[Event::Location_N];
 };
 }
 #endif

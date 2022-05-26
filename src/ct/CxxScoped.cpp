@@ -90,7 +90,7 @@ void Argument::CheckVoid() const
          //  compare function signatures and match arguments to functions.
          //
          Log(VoidAsArgument);
-         auto func = static_cast< Function* >(GetScope());
+         auto func = static_cast<Function*>(GetScope());
          func->DeleteVoidArg();
       }
    }
@@ -198,7 +198,7 @@ bool Argument::IsDummy() const
 
    if(type == "int")
    {
-      auto& fname = static_cast< Function* >(GetScope())->Name();
+      auto& fname = static_cast<Function*>(GetScope())->Name();
       return ((fname == "operator++") || (fname == "operator--"));
    }
 
@@ -214,7 +214,7 @@ Class* Argument::IsThisCandidate() const
    auto ref = spec_->Referent();
    if(ref == nullptr) return nullptr;
    if(ref->Type() != Cxx::Class) return nullptr;
-   auto cls = static_cast< Class* >(ref);
+   auto cls = static_cast<Class*>(ref);
    if(cls->GetFile()->IsSubsFile()) return nullptr;
    if(cls->IsInternal()) return nullptr;
    if(IsConst()) return nullptr;
@@ -238,7 +238,7 @@ void Argument::LogToFunc(Warning warning) const
 {
    Debug::ft("Argument.LogToFunc");
 
-   auto func = static_cast< Function* >(GetScope());
+   auto func = static_cast<Function*>(GetScope());
    auto offset = func->FindArg(this, true);
    if(offset == SIZE_MAX) offset = 0;
    Log(warning, func, offset);
@@ -302,7 +302,7 @@ bool Argument::SetNonConst()
    if(!nonconst_)
    {
       nonconst_ = true;
-      auto item = static_cast< Argument* >(FindTemplateAnalog(this));
+      auto item = static_cast<Argument*>(FindTemplateAnalog(this));
       if(item != nullptr) item->nonconst_ = true;
    }
 
@@ -341,7 +341,7 @@ bool Argument::WasRead()
    Debug::ft("Argument.WasRead");
 
    ++reads_;
-   auto item = static_cast< Argument* >(FindTemplateAnalog(this));
+   auto item = static_cast<Argument*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->reads_;
    return true;
 }
@@ -353,7 +353,7 @@ bool Argument::WasWritten(const StackArg* arg, bool direct, bool indirect)
    Debug::ft("Argument.WasWritten");
 
    ++writes_;
-   auto item = static_cast< Argument* >(FindTemplateAnalog(this));
+   auto item = static_cast<Argument*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->writes_;
 
    if((arg == nullptr) || (arg->Ptrs(true) == 0))
@@ -389,7 +389,7 @@ BaseDecl::~BaseDecl()
 {
    Debug::ft("BaseDecl.dtor");
 
-   GetClass()->EraseSubclass(static_cast< Class* >(GetScope()));
+   GetClass()->EraseSubclass(static_cast<Class*>(GetScope()));
 }
 
 //------------------------------------------------------------------------------
@@ -419,7 +419,7 @@ bool BaseDecl::EnterScope()
    Context::SetPos(GetLoc());
    FindReferent();
    if(Referent() == nullptr) return false;
-   GetClass()->AddSubclass(static_cast< Class* >(Context::Scope()));
+   GetClass()->AddSubclass(static_cast<Class*>(Context::Scope()));
    return true;
 }
 
@@ -453,7 +453,7 @@ void BaseDecl::FindReferent()
 
 Class* BaseDecl::GetClass() const
 {
-   return static_cast< Class* >(name_->GetReferent());
+   return static_cast<Class*>(name_->GetReferent());
 }
 
 //------------------------------------------------------------------------------
@@ -725,7 +725,7 @@ CxxScoped* CxxScoped::FindNthItem(const std::string& name, size_t& n) const
 
    if(n == 0) return nullptr;
    if(name == Name()) --n;
-   if(n == 0) return const_cast< CxxScoped* >(this);
+   if(n == 0) return const_cast<CxxScoped*>(this);
    return nullptr;
 }
 
@@ -1174,7 +1174,7 @@ void CxxScoped::UpdateReference(CxxToken* item, bool insert) const
 
       if(ref->Type() == Cxx::Function)
       {
-         ref = static_cast< const Function* >(ref)->FindRootFunc();
+         ref = static_cast<const Function*>(ref)->FindRootFunc();
       }
 
       //  A template instance can't be edited, so an erasure shouldn't occur
@@ -1214,7 +1214,7 @@ Enum::Enum(string& name) : refs_(0)
    Debug::ft("Enum.ctor");
 
    std::swap(name_, name);
-   if(!name_.empty()) Singleton< CxxSymbols >::Instance()->InsertEnum(this);
+   if(!name_.empty()) Singleton<CxxSymbols>::Instance()->InsertEnum(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1224,7 +1224,7 @@ Enum::~Enum()
    Debug::ftnt("Enum.dtor");
 
    GetFile()->EraseEnum(this);
-   if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
+   if(!name_.empty()) Singleton<CxxSymbols>::Extant()->EraseEnum(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1411,7 +1411,7 @@ void Enum::ExitBlock() const
       (*e)->ExitBlock();
    }
 
-   Singleton< CxxSymbols >::Instance()->EraseEnum(this);
+   Singleton<CxxSymbols>::Instance()->EraseEnum(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1526,7 +1526,7 @@ void Enum::SetAsReferent(const CxxNamed* user)
    Debug::ft("Enum.SetAsReferent");
 
    ++refs_;
-   auto item = static_cast< Enum* >(FindTemplateAnalog(this));
+   auto item = static_cast<Enum*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->refs_;
 }
 
@@ -1573,7 +1573,7 @@ Enumerator::Enumerator(string& name, ExprPtr& init, Enum* decl) :
    Debug::ft("Enumerator.ctor");
 
    std::swap(name_, name);
-   Singleton< CxxSymbols >::Instance()->InsertEtor(this);
+   Singleton<CxxSymbols>::Instance()->InsertEtor(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1582,7 +1582,7 @@ Enumerator::~Enumerator()
 {
    Debug::ftnt("Enumerator.dtor");
 
-   Singleton< CxxSymbols >::Extant()->EraseEtor(this);
+   Singleton<CxxSymbols>::Extant()->EraseEtor(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1685,7 +1685,7 @@ void Enumerator::ExitBlock() const
 {
    Debug::ft("Enumerator.ExitBlock");
 
-   Singleton< CxxSymbols >::Instance()->EraseEtor(this);
+   Singleton<CxxSymbols>::Instance()->EraseEtor(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1796,7 +1796,7 @@ void Enumerator::SetAsReferent(const CxxNamed* user)
    Debug::ft("Enumerator.SetAsReferent");
 
    ++refs_;
-   auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
+   auto item = static_cast<Enumerator*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->refs_;
 }
 
@@ -1832,7 +1832,7 @@ bool Enumerator::WasRead()
    Debug::ft("Enumerator.WasRead");
 
    ++refs_;
-   auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
+   auto item = static_cast<Enumerator*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->refs_;
    return true;
 }
@@ -1853,7 +1853,7 @@ Forward::Forward(QualNamePtr& name, Cxx::ClassTag tag) :
 {
    Debug::ft("Forward.ctor");
 
-   Singleton< CxxSymbols >::Instance()->InsertForw(this);
+   Singleton<CxxSymbols>::Instance()->InsertForw(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1863,7 +1863,7 @@ Forward::~Forward()
    Debug::ftnt("Forward.dtor");
 
    GetFile()->EraseForw(this);
-   Singleton< CxxSymbols >::Extant()->EraseForw(this);
+   Singleton<CxxSymbols>::Extant()->EraseForw(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2027,7 +2027,7 @@ void Forward::SetAsReferent(const CxxNamed* user)
    Debug::ft("Forward.SetAsReferent");
 
    ++users_;
-   auto item = static_cast< Forward* >(FindTemplateAnalog(this));
+   auto item = static_cast<Forward*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->users_;
 }
 
@@ -2093,7 +2093,7 @@ Friend::~Friend()
 {
    Debug::ftnt("Friend.dtor");
 
-   Singleton< CxxSymbols >::Extant()->EraseFriend(this);
+   Singleton<CxxSymbols>::Extant()->EraseFriend(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2149,7 +2149,7 @@ void Friend::Delete()
 {
    Debug::ftnt("Friend.Delete");
 
-   static_cast< Class* >(grantor_)->EraseFriend(this);
+   static_cast<Class*>(grantor_)->EraseFriend(this);
    delete this;
 }
 
@@ -2206,7 +2206,7 @@ bool Friend::EnterScope()
    //  friend's name was not yet known.  Look for what the friend refers to.
    //
    Context::SetPos(GetLoc());
-   Singleton< CxxSymbols >::Instance()->InsertFriend(this);
+   Singleton<CxxSymbols>::Instance()->InsertFriend(this);
    if(parms_ != nullptr) parms_->EnterScope();
    FindReferent();
    return true;
@@ -2248,7 +2248,7 @@ CxxScoped* Friend::FindForward() const
          //  return the namespace itself.
          //
          if(idx >= size) return item;
-         space = static_cast< Namespace* >(item);
+         space = static_cast<Namespace*>(item);
          name = qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
@@ -2261,7 +2261,7 @@ CxxScoped* Friend::FindForward() const
          break;
 
       case Cxx::Class:
-         cls = static_cast< Class* >(item);
+         cls = static_cast<Class*>(item);
 
          do
          {
@@ -2300,12 +2300,12 @@ CxxScoped* Friend::FindForward() const
       {
          //  See if the item wants to resolve the typedef.
          //
-         auto tdef = static_cast< Typedef* >(item);
+         auto tdef = static_cast<Typedef*>(item);
          tdef->SetAsReferent(this);
          if(!ResolveTypedef(tdef, idx - 1)) return tdef;
          auto root = tdef->Root();
          if(root == nullptr) return tdef;
-         item = static_cast< CxxScoped* >(root);
+         item = static_cast<CxxScoped*>(root);
          qname->SetReferentN(idx - 1, item, nullptr);  // updated value
          break;
       }
@@ -2493,7 +2493,7 @@ void Friend::IncrUsers()
    Debug::ft("Friend.IncrUsers");
 
    ++users_;
-   auto item = static_cast< Friend* >(grantor_->FindTemplateAnalog(this));
+   auto item = static_cast<Friend*>(grantor_->FindTemplateAnalog(this));
    if(item != nullptr) ++item->users_;
 }
 
@@ -2539,7 +2539,7 @@ CxxScoped* Friend::Referent() const
 
    auto ref = GetReferent();
    if(ref != nullptr) return ref;
-   const_cast< Friend* >(this)->FindReferent();
+   const_cast<Friend*>(this)->FindReferent();
    return GetReferent();
 }
 
@@ -2565,7 +2565,7 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
    if(decl == this) return false;
    name_->At(n)->SetForward(decl);
    decl->SetAsReferent(this);
-   const_cast< Friend* >(this)->SetScope(decl->GetSpace());
+   const_cast<Friend*>(this)->SetScope(decl->GetSpace());
    return true;
 }
 
@@ -2576,7 +2576,7 @@ bool Friend::ResolveTemplate(Class* cls, const TypeName* type, bool end) const
    Debug::ft("Friend.ResolveTemplate");
 
    auto scope = cls->GetScope();
-   const_cast< Friend* >(this)->SetScope(scope);
+   const_cast<Friend*>(this)->SetScope(scope);
 
    //  Class.AccessbilityTo invokes Class.FindFriend to determine if a friend
    //  declaration did anything useful, even if it wasn't needed to access a
@@ -2638,7 +2638,7 @@ void Friend::SetFunc(FunctionPtr& func)
       inline_ = func.get();
       inline_->SetTemplateParms(parms_);
       inline_->SetFriend();
-      static_cast< CxxArea* >(scope)->AddFunc(func);
+      static_cast<CxxArea*>(scope)->AddFunc(func);
       GetQualName()->SetReferent(inline_, nullptr);
       inline_->SetAsReferent(this);
    }
@@ -2760,7 +2760,7 @@ void MemberInit::Delete()
    Debug::ft("MemberInit.Delete");
 
    if(ref_ != nullptr) ref_->UpdateReference(this, false);
-   auto func = static_cast< Function* >(GetScope());
+   auto func = static_cast<Function*>(GetScope());
    if(func != nullptr) func->EraseMemberInit(this);
    delete this;
 }
@@ -2844,7 +2844,7 @@ CxxScoped* MemberInit::Referent() const
    if(ref_ != nullptr) return ref_;
 
    auto cls = ctor_->GetClass();
-   ref_ = static_cast< ClassData* >(cls->FindData(name_));
+   ref_ = static_cast<ClassData*>(cls->FindData(name_));
    return ref_;
 }
 
@@ -3213,8 +3213,8 @@ Terminal::Terminal(const string& name, const string& type) :
 {
    Debug::ft("Terminal.ctor");
 
-   SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
-   Singleton< CxxSymbols >::Instance()->InsertTerm(this);
+   SetScope(Singleton<CxxRoot>::Instance()->GlobalNamespace());
+   Singleton<CxxSymbols>::Instance()->InsertTerm(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3223,7 +3223,7 @@ Terminal::~Terminal()
 {
    Debug::ftnt("Terminal.dtor");
 
-   Singleton< CxxSymbols >::Extant()->EraseTerm(this);
+   Singleton<CxxSymbols>::Extant()->EraseTerm(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3282,7 +3282,7 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    Debug::ft("Typedef.ctor");
 
    std::swap(name_, name);
-   Singleton< CxxSymbols >::Instance()->InsertType(this);
+   Singleton<CxxSymbols>::Instance()->InsertType(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3292,7 +3292,7 @@ Typedef::~Typedef()
    Debug::ftnt("Typedef.dtor");
 
    GetFile()->EraseType(this);
-   Singleton< CxxSymbols >::Extant()->EraseType(this);
+   Singleton<CxxSymbols>::Extant()->EraseType(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3450,7 +3450,7 @@ void Typedef::ExitBlock() const
 {
    Debug::ft("Typedef.ExitBlock");
 
-   Singleton< CxxSymbols >::Instance()->EraseType(this);
+   Singleton<CxxSymbols>::Instance()->EraseType(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3574,7 +3574,7 @@ void Typedef::SetAsReferent(const CxxNamed* user)
    Debug::ft("Typedef.SetAsReferent");
 
    ++refs_;
-   auto item = static_cast< Typedef* >(FindTemplateAnalog(this));
+   auto item = static_cast<Typedef*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->refs_;
 }
 
@@ -3765,7 +3765,7 @@ bool Using::IsUsingFor
       if(Context::ParsingSourceCode())
       {
          ++users_;
-         auto item = static_cast< Using* >(FindTemplateAnalog(this));
+         auto item = static_cast<Using*>(FindTemplateAnalog(this));
          if(item != nullptr) ++item->users_;
       }
       return true;

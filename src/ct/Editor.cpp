@@ -68,7 +68,7 @@ namespace CodeTools
 //  declaration and definition).  After all changes needed for a fix have been
 //  made, all modified files can be committed.
 //
-static std::set< Editor* > Editors_;
+static std::set<Editor*> Editors_;
 
 //  The number of files committed so far.
 //
@@ -263,7 +263,7 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
    {
    case Cxx::Function:
    {
-      auto func = static_cast< const Function* >(item);
+      auto func = static_cast<const Function*>(item);
       role_ = func->FuncRole();
       over_ = func->IsOverride();
       oper_ = (func->FuncType() == FuncOperator);
@@ -617,7 +617,7 @@ static bool EnsureUniqueDebugFtName
 {
    Debug::ft("CodeTools.EnsureUniqueDebugFtName");
 
-   auto coverdb = Singleton< CodeCoverage >::Instance();
+   auto coverdb = Singleton<CodeCoverage>::Instance();
    auto hash = func->CalcHash();
    fname = flit;
 
@@ -668,7 +668,7 @@ static CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
 {
    Debug::ft("CodeTools.FindFuncDefnFile");
 
-   std::set< CodeFile* > impls;
+   std::set<CodeFile*> impls;
    auto funcs = cls->Funcs();
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
@@ -688,7 +688,7 @@ static CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
       auto fileName = Cli_->StrPrompt(prompt.str());
       if(fileName == "s") return nullptr;
 
-      file = Singleton< Library >::Instance()->FindFile(fileName);
+      file = Singleton<Library>::Instance()->FindFile(fileName);
       if(file == nullptr)
       {
          Inform("That file is not in the code library.");
@@ -729,10 +729,10 @@ static Namespace* FindNamespace(const string& nspace)
    Debug::ft("CodeTools.FindNamespace");
 
    string space(nspace);
-   auto syms = Singleton< CxxSymbols >::Instance();
-   auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto syms = Singleton<CxxSymbols>::Instance();
+   auto gns = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    auto scope = (nspace != EMPTY_STR ? syms->FindScope(gns, space) : gns);
-   return static_cast< Namespace* >(scope);
+   return static_cast<Namespace*>(scope);
 }
 
 //------------------------------------------------------------------------------
@@ -777,7 +777,7 @@ static string GetItemName(const CxxScope* decl, CodeFile* file)
 {
    Debug::ft("CodeTools.GetItemName");
 
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto space = decl->GetSpace();
    auto name = decl->Name();
 
@@ -804,7 +804,7 @@ static void GetDatas(Data* data, DataVector& datas)
 {
    Debug::ft("CodeTools.GetDatas");
 
-   auto defn = static_cast< Data* >(data->GetMate());
+   auto defn = static_cast<Data*>(data->GetMate());
    if(defn != nullptr) datas.push_back(defn);
    datas.push_back(data);
 }
@@ -897,7 +897,7 @@ static void GetOverrides(Function* func, FunctionVector& funcs)
       GetOverrides(*f, funcs);
    }
 
-   auto defn = static_cast< Function* >(func->GetMate());
+   auto defn = static_cast<Function*>(func->GetMate());
    if((defn != nullptr) && (defn != func)) funcs.push_back(defn);
 
    funcs.push_back(func);
@@ -925,7 +925,7 @@ static bool IsNonTrivialInline(const CxxToken* item, const string& code)
    Debug::ft("CodeTools.IsNonTrivialInline");
 
    if(item->Type() != Cxx::Function) return false;
-   auto func = static_cast< const Function* >(item);
+   auto func = static_cast<const Function*>(item);
 
    if(func->GetDefn() != func) return false;
    auto impl = func->GetImpl();
@@ -1163,7 +1163,7 @@ word Editor::AdjustOperator(const CodeWarning& log)
 {
    Debug::ft("Editor.AdjustOperator");
 
-   auto oper = static_cast< const Operation* >(log.item_);
+   auto oper = static_cast<const Operation*>(log.item_);
    auto& attrs = CxxOp::Attrs[oper->Op()];
 
    if(AdjustHorizontally(oper->GetPos(), attrs.symbol.size(), attrs.spacing))
@@ -1444,7 +1444,7 @@ word Editor::ChangeClassToStruct(const CodeWarning& log)
       if(IsBlankLine(access)) EraseLine(access);
    }
 
-   static_cast< Class* >(log.item_)->SetClassTag(Cxx::StructType);
+   static_cast<Class*>(log.item_)->SetClassTag(Cxx::StructType);
    return Changed(pos);
 }
 
@@ -1480,7 +1480,7 @@ void Editor::ChangeForwards
    auto prev = (from == Cxx::ClassType ? CLASS_STR : STRUCT_STR);
    auto next = (from == Cxx::ClassType ? CLASS_STR : STRUCT_STR);
    SymbolVector forwards;
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
 
    syms->FindItems(item->Name(), CLASS_FORWS, forwards);
 
@@ -1493,7 +1493,7 @@ void Editor::ChangeForwards
          auto cpos = editor.Find(pos, prev);
          if(cpos == string::npos) continue;
          editor.Replace(pos, strlen(prev), next);
-         static_cast< Forward* >(*f)->SetClassTag(to);
+         static_cast<Forward*>(*f)->SetClassTag(to);
       }
    }
 }
@@ -1535,7 +1535,7 @@ word Editor::ChangeMemberToFree(const CodeWarning& log)
    //  it to a namespace.  This is supported if the member is used in a single
    //  .cpp, which is provided in the log's info_ field.
    //
-   auto decl = static_cast< CxxScope* >(log.item_);
+   auto decl = static_cast<CxxScope*>(log.item_);
    auto defn = decl->GetMate();
 
    if(defn == nullptr)
@@ -1545,7 +1545,7 @@ word Editor::ChangeMemberToFree(const CodeWarning& log)
       return Report("This is not supported unless a .cpp defines the item.");
    }
 
-   auto file = Singleton< Library >::Instance()->FindFile(log.info_);
+   auto file = Singleton<Library>::Instance()->FindFile(log.info_);
    if(file == nullptr)
    {
       //  LOG should have provided a valid file.
@@ -1697,7 +1697,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
    pos = code_.find(code, dest);
    pos = Find(pos, STATIC_STR);
 
-   auto item = static_cast< CxxScope* >(ParseFileItem(pos, space));
+   auto item = static_cast<CxxScope*>(ParseFileItem(pos, space));
    if(item == nullptr)
    {
       return Report("Parsing of new declaration failed.");
@@ -1710,7 +1710,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
    {
       if((*r)->Type() == Cxx::TypeName)
       {
-         auto tname = static_cast< const TypeName* >(*r);
+         auto tname = static_cast<const TypeName*>(*r);
          auto qname = tname->GetQualName();
          while(qname->Size() > 1) EraseItem(qname->First());
          if(newName != oldName) qname->Rename(newName);
@@ -1724,7 +1724,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
    //
    if(ftarg != nullptr)
    {
-      UpdateDebugFt(static_cast< Function* >(item));
+      UpdateDebugFt(static_cast<Function*>(item));
    }
 
    if(item != nullptr) pos = item->GetPos();
@@ -1760,7 +1760,7 @@ word Editor::ChangeSpecialFunction(const CodeWarning& log)
 
    //  The function already exists, so its access control needs to change.
    //
-   auto func = static_cast< const Function* >(log.item_);
+   auto func = static_cast<const Function*>(log.item_);
    auto cls = func->GetClass();
    ItemDeclAttrs attrs(func);
    word rc = EditFailed;
@@ -1830,7 +1830,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log)
       InsertLine(NextBegin(left), control);
    }
 
-   static_cast< Class* >(log.item_)->SetClassTag(Cxx::ClassType);
+   static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
    return Changed(pos);
 }
 
@@ -2089,7 +2089,7 @@ word Editor::DeleteSpecialFunction(const CodeWarning& log)
 
    //  If the function has a definition, erase it.
    //
-   auto decl = static_cast< Function* >(log.item_);
+   auto decl = static_cast<Function*>(log.item_);
    auto defn = decl->GetDefn();
    if(defn != decl)
    {
@@ -2474,7 +2474,7 @@ word Editor::EraseExplicitTag(const CodeWarning& log)
    auto exp = Rfind(log.item_->GetPos(), EXPLICIT_STR);
    if(exp == string::npos) return NotFound(EXPLICIT_STR, true);
    Erase(exp, strlen(EXPLICIT_STR) + 1);
-   static_cast< Function* >(log.item_)->SetExplicit(false);
+   static_cast<Function*>(log.item_)->SetExplicit(false);
    return Changed(exp);
 }
 
@@ -2570,7 +2570,7 @@ word Editor::EraseMutableTag(const CodeWarning& log)
    auto tag = Rfind(log.item_->GetTypeSpec()->GetPos(), MUTABLE_STR);
    if(tag == string::npos) return NotFound(MUTABLE_STR, true);
    Erase(tag, strlen(MUTABLE_STR) + 1);
-   static_cast< ClassData* >(log.item_)->SetMutable(false);
+   static_cast<ClassData*>(log.item_)->SetMutable(false);
    return Changed(tag);
 }
 
@@ -2606,7 +2606,7 @@ word Editor::EraseOverrideTag(const CodeWarning& log)
    if(endsig == string::npos) return NotFound(OVERRIDE_STR, true);
    size_t space = (IsFirstNonBlank(endsig) ? 0 : 1);
    Erase(endsig - space, strlen(OVERRIDE_STR) + space);
-   static_cast< Function* >(log.item_)->SetOverride(false);
+   static_cast<Function*>(log.item_)->SetOverride(false);
    return Changed(endsig);
 }
 
@@ -2627,7 +2627,7 @@ word Editor::EraseScope(const CodeWarning& log)
 {
    Debug::ft("Editor.EraseScope");
 
-   auto qname = static_cast< const QualName* >(log.item_);
+   auto qname = static_cast<const QualName*>(log.item_);
    auto begin = qname->GetPos();
    auto op = code_.find(SCOPE_STR, begin);
    if(op == string::npos) return NotFound("Scope resolution operator");
@@ -2691,7 +2691,7 @@ word Editor::EraseVirtualTag(const CodeWarning& log)
    auto virt = LineRfind(log.item_->GetTypeSpec()->GetPos(), VIRTUAL_STR);
    if(virt == string::npos) return NotFound(VIRTUAL_STR, true);
    Erase(virt, strlen(VIRTUAL_STR) + 1);
-   static_cast< Function* >(log.item_)->SetVirtual(false);
+   static_cast<Function*>(log.item_)->SetVirtual(false);
    return Changed(virt);
 }
 
@@ -2761,8 +2761,8 @@ CxxItemVector Editor::FindDeclRange
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      usages.directs.erase(static_cast< CxxNamed* >(*i));
-      usages.indirects.erase(static_cast< CxxNamed* >(*i));
+      usages.directs.erase(static_cast<CxxNamed*>(*i));
+      usages.indirects.erase(static_cast<CxxNamed*>(*i));
    }
 
    begin = file_->FindLastUsage(usages.directs);
@@ -2797,7 +2797,7 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
    //
    attrs.pos_ = string::npos;
    attrs.offsets_.below_ = OffsetRule;
-   auto currSpace = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto currSpace = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    auto items = file_->Items();
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
@@ -2834,7 +2834,7 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
          //  Free data goes after existing free data.
          //
          if(type != Cxx::Data) return;
-         auto data = static_cast< const Data* >(*i);
+         auto data = static_cast<const Data*>(*i);
          if(data->GetClass() != nullptr) return;
          attrs.offsets_.below_ = OffsetNone;
       }
@@ -2848,7 +2848,7 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
          {
          case Cxx::Function:
          {
-            auto func = static_cast< const Function* >(*i);
+            auto func = static_cast<const Function*>(*i);
             if(func->GetClass() != nullptr) return;
             if(func->GetDefn() == func)
             {
@@ -2862,7 +2862,7 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
             //  Skip over an fn_name.  It belongs to the next function, and
             //  we wouldn't want to insert the new function between them.
             //
-            auto data = static_cast< const Data* >(*i);
+            auto data = static_cast<const Data*>(*i);
             if(data->GetTypeSpec()->Name() == "fn_name") continue;
             break;
          }
@@ -3012,7 +3012,7 @@ size_t Editor::FindSigEnd(const CodeWarning& log)
 
    if(log.item_ == nullptr) return string::npos;
    if(log.item_->Type() != Cxx::Function) return string::npos;
-   return FindSigEnd(static_cast< const Function* >(log.item_));
+   return FindSigEnd(static_cast<const Function*>(log.item_));
 }
 
 //------------------------------------------------------------------------------
@@ -3326,7 +3326,7 @@ word Editor::FixDatas(const CodeWarning& log)
 
    //  Fix the data's declaration and definition (if distinct).
    //
-   auto data = static_cast< Data* >(log.item_);
+   auto data = static_cast<Data*>(log.item_);
    DataVector datas;
    GetDatas(data, datas);
 
@@ -3393,7 +3393,7 @@ word Editor::FixFunctions(const CodeWarning& log)
    //  Create a list of all the function declarations and definitions that
    //  are associated with the log.
    //
-   auto func = static_cast< Function* >(log.item_);
+   auto func = static_cast<Function*>(log.item_);
    FunctionVector funcs;
    GetOverrides(func, funcs);
 
@@ -3484,7 +3484,7 @@ word Editor::FixReferences(const CodeWarning& log)
 
    //  Fix references to the data, followed by the data itself.
    //
-   auto data = static_cast< const Data* >(log.item_);
+   auto data = static_cast<const Data*>(log.item_);
    auto refs = data->GetNonLocalRefs();
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
@@ -4064,14 +4064,14 @@ word Editor::InlineDebugFtArgument(const CodeWarning& log)
    if(aref->Type() != Cxx::Data) return NotFound("Debug::ft fn_name");
 
    string fname;
-   auto data = static_cast< Data* >(aref);
+   auto data = static_cast<Data*>(aref);
    if(!data->GetStrValue(fname)) return NotFound("fn_name definition");
 
    auto literal = QUOTE + fname + QUOTE;
    auto rpar = code_.find(')', lpar);
    if(rpar == string::npos) return NotFound("Debug::ft right parenthesis");
    Replace(lpar + 1, rpar - lpar - 1, literal);
-   ReplaceImpl(static_cast< Function* >(log.item_));
+   ReplaceImpl(static_cast<Function*>(log.item_));
 
    //  Erase the fn_name.  This was deferred until now so as not to invalidate
    //  LPAR, which is an infuriatingly common type of bug when editing code.
@@ -4222,7 +4222,7 @@ word Editor::InsertDebugFtCall(const CodeWarning& log)
    Debug::ft("Editor.InsertDebugFtCall");
 
    size_t begin, left, right;
-   auto func = static_cast< Function* >(log.item_);
+   auto func = static_cast<Function*>(log.item_);
    func->GetSpan3(begin, left, right);
    if(left == string::npos) return NotFound("Function definition");
 
@@ -4330,7 +4330,7 @@ word Editor::InsertForward(const CodeWarning& log)
    if(srPos == string::npos) return NotFound("Forward's namespace.");
 
    //  Extract the namespace; rfind avoids the initial "class" in a forward
-   //  declaration for template< class T > class ClassTemplateName.
+   //  declaration for template<class T> class ClassTemplateName.
    //
    auto areaPos = forward.rfind("class ");
    if(areaPos == string::npos) areaPos = forward.rfind("struct ");
@@ -4476,7 +4476,7 @@ word Editor::InsertIncludeGuard(const CodeWarning& log)
    //  The same Parser instance is used because when parsing an #endif, the
    //  parser must have noted an unresolved #if/#ifdef/#ifndef.
    //
-   auto ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto ns = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser());
    parser->ParseFileItem(code_, ifnPos, file_, ns);
    parser->ParseFileItem(code_, defPos, nullptr, ns);
@@ -4573,7 +4573,7 @@ word Editor::InsertPatch(const CodeWarning& log)
    //  Extract the name of the function to insert.  (It will be "Patch",
    //  but this code might eventually be generalized for other functions.)
    //
-   auto cls = static_cast< Class* >(log.item_);
+   auto cls = static_cast<Class*>(log.item_);
    auto name = log.GetNewFuncName();
    if(name.empty()) return Report("Log did not specify function name.");
 
@@ -4874,9 +4874,9 @@ word Editor::InsertSpecialFunctions(CxxToken* item)
    //  This coordinates adding all missing special member functions
    //  that can be defined as defaulted or deleted.
    //
-   auto cls = static_cast< Class* >(item);
-   std::vector< const CodeWarning* > logs;
-   std::set< FunctionRole > roles;
+   auto cls = static_cast<Class*>(item);
+   std::vector<const CodeWarning*> logs;
+   std::set<FunctionRole> roles;
 
    for(size_t i = 0; i < MaxRoleWarning; ++i)
    {
@@ -4930,7 +4930,7 @@ word Editor::InsertSpecialFunctions(CxxToken* item)
    //
    for(int r = PureCtor; r < FuncOther; ++r)
    {
-      auto role = static_cast< FunctionRole >(r);
+      auto role = static_cast<FunctionRole>(r);
 
       if(roles.find(role) != roles.cend())
       {
@@ -5171,7 +5171,7 @@ CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
 {
    Debug::ft("Editor.ParseFileItem");
 
-   if(ns == nullptr) ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   if(ns == nullptr) ns = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser());
    if(!parser->ParseFileItem(code_, pos, file_, ns)) return ParseFailed(pos);
    auto item = file_->NewestItem();
@@ -5315,7 +5315,7 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
    switch(ref->Type())
    {
    case Cxx::Namespace:
-      ns = static_cast< Namespace* >(ref)->OuterSpace();
+      ns = static_cast<Namespace*>(ref)->OuterSpace();
       break;
    case Cxx::Class:
       if(ref->IsInTemplateInstance())
@@ -5391,7 +5391,7 @@ word Editor::RenameArgument(const CodeWarning& log)
    //  o DefinitionRenamesArgument: definition's name differs from declaration's
    //  o OverrideRenamesArgument: override's name differs from root's
    //
-   auto func = static_cast< const Function* >(log.item_);
+   auto func = static_cast<const Function*>(log.item_);
    auto index = func->LogOffsetToArgIndex(log.offset_);
    const Function* decl = func->GetDecl();
    const Function* defn = func->GetDefn();
@@ -5482,7 +5482,7 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    {
       //  Replace the string literal in the Debug::ft invocation.
       //
-      auto slit = static_cast< StrLiteral* >(arg);
+      auto slit = static_cast<StrLiteral*>(arg);
       auto size = slit->GetStr().size();
       auto lpos = code_.find(QUOTE, lpar);
       if(lpos == string::npos) return NotFound("Debug::ft left quote");
@@ -5496,14 +5496,14 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    //  The Debug::ft invocation used an fn_name.  Replace its definition
    //  and rename it if it doesn't follow the Scope_Function convention.
    //
-   auto data = static_cast< SpaceData* >(arg->Referent());
+   auto data = static_cast<SpaceData*>(arg->Referent());
    if(data == nullptr) return NotFound("Debug::ft fn_name");
    auto dpos = data->GetPos();
    auto lpos = Find(dpos, QUOTE_STR);
    if(lpos == string::npos) return NotFound("fn_name left quote");
    auto rpos = code_.find(QUOTE, lpos + 1);
    if(rpos == string::npos) return NotFound("fn_name right quote");
-   auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
+   auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
    Replace(lpos, rpos - lpos + 1, fname);
    if(data->Name() != fvar) data->Rename(fvar);
 
@@ -5530,7 +5530,7 @@ word Editor::RenameIncludeGuard(const CodeWarning& log)
    if(CompareCode(ifn, HASH_IFNDEF_STR) != 0) return NotFound(HASH_IFNDEF_STR);
 
    auto guard = log.File()->MakeGuardName();
-   static_cast< Ifndef* >(log.item_)->ChangeName(guard);
+   static_cast<Ifndef*>(log.item_)->ChangeName(guard);
    auto def = Find(ifn, HASH_DEFINE_STR);
    return Changed(def);
 }
@@ -5595,10 +5595,10 @@ word Editor::ReplaceNull(const CodeWarning& log)
    Debug::ft("Editor.ReplaceNull");
 
    auto pos = log.Pos();
-   auto type = static_cast< TypeName* >(log.item_);
+   auto type = static_cast<TypeName*>(log.item_);
    type->Rename(NULLPTR_STR);
    type->UpdateXref(false);
-   type->SetReferent(Singleton< CxxRoot >::Instance()->NullptrTerm(), nullptr);
+   type->SetReferent(Singleton<CxxRoot>::Instance()->NullptrTerm(), nullptr);
    type->UpdateXref(true);
    return Changed(pos);
 }
@@ -6162,7 +6162,7 @@ word Editor::TagAsExplicit(const CodeWarning& log)
    auto prev = LineRfind(ctor, CONSTEXPR_STR);
    if(prev != string::npos) ctor = prev;
    Insert(ctor, "explicit ");
-   static_cast< Function* >(log.item_)->SetExplicit(true);
+   static_cast<Function*>(log.item_)->SetExplicit(true);
    return Changed(ctor);
 }
 
@@ -6211,7 +6211,7 @@ word Editor::TagAsOverride(const CodeWarning& log)
    if(endsig == string::npos) return NotFound("Signature end");
    endsig = RfindNonBlank(endsig - 1);
    Insert(endsig + 1, " override");
-   static_cast< Function* >(log.item_)->SetOverride(true);
+   static_cast<Function*>(log.item_)->SetOverride(true);
    return Changed(endsig);
 }
 
@@ -6315,7 +6315,7 @@ word Editor::TagAsVirtual(const CodeWarning& log)
    //  Make this destructor virtual.
    //
    auto pos = Insert(log.item_->GetPos(), "virtual ");
-   static_cast< Function* >(log.item_)->SetVirtual(true);
+   static_cast<Function*>(log.item_)->SetVirtual(true);
    return Changed(pos);
 }
 
@@ -6603,7 +6603,7 @@ word Editor::UpdateItemDefnLoc(const CxxToken* prev,
    //
    if((prev == nullptr) && (next != nullptr) && (next->Type() == Cxx::Function))
    {
-      auto items = GetItemsForDefn(static_cast< const CxxScope* >(next));
+      auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
       if(!items.empty()) next = items.front();
    }
 

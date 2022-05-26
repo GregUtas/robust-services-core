@@ -69,7 +69,7 @@ static RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm)
    }
 
    auto fid = header->rxAddr.fid;
-   auto fac = Singleton < FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton <FactoryRegistry>::Instance()->GetFactory(fid);
 
    if(fac == nullptr)
    {
@@ -78,7 +78,7 @@ static RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm)
       return nullptr;
    }
 
-   return static_cast< SsmFactory* >(fac)->AllocRoot(msg, psm);
+   return static_cast<SsmFactory*>(fac)->AllocRoot(msg, psm);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void SsmContext::EndOfTransaction()
 
 //------------------------------------------------------------------------------
 
-void SsmContext::GetSubtended(std::vector< Base* >& objects) const
+void SsmContext::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("SsmContext.GetSubtended");
 

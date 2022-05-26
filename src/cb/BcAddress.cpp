@@ -87,7 +87,7 @@ AddressParameter::~AddressParameter()
 void AddressParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const DigitString* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const DigitString*>(bytes)->Display(stream, prefix);
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ Parameter::TestRc AddressParameter::InjectMsg
 
    string digits;
    DigitString ds;
-   auto& tlvmsg = static_cast< TlvMessage& >(msg);
+   auto& tlvmsg = static_cast<TlvMessage&>(msg);
 
    switch(cli.Command()->GetStringRc(digits, cli))
    {
@@ -152,7 +152,7 @@ Parameter::TestRc AddressParameter::VerifyMsg
    Debug::ft("AddressParameter.VerifyMsg");
 
    TestRc rc;
-   auto& tlvmsg = static_cast< const TlvMessage& >(msg);
+   auto& tlvmsg = static_cast<const TlvMessage&>(msg);
    DigitString* info;
    string digits;
    DigitString ds;

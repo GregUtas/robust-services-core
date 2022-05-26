@@ -58,7 +58,7 @@ protected:
 
    //  Sets pool_.  A subclass' Initialize function calls this to
    //  set its associated ObjectPool subclass.
-   //    auto pool = Singleton< MyObjectPool >::Instance();
+   //    auto pool = Singleton<MyObjectPool>::Instance();
    //    auto obj1 = new MyPooledObject(...);
    //    auto obj2 = new MyPooledObject(...);
    //    SetPool(*pool);

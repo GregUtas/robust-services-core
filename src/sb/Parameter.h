@@ -46,7 +46,7 @@ namespace SessionBase
 //
 class Parameter : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< Parameter >;
+   friend class NodeBase::Registry<Parameter>;
 public:
    //  Allows "Id" to refer to a parameter identifier in this class hierarchy.
    //

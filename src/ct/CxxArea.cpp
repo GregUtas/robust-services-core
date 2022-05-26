@@ -66,7 +66,7 @@ static size_t CreateCodeError(const string& name, debug64_t offset)
 //
 //  Returns the minimum value in MATCHES.
 //
-static TypeMatch FindMin(const std::vector< TypeMatch >& matches)
+static TypeMatch FindMin(const std::vector<TypeMatch>& matches)
 {
    if(matches.empty()) return Incompatible;
    auto min = Compatible;
@@ -105,7 +105,7 @@ static Function* FuncAccessed(Function* func,
 
    if((call != nullptr) && (call->Via() != nullptr))
    {
-      auto cls = static_cast< Class* >(call->Via()->Root());
+      auto cls = static_cast<Class*>(call->Via()->Root());
 
       call->Name()->MemberAccessed(cls, func);
 
@@ -166,7 +166,7 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
 {
    Debug::ft("Class.ctor[>ct]");
 
-   Singleton< CxxSymbols >::Instance()->InsertClass(this);
+   Singleton<CxxSymbols>::Instance()->InsertClass(this);
 }
 
 //------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ Class::~Class()
    Debug::ftnt("Class.dtor[>ct]");
 
    GetFile()->EraseClass(this);
-   Singleton< CxxSymbols >::Extant()->EraseClass(this);
+   Singleton<CxxSymbols>::Extant()->EraseClass(this);
 }
 
 //------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ void Class::AccessibilityOf
    //  also to determine whether an item's access control could be changed
    //  to something more restrictive.  This affects the order of the logic.
    //
-   std::vector< Class* > userClasses;
+   std::vector<Class*> userClasses;
    auto userClass = scope->GetClass();
 
    if(userClass != nullptr)
@@ -278,7 +278,7 @@ void Class::AccessibilityOf
       //  ITEM if userClass is an instance of the class template.
       //
       if((itemType == Cxx::Function) && (userClass->GetTemplate() == this) &&
-         static_cast< const Function* >(item)->IsInline())
+         static_cast<const Function*>(item)->IsInline())
       {
          view.distance_ = 1;
          view.accessibility_ = Declared;
@@ -315,8 +315,8 @@ void Class::AccessibilityOf
    //  same time, find the access control that applies to ITEM on the
    //  path from its class to its outermost class.
    //
-   std::vector< Class* > itemClasses;
-   std::vector< Cxx::Access > controls;
+   std::vector<Class*> itemClasses;
+   std::vector<Cxx::Access> controls;
    auto control = item->GetAccess();
 
    for(auto c = itemClass; c != nullptr; c = c->OuterClass())
@@ -1231,14 +1231,14 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    //  current scope is irrelevant because all users can share the same
    //  instance.
    //
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto name = Name() + type->TypeString(true);
    SymbolVector list;
    syms->FindItems(name, CLASS_MASK, list);
 
    if(!list.empty())
    {
-      return static_cast< ClassInst* >(list.front());
+      return static_cast<ClassInst*>(list.front());
    }
 
    //  The instance doesn't exist, so create it.  If the template class
@@ -1259,7 +1259,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
 
       for(auto s = list.cbegin(); s != list.cend(); ++s)
       {
-         auto c = static_cast< Class* >(*s);
+         auto c = static_cast<Class*>(*s);
          auto m = c->MatchTemplate(*type);
 
          if(m >= match)
@@ -1360,7 +1360,7 @@ Function* Class::FindCtor
    //
    if(args->empty() || !args->front().IsThis())
    {
-      auto self = const_cast< Class* >(this);
+      auto self = const_cast<Class*>(this);
       args->insert(args->begin(), StackArg(self, 1, false));
    }
 
@@ -1558,7 +1558,7 @@ bool Class::FuncToIndex(const Function* func, size_t& idx) const
 Class* Class::GetClassTemplate() const
 {
    if(!IsTemplate()) return nullptr;
-   return const_cast< Class* >(this);
+   return const_cast<Class*>(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1722,7 +1722,7 @@ bool Class::GetSpan(size_t& begin, size_t& left, size_t& end) const
 CxxScope* Class::GetTemplate() const
 {
    if(!IsTemplate()) return nullptr;
-   return const_cast< Class* >(this);
+   return const_cast<Class*>(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2234,7 +2234,7 @@ void Class::Rename(const string& name)
    //  symbols match the name that is used as a key.
    //
    SymbolVector forwards;
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    syms->FindItems(Name(), CLASS_FORWS, forwards);
 
    for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
@@ -2664,11 +2664,11 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
    switch(type)
    {
    case Cxx::Class:
-      return const_cast< ClassInst* >(this);
+      return const_cast<ClassInst*>(this);
 
    case Cxx::Function:
       size_t idx;
-      auto func = static_cast< const Function* >(item);
+      auto func = static_cast<const Function*>(item);
       if(!tmplt_->FuncToIndex(func, idx)) return nullptr;
       auto list = FuncVector(item->Name());
       return list->at(idx).get();
@@ -2710,7 +2710,7 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxToken* item) const
    case Cxx::Function:
    {
       size_t idx;
-      auto func = static_cast< const Function* >(item);
+      auto func = static_cast<const Function*>(item);
       if(!FuncToIndex(func, idx)) return nullptr;
       return tmplt_->IndexToFunc(item->Name(), idx);
    }
@@ -2719,7 +2719,7 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxToken* item) const
    {
       auto ref = item->Referent();
       if(ref == nullptr) return nullptr;
-      return tmplt_->FindFriend(static_cast< const CxxScope* >(ref));
+      return tmplt_->FindFriend(static_cast<const CxxScope*>(ref));
    }
    }
 
@@ -2788,7 +2788,7 @@ bool ClassInst::NameRefersToItem(const string& name,
    //  see this class as a forward declaration.
    //
    auto names = GetNameAndArgs(name);
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto item = syms->FindSymbol
       (file, scope, names.front().name, FRIEND_CLASSES, view);
    if(item == nullptr) return false;
@@ -3058,7 +3058,7 @@ void CxxArea::EraseData(const Data* data)
    }
    else
    {
-      EraseItemPtr< CxxScope >(defns_, data);
+      EraseItemPtr<CxxScope>(defns_, data);
    }
 }
 
@@ -3095,7 +3095,7 @@ void CxxArea::EraseFunc(const Function* func)
    }
    else
    {
-      EraseItemPtr< CxxScope >(defns_, func);
+      EraseItemPtr<CxxScope>(defns_, func);
    }
 }
 
@@ -3185,7 +3185,7 @@ Function* CxxArea::FindFunc(const string& name,
    //  Get the type string for each argument in ARGS.
    //
    FunctionVector funcs;
-   std::vector< std::vector <TypeMatch >> argMatches;
+   std::vector<std::vector<TypeMatch>> argMatches;
 
    stringVector argTypes;
 
@@ -3215,7 +3215,7 @@ Function* CxxArea::FindFunc(const string& name,
       {
          if(args == nullptr) return FoundFunc(func, view, Compatible);
 
-         std::vector< TypeMatch > matches;
+         std::vector<TypeMatch> matches;
          func = func->CanInvokeWith(*args, argTypes, matches);
 
          if(func != nullptr)
@@ -3657,7 +3657,7 @@ Namespace::Namespace(const string& name, Namespace* space) :
    Debug::ft("Namespace.ctor");
 
    CxxArea::SetScope(space);
-   Singleton< CxxSymbols >::Instance()->InsertSpace(this);
+   Singleton<CxxSymbols>::Instance()->InsertSpace(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3666,7 +3666,7 @@ Namespace::~Namespace()
 {
    Debug::ftnt("Namespace.dtor");
 
-   Singleton< CxxSymbols >::Extant()->EraseSpace(this);
+   Singleton<CxxSymbols>::Extant()->EraseSpace(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3866,7 +3866,7 @@ string Namespace::ScopedName(bool templates) const
       return EMPTY_STR;
    }
 
-   if(scope == Singleton< CxxRoot >::Instance()->GlobalNamespace())
+   if(scope == Singleton<CxxRoot>::Instance()->GlobalNamespace())
    {
       //  This namespace is directly below the global namespace.
       //

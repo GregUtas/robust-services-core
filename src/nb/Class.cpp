@@ -53,11 +53,11 @@ struct ClassDynamic : public Permanent
 
    //  Used by Create to block-initialize a new object.
    //
-   std::unique_ptr< Object > template_;
+   std::unique_ptr<Object> template_;
 
    //  The quasi-singleton instance.
    //
-   std::unique_ptr< Object > singleton_;
+   std::unique_ptr<Object> singleton_;
 };
 
 //==============================================================================
@@ -70,7 +70,7 @@ Class::Class(ClassId cid, size_t size) :
 
    dyn_.reset(new ClassDynamic);
    cid_.SetId(cid);
-   Singleton< ClassRegistry >::Instance()->BindClass(*this);
+   Singleton<ClassRegistry>::Instance()->BindClass(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ Class::~Class()
    Debug::ftnt(Class_dtor);
 
    Debug::SwLog(Class_dtor, UnexpectedInvocation, 0);
-   Singleton< ClassRegistry >::Extant()->UnbindClass(*this);
+   Singleton<ClassRegistry>::Extant()->UnbindClass(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ Class::~Class()
 ptrdiff_t Class::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Class* >(&local);
+   auto fake = reinterpret_cast<const Class*>(&local);
    return ptrdiff(&fake->cid_, fake);
 }
 

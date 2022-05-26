@@ -54,8 +54,8 @@ PbModule::PbModule() : Module()
 
    //  Create the modules required by PotsBase.
    //
-   Singleton< CbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<CbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -71,8 +71,8 @@ void PbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("PbModule.Shutdown");
 
-   Singleton< PotsFeatureRegistry >::Instance()->Shutdown(level);
-   Singleton< PotsProfileRegistry >::Instance()->Shutdown(level);
+   Singleton<PotsFeatureRegistry>::Instance()->Shutdown(level);
+   Singleton<PotsProfileRegistry>::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -82,28 +82,28 @@ void PbModule::Startup(RestartLevel level)
    Debug::ft("PbModule.Startup");
 
    CreatePotsLogs(level);
-   Singleton< PotsProfileRegistry >::Instance()->Startup(level);
-   Singleton< PotsBicFeature >::Instance()->Startup(level);
-   Singleton< PotsBocFeature >::Instance()->Startup(level);
-   Singleton< PotsCfbFeature >::Instance()->Startup(level);
-   Singleton< PotsCfnFeature >::Instance()->Startup(level);
-   Singleton< PotsCfuFeature >::Instance()->Startup(level);
-   Singleton< PotsCwtFeature >::Instance()->Startup(level);
-   Singleton< PotsCxfFeature >::Instance()->Startup(level);
-   Singleton< PotsHtlFeature >::Instance()->Startup(level);
-   Singleton< PotsSusFeature >::Instance()->Startup(level);
-   Singleton< PotsTwcFeature >::Instance()->Startup(level);
-   Singleton< PotsWmlFeature >::Instance()->Startup(level);
-   Singleton< PotsProtocol >::Instance()->Startup(level);
+   Singleton<PotsProfileRegistry>::Instance()->Startup(level);
+   Singleton<PotsBicFeature>::Instance()->Startup(level);
+   Singleton<PotsBocFeature>::Instance()->Startup(level);
+   Singleton<PotsCfbFeature>::Instance()->Startup(level);
+   Singleton<PotsCfnFeature>::Instance()->Startup(level);
+   Singleton<PotsCfuFeature>::Instance()->Startup(level);
+   Singleton<PotsCwtFeature>::Instance()->Startup(level);
+   Singleton<PotsCxfFeature>::Instance()->Startup(level);
+   Singleton<PotsHtlFeature>::Instance()->Startup(level);
+   Singleton<PotsSusFeature>::Instance()->Startup(level);
+   Singleton<PotsTwcFeature>::Instance()->Startup(level);
+   Singleton<PotsWmlFeature>::Instance()->Startup(level);
+   Singleton<PotsProtocol>::Instance()->Startup(level);
 
    //  Audit the features and create their CLI parameters.
    //  This is done before creating the POTS CLI increment.
    //
    if(level >= RestartReboot)
    {
-      Singleton< PotsFeatureRegistry >::Instance()->Audit();
+      Singleton<PotsFeatureRegistry>::Instance()->Audit();
    }
 
-   Singleton< PotsIncrement >::Instance()->Startup(level);
+   Singleton<PotsIncrement>::Instance()->Startup(level);
 }
 }

@@ -96,7 +96,7 @@ Message::Message(ProtocolSM* psm, size_t size) :
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -121,7 +121,7 @@ Message::~Message()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -146,7 +146,7 @@ void Message::Capture(Route route) const
    Debug::ft("Message.Capture");
 
    auto warp = SteadyTime::Now();
-   auto sbt = Singleton< SbTracer >::Instance();
+   auto sbt = Singleton<SbTracer>::Instance();
    auto ctx = Context::RunningContext();
    bool trace;
    TransTrace* trans = nullptr;
@@ -175,7 +175,7 @@ void Message::Capture(Route route) const
 
    if(trace)
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -257,7 +257,7 @@ void Message::Display(ostream& stream,
 
 fn_name Message_Enqueue = "Message.Enqueue";
 
-void Message::Enqueue(Q1Way< Message >& whichq)
+void Message::Enqueue(Q1Way<Message>& whichq)
 {
    Debug::ft(Message_Enqueue);
 
@@ -358,7 +358,7 @@ SignalId Message::GetSignal() const
 
 //------------------------------------------------------------------------------
 
-void Message::GetSubtended(std::vector< Base* >& objects) const
+void Message::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("Message.GetSubtended");
 
@@ -413,7 +413,7 @@ MsgHeader* Message::Header() const
 
 //------------------------------------------------------------------------------
 
-void Message::Henqueue(Q1Way< Message >& whichq)
+void Message::Henqueue(Q1Way<Message>& whichq)
 {
    Debug::ft("Message.Henqueue");
 
@@ -470,7 +470,7 @@ void* Message::operator new(size_t size)
 {
    Debug::ft("Message.operator new");
 
-   return Singleton< MessagePool >::Instance()->DeqBlock(size);
+   return Singleton<MessagePool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -619,7 +619,7 @@ Factory* Message::RxFactory() const
 
    auto fid = buff_->Header()->rxAddr.fid;
 
-   return Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   return Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
 }
 
 //------------------------------------------------------------------------------
@@ -663,7 +663,7 @@ bool Message::Send(Route route)
    }
 
    auto header = buff_->Header();
-   auto facreg = Singleton< FactoryRegistry >::Instance();
+   auto facreg = Singleton<FactoryRegistry>::Instance();
    auto txpsm = psm_;
    auto txport = (psm_ == nullptr ? nullptr : psm_->Port());
    bool local = false;
@@ -695,7 +695,7 @@ bool Message::Send(Route route)
    {
       //  See if the message is local (intraprocessor to a known IP port).
       //
-      auto ippreg = Singleton< IpPortRegistry >::Instance();
+      auto ippreg = Singleton<IpPortRegistry>::Instance();
       local = ippreg->CanBypassStack(buff_->TxAddr(), buff_->RxAddr());
    }
 
@@ -762,7 +762,7 @@ bool Message::Send(Route route)
       }
 
       auto faction = fac->GetFaction();
-      auto invreg = Singleton< InvokerPoolRegistry >::Instance();
+      auto invreg = Singleton<InvokerPoolRegistry>::Instance();
       auto pool = invreg->Pool(faction);
 
       if(pool == nullptr)
@@ -951,7 +951,7 @@ void Message::SetRxAddr(const LocalAddress& rxaddr)
          //  message actually gets processed, in which case bt_ now points to
          //  a trace record that has been overwritten.
          //
-         auto bt = dynamic_cast< const BuffTrace* >(bt_);
+         auto bt = dynamic_cast<const BuffTrace*>(bt_);
          if(bt != nullptr) bt->Header()->rxAddr = rxaddr;
       }
    }

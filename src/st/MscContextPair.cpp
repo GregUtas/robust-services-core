@@ -84,7 +84,7 @@ bool MscContextPair::IsEqualTo
 ptrdiff_t MscContextPair::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const MscContextPair* >(&local);
+   auto fake = reinterpret_cast<const MscContextPair*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

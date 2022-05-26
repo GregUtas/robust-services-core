@@ -37,7 +37,7 @@ namespace NodeBase
 //
 class FileThread : public Thread
 {
-   friend class Singleton< FileThread >;
+   friend class Singleton<FileThread>;
 public:
    //  Creates a stream where output can be directed and eventually passed
    //  to our Spool function.

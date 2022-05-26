@@ -43,9 +43,9 @@ StModule::StModule() : Module()
 
    //  Create the modules required by SessionTools.
    //
-   Singleton< SbModule >::Instance();
-   Singleton< NtModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<SbModule>::Instance();
+   Singleton<NtModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -68,14 +68,14 @@ void StModule::Startup(RestartLevel level)
 {
    Debug::ft("StModule.Startup");
 
-   Singleton< TestProtocol >::Instance()->Startup(level);
-   Singleton< TestService >::Instance()->Startup(level);
-   Singleton< TestFactory >::Instance()->Startup(level);
-   Singleton< StIncrement >::Instance()->Startup(level);
+   Singleton<TestProtocol>::Instance()->Startup(level);
+   Singleton<TestService>::Instance()->Startup(level);
+   Singleton<TestFactory>::Instance()->Startup(level);
+   Singleton<StIncrement>::Instance()->Startup(level);
 
    //  Define symbols.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("factory.test", TestFactoryId);
 }
 }

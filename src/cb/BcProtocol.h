@@ -64,7 +64,7 @@ namespace CallBase
 //
 class CipProtocol : public TlvProtocol
 {
-   friend class Singleton< CipProtocol >;
+   friend class Singleton<CipProtocol>;
 public:
    //  Timeout while waiting for a response to an IAM, which is the first
    //  signal sent from the originator of a call to the terminator.
@@ -297,7 +297,7 @@ private:
 //
 class CipUdpService : public UdpIpService
 {
-   friend class Singleton< CipUdpService >;
+   friend class Singleton<CipUdpService>;
    friend class CipPsm;
 public:
    //  Overridden for restarts.
@@ -342,7 +342,7 @@ private:
 //
 class CipTcpService : public TcpIpService
 {
-   friend class Singleton< CipTcpService >;
+   friend class Singleton<CipTcpService>;
    friend class CipPsm;
 public:
    //  Overridden for restarts.
@@ -437,7 +437,7 @@ protected:
 //
 class CipObcFactory : public CipFactory
 {
-   friend class Singleton< CipObcFactory >;
+   friend class Singleton<CipObcFactory>;
 
    //  Private because this is a singleton.
    //
@@ -462,7 +462,7 @@ class CipObcFactory : public CipFactory
 //
 class CipTbcFactory : public CipFactory
 {
-   friend class Singleton< CipTbcFactory >;
+   friend class Singleton<CipTbcFactory>;
 
    //  Private because this is a singleton.
    //

@@ -44,7 +44,7 @@ class InvokerThread : public NodeBase::Thread
    friend class Context;
    friend class InvokerDaemon;
    friend class InvokerPool;
-   friend class NodeBase::Registry< InvokerThread >;
+   friend class NodeBase::Registry<InvokerThread>;
    friend class SbException;
 public:
    //  After a transaction, Thread::RtcPercentUsed is called to see how long
@@ -137,7 +137,7 @@ private:
 
    //  The context that the invoker is currently serving.
    //
-   std::unique_ptr< Context > ctx_;
+   std::unique_ptr<Context> ctx_;
 
    //  Remembers ctx_'s context message before a blocking operation and
    //  restores it afterwards.

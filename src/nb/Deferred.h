@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class Deferred : public MsgBuffer
 {
-   friend class Q2Way< Deferred >;
+   friend class Q2Way<Deferred>;
    friend class DeferredRegistry;
 public:
    //  Virtual to allow subclassing.

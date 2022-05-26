@@ -41,7 +41,7 @@ namespace NodeBase
 //
 class PosixSignalRegistry : public Immutable
 {
-   friend class Singleton< PosixSignalRegistry >;
+   friend class Singleton<PosixSignalRegistry>;
    friend class PosixSignal;
 public:
    //  Deleted to prohibit copying.
@@ -75,7 +75,7 @@ public:
 
    //  Returns the registry of signals.  Used for iteration.
    //
-   const Registry< PosixSignal >& Signals() const { return signals_; }
+   const Registry<PosixSignal>& Signals() const { return signals_; }
 
    //  Overridden to display member variables.
    //
@@ -104,7 +104,7 @@ private:
 
    //  The global registry of POSIX signals.
    //
-   Registry< PosixSignal > signals_;
+   Registry<PosixSignal> signals_;
 };
 }
 #endif

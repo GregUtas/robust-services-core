@@ -50,7 +50,7 @@ fixed_string ObjPoolTraceToolExpl = "traces pooled objects";
 
 class ObjPoolTraceTool : public Tool
 {
-   friend class Singleton< ObjPoolTraceTool >;
+   friend class Singleton<ObjPoolTraceTool>;
 
    ObjPoolTraceTool() : Tool(ObjPoolTracer, 'o', true) { }
    ~ObjPoolTraceTool() = default;
@@ -93,7 +93,7 @@ void ObjectPoolStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   auto reg = Singleton< ObjectPoolRegistry >::Instance();
+   auto reg = Singleton<ObjectPoolRegistry>::Instance();
 
    if(id == 0)
    {
@@ -124,12 +124,12 @@ ObjectPoolRegistry::ObjectPoolRegistry()
 {
    Debug::ft("ObjectPoolRegistry.ctor");
 
-   Singleton< ObjPoolTraceTool >::Instance();
+   Singleton<ObjPoolTraceTool>::Instance();
    pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProtected);
    statsGroup_.reset(new ObjectPoolStatsGroup);
    nullifyObjectDataCfg_.reset(new CfgBoolParm("NullifyObjectData", "F",
       "set to nullify the data after an object's vptr"));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectDataCfg_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*nullifyObjectDataCfg_);
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ void ObjectPoolRegistry::AuditPools() const
 {
    Debug::ft(ObjectPoolRegistry_AuditPools);
 
-   auto thread = Singleton< ObjectPoolAudit >::Instance();
+   auto thread = Singleton<ObjectPoolAudit>::Instance();
 
    //  This code is stateful.  When it is reentered after an exception, it
    //  resumes execution at the phase and pool where the exception occurred.

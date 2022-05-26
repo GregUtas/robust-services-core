@@ -92,7 +92,7 @@ PotsFeatureProfile* PotsHtlFeature::Subscribe
    if(!cli.Command()->GetIntParm(dn, cli)) return nullptr;
    if(!cli.EndOfInput()) return nullptr;
 
-   if(Singleton< PotsProfileRegistry >::Instance()->Profile(dn) == nullptr)
+   if(Singleton<PotsProfileRegistry>::Instance()->Profile(dn) == nullptr)
       *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;
 
    FunctionGuard guard(Guard_MemUnprotect);

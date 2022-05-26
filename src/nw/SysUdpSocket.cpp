@@ -83,7 +83,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
    }
 
    auto txport = buff.TxAddr().GetPort();
-   auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
+   auto port = Singleton<IpPortRegistry>::Instance()->GetPort(txport);
    auto& peer = buff.RxAddr();
    auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
    auto sent = SendTo(dest, size, peer);

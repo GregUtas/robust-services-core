@@ -59,22 +59,22 @@ void DipMessage::Display(ostream& stream) const
    switch(header.signal)
    {
    case IM_MESSAGE:
-      reinterpret_cast< const IM_Message* >(this)->Display(stream);
+      reinterpret_cast<const IM_Message*>(this)->Display(stream);
       break;
    case RM_MESSAGE:
-      reinterpret_cast< const RM_Message* >(this)->Display(stream);
+      reinterpret_cast<const RM_Message*>(this)->Display(stream);
       break;
    case DM_MESSAGE:
-      reinterpret_cast< const DM_Message* >(this)->Display(stream);
+      reinterpret_cast<const DM_Message*>(this)->Display(stream);
       break;
    case FM_MESSAGE:
-      reinterpret_cast< const FM_Message* >(this)->Display(stream);
+      reinterpret_cast<const FM_Message*>(this)->Display(stream);
       break;
    case EM_MESSAGE:
-      reinterpret_cast< const EM_Message* >(this)->Display(stream);
+      reinterpret_cast<const EM_Message*>(this)->Display(stream);
       break;
    case BM_MESSAGE:
-      reinterpret_cast< const BM_Message* >(this)->Display(stream);
+      reinterpret_cast<const BM_Message*>(this)->Display(stream);
       break;
    default:
       stream << "Unknown signal: " << int(header.signal) << CRLF;
@@ -195,7 +195,7 @@ IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
       //  occurs.  The buffer that we allocate, however, will be able to
       //  hold the entire message, even if it is segmented.
       //
-      auto header = reinterpret_cast< const DipHeader* >(source);
+      auto header = reinterpret_cast<const DipHeader*>(source);
       size_t pending = DipHeaderSize + ntohs(header->length);
       rcvd = (pending < size ? pending : size);
       buff.reset(new DipIpBuffer(MsgIncoming, pending));
@@ -205,7 +205,7 @@ IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
    {
       auto payload = buff->PayloadPtr();
       auto received = buff->PayloadSize();
-      auto header = reinterpret_cast< const DipHeader* >(payload);
+      auto header = reinterpret_cast<const DipHeader*>(payload);
       auto pending = DipHeaderSize + header->length - received;
       rcvd = (pending < size ? pending : size);
       dest = payload + received;
@@ -224,13 +224,13 @@ byte_t* DipInputHandler::HostToNetwork
    //  Some fields are byte-oriented, but most are 16 bits long and
    //  therefore need to be converted.  Conversion is done in place.
    //
-   auto msg = reinterpret_cast< DipHeader* >(buff.PayloadPtr());
+   auto msg = reinterpret_cast<DipHeader*>(buff.PayloadPtr());
 
    switch(msg->signal)
    {
    case IM_MESSAGE:
    {
-      auto im = reinterpret_cast< IM_Message* >(src);
+      auto im = reinterpret_cast<IM_Message*>(src);
       im->version = htons(im->version);
       im->magic_number = htons(im->magic_number);
       break;
@@ -238,7 +238,7 @@ byte_t* DipInputHandler::HostToNetwork
 
    case DM_MESSAGE:
    {
-      auto dm = reinterpret_cast< DM_Message* >(src);
+      auto dm = reinterpret_cast<DM_Message*>(src);
       size_t count = msg->length >> 1;
       for(size_t i = 0; i < count; ++i)
       {
@@ -249,7 +249,7 @@ byte_t* DipInputHandler::HostToNetwork
 
    case EM_MESSAGE:
    {
-      auto em = reinterpret_cast< EM_Message* >(src);
+      auto em = reinterpret_cast<EM_Message*>(src);
       em->error = htons(em->error);
       break;
    }
@@ -271,12 +271,12 @@ void DipInputHandler::NetworkToHost
    //  to host order.  If this is the last message (all bytes are present),
    //  convert the rest of the message now that it is ready for processing.
    //
-   auto dipbuff = static_cast< DipIpBuffer* >(&buff);
+   auto dipbuff = static_cast<DipIpBuffer*>(&buff);
    auto first = (dipbuff->PayloadSize() == 0);
    Memory::Copy(dest, src, size);
    dipbuff->BytesAdded(size);
 
-   auto msg = reinterpret_cast< DipHeader* >(buff.PayloadPtr());
+   auto msg = reinterpret_cast<DipHeader*>(buff.PayloadPtr());
    if(first) msg->length = ntohs(msg->length);
 
    if(dipbuff->PayloadSize() < msg->length) return;
@@ -285,7 +285,7 @@ void DipInputHandler::NetworkToHost
    {
    case RM_MESSAGE:
    {
-      auto rm = reinterpret_cast< RM_Message* >(msg);
+      auto rm = reinterpret_cast<RM_Message*>(msg);
       size_t count = msg->length / 6;
       for(size_t i = 0; i < count; ++i)
       {
@@ -296,7 +296,7 @@ void DipInputHandler::NetworkToHost
 
    case DM_MESSAGE:
    {
-      auto dm = reinterpret_cast< DM_Message* >(msg);
+      auto dm = reinterpret_cast<DM_Message*>(msg);
       size_t count = msg->length >> 1;
       for(size_t i = 0; i < count; ++i)
       {
@@ -307,7 +307,7 @@ void DipInputHandler::NetworkToHost
 
    case EM_MESSAGE:
    {
-      auto em = reinterpret_cast< EM_Message* >(msg);
+      auto em = reinterpret_cast<EM_Message*>(msg);
       em->error = ntohs(em->error);
       break;
    }
@@ -324,16 +324,16 @@ void DipInputHandler::ReceiveBuff
    //  If the message is not complete, return it to the socket to await
    //  more bytes instead of passing it to BotThread for processing.
    //
-   DipIpBufferPtr dipbuff(static_cast< DipIpBuffer* >(buff.release()));
+   DipIpBufferPtr dipbuff(static_cast<DipIpBuffer*>(buff.release()));
 
    auto payload = dipbuff->PayloadPtr();
    auto received = dipbuff->PayloadSize();
-   auto header = reinterpret_cast< const DipHeader* >(payload);
+   auto header = reinterpret_cast<const DipHeader*>(payload);
    auto pending = DipHeaderSize + header->length - received;
 
    if(pending == 0)
    {
-      Singleton< BotThread >::Instance()->QueueMsg(dipbuff);
+      Singleton<BotThread>::Instance()->QueueMsg(dipbuff);
    }
    else
    {
@@ -353,11 +353,11 @@ void DipInputHandler::SocketFailed(SysSocket* socket) const
    //  Send a message to BotThread, informing it of the failure.
    //
    DipIpBufferPtr buff(new DipIpBuffer(MsgIncoming, DipHeaderSize));
-   auto msg = reinterpret_cast< BM_Message* >(buff->PayloadPtr());
+   auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
    msg->header.signal = BM_MESSAGE;
    msg->header.spare = SOCKET_FAILURE_EVENT;
    msg->header.length = 0;
-   Singleton< BotThread >::Instance()->QueueMsg(buff);
+   Singleton<BotThread>::Instance()->QueueMsg(buff);
 }
 
 //==============================================================================
@@ -469,7 +469,7 @@ void* DipIpBuffer::operator new(size_t size)
 {
    Debug::ft("DipIpBuffer.operator new");
 
-   return Singleton< DipIpBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<DipIpBufferPool>::Instance()->DeqBlock(size);
 }
 
 //==============================================================================

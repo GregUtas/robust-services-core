@@ -43,7 +43,7 @@ namespace NodeBase
 //
 //    class SomeModule : public Module
 //    {
-//       friend class Singleton< SomeModule >;
+//       friend class Singleton<SomeModule>;
 //    public:
 //       virtual void Patch(sel_t selector, void* arguments) override;
 //    private:
@@ -56,10 +56,10 @@ namespace NodeBase
 //          //  it adds itself to the registry, the registry will contain
 //          //  modules in the (partial) ordering of their dependencies.
 //          //
-//          Singleton< Module1 >::Instance();
+//          Singleton<Module1>::Instance();
 //          //  ...
-//          Singleton< ModuleN >::Instance();
-//          Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+//          Singleton<ModuleN>::Instance();
+//          Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 //       }
 //
 //       ~SomeModule() = default;
@@ -77,7 +77,7 @@ namespace NodeBase
 //
 class Module : public Immutable
 {
-   friend class Registry< Module >;
+   friend class Registry<Module>;
 public:
    //  Deleted to prohibit copying.
    //

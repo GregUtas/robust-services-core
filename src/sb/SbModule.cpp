@@ -50,8 +50,8 @@ SbModule::SbModule() : Module()
 
    //  Create the modules required by SessionBase.
    //
-   Singleton< NwModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<NwModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -74,10 +74,10 @@ void SbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("SbModule.Shutdown");
 
-   Singleton< TimerRegistry >::Instance()->Shutdown(level);
-   Singleton< FactoryRegistry >::Instance()->Shutdown(level);
-   Singleton< ServiceRegistry >::Instance()->Shutdown(level);
-   Singleton< ProtocolRegistry >::Instance()->Shutdown(level);
+   Singleton<TimerRegistry>::Instance()->Shutdown(level);
+   Singleton<FactoryRegistry>::Instance()->Shutdown(level);
+   Singleton<ServiceRegistry>::Instance()->Shutdown(level);
+   Singleton<ProtocolRegistry>::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -88,32 +88,32 @@ void SbModule::Startup(RestartLevel level)
 
    CreateSbLogs(level);
 
-   Singleton< ProtocolRegistry >::Instance()->Startup(level);
-   Singleton< ServiceRegistry >::Instance()->Startup(level);
-   Singleton< FactoryRegistry >::Instance()->Startup(level);
-   Singleton< TimerRegistry >::Instance()->Startup(level);
+   Singleton<ProtocolRegistry>::Instance()->Startup(level);
+   Singleton<ServiceRegistry>::Instance()->Startup(level);
+   Singleton<FactoryRegistry>::Instance()->Startup(level);
+   Singleton<TimerRegistry>::Instance()->Startup(level);
 
-   Singleton< SbIpBufferPool >::Instance()->Startup(level);
-   Singleton< ContextPool >::Instance()->Startup(level);
-   Singleton< MsgPortPool >::Instance()->Startup(level);
-   Singleton< MessagePool >::Instance()->Startup(level);
-   Singleton< ProtocolSMPool >::Instance()->Startup(level);
-   Singleton< TimerPool >::Instance()->Startup(level);
-   Singleton< ServiceSMPool >::Instance()->Startup(level);
-   Singleton< EventPool >::Instance()->Startup(level);
-   Singleton< BtIpBufferPool >::Instance()->Startup(level);
+   Singleton<SbIpBufferPool>::Instance()->Startup(level);
+   Singleton<ContextPool>::Instance()->Startup(level);
+   Singleton<MsgPortPool>::Instance()->Startup(level);
+   Singleton<MessagePool>::Instance()->Startup(level);
+   Singleton<ProtocolSMPool>::Instance()->Startup(level);
+   Singleton<TimerPool>::Instance()->Startup(level);
+   Singleton<ServiceSMPool>::Instance()->Startup(level);
+   Singleton<EventPool>::Instance()->Startup(level);
+   Singleton<BtIpBufferPool>::Instance()->Startup(level);
 
-   Singleton< TimerProtocol >::Instance()->Startup(level);
-   Singleton< SbTracer >::Instance()->Startup(level);
-   Singleton< SbIncrement >::Instance()->Startup(level);
+   Singleton<TimerProtocol>::Instance()->Startup(level);
+   Singleton<SbTracer>::Instance()->Startup(level);
+   Singleton<SbIncrement>::Instance()->Startup(level);
 
    //  Create thread pools.
    //
-   Singleton< PayloadInvokerPool >::Instance();
+   Singleton<PayloadInvokerPool>::Instance();
 
    //  Start threads.
    //
-   Singleton< TimerThread >::Instance()->Startup(level);
-   Singleton< InvokerPoolRegistry >::Instance()->Startup(level);
+   Singleton<TimerThread>::Instance()->Startup(level);
+   Singleton<InvokerPoolRegistry>::Instance()->Startup(level);
 }
 }

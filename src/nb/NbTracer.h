@@ -62,7 +62,7 @@ namespace NodeBase
 //
 class NbTracer : public Permanent
 {
-   friend class Singleton< NbTracer >;
+   friend class Singleton<NbTracer>;
 public:
    //  Deleted to prohibit copying.
    //

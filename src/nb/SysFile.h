@@ -53,7 +53,7 @@ namespace SysFile
    //  Adds the filenames in the directory DIR to NAMES, omitting any
    //  subdirectories.  Returns false if DIR could not be opened.
    //
-   bool ListFiles(const std::string& dir, std::set< std::string >& names);
+   bool ListFiles(const std::string& dir, std::set<std::string>& names);
 }
 }
 #endif

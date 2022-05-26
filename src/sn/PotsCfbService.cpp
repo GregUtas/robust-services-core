@@ -50,9 +50,9 @@ EventHandler::Rc PotsCfbInitiator::ProcessEvent
 {
    Debug::ft("PotsCfbInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
-   auto cfbp = static_cast< PotsCfbFeatureProfile* >(prof->FindFeature(CFB));
+   auto cfbp = static_cast<PotsCfbFeatureProfile*>(prof->FindFeature(CFB));
 
    if((cfbp != nullptr) && cfbp->IsActive())
    {

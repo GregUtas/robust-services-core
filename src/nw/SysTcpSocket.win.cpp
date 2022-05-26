@@ -240,7 +240,7 @@ word SysTcpSocket::Poll
 
    //  Create an array for the sockets and their flags.
    //
-   std::unique_ptr< pollfd[] > list(new pollfd[size]);
+   std::unique_ptr<pollfd[]> list(new pollfd[size]);
 
    for(size_t i = 0; i < size; ++i)
    {
@@ -308,7 +308,7 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
       return -2;
    }
 
-   auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
+   auto rcvd = recv(Socket(), reinterpret_cast<char*>(buff), size, 0);
    TraceEvent(NwTrace::Recv, rcvd);
 
    if(rcvd == SOCKET_ERROR)
@@ -379,7 +379,7 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
       return -2;
    }
 
-   auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
+   auto sent = send(Socket(), reinterpret_cast<const char*>(data), size, 0);
 
    if(sent == SOCKET_ERROR)
    {
@@ -429,7 +429,7 @@ SysSocket::AllocRc SysTcpSocket::SetService
    auto rc = SysSocket::SetService(service, shared);
    if(rc != AllocOk) return rc;
 
-   bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
+   bool alive = static_cast<const TcpIpService*>(service)->Keepalive();
 
    if(setsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)

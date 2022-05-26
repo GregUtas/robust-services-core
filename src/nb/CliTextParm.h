@@ -104,7 +104,7 @@ private:
 
    //  The strings that are legal for the text parameter.
    //
-   Registry< CliText > strings_;
+   Registry<CliText> strings_;
 };
 }
 #endif

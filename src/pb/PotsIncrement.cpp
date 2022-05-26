@@ -85,7 +85,7 @@ fixed_string ActivateExpl = "Activates a feature assigned to a DN.";
 ActivateCommand::ActivateCommand() : CliCommand(ActivateStr, ActivateExpl)
 {
    BindParm(*new DnMandParm);
-   BindParm(*Singleton< PotsFeatureRegistry >::Instance()->featuresActivate_);
+   BindParm(*Singleton<PotsFeatureRegistry>::Instance()->featuresActivate_);
 }
 
 word ActivateCommand::ProcessCommand(CliThread& cli) const
@@ -97,7 +97,7 @@ word ActivateCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    if(!GetTextIndex(id2, cli)) return -1;
@@ -131,7 +131,7 @@ word CodesCommand::ProcessCommand(CliThread& cli) const
 
    if(!cli.EndOfInput()) return -1;
 
-   Singleton< ServiceCodeRegistry >::Instance()->Output(*cli.obuf, 2, true);
+   Singleton<ServiceCodeRegistry>::Instance()->Output(*cli.obuf, 2, true);
    return 0;
 }
 
@@ -153,7 +153,7 @@ fixed_string DeactivateExpl = "Deactivates a feature assigned to a DN.";
 DeactivateCommand::DeactivateCommand() :
    CliCommand(DeactivateStr, DeactivateExpl)
 {
-   auto reg = Singleton< PotsFeatureRegistry >::Instance();
+   auto reg = Singleton<PotsFeatureRegistry>::Instance();
    BindParm(*new DnMandParm);
    BindParm(*reg->featuresDeactivate_);
 }
@@ -167,7 +167,7 @@ word DeactivateCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    if(!GetTextIndex(id2, cli)) return -1;
@@ -209,7 +209,7 @@ word DeregisterCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
    if(!pro->Deregister()) return -4;
    return cli.Report(0, SuccessExpl);
@@ -258,7 +258,7 @@ word DnsCommand::ProcessCommand(CliThread& cli) const
 
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< PotsProfileRegistry >::Instance();
+   auto reg = Singleton<PotsProfileRegistry>::Instance();
 
    for(auto p = reg->FirstProfile(first); p != nullptr; NO_OP)
    {
@@ -326,7 +326,7 @@ word FeaturesCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< PotsFeatureRegistry >::Instance();
+   auto reg = Singleton<PotsFeatureRegistry>::Instance();
 
    if(all)
    {
@@ -380,7 +380,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    if(GetCBV(*this, cli, c, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< MediaEndptPool >::Instance();
+   auto pool = Singleton<MediaEndptPool>::Instance();
 
    if(c)
    {
@@ -395,7 +395,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
-      auto mep = static_cast< MediaEndpt* >(obj);
+      auto mep = static_cast<MediaEndpt*>(obj);
 
       ++count;
 
@@ -453,7 +453,7 @@ word RegisterCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro != nullptr) return cli.Report(-3, AlreadyRegistered);
 
    FunctionGuard guard(Guard_MemUnprotect);
@@ -491,7 +491,7 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    auto cct = pro->GetCircuit();
@@ -530,7 +530,7 @@ fixed_string SubscribeExpl = "Assigns a feature to a DN.";
 
 SubscribeCommand::SubscribeCommand() : CliCommand(SubscribeStr, SubscribeExpl)
 {
-   auto reg = Singleton< PotsFeatureRegistry >::Instance();
+   auto reg = Singleton<PotsFeatureRegistry>::Instance();
    BindParm(*new DnMandParm);
    BindParm(*reg->featuresSubscribe_);
 }
@@ -544,7 +544,7 @@ word SubscribeCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    if(!GetTextIndex(id2, cli)) return -1;
@@ -593,7 +593,7 @@ word TonesCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< ToneRegistry >::Instance();
+   auto reg = Singleton<ToneRegistry>::Instance();
 
    if(all)
    {
@@ -653,7 +653,7 @@ word TsPortsCommand::ProcessCommand(CliThread& cli) const
 
    if(!cli.EndOfInput()) return -1;
 
-   auto tsw = Singleton< Switch >::Instance();
+   auto tsw = Singleton<Switch>::Instance();
 
    for(auto i = first; i <= last; ++i)
    {
@@ -698,7 +698,7 @@ fixed_string UnsubscribeExpl = "Removes a feature from a DN.";
 UnsubscribeCommand::UnsubscribeCommand() :
    CliCommand(UnsubscribeStr, UnsubscribeExpl)
 {
-   auto reg = Singleton< PotsFeatureRegistry >::Instance();
+   auto reg = Singleton<PotsFeatureRegistry>::Instance();
    BindParm(*new DnMandParm);
    BindParm(*reg->featuresUnsubscribe_);
 }
@@ -712,7 +712,7 @@ word UnsubscribeCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
 
-   auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
+   auto pro = Singleton<PotsProfileRegistry>::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    if(!GetTextIndex(id2, cli)) return -1;

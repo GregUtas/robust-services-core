@@ -42,7 +42,7 @@ namespace NodeBase
 //
 class LogGroupRegistry : public Immutable
 {
-   friend class Singleton< LogGroupRegistry >;
+   friend class Singleton<LogGroupRegistry>;
    friend class LogGroup;
 public:
    //  Deleted to prohibit copying.
@@ -63,7 +63,7 @@ public:
 
    //  Returns the registry.
    //
-   const Registry< LogGroup >& Groups() const { return groups_; }
+   const Registry<LogGroup>& Groups() const { return groups_; }
 
    //  Returns the group associated with GID.
    //
@@ -104,7 +104,7 @@ private:
 
    //  The registry of log groups.
    //
-   Registry< LogGroup > groups_;
+   Registry<LogGroup> groups_;
 
    //  The statistics group for logs.
    //

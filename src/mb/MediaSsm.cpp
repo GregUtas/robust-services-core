@@ -60,7 +60,7 @@ void MediaSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void MediaSsm::GetSubtended(std::vector< Base* >& objects) const
+void MediaSsm::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("MediaSsm.GetSubtended");
 
@@ -83,7 +83,7 @@ void MediaSsm::NotifyListeners
 
    for(auto psm = ctx->FirstPsm(); psm != nullptr; ctx->NextPsm(psm))
    {
-      auto mpsm = static_cast< MediaPsm* >(psm);
+      auto mpsm = static_cast<MediaPsm*>(psm);
 
       if((mpsm->GetOgPsm() == &txPsm) && (mpsm->GetOgTone() == Tone::Media))
       {
@@ -105,7 +105,7 @@ void MediaSsm::PsmDeleted(const ProtocolSM& exPsm)
 
    for(auto psm = ctx->FirstPsm(); psm != nullptr; ctx->NextPsm(psm))
    {
-      auto mpsm = static_cast< MediaPsm* >(psm);
+      auto mpsm = static_cast<MediaPsm*>(psm);
 
       if(mpsm->GetOgPsm() == &exPsm)
       {

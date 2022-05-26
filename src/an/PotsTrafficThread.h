@@ -48,7 +48,7 @@ namespace PotsBase
 //
 class PotsTrafficThread : public Thread
 {
-   friend class Singleton< PotsTrafficThread >;
+   friend class Singleton<PotsTrafficThread>;
 public:
    //  The maximum call rate that can be supported.  It is based on the
    //  number of DNs that are available (Address::LastDN - StartDN) and
@@ -205,7 +205,7 @@ private:
    //  Each active call is queued against the timeslot in which it will
    //  decide what to do next (typically, to send a message).
    //
-   Q1Way< TrafficCall >* timewheel_;
+   Q1Way<TrafficCall>* timewheel_;
 };
 }
 #endif

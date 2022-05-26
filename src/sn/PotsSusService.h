@@ -58,7 +58,7 @@ public:
 
 class PotsSusService : public Service
 {
-   friend class Singleton< PotsSusService >;
+   friend class Singleton<PotsSusService>;
 
    PotsSusService();
    ~PotsSusService();

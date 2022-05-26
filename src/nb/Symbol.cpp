@@ -62,7 +62,7 @@ Symbol::~Symbol()
 {
    Debug::ftnt("Symbol.dtor");
 
-   Singleton< SymbolRegistry >::Extant()->RemoveSymbol(*this);
+   Singleton<SymbolRegistry>::Extant()->RemoveSymbol(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ const string& Symbol::InvalidInitialChars()
 ptrdiff_t Symbol::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Symbol* >(&local);
+   auto fake = reinterpret_cast<const Symbol*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

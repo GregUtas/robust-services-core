@@ -68,28 +68,28 @@ BcService::BcService(Id sid, bool modifiable) : Service(sid, modifiable, false)
 {
    Debug::ft("BcService.ctor");
 
-   BindHandler(*Singleton< BcNuAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcNuAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::NuAnalyzeRemoteMessage);
 
-   BindHandler(*Singleton< BcScAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcScAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::ScAnalyzeRemoteMessage);
-   BindHandler(*Singleton< BcOaAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcOaAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::OaAnalyzeRemoteMessage);
 
-   BindHandler(*Singleton< BcPcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcPcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::AtAnalyzeRemoteMessage);
-   BindHandler(*Singleton< BcPcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcPcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::SfAnalyzeRemoteMessage);
-   BindHandler(*Singleton< BcPcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcPcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::PcAnalyzeRemoteMessage);
-   BindHandler(*Singleton< BcPcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcPcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::TaAnalyzeRemoteMessage);
 
-   BindHandler(*Singleton< BcAcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcAcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::AcAnalyzeRemoteMessage);
-   BindHandler(*Singleton< BcAcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcAcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::LsAnalyzeRemoteMessage);
-   BindHandler(*Singleton< BcAcAnalyzeRemoteMessage >::Instance(),
+   BindHandler(*Singleton<BcAcAnalyzeRemoteMessage>::Instance(),
       BcEventHandler::RsAnalyzeRemoteMessage);
 
    BindEventName(BcOriginateEventStr, BcEvent::Originate);

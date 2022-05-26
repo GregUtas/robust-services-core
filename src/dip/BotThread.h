@@ -45,7 +45,7 @@ namespace Diplomacy
 //
 class BotThread : public Thread
 {
-   friend class Singleton< BotThread >;
+   friend class Singleton<BotThread>;
 public:
    //  Queues BUFF for processing.  It must begin with the DipHeader
    //  defined in DipProtocol.h.
@@ -134,7 +134,7 @@ private:
 
    //  The set of pending events.
    //
-   std::set< Wakeup > wakeups_;
+   std::set<Wakeup> wakeups_;
 };
 }
 #endif

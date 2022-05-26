@@ -32,7 +32,7 @@
 namespace NodeBase
 {
 DeferredThread::DeferredThread() :
-   Thread(MaintenanceFaction, Singleton< DeferredDaemon >::Instance())
+   Thread(MaintenanceFaction, Singleton<DeferredDaemon>::Instance())
 {
    Debug::ft("DeferredThread.ctor");
 
@@ -59,7 +59,7 @@ void DeferredThread::Destroy()
 {
    Debug::ft("DeferredThread.Destroy");
 
-   Singleton< DeferredThread >::Destroy();
+   Singleton<DeferredThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void DeferredThread::Enter()
    //  Every second, tell our registry to notify items whose timeout has
    //  occurred.
    //
-   auto reg = Singleton< DeferredRegistry >::Instance();
+   auto reg = Singleton<DeferredRegistry>::Instance();
    msecs_t sleep(msecs_t(1 * ONE_SEC));
 
    while(true)

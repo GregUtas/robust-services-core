@@ -50,7 +50,7 @@ void* HugeBuffer::operator new(size_t size)
 {
    Debug::ft("HugeBuffer.operator new");
 
-   return Singleton< HugeBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<HugeBufferPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void* LargeBuffer::operator new(size_t size)
 {
    Debug::ft("LargeBuffer.operator new");
 
-   return Singleton< LargeBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<LargeBufferPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ void* MediumBuffer::operator new(size_t size)
 {
    Debug::ft("MediumBuffer.operator new");
 
-   return Singleton< MediumBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<MediumBufferPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void* SmallBuffer::operator new(size_t size)
 {
    Debug::ft("SmallBuffer.operator new");
 
-   return Singleton< SmallBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<SmallBufferPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -86,6 +86,6 @@ void* TinyBuffer::operator new(size_t size)
 {
    Debug::ft("TinyBuffer.operator new");
 
-   return Singleton< TinyBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<TinyBufferPool>::Instance()->DeqBlock(size);
 }
 }

@@ -63,7 +63,7 @@ struct CliSource
    //  The current commands from the input stream.  There is usually one, but
    //  the break character allows a line to contain more than one command.
    //
-   std::list< std::string > inputs_;
+   std::list<std::string> inputs_;
 };
 
 //------------------------------------------------------------------------------
@@ -538,7 +538,7 @@ CliParm::Rc CliBuffer::GetSymbol(string& s)
       }
 
       if(s.empty()) return CliParm::Error;
-      auto sym = Singleton< SymbolRegistry >::Instance()->FindSymbol(s);
+      auto sym = Singleton<SymbolRegistry>::Instance()->FindSymbol(s);
       if(sym == nullptr) return CliParm::Error;
       s = sym->GetValue();
       return CliParm::Ok;

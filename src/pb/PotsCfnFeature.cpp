@@ -96,7 +96,7 @@ PotsFeatureProfile* PotsCfnFeature::Subscribe
 
    if(cli.Command()->GetIntParmRc(dn, cli) == CliParm::Ok)
    {
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
       auto dnwarn = (reg->Profile(dn) == nullptr);
       auto towarn = false;
 
@@ -155,7 +155,7 @@ bool PotsCfnFeatureProfile::Activate(const PotsProfile& profile, CliThread& cli)
       }
       if(!cli.EndOfInput()) return false;
 
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
 
       if(reg->Profile(GetDN()) == nullptr)
       {

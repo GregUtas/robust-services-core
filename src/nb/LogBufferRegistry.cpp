@@ -180,7 +180,7 @@ void LogBufferRegistry::Startup(RestartLevel level)
    //
    FunctionGuard guard(Guard_ImmUnprotect);
 
-   buffer_[size_] = std::unique_ptr< LogBuffer >(new LogBuffer(LogBufferSize));
+   buffer_[size_] = std::unique_ptr<LogBuffer>(new LogBuffer(LogBufferSize));
    ++size_;
 
    //  Delete all empty buffers except the new one.

@@ -54,7 +54,7 @@ class ObjectPool : public Protected
 {
    friend class ObjectPoolRegistry;
    friend class ObjectPoolSizeCfg;
-   friend class Registry< ObjectPool >;
+   friend class Registry<ObjectPool>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -318,11 +318,11 @@ private:
    //  Data that changes too frequently to unprotect and reprotect memory
    //  when it needs to be modified.
    //
-   std::unique_ptr< ObjectPoolDynamic > dyn_;
+   std::unique_ptr<ObjectPoolDynamic> dyn_;
 
    //  The pool's statistics.
    //
-   std::unique_ptr< ObjectPoolStats > stats_;
+   std::unique_ptr<ObjectPoolStats> stats_;
 };
 }
 #endif

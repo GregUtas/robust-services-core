@@ -134,7 +134,7 @@ public:
 
    //  Overridden to return the area itself.
    //
-   CxxArea* GetArea() const override { return const_cast< CxxArea* >(this); }
+   CxxArea* GetArea() const override { return const_cast<CxxArea*>(this); }
 
    //  Adds the area's declarations to ITEMS.
    //
@@ -245,7 +245,7 @@ struct DataInitAttrs
       member(m), initNeeded(n), initOrder(o) { }
 };
 
-typedef std::vector< DataInitAttrs > DataInitVector;
+typedef std::vector<DataInitAttrs> DataInitVector;
 
 //------------------------------------------------------------------------------
 //
@@ -571,7 +571,7 @@ public:
 
    //  Overridden to return the class.
    //
-   Class* GetClass() const override { return const_cast< Class* >(this); }
+   Class* GetClass() const override { return const_cast<Class*>(this); }
 
    //  Overridden to return the types for which the class has conversion
    //  operators.
@@ -723,7 +723,7 @@ private:
    //  The attributes of a class, used to analyze if it is unused, or should
    //  be a namespace or struct, or a struct should be a class.
    //
-   typedef std::bitset< Attribute_N > UsageAttributes;
+   typedef std::bitset<Attribute_N> UsageAttributes;
 
    //  Returns a class's attributes.  Only sets flags in UsageAttributes for
    //  items that are actually used.
@@ -983,8 +983,7 @@ public:
 
    //  Returns the namespace's outer namespace.
    //
-   Namespace* OuterSpace()
-      const { return static_cast< Namespace* >(GetScope()); }
+   Namespace* OuterSpace() const { return static_cast<Namespace*>(GetScope()); }
 
    //  Returns the namespace identified by NAME that is a direct subscope of
    //  this namespace.
@@ -1027,8 +1026,7 @@ public:
 
    //  Overridden to return the namespace.
    //
-   Namespace* GetSpace() const override
-      { return const_cast< Namespace* >(this); }
+   Namespace* GetSpace() const override { return const_cast<Namespace*>(this); }
 
    //  Overridden to indicate that we are not in a template instance.
    //

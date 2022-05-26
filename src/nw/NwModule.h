@@ -33,7 +33,7 @@ namespace NetworkBase
 //
 class NwModule : public NodeBase::Module
 {
-   friend class NodeBase::Singleton< NwModule >;
+   friend class NodeBase::Singleton<NwModule>;
 public:
    //  Overridden for patching.
    //

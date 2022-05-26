@@ -116,7 +116,7 @@ RouteResult::RouteResult(const AnalysisResult& ar) :
 
 void RouteResult::Display(ostream& stream, const string& prefix) const
 {
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(selector);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(selector);
 
    stream << prefix << "selector   : " << int(selector);
    stream << " (" << strClass(fac, false) << ')' << CRLF;

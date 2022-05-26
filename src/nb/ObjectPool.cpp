@@ -216,7 +216,7 @@ struct ObjectPoolDynamic : public Persistent
 
    //  The queue of available blocks.
    //
-   Q1Way< Pooled > freeq_;
+   Q1Way<Pooled> freeq_;
 
    //  The number of blocks in freeq_.
    //
@@ -273,10 +273,10 @@ ObjectPool::ObjectPool
    pid_.SetId(pid);
    dyn_.reset(new ObjectPoolDynamic);
    targSegmentsCfg_.reset(new ObjectPoolSizeCfg(this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*targSegmentsCfg_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*targSegmentsCfg_);
    EnsureAlarm();
    stats_.reset(new ObjectPoolStats);
-   Singleton< ObjectPoolRegistry >::Instance()->BindPool(*this);
+   Singleton<ObjectPoolRegistry>::Instance()->BindPool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ ObjectPool::~ObjectPool()
       blocks_[i] = nullptr;
    }
 
-   Singleton< ObjectPoolRegistry >::Extant()->UnbindPool(*this);
+   Singleton<ObjectPoolRegistry>::Extant()->UnbindPool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ void ObjectPool::AuditFreeq()
    //        Such a block will have a zero orphaned_ count (see EnqBlock),
    //        which will cause us to believe that the queue is corrupt.
    //
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    buff->Lock();
    {
@@ -554,7 +554,7 @@ Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
 ptrdiff_t ObjectPool::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const ObjectPool* >(&local);
+   auto fake = reinterpret_cast<const ObjectPool*>(&local);
    return ptrdiff(&fake->pid_, fake);
 }
 
@@ -640,7 +640,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 
    if(Debug::TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ObjPoolTracer))
       {
@@ -746,7 +746,7 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(Debug::TraceOn() && deleted)
    {
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ObjPoolTracer))
       {
@@ -774,7 +774,7 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
       return;
    }
 
-   auto reg = Singleton< ObjectPoolRegistry >::Extant();
+   auto reg = Singleton<ObjectPoolRegistry>::Extant();
    auto nullify = reg->NullifyObjectData();
    obj->Nullify(nullify ? blockSize_ - BlockHeaderSize : 0);
 
@@ -819,7 +819,7 @@ void ObjectPool::EnsureAlarm()
 
    //  If the high usage alarm is not registered, create it.
    //
-   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto reg = Singleton<AlarmRegistry>::Instance();
    auto alarmName = "OBJPOOL" + std::to_string(Pid());
    alarm_ = reg->Find(alarmName);
 
@@ -1035,7 +1035,7 @@ void ObjectPool::RecoverBlocks()
    Debug::ft("ObjectPool.RecoverBlocks");
 
    auto pid = Pid();
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    size_t count = 0;
 
    //  Run through all of the blocks, recovering orphans.

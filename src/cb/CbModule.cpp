@@ -49,9 +49,9 @@ CbModule::CbModule() : Module()
 
    //  Create the modules required by CallBase.
    //
-   Singleton< StModule >::Instance();
-   Singleton< MbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<StModule>::Instance();
+   Singleton<MbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void CbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("CbModule.Shutdown");
 
-   Singleton< ServiceCodeRegistry >::Instance()->Shutdown(level);
+   Singleton<ServiceCodeRegistry>::Instance()->Shutdown(level);
 
    BcSsm::ResetStateCounts(level);
 }
@@ -78,18 +78,18 @@ void CbModule::Startup(RestartLevel level)
 {
    Debug::ft("CbModule.Startup");
 
-   Singleton< CipProtocol >::Instance()->Startup(level);
-   Singleton< CipObcFactory >::Instance()->Startup(level);
-   Singleton< CipTbcFactory >::Instance()->Startup(level);
-   Singleton< TestCallFactory >::Instance()->Startup(level);
-   Singleton< ProxyBcFactory >::Instance()->Startup(level);
-   Singleton< CipUdpService >::Instance()->Startup(level);
-   Singleton< CipTcpService >::Instance()->Startup(level);
-   Singleton< ServiceCodeRegistry >::Instance()->Startup(level);
+   Singleton<CipProtocol>::Instance()->Startup(level);
+   Singleton<CipObcFactory>::Instance()->Startup(level);
+   Singleton<CipTbcFactory>::Instance()->Startup(level);
+   Singleton<TestCallFactory>::Instance()->Startup(level);
+   Singleton<ProxyBcFactory>::Instance()->Startup(level);
+   Singleton<CipUdpService>::Instance()->Startup(level);
+   Singleton<CipTcpService>::Instance()->Startup(level);
+   Singleton<ServiceCodeRegistry>::Instance()->Startup(level);
 
    //  Define symbols.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("factory.cip.obc", CipObcFactoryId);
    reg->BindSymbol("factory.cip.tbc", CipTbcFactoryId);
    reg->BindSymbol("factory.call.proxy", ProxyCallFactoryId);

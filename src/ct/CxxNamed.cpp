@@ -97,7 +97,7 @@ static void CheckIfTemplateArgument(const CxxScoped* ref)
       {
          auto tfunc = inst->FindTemplateAnalog(ifunc);
          if(tfunc != nullptr)
-            static_cast< Function* >(tfunc)->SetTemplateParm();
+            static_cast<Function*>(tfunc)->SetTemplateParm();
       }
    }
 }
@@ -409,7 +409,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
    auto func = GetFunction();
    auto qname = GetQualName();
    auto size = qname->Size();
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto selector = (size == 1 ? mask : SCOPE_REFS);
    size_t idx = (qname->IsGlobal() ? 0 : 1);
 
@@ -419,7 +419,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       //  global namespace, starting with the first name.
       //
       view = DeclaredGlobally;
-      item = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+      item = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    }
    else
    {
@@ -471,7 +471,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          //  else return the namespace itself.
          //
          if(idx >= size) return item;
-         space = static_cast< Namespace* >(item);
+         space = static_cast<Namespace*>(item);
          if(!name.empty()) name += SCOPE_STR;
          name += qname->At(idx)->Name();
          item = nullptr;
@@ -495,7 +495,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          break;
 
       case Cxx::Class:
-         cls = static_cast< Class* >(item);
+         cls = static_cast<Class*>(item);
 
          do
          {
@@ -549,7 +549,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          //
          if(idx >= size) return item;
          name = qname->At(idx)->Name();
-         item = static_cast< Enum* >(item)->FindEnumerator(name);
+         item = static_cast<Enum*>(item)->FindEnumerator(name);
          view = DeclaredLocally;
          qname->SetReferentN(idx, item, &view);
          return item;
@@ -560,12 +560,12 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          //  typedef is that of a template, instantiate it if a template
          //  member is being named.
          //
-         auto tdef = static_cast< Typedef* >(item);
+         auto tdef = static_cast<Typedef*>(item);
          tdef->SetAsReferent(this);
          if(!ResolveTypedef(tdef, idx - 1)) return tdef;
          auto root = tdef->Root();
          if(root == nullptr) return tdef;
-         item = static_cast< CxxScoped* >(root);
+         item = static_cast<CxxScoped*>(root);
          qname->SetReferentN(idx - 1, item, &view);  // updated value
          if(idx < size) item->Instantiate();
          break;
@@ -852,7 +852,7 @@ Class* DataSpec::DirectClass() const
    auto root = Root();
    if(root->Type() != Cxx::Class) return nullptr;
    if(IsIndirect(false)) return nullptr;
-   return static_cast< Class* >(root);
+   return static_cast<Class*>(root);
 }
 
 //------------------------------------------------------------------------------
@@ -964,7 +964,7 @@ void DataSpec::FindReferent()
    }
 
    //  The referent wasn't found.  If this is a template parameter (the "T"
-   //  in "template< typename T >", for example) it never will be.
+   //  in "template<typename T>", for example) it never will be.
    //
    auto qname = QualifiedName(true, false);
    item = scope->NameToTemplateParm(qname);
@@ -977,7 +977,7 @@ void DataSpec::FindReferent()
       return;
    }
 
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
 
    switch(GetTemplateRole())
    {
@@ -1087,7 +1087,7 @@ Numeric DataSpec::GetNumeric() const
 
 TypeSpec* DataSpec::GetTypeSpec() const
 {
-   return const_cast< DataSpec* >(this);
+   return const_cast<DataSpec*>(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1217,7 +1217,7 @@ bool DataSpec::IsAuto() const
    //  as its referent.  This referent is overwritten when the data's actual
    //  type is determined.
    //
-   return (Referent() == Singleton< CxxRoot >::Instance()->AutoTerm());
+   return (Referent() == Singleton<CxxRoot>::Instance()->AutoTerm());
 }
 
 //------------------------------------------------------------------------------
@@ -1298,7 +1298,7 @@ bool DataSpec::IsPOD() const
    if(root == nullptr) return true;
    if(root->Type() != Cxx::Class) return true;
    if(Ptrs(false) > 0) return true;
-   return (static_cast< Class* >(root)->FindCtor(nullptr) == nullptr);
+   return (static_cast<Class*>(root)->FindCtor(nullptr) == nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1551,7 +1551,7 @@ bool DataSpec::NamesReferToArgs(const NameVector& names,
       SymbolVector items;
       ViewVector views;
 
-      auto syms = Singleton< CxxSymbols >::Instance();
+      auto syms = Singleton<CxxSymbols>::Instance();
       syms->FindSymbols(file, scope, name, TARG_REFS, items, views);
 
       if(!items.empty())
@@ -1653,7 +1653,7 @@ CxxScoped* DataSpec::Referent() const
    auto ref = name_->GetReferent();
    if(ref != nullptr) return ref;
 
-   const_cast< DataSpec* >(this)->FindReferent();
+   const_cast<DataSpec*>(this)->FindReferent();
    return name_->GetReferent();
 }
 
@@ -2187,7 +2187,7 @@ void QualName::CheckForRedundantScope() const
    if(scope == nullptr) return;
    auto inner = scope->GetArea();
    auto type = inner->Type();
-   auto cls = (type == Cxx::Class ? static_cast< Class* >(inner) : nullptr);
+   auto cls = (type == Cxx::Class ? static_cast<Class*>(inner) : nullptr);
 
    for(CxxScope* area = inner; area != nullptr; area = area->GetScope())
    {
@@ -2420,7 +2420,7 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
    //
    if(type == Cxx::Function)
    {
-      auto func = static_cast< Function* >(ref);
+      auto func = static_cast<Function*>(ref);
       if(func->FuncRole() == FuncOther) ref = func->FindRootFunc();
    }
 
@@ -2849,7 +2849,7 @@ CxxToken* TemplateArg::Clone() const
 
    if(spec_ != nullptr)
    {
-      TypeSpecPtr spec(static_cast< TypeSpec* >(spec_->Clone()));
+      TypeSpecPtr spec(static_cast<TypeSpec*>(spec_->Clone()));
       return new TemplateArg(spec);
    }
    else if(expr_ != nullptr)
@@ -3349,7 +3349,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
-         TemplateArgPtr arg(static_cast< TemplateArg* >((*a)->Clone()));
+         TemplateArgPtr arg(static_cast<TemplateArg*>((*a)->Clone()));
          arg->CopyContext(a->get(), true);
          args_->push_back(std::move(arg));
       }
@@ -3543,7 +3543,7 @@ TypeName* TypeName::GetTemplatedName() const
    }
 
    if(args_ == nullptr) return nullptr;
-   return const_cast< TypeName* >(this);
+   return const_cast<TypeName*>(this);
 }
 
 //------------------------------------------------------------------------------

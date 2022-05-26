@@ -31,7 +31,7 @@ namespace NodeBase
 {
 class SigAbort : public PosixSignal
 {
-   friend class Singleton< SigAbort >;
+   friend class Singleton<SigAbort>;
 
    SigAbort();
    ~SigAbort() = default;
@@ -39,7 +39,7 @@ class SigAbort : public PosixSignal
 
 class SigFpe : public PosixSignal
 {
-   friend class Singleton< SigFpe >;
+   friend class Singleton<SigFpe>;
 
    SigFpe();
    ~SigFpe() = default;
@@ -47,7 +47,7 @@ class SigFpe : public PosixSignal
 
 class SigIll : public PosixSignal
 {
-   friend class Singleton< SigIll >;
+   friend class Singleton<SigIll>;
 
    SigIll();
    ~SigIll() = default;
@@ -55,7 +55,7 @@ class SigIll : public PosixSignal
 
 class SigInt : public PosixSignal
 {
-   friend class Singleton< SigInt >;
+   friend class Singleton<SigInt>;
 
    SigInt();
    ~SigInt() = default;
@@ -63,7 +63,7 @@ class SigInt : public PosixSignal
 
 class SigSegv : public PosixSignal
 {
-   friend class Singleton< SigSegv >;
+   friend class Singleton<SigSegv>;
 
    SigSegv();
    ~SigSegv() = default;
@@ -71,7 +71,7 @@ class SigSegv : public PosixSignal
 
 class SigTerm : public PosixSignal
 {
-   friend class Singleton< SigTerm >;
+   friend class Singleton<SigTerm>;
 
    SigTerm();
    ~SigTerm() = default;
@@ -113,11 +113,11 @@ void SysSignals::CreateStandardSignals()
 {
    Debug::ft("SysSignals.CreateStandardSignals");
 
-   Singleton< SigAbort >::Instance();
-   Singleton< SigFpe >::Instance();
-   Singleton< SigIll >::Instance();
-   Singleton< SigInt >::Instance();
-   Singleton< SigSegv >::Instance();
-   Singleton< SigTerm >::Instance();
+   Singleton<SigAbort>::Instance();
+   Singleton<SigFpe>::Instance();
+   Singleton<SigIll>::Instance();
+   Singleton<SigInt>::Instance();
+   Singleton<SigSegv>::Instance();
+   Singleton<SigTerm>::Instance();
 }
 }

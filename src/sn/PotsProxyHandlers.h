@@ -34,7 +34,7 @@ namespace PotsBase
 {
 class PotsProxyNuAnalyzeLocalMessage : public EventHandler
 {
-   friend class Singleton< PotsProxyNuAnalyzeLocalMessage >;
+   friend class Singleton<PotsProxyNuAnalyzeLocalMessage>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -45,7 +45,7 @@ private:
 
 class PotsProxyNuOriginate : public EventHandler
 {
-   friend class Singleton< PotsProxyNuOriginate >;
+   friend class Singleton<PotsProxyNuOriginate>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -58,7 +58,7 @@ private:
 
 class PotsProxyCiCollectInformation : public EventHandler
 {
-   friend class Singleton< PotsProxyCiCollectInformation >;
+   friend class Singleton<PotsProxyCiCollectInformation>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -71,7 +71,7 @@ private:
 
 class PotsProxyScAnalyzeLocalMessage : public EventHandler
 {
-   friend class Singleton< PotsProxyScAnalyzeLocalMessage >;
+   friend class Singleton<PotsProxyScAnalyzeLocalMessage>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -82,7 +82,7 @@ private:
 
 class PotsProxyScSendCall : public EventHandler
 {
-   friend class Singleton< PotsProxyScSendCall >;
+   friend class Singleton<PotsProxyScSendCall>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -93,7 +93,7 @@ private:
 
 class PotsProxyScRemoteProgress : public EventHandler
 {
-   friend class Singleton< PotsProxyScRemoteProgress >;
+   friend class Singleton<PotsProxyScRemoteProgress>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -104,7 +104,7 @@ private:
 
 class PotsProxyScRemoteAlerting : public EventHandler
 {
-   friend class Singleton< PotsProxyScRemoteAlerting >;
+   friend class Singleton<PotsProxyScRemoteAlerting>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -117,7 +117,7 @@ private:
 
 class PotsProxyPcAnalyzeLocalMessage : public EventHandler
 {
-   friend class Singleton< PotsProxyPcAnalyzeLocalMessage >;
+   friend class Singleton<PotsProxyPcAnalyzeLocalMessage>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -128,7 +128,7 @@ private:
 
 class PotsProxyPcLocalProgress : public EventHandler
 {
-   friend class Singleton< PotsProxyPcLocalProgress >;
+   friend class Singleton<PotsProxyPcLocalProgress>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -141,7 +141,7 @@ private:
 
 class PotsProxyTaAnalyzeLocalMessage : public EventHandler
 {
-   friend class Singleton< PotsProxyTaAnalyzeLocalMessage >;
+   friend class Singleton<PotsProxyTaAnalyzeLocalMessage>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -154,7 +154,7 @@ private:
 
 class PotsProxyAcAnalyzeLocalMessage : public EventHandler
 {
-   friend class Singleton< PotsProxyAcAnalyzeLocalMessage >;
+   friend class Singleton<PotsProxyAcAnalyzeLocalMessage>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -165,7 +165,7 @@ private:
 
 class PotsProxyAcLocalSuspend : public EventHandler
 {
-   friend class Singleton< PotsProxyAcLocalSuspend >;
+   friend class Singleton<PotsProxyAcLocalSuspend>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -176,7 +176,7 @@ private:
 
 class PotsProxyAcRemoteSuspend : public EventHandler
 {
-   friend class Singleton< PotsProxyAcRemoteSuspend >;
+   friend class Singleton<PotsProxyAcRemoteSuspend>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -189,7 +189,7 @@ private:
 
 class PotsProxyLsLocalResume : public EventHandler
 {
-   friend class Singleton< PotsProxyLsLocalResume >;
+   friend class Singleton<PotsProxyLsLocalResume>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -202,7 +202,7 @@ private:
 
 class PotsProxyRsRemoteResume : public EventHandler
 {
-   friend class Singleton< PotsProxyRsRemoteResume >;
+   friend class Singleton<PotsProxyRsRemoteResume>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -215,7 +215,7 @@ private:
 
 class PotsProxyLocalAlerting : public EventHandler
 {
-   friend class Singleton< PotsProxyLocalAlerting >;
+   friend class Singleton<PotsProxyLocalAlerting>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -226,7 +226,7 @@ private:
 
 class PotsProxyLocalAnswer : public EventHandler
 {
-   friend class Singleton< PotsProxyLocalAnswer >;
+   friend class Singleton<PotsProxyLocalAnswer>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -237,7 +237,7 @@ private:
 
 class PotsProxyRemoteAnswer : public EventHandler
 {
-   friend class Singleton< PotsProxyRemoteAnswer >;
+   friend class Singleton<PotsProxyRemoteAnswer>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -248,7 +248,7 @@ private:
 
 class PotsProxyLocalRelease : public EventHandler
 {
-   friend class Singleton< PotsProxyLocalRelease >;
+   friend class Singleton<PotsProxyLocalRelease>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -259,7 +259,7 @@ private:
 
 class PotsProxyRemoteRelease : public EventHandler
 {
-   friend class Singleton< PotsProxyRemoteRelease >;
+   friend class Singleton<PotsProxyRemoteRelease>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -270,7 +270,7 @@ private:
 
 class PotsProxyReleaseCall : public EventHandler
 {
-   friend class Singleton< PotsProxyReleaseCall >;
+   friend class Singleton<PotsProxyReleaseCall>;
 protected:
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;

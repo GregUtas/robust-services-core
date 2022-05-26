@@ -33,7 +33,7 @@ namespace NodeBase
 //
 class NbModule : public Module
 {
-   friend class Singleton< NbModule >;
+   friend class Singleton<NbModule>;
 public:
    //  Overridden for patching.
    //

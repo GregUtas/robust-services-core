@@ -37,7 +37,7 @@ namespace NodeBase
 //
 class StatisticsThread : public Thread
 {
-   friend class Singleton< StatisticsThread >;
+   friend class Singleton<StatisticsThread>;
 public:
    //  Overridden to display member variables.
    //

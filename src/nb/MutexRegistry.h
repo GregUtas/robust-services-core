@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class MutexRegistry : public Permanent
 {
-   friend class Singleton< MutexRegistry >;
+   friend class Singleton<MutexRegistry>;
    friend class SysMutex;
 public:
    //  Deleted to prohibit copying.
@@ -61,7 +61,7 @@ public:
 
    //  Returns the registry.
    //
-   const Registry< SysMutex >& Mutexes() const { return mutexes_; }
+   const Registry<SysMutex>& Mutexes() const { return mutexes_; }
 
    //  Overridden to display member variables.
    //
@@ -90,7 +90,7 @@ private:
 
    //  The registry of mutexes.
    //
-   Registry< SysMutex > mutexes_;
+   Registry<SysMutex> mutexes_;
 };
 }
 #endif

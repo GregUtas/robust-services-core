@@ -70,7 +70,7 @@ void ServiceCodeRegistry::Display(ostream& stream,
 
       if(sid != NIL_ID)
       {
-         auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
+         auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
 
          stream << lead << strIndex(i);
 
@@ -133,7 +133,7 @@ void ServiceCodeRegistry::Startup(RestartLevel level)
 
    //  Define service code symbols.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("sc.wml.activation", "*33");
    reg->BindSymbol("sc.wml.deactivation", "*34");
    reg->BindSymbol("sc.ccw", "*70");

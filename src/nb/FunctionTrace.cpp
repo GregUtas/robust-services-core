@@ -143,7 +143,7 @@ private:
 
    //  The constructor chain.
    //
-   std::vector< FunctionTrace* > ctors_;
+   std::vector<FunctionTrace*> ctors_;
 
    //  The call to a new operator, if any, that precedes the chain.
    //
@@ -163,8 +163,8 @@ private:
 //
 struct PerThreadInfo
 {
-   std::vector< CtorChain > chains;  // chains yet to be finalized
-   std::stack< fn_depth > depths;    // depths of active functions
+   std::vector<CtorChain> chains;  // chains yet to be finalized
+   std::stack<fn_depth> depths;    // depths of active functions
 
    PerThreadInfo()
    {
@@ -184,7 +184,7 @@ struct PerThreadInfo
 //  The constructor chains that have yet to be finalized.  The map's key is
 //  the current function's native thread identifier.
 //
-static std::map< SysThreadId, PerThreadInfo > ThreadInfo;
+static std::map<SysThreadId, PerThreadInfo> ThreadInfo;
 
 //==============================================================================
 
@@ -340,7 +340,7 @@ TraceRecord* CtorChain::CheckForEndOfChains(const FunctionTrace* curr)
          break;
    }
 
-   return Singleton< TraceBuffer >::Instance()->At(slot);
+   return Singleton<TraceBuffer>::Instance()->At(slot);
 }
 
 //------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ bool CtorChain::FunctionEndsChain(const FunctionTrace* curr) const
 
 TraceRecord* CtorChain::HandleCtor(FunctionTrace* ctor)
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto& thrd = ThreadInfo[ctor->Nid()];
    auto& chains = thrd.chains;
    auto slot = ctor->Slot();
@@ -487,7 +487,7 @@ void CtorChain::MoveOuterAboveInit()
    if(!ctors_.empty() && (init_ != nullptr))
    {
       auto outer = ctors_.back();
-      Singleton< TraceBuffer >::Instance()->MoveAbove(outer, init_);
+      Singleton<TraceBuffer>::Instance()->MoveAbove(outer, init_);
       outer->SetTime(init_->GetTime());
    }
 
@@ -502,7 +502,7 @@ void CtorChain::MoveOuterAboveInner() const
    {
       auto inner = ctors_.front();
       auto outer = ctors_.back();
-      Singleton< TraceBuffer >::Instance()->MoveAbove(outer, inner);
+      Singleton<TraceBuffer>::Instance()->MoveAbove(outer, inner);
       outer->SetTime(inner->GetTime());
    }
 }
@@ -558,7 +558,7 @@ FunctionTrace::FunctionTrace() :
 
 void FunctionTrace::AdjustDepths()
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
    auto mask = FTmask;
 
@@ -566,7 +566,7 @@ void FunctionTrace::AdjustDepths()
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
       if(curr->depth_ < minDepth) minDepth = curr->depth_;
    }
 
@@ -580,7 +580,7 @@ void FunctionTrace::AdjustDepths()
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
       curr->depth_ -= minDepth;
       curr->invokerDepth_ -= minDepth;
    }
@@ -590,7 +590,7 @@ void FunctionTrace::AdjustDepths()
 
 void FunctionTrace::CalcFuncTimes()
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
    auto mask = FTmask;
 
@@ -599,7 +599,7 @@ void FunctionTrace::CalcFuncTimes()
    //
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
       curr->CalcTimes();
    }
 }
@@ -612,7 +612,7 @@ usecs_t FunctionTrace::CalcGrossTime()
    //
    if(!SystemTime::IsValid(GetTime())) return usecs_t(0);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto mask = FTmask;
    TraceRecord* rec = this;
    FunctionTrace* prev = this;
@@ -627,7 +627,7 @@ usecs_t FunctionTrace::CalcGrossTime()
    //
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
 
       if(prev->Nid() != nid)
       {
@@ -656,7 +656,7 @@ usecs_t FunctionTrace::CalcGrossTime()
 
 void FunctionTrace::CalcTimes()
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto mask = FTmask;
    auto nid = Nid();
    TraceRecord* rec = this;
@@ -674,7 +674,7 @@ void FunctionTrace::CalcTimes()
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
 
       if(curr->Nid() != nid) continue;
       if(curr->depth_ <= depth_) break;
@@ -703,13 +703,13 @@ void FunctionTrace::Capture(fn_name_arg func)
    //
    if(Scope_ == CountsOnly)
    {
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
       if(buff == nullptr) return;
       buff->RecordInvocation(func);
       return;
    }
 
-   auto buff = Singleton< TraceBuffer >::Extant();
+   auto buff = Singleton<TraceBuffer>::Extant();
    if(buff == nullptr) return;
    auto depth = SysThreadStack::FuncDepth() - 3;
 
@@ -785,7 +785,7 @@ bool FunctionTrace::Display(ostream& stream, const string& opts)
 
 bool FunctionTrace::FindDeleteOperator()
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = this;
    auto mask = FTmask;
    auto nid = Nid();
@@ -793,7 +793,7 @@ bool FunctionTrace::FindDeleteOperator()
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
       if(curr->Nid() != nid) continue;
 
       auto depth = curr->Depth();
@@ -809,13 +809,13 @@ bool FunctionTrace::FindDeleteOperator()
 
 void FunctionTrace::FindInvokerDepths()
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
    auto mask = FTmask;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
       auto& thrd = ThreadInfo[curr->Nid()];
       while(thrd.depths.top() >= curr->depth_) thrd.depths.pop();
       curr->invokerDepth_ = thrd.depths.top();
@@ -827,13 +827,13 @@ void FunctionTrace::FindInvokerDepths()
 
 void FunctionTrace::FixCtorChains()
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
    auto mask = FTmask;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
 
       //  Constructors are analyzed differently than other functions.
       //
@@ -860,7 +860,7 @@ void FunctionTrace::FixCtorChains()
 
 void* FunctionTrace::operator new(size_t size)
 {
-   return Singleton< TraceBuffer >::Extant()->AddFunction();
+   return Singleton<TraceBuffer>::Extant()->AddFunction();
 }
 
 //------------------------------------------------------------------------------
@@ -879,7 +879,7 @@ void FunctionTrace::Process(const string& opts)
    //  If the trace records have already been processed, don't process
    //  them again.
    //
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    if(buff->HasBeenProcessed()) return;
 
    buff->Lock();
@@ -900,13 +900,13 @@ void FunctionTrace::RemoveCxxDeletes()
 {
    Debug::ft("FunctionTrace.RemoveCxxDeletes");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
    auto mask = FTmask;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< FunctionTrace* >(rec);
+      auto curr = static_cast<FunctionTrace*>(rec);
 
       if(strcmp(curr->func_, Cxx_delete) == 0)
       {

@@ -108,8 +108,8 @@ word StCorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< ContextPool >::Instance();
-   auto ctx = static_cast< Context* >(pool->FirstUsed(bid));
+   auto pool = Singleton<ContextPool>::Instance();
+   auto ctx = static_cast<Context*>(pool->FirstUsed(bid));
    if(ctx == nullptr) return cli.Report(-2, NoContextExpl);
    ctx->Corrupt();
    return cli.Report(0, SuccessExpl);
@@ -146,8 +146,8 @@ InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
 {
    Debug::ft("InjectCommand.ctor");
 
-   auto& facs = Singleton< FactoryRegistry >::Instance()->Factories();
-   auto preg = Singleton< ProtocolRegistry >::Instance();
+   auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
+   auto preg = Singleton<ProtocolRegistry>::Instance();
 
    //  Add the parameter that will contain the factories that support this
    //  command.
@@ -227,13 +227,13 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
    //
    if(!GetTextIndex(fid, cli)) return -1;
 
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
    if(fac == nullptr) return cli.Report(-2, NoFactoryExpl);
 
    //  Find the message's protocol.
    //
    auto prid = fac->GetProtocol();
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
    if(pro == nullptr) return cli.Report(-6, NoFactoryProtocol);
 
    //  If the factory uses a PSM or SSM context, find the session from
@@ -378,10 +378,10 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    if(buff->Empty()) return ExplainTraceRc(cli, BufferEmpty);
 
-   std::unique_ptr< MscBuilder > msc(new MscBuilder(debug));
+   std::unique_ptr<MscBuilder> msc(new MscBuilder(debug));
    rc = msc->Generate(*stream);
    msc.reset();
 
@@ -496,8 +496,8 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
 {
    Debug::ft("VerifyCommand.ctor");
 
-   auto& facs = Singleton< FactoryRegistry >::Instance()->Factories();
-   auto preg = Singleton< ProtocolRegistry >::Instance();
+   auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
+   auto preg = Singleton<ProtocolRegistry>::Instance();
 
    //  Add the parameter that will contain the factories that support this
    //  command.
@@ -590,13 +590,13 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
    //
    if(!GetTextIndex(fid, cli)) return -1;
 
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
    if(fac == nullptr) return cli.Report(-2, NoFactoryExpl);
 
    //  Find the expected message's protocol.
    //
    auto prid = fac->GetProtocol();
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
    if(pro == nullptr) return cli.Report(-6, NoFactoryProtocol);
 
    //  If the factory uses a PSM or SSM context, see if a session is to be

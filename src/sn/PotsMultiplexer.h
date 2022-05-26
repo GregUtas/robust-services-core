@@ -53,7 +53,7 @@ namespace PotsBase
 {
 class PotsMuxFactory : public SsmFactory
 {
-   friend class Singleton< PotsMuxFactory >;
+   friend class Singleton<PotsMuxFactory>;
 
    PotsMuxFactory();
    ~PotsMuxFactory();
@@ -105,7 +105,7 @@ private:
 
 class PotsMuxService : public Service
 {
-   friend class Singleton< PotsMuxService >;
+   friend class Singleton<PotsMuxService>;
 
    PotsMuxService();
    ~PotsMuxService();
@@ -182,7 +182,7 @@ private:
 
 class PotsDiscService : public Service
 {
-   friend class Singleton< PotsDiscService >;
+   friend class Singleton<PotsDiscService>;
 
    PotsDiscService();
    ~PotsDiscService();

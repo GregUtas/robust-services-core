@@ -50,7 +50,7 @@ IoThread* UdpIpPort::CreateIoThread()
 {
    Debug::ft("UdpIpPort.CreateIoThread");
 
-   auto svc = static_cast< const UdpIpService* >(GetService());
+   auto svc = static_cast<const UdpIpService*>(GetService());
    auto daemon = UdpIoDaemon::GetDaemon(svc, GetPort());
    return new UdpIoThread(daemon, svc, GetPort());
 }

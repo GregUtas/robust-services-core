@@ -56,7 +56,7 @@ InvokerThread::InvokerThread(Faction faction, Daemon* daemon) :
 {
    Debug::ft("InvokerThread.ctor");
 
-   pool_ = Singleton< InvokerPoolRegistry >::Instance()->Pool(faction);
+   pool_ = Singleton<InvokerPoolRegistry>::Instance()->Pool(faction);
    Debug::Assert(pool_->BindThread(*this));
    SetInitialized();
 }
@@ -127,7 +127,7 @@ TraceStatus InvokerThread::CalcStatus(bool dynamic) const
 ptrdiff_t InvokerThread::CellDiff2()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const InvokerThread* >(&local);
+   auto fake = reinterpret_cast<const InvokerThread*>(&local);
    return ptrdiff(&fake->iid_, fake);
 }
 
@@ -261,6 +261,6 @@ void InvokerThread::Shutdown(RestartLevel level)
    Restart::Release(ctx_);
    if(ctx_ == nullptr) return;
 
-   Singleton< PayloadInvokerPool >::Extant()->Requeue(*ctx_.release());
+   Singleton<PayloadInvokerPool>::Extant()->Requeue(*ctx_.release());
 }
 }

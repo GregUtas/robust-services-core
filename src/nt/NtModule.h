@@ -35,7 +35,7 @@ namespace NodeTools
 //
 class NtModule : public Module
 {
-   friend class Singleton< NtModule >;
+   friend class Singleton<NtModule>;
 
    //  Private because this is a singleton.
    //

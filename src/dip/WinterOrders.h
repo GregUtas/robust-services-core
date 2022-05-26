@@ -32,7 +32,7 @@ namespace Diplomacy
 //  order (e.g. TOKEN_PROVINCE_STP/TOKEN_UNIT_NCS builds a fleet in StP(nc)).
 //  The Token indicates whether the order succeeded.
 //
-typedef std::map< Location, Token > Adjustments;
+typedef std::map<Location, Token> Adjustments;
 
 //  Adjustment orders.
 //

@@ -51,7 +51,7 @@ CfgParm::CfgParm(c_string key, c_string def, c_string expl) :
    Debug::Assert(default_ != nullptr);
    Debug::Assert(expl_ != nullptr);
 
-   auto reg = Singleton< CfgParmRegistry >::Instance();
+   auto reg = Singleton<CfgParmRegistry>::Instance();
 
    tuple_ = reg->FindTuple(key);
 
@@ -71,7 +71,7 @@ CfgParm::~CfgParm()
    Debug::ftnt(CfgParm_dtor);
 
    Debug::SwLog(CfgParm_dtor, UnexpectedInvocation, 0);
-   Singleton< CfgParmRegistry >::Extant()->UnbindParm(*this);
+   Singleton<CfgParmRegistry>::Extant()->UnbindParm(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ c_string CfgParm::Key() const
 ptrdiff_t CfgParm::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const CfgParm* >(&local);
+   auto fake = reinterpret_cast<const CfgParm*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

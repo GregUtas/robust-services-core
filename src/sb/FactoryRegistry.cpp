@@ -73,7 +73,7 @@ void FactoryStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   auto reg = Singleton< FactoryRegistry >::Instance();
+   auto reg = Singleton<FactoryRegistry>::Instance();
 
    if(id == 0)
    {

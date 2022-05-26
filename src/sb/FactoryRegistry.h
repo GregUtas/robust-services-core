@@ -35,7 +35,7 @@ namespace SessionBase
 //
 class FactoryRegistry : public NodeBase::Immutable
 {
-   friend class NodeBase::Singleton< FactoryRegistry >;
+   friend class NodeBase::Singleton<FactoryRegistry>;
    friend class Factory;
 public:
    //  Deleted to prohibit copying.
@@ -52,7 +52,7 @@ public:
 
    //  Returns the registry of factories.  Used for iteration.
    //
-   const NodeBase::Registry< Factory >& Factories() const { return factories_; }
+   const NodeBase::Registry<Factory>& Factories() const { return factories_; }
 
    //  Overridden to display member variables.
    //
@@ -91,7 +91,7 @@ private:
 
    //  The global registry of factories.
    //
-   NodeBase::Registry< Factory > factories_;
+   NodeBase::Registry<Factory> factories_;
 
    //  The statistics group for factories.
    //

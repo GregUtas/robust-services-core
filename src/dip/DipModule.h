@@ -37,7 +37,7 @@ namespace Diplomacy
 //
 class DipModule : public Module
 {
-   friend class Singleton< DipModule >;
+   friend class Singleton<DipModule>;
 
    //  Private because this is a singleton.
    //

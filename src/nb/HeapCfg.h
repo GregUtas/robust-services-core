@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class HeapCfg : public Immutable
 {
-   friend class Singleton< HeapCfg >;
+   friend class Singleton<HeapCfg>;
 public:
    //  Deleted to prohibit copying.
    //

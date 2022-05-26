@@ -45,7 +45,7 @@ Deferred::Deferred(Base& owner, uint32_t secs, bool warm) :
 {
    Debug::ft("Deferred.ctor");
 
-   auto reg = Singleton< DeferredRegistry >::Instance();
+   auto reg = Singleton<DeferredRegistry>::Instance();
    reg->Insert(this);
 }
 
@@ -62,7 +62,7 @@ void Deferred::Cleanup()
 {
    Debug::ftnt("Deferred.Cleanup");
 
-   Singleton< DeferredRegistry >::Instance()->Exqueue(this);
+   Singleton<DeferredRegistry>::Instance()->Exqueue(this);
    MsgBuffer::Cleanup();
 }
 
@@ -113,7 +113,7 @@ void Deferred::Restart(uint32_t secs)
 {
    Debug::ftnt("Deferred.Restart");
 
-   auto reg = Singleton< DeferredRegistry >::Instance();
+   auto reg = Singleton<DeferredRegistry>::Instance();
    reg->Exqueue(this);
    secs_ = secs;
    reg->Insert(this);
@@ -127,7 +127,7 @@ void Deferred::SendToThread(Thread* thread)
 
    if(thread == nullptr) return;
 
-   auto reg = Singleton< DeferredRegistry >::Instance();
+   auto reg = Singleton<DeferredRegistry>::Instance();
    reg->Exqueue(this);
    thread->EnqMsg(*this);
 }

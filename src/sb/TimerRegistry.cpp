@@ -81,7 +81,7 @@ Timer::QId TimerRegistry::CalcQId(uint32_t secs) const
    //  If it last began to run over 500 msecs ago, the next timer queue
    //  will be served in less than half a second, so increment SECS.
    //
-   auto thr = Singleton< TimerThread >::Instance();
+   auto thr = Singleton<TimerThread>::Instance();
    auto incr = (thr->CurrTimeRunning().count() >= 500 ? 1 : 0);
 
    secs += incr;
@@ -213,7 +213,7 @@ void TimerRegistry::SendTimeout(Timer* tmr)
    {
       currTimer_ = tmr;
       tmr->SendTimeout();
-      Singleton< TimerPool >::Instance()->IncrTimeouts();
+      Singleton<TimerPool>::Instance()->IncrTimeouts();
    }
 
    currTimer_ = nullptr;

@@ -54,7 +54,7 @@ Module::~Module()
    Debug::ftnt(Module_dtor);
 
    Debug::SwLog(Module_dtor, UnexpectedInvocation, 0);
-   Singleton< ModuleRegistry >::Extant()->UnbindModule(*this);
+   Singleton<ModuleRegistry>::Extant()->UnbindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ Module::~Module()
 ptrdiff_t Module::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Module* >(&local);
+   auto fake = reinterpret_cast<const Module*>(&local);
    return ptrdiff(&fake->mid_, fake);
 }
 

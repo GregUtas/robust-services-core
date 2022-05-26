@@ -92,7 +92,7 @@ ProtocolSM::~ProtocolSM()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -273,7 +273,7 @@ ProtocolId ProtocolSM::GetProtocol() const
 {
    Debug::ft(ProtocolSM_GetProtocol);
 
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid_);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid_);
    if(fac != nullptr) return fac->GetProtocol();
 
    Debug::SwLog(ProtocolSM_GetProtocol, "factory not found", fid_);
@@ -282,7 +282,7 @@ ProtocolId ProtocolSM::GetProtocol() const
 
 //------------------------------------------------------------------------------
 
-void ProtocolSM::GetSubtended(std::vector< Base* >& objects) const
+void ProtocolSM::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("ProtocolSM.GetSubtended");
 
@@ -364,7 +364,7 @@ void ProtocolSM::Initialize(bool henq)
    if(ctx->TraceOn(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -401,7 +401,7 @@ ProtocolSM* ProtocolSM::JoinPeer
 
    for(auto layer = port->Upper(); layer != nullptr; layer = layer->Upper())
    {
-      auto psm = static_cast< ProtocolSM* >(layer);
+      auto psm = static_cast<ProtocolSM*>(layer);
       if(psm->GetProtocol() == prid) return psm;
    }
 
@@ -436,7 +436,7 @@ void* ProtocolSM::operator new(size_t size)
 {
    Debug::ft("ProtocolSM.operator new");
 
-   return Singleton< ProtocolSMPool >::Instance()->DeqBlock(size);
+   return Singleton<ProtocolSMPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ ProtocolSM* ProtocolSM::UppermostPsm() const
    Debug::ft("ProtocolSM.UppermostPsm");
 
    auto upper = Upper();
-   if(upper == nullptr) return const_cast< ProtocolSM* >(this);
+   if(upper == nullptr) return const_cast<ProtocolSM*>(this);
    return upper->UppermostPsm();
 }
 }

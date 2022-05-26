@@ -45,20 +45,20 @@ using std::string;
 
 namespace NetworkBase
 {
-static std::unique_ptr< ByteBuffer > AllocByteBuff(size_t bytes)
+static std::unique_ptr<ByteBuffer> AllocByteBuff(size_t bytes)
 {
    Debug::ft("NetworkBase.AllocByteBuff");
 
    if(bytes <= TinyBuffer::ArraySize)
-      return std::unique_ptr< ByteBuffer >(new TinyBuffer);
+      return std::unique_ptr<ByteBuffer>(new TinyBuffer);
    else if(bytes <= SmallBuffer::ArraySize)
-      return std::unique_ptr< ByteBuffer >(new SmallBuffer);
+      return std::unique_ptr<ByteBuffer>(new SmallBuffer);
    else if(bytes <= MediumBuffer::ArraySize)
-      return std::unique_ptr< ByteBuffer >(new MediumBuffer);
+      return std::unique_ptr<ByteBuffer>(new MediumBuffer);
    else if(bytes <= LargeBuffer::ArraySize)
-      return std::unique_ptr< ByteBuffer >(new LargeBuffer);
+      return std::unique_ptr<ByteBuffer>(new LargeBuffer);
    else if(bytes <= HugeBuffer::ArraySize)
-      return std::unique_ptr< ByteBuffer >(new HugeBuffer);
+      return std::unique_ptr<ByteBuffer>(new HugeBuffer);
 
    throw AllocationException(MemDynamic, bytes);
 }
@@ -193,12 +193,12 @@ void IpBuffer::Display(ostream& stream,
 
 TraceStatus IpBuffer::GetStatus() const
 {
-   return Singleton< NwTracer >::Instance()->BuffStatus(*this, dir_);
+   return Singleton<NwTracer>::Instance()->BuffStatus(*this, dir_);
 }
 
 //------------------------------------------------------------------------------
 
-void IpBuffer::GetSubtended(std::vector< Base* >& objects) const
+void IpBuffer::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("IpBuffer.GetSubtended");
 
@@ -213,7 +213,7 @@ void IpBuffer::InvalidDiscarded() const
 {
    Debug::ft("IpBuffer.InvalidDiscarded");
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
    auto port = reg->GetPort(rxAddr_.GetPort());
    if(port != nullptr) port->InvalidDiscarded();
 }
@@ -224,7 +224,7 @@ void* IpBuffer::operator new(size_t size)
 {
    Debug::ft("IpBuffer.operator new");
 
-   return Singleton< IpBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<IpBufferPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -298,7 +298,7 @@ bool IpBuffer::Send(bool external)
    {
       auto txPort = txAddr_.GetPort();
       auto txProto = txAddr_.GetProtocol();
-      auto reg = Singleton< IpPortRegistry >::Instance();
+      auto reg = Singleton<IpPortRegistry>::Instance();
       auto ipPort = reg->GetPort(txPort, txProto);
 
       if(ipPort == nullptr)

@@ -42,7 +42,7 @@ namespace NodeBase
 //
 class LogBufferRegistry : public Immutable
 {
-   friend class Singleton< LogBufferRegistry >;
+   friend class Singleton<LogBufferRegistry>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -106,7 +106,7 @@ private:
 
    //  The buffers.
    //
-   std::unique_ptr< LogBuffer > buffer_[MaxBuffers];
+   std::unique_ptr<LogBuffer> buffer_[MaxBuffers];
 };
 }
 #endif

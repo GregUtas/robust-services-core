@@ -53,7 +53,7 @@ namespace CodeTools
 //
 class Library : public NodeBase::Base
 {
-   friend class NodeBase::Singleton< Library >;
+   friend class NodeBase::Singleton<Library>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -156,7 +156,7 @@ public:
 
    //  Returns all variables.  Used for iteration.
    //
-   const std::list< LibrarySet* >& Variables() const { return vars_; }
+   const std::list<LibrarySet*>& Variables() const { return vars_; }
 
    //  Overridden to display member variables.
    //
@@ -193,15 +193,15 @@ private:
 
    //  The directories in the code base.  Sorted by name, ignoring case.
    //
-   std::list< std::unique_ptr < CodeDir >> dirs_;
+   std::list< std::unique_ptr <CodeDir>> dirs_;
 
    //  The files in the code base.  Sorted by name, ignoring case.
    //
-   std::list< std::unique_ptr < CodeFile >> files_;
+   std::list< std::unique_ptr <CodeFile>> files_;
 
    //  The currently defined variables.  Sorted by name, ignoring case.
    //
-   std::list< LibrarySet* > vars_;
+   std::list<LibrarySet*> vars_;
 
    //  A variable for the set of all directories.
    //

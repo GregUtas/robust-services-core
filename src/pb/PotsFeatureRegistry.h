@@ -43,7 +43,7 @@ namespace PotsBase
 //
 class PotsFeatureRegistry : public Immutable
 {
-   friend class Singleton< PotsFeatureRegistry >;
+   friend class Singleton<PotsFeatureRegistry>;
    friend class PotsFeature;
    friend class ActivateCommand;
    friend class DeactivateCommand;
@@ -92,23 +92,23 @@ private:
 
    //  The registry of POTS features.
    //
-   Registry< PotsFeature > features_;
+   Registry<PotsFeature> features_;
 
    //  The CLI parameter tree used when assigning a feature to a profile.
    //
-   std::unique_ptr< CliTextParm > featuresSubscribe_;
+   std::unique_ptr<CliTextParm> featuresSubscribe_;
 
    //  The CLI parameter tree used when activating a feature.
    //
-   std::unique_ptr< CliTextParm > featuresActivate_;
+   std::unique_ptr<CliTextParm> featuresActivate_;
 
    //  The CLI parameter tree used when deactivating a feature.
    //
-   std::unique_ptr< CliTextParm > featuresDeactivate_;
+   std::unique_ptr<CliTextParm> featuresDeactivate_;
 
    //  The CLI parameter tree used when removing a feature from a profile.
    //
-   std::unique_ptr< CliTextParm > featuresUnsubscribe_;
+   std::unique_ptr<CliTextParm> featuresUnsubscribe_;
 };
 }
 #endif

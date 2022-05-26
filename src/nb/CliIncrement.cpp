@@ -46,7 +46,7 @@ CliIncrement::CliIncrement(c_string name, c_string help, uint32_t size) :
    Debug::Assert(help_ != nullptr);
 
    commands_.Init(size, CliParm::CellDiff(), MemImmutable);
-   Singleton< CliRegistry >::Instance()->BindIncrement(*this);
+   Singleton<CliRegistry>::Instance()->BindIncrement(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ CliIncrement::~CliIncrement()
    Debug::ftnt(CliIncrement_dtor);
 
    Debug::SwLog(CliIncrement_dtor, UnexpectedInvocation, 0);
-   Singleton< CliRegistry >::Extant()->UnbindIncrement(*this);
+   Singleton<CliRegistry>::Extant()->UnbindIncrement(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
 ptrdiff_t CliIncrement::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const CliIncrement* >(&local);
+   auto fake = reinterpret_cast<const CliIncrement*>(&local);
    return ptrdiff(&fake->iid_, fake);
 }
 

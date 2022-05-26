@@ -42,8 +42,8 @@ MbModule::MbModule() : Module()
 
    //  Create the modules required by MediaBase.
    //
-   Singleton< SbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<SbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -59,8 +59,8 @@ void MbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("MbModule.Shutdown");
 
-   Singleton< ToneRegistry >::Instance()->Shutdown(level);
-   Singleton< Switch >::Instance()->Shutdown(level);
+   Singleton<ToneRegistry>::Instance()->Shutdown(level);
+   Singleton<Switch>::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -69,23 +69,23 @@ void MbModule::Startup(RestartLevel level)
 {
    Debug::ft("MbModule.Startup");
 
-   Singleton< Switch >::Instance()->Startup(level);
-   Singleton< ToneRegistry >::Instance()->Startup(level);
-   Singleton< ToneSilent >::Instance()->Startup(level);
-   Singleton< ToneDial >::Instance()->Startup(level);
-   Singleton< ToneStutteredDial >::Instance()->Startup(level);
-   Singleton< ToneConfirmation >::Instance()->Startup(level);
-   Singleton< ToneRingback >::Instance()->Startup(level);
-   Singleton< ToneBusy >::Instance()->Startup(level);
-   Singleton< ToneCallWaiting >::Instance()->Startup(level);
-   Singleton< ToneReorder >::Instance()->Startup(level);
-   Singleton< ToneReceiverOffHook >::Instance()->Startup(level);
-   Singleton< ToneHeld >::Instance()->Startup(level);
-   Singleton< MediaEndptPool >::Instance()->Startup(level);
+   Singleton<Switch>::Instance()->Startup(level);
+   Singleton<ToneRegistry>::Instance()->Startup(level);
+   Singleton<ToneSilent>::Instance()->Startup(level);
+   Singleton<ToneDial>::Instance()->Startup(level);
+   Singleton<ToneStutteredDial>::Instance()->Startup(level);
+   Singleton<ToneConfirmation>::Instance()->Startup(level);
+   Singleton<ToneRingback>::Instance()->Startup(level);
+   Singleton<ToneBusy>::Instance()->Startup(level);
+   Singleton<ToneCallWaiting>::Instance()->Startup(level);
+   Singleton<ToneReorder>::Instance()->Startup(level);
+   Singleton<ToneReceiverOffHook>::Instance()->Startup(level);
+   Singleton<ToneHeld>::Instance()->Startup(level);
+   Singleton<MediaEndptPool>::Instance()->Startup(level);
 
    //  Define symbols.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("port.silence", Tone::Silence);
    reg->BindSymbol("port.dial", Tone::Dial);
    reg->BindSymbol("port.stutter", Tone::StutteredDial);

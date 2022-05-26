@@ -226,7 +226,7 @@ private:
 //
 class TrafficCallPool : public Dynamic
 {
-   friend class Singleton< TrafficCallPool >;
+   friend class Singleton<TrafficCallPool>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -254,7 +254,7 @@ private:
 
    //  The free queue of calls, which minimizes use of the heap.
    //
-   Q1Way< TrafficCall > freeq_;
+   Q1Way<TrafficCall> freeq_;
 };
 
 //==============================================================================
@@ -324,7 +324,7 @@ TrafficCall::~TrafficCall()
    //  Update holding times.  Because we wait 2 seconds when entering the
    //  Terminating state, add 2 seconds to the terminator's holding time.
    //
-   auto thread = Singleton< PotsTrafficThread >::Instance();
+   auto thread = Singleton<PotsTrafficThread>::Instance();
 
    if(SteadyTime::IsValid(origEnd_))
    {
@@ -388,7 +388,7 @@ bool TrafficCall::CheckTerm()
    //  but was only seen when trace tools were imposing significant overhead,
    //  so the log was removed.
    //
-   Singleton< PotsTrafficThread >::Instance()->RecordAbort();
+   Singleton<PotsTrafficThread>::Instance()->RecordAbort();
    EraseTerm();
    return false;
 }
@@ -480,7 +480,7 @@ void TrafficCall::EraseTerm()
 ptrdiff_t TrafficCall::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const TrafficCall* >(&local);
+   auto fake = reinterpret_cast<const TrafficCall*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -490,7 +490,7 @@ void TrafficCall::operator delete(void* addr)
 {
    Debug::ftnt("TrafficCall.operator delete");
 
-   Singleton< TrafficCallPool >::Extant()->Enq((TrafficCall*) addr);
+   Singleton<TrafficCallPool>::Extant()->Enq((TrafficCall*) addr);
 }
 
 //------------------------------------------------------------------------------
@@ -499,7 +499,7 @@ void* TrafficCall::operator new(size_t size)
 {
    Debug::ft("TrafficCall.operator new");
 
-   auto data = Singleton< TrafficCallPool >::Instance()->Deq();
+   auto data = Singleton<TrafficCallPool>::Instance()->Deq();
    if(data != nullptr) return data;
    return Dynamic::operator new(size);
 }
@@ -569,7 +569,7 @@ uint32_t TrafficCall::ProcessDialing()
 
    if((rnd <= 5) || !dial)
    {
-      if(!dial) Singleton< PotsTrafficThread >::Instance()->RecordAbort();
+      if(!dial) Singleton<PotsTrafficThread>::Instance()->RecordAbort();
       ReleaseOrig();
       return 0;
    }
@@ -710,7 +710,7 @@ uint32_t TrafficCall::ProcessOriginating()
          return 2000;
       }
 
-      auto thr = Singleton< PotsTrafficThread >::Instance();
+      auto thr = Singleton<PotsTrafficThread>::Instance();
 
       if(rnd <= 12)
          dest_ = thr->FindDn(PotsTrafficThread::Unassigned);
@@ -860,7 +860,7 @@ uint32_t TrafficCall::ProcessTerminating()
       //  Add the terminator to our call record after verifying that it is,
       //  indeed, a terminator.
       //
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
       auto prof = reg->Profile(dest_);
       auto term = prof->GetCircuit();
       auto state = term->GetState();
@@ -1049,12 +1049,12 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
 {
    Debug::ft("PotsTrafficThread.ctor");
 
-   auto size = sizeof(Q1Way< TrafficCall >) * NumOfSlots;
-   timewheel_ = (Q1Way< TrafficCall >*) Memory::Alloc(size, MemDynamic);
+   auto size = sizeof(Q1Way<TrafficCall>) * NumOfSlots;
+   timewheel_ = (Q1Way<TrafficCall>*) Memory::Alloc(size, MemDynamic);
 
    for(auto i = 0; i < NumOfSlots; ++i)
    {
-      new (&timewheel_[i]) Q1Way< TrafficCall >();
+      new (&timewheel_[i]) Q1Way<TrafficCall>();
       timewheel_[i].Init(TrafficCall::LinkDiff());
    }
 
@@ -1101,7 +1101,7 @@ void PotsTrafficThread::Destroy()
 {
    Debug::ft("PotsTrafficThread.Destroy");
 
-   Singleton< PotsTrafficThread >::Destroy();
+   Singleton<PotsTrafficThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -1232,7 +1232,7 @@ Address::DN PotsTrafficThread::FindDn(DnStatus status) const
    Debug::ft(PotsTrafficThread_FindDn);
 
    Address::DN dn;
-   auto reg = Singleton< PotsProfileRegistry >::Instance();
+   auto reg = Singleton<PotsProfileRegistry>::Instance();
 
    switch(status)
    {
@@ -1368,7 +1368,7 @@ void PotsTrafficThread::SendMessages()
 
    if(!stop)
    {
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
       auto n = rand(0, maxCallsPerTick_);
       if(rand(0, 999) < milCallsPerTick_) ++n;
 
@@ -1437,7 +1437,7 @@ void PotsTrafficThread::SetRate(uint32_t rate)
       }
 
       FunctionGuard guard(Guard_MemUnprotect);
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
 
       for(auto i = 0; i < n; ++i)
       {
@@ -1486,7 +1486,7 @@ void PotsTrafficThread::Takedown()
    //  Although we're finished, calls are still in the process of clearing,
    //  and a call traps if we delete a user profile that it is still using.
    //
-   auto contexts = Singleton< ContextPool >::Instance();
+   auto contexts = Singleton<ContextPool>::Instance();
    auto curr = contexts->InUseCount();
    auto count = 60;
 
@@ -1501,7 +1501,7 @@ void PotsTrafficThread::Takedown()
 
    FunctionGuard guard(Guard_MemUnprotect);
 
-   auto reg = Singleton< PotsProfileRegistry >::Instance();
+   auto reg = Singleton<PotsProfileRegistry>::Instance();
 
    for(auto dn = firstDN_; dn <= lastDN_; ++dn)
    {
@@ -1515,6 +1515,6 @@ void PotsTrafficThread::Takedown()
    firstDN_ = Address::NilDN;
    lastDN_ = Address::NilDN;
 
-   Singleton< TrafficCallPool >::Destroy();
+   Singleton<TrafficCallPool>::Destroy();
 }
 }

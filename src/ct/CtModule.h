@@ -33,7 +33,7 @@ namespace CodeTools
 //
 class CtModule : public NodeBase::Module
 {
-   friend class NodeBase::Singleton< CtModule >;
+   friend class NodeBase::Singleton<CtModule>;
 public:
    //  Overridden for restarts.
    //

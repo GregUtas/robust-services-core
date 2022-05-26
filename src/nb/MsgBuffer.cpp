@@ -71,7 +71,7 @@ void* MsgBuffer::operator new(size_t size)
 {
    Debug::ft("MsgBuffer.operator new");
 
-   return Singleton< MsgBufferPool >::Instance()->DeqBlock(size);
+   return Singleton<MsgBufferPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------

@@ -55,7 +55,7 @@ void SignalException::Display(ostream& stream, const string& prefix) const
 {
    Exception::Display(stream, prefix);
 
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
 
    stream << prefix << "signal : " << reg->strSignal(signal_) << CRLF;
    stream << prefix << "errval : " << strHex(errval_) << CRLF;

@@ -40,16 +40,16 @@ namespace Diplomacy
 {
 //  For mapping a province to the order for the unit located in it.
 //
-typedef std::map< ProvinceId, UnitOrder> UnitOrderMap;
+typedef std::map<ProvinceId, UnitOrder> UnitOrderMap;
 
 //  For mapping a power to its winter orders.
 //
-typedef std::map< PowerId, WinterOrders > WinterOrderMap;
+typedef std::map<PowerId, WinterOrders> WinterOrderMap;
 
 //  For mapping a province that contains a convoying army to
 //  a description of whether that army subverts a convoy.
 //
-typedef std::map< ProvinceId, ConvoySubversion > ConvoySubversionMap;
+typedef std::map<ProvinceId, ConvoySubversion> ConvoySubversionMap;
 
 //  A power and the centres that it owns.  Note that the power is
 //  a token, whereas the centre is simply an index (ProvinceId).
@@ -57,7 +57,7 @@ typedef std::map< ProvinceId, ConvoySubversion > ConvoySubversionMap;
 struct PowerCentres
 {
    const Token power;
-   std::vector< ProvinceId > centres;
+   std::vector<ProvinceId> centres;
 
    explicit PowerCentres(const Token& power) : power(power) { }
 };
@@ -78,7 +78,7 @@ struct UnitLocation
 struct PowerUnits
 {
    const Token power;
-   std::vector< UnitLocation > units;
+   std::vector<UnitLocation> units;
 
    explicit PowerUnits(const Token& power) : power(power) { }
 };
@@ -88,7 +88,7 @@ struct PowerUnits
 struct PowerOrders
 {
    const Token power;
-   std::vector< UnitOrder > orders;
+   std::vector<UnitOrder> orders;
 
    explicit PowerOrders(const Token& power) : power(power) { }
 };
@@ -290,15 +290,15 @@ public:
    //  Returns the powers and their adjudicated orders for the most
    //  recent SEASON (excluding Winter).
    //
-   std::vector< PowerOrders > get_orders(const Token& season) const;
+   std::vector<PowerOrders> get_orders(const Token& season) const;
 
    //  Returns the powers and the units that they currently own.
    //
-   std::vector< PowerUnits > get_units() const;
+   std::vector<PowerUnits> get_units() const;
 
    //  Returns the powers and the centres that they currently own.
    //
-   std::vector< PowerCentres > get_centres() const;
+   std::vector<PowerCentres> get_centres() const;
 
    //  Sets the order checking options.
    //
@@ -415,7 +415,7 @@ private:
    //  For mapping a province to the provinces whose units were
    //  ordered to move there.
    //
-   typedef std::multimap< ProvinceId, ProvinceId > AttackMap;
+   typedef std::multimap<ProvinceId, ProvinceId> AttackMap;
 
    /////////////////////////////////////////////////////////////////////////////
    //

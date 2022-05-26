@@ -64,7 +64,7 @@ struct MediaInfo
 //
 //  Virtual base class for supporting a MediaInfo parameter.
 //
-class MediaParameter : public TlvIntParameter< Switch::PortId >
+class MediaParameter : public TlvIntParameter<Switch::PortId>
 {
 protected:
    //  Protected because this class is virtual.

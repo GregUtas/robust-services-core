@@ -83,7 +83,7 @@ void AnalyzeSnpEvent::Capture
    (ServiceId sid, const State& state, EventHandler::Rc rc) const
 {
    auto rec = new SxpTrace(sid, state, *this, rc);
-   Singleton< TraceBuffer >::Instance()->Insert(rec);
+   Singleton<TraceBuffer>::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------

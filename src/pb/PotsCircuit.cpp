@@ -164,7 +164,7 @@ void PotsCircuit::ReceiveMsg(const Pots_NU_Message& msg)
    PotsScanInfo* psi;
    CauseInfo* pci;
 
-   auto phi = msg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto phi = msg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    SignalEntry entry = NilSignalEntry;
    entry.signal = phi->signal & 0x0f;
@@ -176,9 +176,9 @@ void PotsCircuit::ReceiveMsg(const Pots_NU_Message& msg)
       //  Look for all possible parameters.
       //
       if(state_ == Idle) SetState(Terminator);
-      pri = msg.FindType< PotsRingInfo >(PotsParameter::Ring);
-      psi = msg.FindType< PotsScanInfo >(PotsParameter::Scan);
-      pci = msg.FindType< CauseInfo >(PotsParameter::Cause);
+      pri = msg.FindType<PotsRingInfo>(PotsParameter::Ring);
+      psi = msg.FindType<PotsScanInfo>(PotsParameter::Scan);
+      pci = msg.FindType<CauseInfo>(PotsParameter::Cause);
 
       if(pri != nullptr)
       {
@@ -250,7 +250,7 @@ void PotsCircuit::ReceiveMsg(const Pots_NU_Message& msg)
       //  Idle the circuit.  If it is offhook, send an offhook immediately.
       //
       Trace(entry);
-      pci = msg.FindType< CauseInfo >(PotsParameter::Cause);
+      pci = msg.FindType<CauseInfo>(PotsParameter::Cause);
 
       if((pci != nullptr) && (pci->cause == Cause::ResetCircuit))
       {

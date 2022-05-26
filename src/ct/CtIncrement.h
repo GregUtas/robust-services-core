@@ -33,7 +33,7 @@ namespace CodeTools
 //
 class CtIncrement : public NodeBase::CliIncrement
 {
-   friend class NodeBase::Singleton< CtIncrement >;
+   friend class NodeBase::Singleton<CtIncrement>;
 
    //  Private because this is a singleton.
    //

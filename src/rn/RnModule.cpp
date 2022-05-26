@@ -37,8 +37,8 @@ RnModule::RnModule() : Module()
 
    //  Create the modules required by RoutingNode.
    //
-   Singleton< CbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<CbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------

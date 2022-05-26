@@ -49,7 +49,7 @@ IpService::IpService()
 {
    Debug::ft("IpService.ctor");
 
-   Singleton< IpServiceRegistry >::Instance()->BindService(*this);
+   Singleton<IpServiceRegistry>::Instance()->BindService(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ IpService::~IpService()
    Debug::ftnt(IpService_dtor);
 
    Debug::SwLog(IpService_dtor, UnexpectedInvocation, 0);
-   Singleton< IpServiceRegistry >::Extant()->UnbindService(*this);
+   Singleton<IpServiceRegistry>::Extant()->UnbindService(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ IpService::~IpService()
 ptrdiff_t IpService::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const IpService* >(&local);
+   auto fake = reinterpret_cast<const IpService*>(&local);
    return ptrdiff(&fake->sid_, fake);
 }
 
@@ -226,7 +226,7 @@ IpPort* IpService::Provision(ipport_t pid)
 {
    Debug::ft(IpService_Provision);
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
    auto port = reg->GetPort(pid, Protocol());
 
    if(port != nullptr)

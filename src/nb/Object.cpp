@@ -73,7 +73,7 @@ bool Object::GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid)
    //  Update C to its class and IID to its instance identifier.
    //
    ClassId cid = oid >> MaxInstanceIdLog2;
-   cls = Singleton< ClassRegistry >::Instance()->Lookup(cid);
+   cls = Singleton<ClassRegistry>::Instance()->Lookup(cid);
    if(cls == nullptr) return false;
    iid = oid & MaxInstanceId;
    return true;
@@ -111,7 +111,7 @@ void Object::MorphTo(const Class& target)
 
    //  Change this object's vptr to that of the target class.
    //
-   auto obj = reinterpret_cast< ObjectStruct* >(this);
+   auto obj = reinterpret_cast<ObjectStruct*>(this);
    obj->vptr = target.GetVptr();
 }
 }

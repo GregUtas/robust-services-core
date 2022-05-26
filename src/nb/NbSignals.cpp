@@ -35,7 +35,7 @@ namespace NodeBase
 //
 class SigWrite : public PosixSignal
 {
-   friend class Singleton< SigWrite >;
+   friend class Singleton<SigWrite>;
 
    SigWrite();
    ~SigWrite() = default;
@@ -43,7 +43,7 @@ class SigWrite : public PosixSignal
 
 class SigClose : public PosixSignal
 {
-   friend class Singleton< SigClose >;
+   friend class Singleton<SigClose>;
 
    SigClose();
    ~SigClose() = default;
@@ -51,7 +51,7 @@ class SigClose : public PosixSignal
 
 class SigYield : public PosixSignal
 {
-   friend class Singleton< SigYield >;
+   friend class Singleton<SigYield>;
 
    SigYield();
    ~SigYield() = default;
@@ -59,7 +59,7 @@ class SigYield : public PosixSignal
 
 class SigStack1 : public PosixSignal
 {
-   friend class Singleton< SigStack1 >;
+   friend class Singleton<SigStack1>;
 
    SigStack1();
    ~SigStack1() = default;
@@ -67,7 +67,7 @@ class SigStack1 : public PosixSignal
 
 class SigStack2 : public PosixSignal
 {
-   friend class Singleton< SigStack2 >;
+   friend class Singleton<SigStack2>;
 
    SigStack2();
    ~SigStack2() = default;
@@ -75,7 +75,7 @@ class SigStack2 : public PosixSignal
 
 class SigPurge : public PosixSignal
 {
-   friend class Singleton< SigPurge >;
+   friend class Singleton<SigPurge>;
 
    SigPurge();
    ~SigPurge() = default;
@@ -83,7 +83,7 @@ class SigPurge : public PosixSignal
 
 class SigDeleted : public PosixSignal
 {
-   friend class Singleton< SigDeleted >;
+   friend class Singleton<SigDeleted>;
 
    SigDeleted();
    ~SigDeleted() = default;
@@ -126,12 +126,12 @@ void CreatePosixSignals()
    SysSignals::CreateStandardSignals();
    SysSignals::CreateNativeSignals();
 
-   Singleton< SigWrite >::Instance();
-   Singleton< SigClose >::Instance();
-   Singleton< SigYield >::Instance();
-   Singleton< SigStack1 >::Instance();
-   Singleton< SigStack2 >::Instance();
-   Singleton< SigPurge >::Instance();
-   Singleton< SigDeleted >::Instance();
+   Singleton<SigWrite>::Instance();
+   Singleton<SigClose>::Instance();
+   Singleton<SigYield>::Instance();
+   Singleton<SigStack1>::Instance();
+   Singleton<SigStack2>::Instance();
+   Singleton<SigPurge>::Instance();
+   Singleton<SigDeleted>::Instance();
 }
 }

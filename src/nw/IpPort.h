@@ -216,7 +216,7 @@ private:
 
    //  The port's input handler.
    //
-   std::unique_ptr< InputHandler > handler_;
+   std::unique_ptr<InputHandler> handler_;
 
    //  The port's I/O thread.
    //
@@ -232,7 +232,7 @@ private:
 
    //  The port's statistics.
    //
-   std::unique_ptr< IpPortStats > stats_;
+   std::unique_ptr<IpPortStats> stats_;
 };
 }
 #endif

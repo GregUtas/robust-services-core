@@ -81,7 +81,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
       return -1;
    }
 
-   auto testdb = Singleton< TestDatabase >::Instance();
+   auto testdb = Singleton<TestDatabase>::Instance();
 
    FunctionGuard guard(Guard_MakePreemptable);
 
@@ -90,7 +90,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
    //  that it invoked, to the current database.
    //
    auto outdir = Element::OutputPath();
-   std::set< string > files;
+   std::set<string> files;
 
    if(!SysFile::ListFiles(outdir, files))
    {
@@ -436,8 +436,8 @@ word CodeCoverage::Merge(std::ostringstream& expl)
 {
    Debug::ft("CodeCoverage.Merge");
 
-   auto testdb = Singleton< TestDatabase >::Instance();
-   std::set< string > inclTests;
+   auto testdb = Singleton<TestDatabase>::Instance();
+   std::set<string> inclTests;
 
    //  Update the current database with tests that appear only in the
    //  previous database.  Verify that a test is still in the database
@@ -553,7 +553,7 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
 {
    Debug::ft("CodeCoverage.Retest");
 
-   std::vector< Functions::const_iterator > modified;
+   std::vector<Functions::const_iterator> modified;
 
    for(auto c = currFuncs_.cbegin(); c != currFuncs_.cend(); ++c)
    {
@@ -588,9 +588,9 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
       return 0;
    }
 
-   std::set< string > reexecute;
-   std::set< string > uncovered;
-   std::set< string > unknown;
+   std::set<string> reexecute;
+   std::set<string> uncovered;
+   std::set<string> unknown;
 
    for(auto f = modified.cbegin(); f != modified.cend(); ++f)
    {
@@ -602,7 +602,7 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
          for(auto t = ft.cbegin(); t != ft.cend(); ++t) reexecute.insert(*t);
    }
 
-   auto testdb = Singleton< TestDatabase >::Instance();
+   auto testdb = Singleton<TestDatabase>::Instance();
    std::ostringstream report;
 
    if(!reexecute.empty())

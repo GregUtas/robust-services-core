@@ -42,7 +42,7 @@ MediaInfo::MediaInfo() : rxFrom(Switch::SilentPort)
 
 void MediaInfo::Display(ostream& stream, const string& prefix) const
 {
-   auto tsw = Singleton< Switch >::Instance();
+   auto tsw = Singleton<Switch>::Instance();
 
    stream << prefix << "rxFrom : " << rxFrom;
    stream << " (" << tsw->CircuitName(rxFrom) << ')' << CRLF;
@@ -65,7 +65,7 @@ bool MediaInfo::operator!=(const MediaInfo& that) const
 //==============================================================================
 
 MediaParameter::MediaParameter(ProtocolId prid, Id pid) :
-   TlvIntParameter< Switch::PortId >(prid, pid)
+   TlvIntParameter<Switch::PortId>(prid, pid)
 {
    Debug::ft("MediaParameter.ctor");
 }
@@ -94,6 +94,6 @@ CliParm* MediaParameter::CreateCliParm(Usage use) const
 void MediaParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const MediaInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const MediaInfo*>(bytes)->Display(stream, prefix);
 }
 }

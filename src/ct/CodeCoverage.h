@@ -42,7 +42,7 @@ namespace CodeTools
 //
 class CodeCoverage : public NodeBase::Temporary
 {
-   friend class NodeBase::Singleton< CodeCoverage >;
+   friend class NodeBase::Singleton<CodeCoverage>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -168,18 +168,18 @@ private:
    struct FuncInfo
    {
       const uint32_t hash;            // hash value for function's code
-      std::set< std::string > tests;  // tests that invoke the function
+      std::set<std::string> tests;  // tests that invoke the function
 
       explicit FuncInfo(uint32_t hash) : hash(hash) { }
    };
 
    //  A tuple for a function's name and its associated information.
    //
-   typedef std::pair< std::string, FuncInfo > FuncData;
+   typedef std::pair<std::string, FuncInfo> FuncData;
 
    //  A database of functions that invoke Debug::ft.
    //
-   typedef std::map< std::string, FuncInfo > Functions;
+   typedef std::map<std::string, FuncInfo> Functions;
 
    //  Commits the database referenced by FUNCS.  Returns false if
    //  the database could not be written.
@@ -196,11 +196,11 @@ private:
 
    //  Tests in the previous database.
    //
-   std::set< std::string > prevTests_;
+   std::set<std::string> prevTests_;
 
    //  Tests in the current database.
    //
-   std::set< std::string > currTests_;
+   std::set<std::string> currTests_;
 
    //  The current function whose set of tests is being loaded.
    //

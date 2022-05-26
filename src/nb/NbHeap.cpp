@@ -185,7 +185,7 @@ struct HeapPriv
 {
    //  For locking the heap during operations.
    //
-   std::unique_ptr< SysMutex > lock;
+   std::unique_ptr<SysMutex> lock;
 
    //  The logical start of the heap.  If the heap's size is a power of 2,
    //  this is the same as its actual start.  If not, the heap's logical
@@ -219,7 +219,7 @@ struct HeapPriv
    //  queue is a two-way queue so that a sibling can be extracted quickly
    //  when two blocks can be merged.
    //
-   Q2Way< HeapBlock > freeq[NumLevels];
+   Q2Way<HeapBlock> freeq[NumLevels];
 
    //  The state of each block (see NbHeap::BlockState).  Each state uses
    //  two bits.
@@ -259,7 +259,7 @@ NbHeap::~NbHeap()
    if(heap_ == nullptr) return;
    heap_->lock->Acquire(TIMEOUT_NEVER);
 
-   std::unique_ptr< SysMutex > lock(heap_->lock.release());
+   std::unique_ptr<SysMutex> lock(heap_->lock.release());
    SetPermissions(MemReadWrite);
    SysMemory::Free(heap_, size_);
    heap_ = nullptr;
@@ -428,7 +428,7 @@ bool NbHeap::Create()
 
    //  If the target size cannot be allocated, revert to the previous size.
    //
-   auto config = Singleton< HeapCfg >::Instance();
+   auto config = Singleton<HeapCfg>::Instance();
    auto size = config->GetTargSize(type_);
 
    if(!Create(size))
@@ -469,7 +469,7 @@ bool NbHeap::Create(size_t size)
    std::ostringstream stream;
    stream << "HeapLock(" << type_ << ')';
    lockName_ = stream.str();
-   std::unique_ptr< SysMutex > lock(new SysMutex(lockName_.c_str()));
+   std::unique_ptr<SysMutex> lock(new SysMutex(lockName_.c_str()));
 
    if(lock == nullptr)
    {

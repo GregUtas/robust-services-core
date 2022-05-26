@@ -119,9 +119,9 @@ LogBuffer::LogBuffer(size_t size) :
    fileName_.append(".txt");
 
    if(size < (16 * kBs)) size = 16 * kBs;
-   buff_ = static_cast< char* >(Memory::Alloc(size, MemPermanent));
+   buff_ = static_cast<char*>(Memory::Alloc(size, MemPermanent));
    size_ = size;
-   SetNext(reinterpret_cast< Entry* >(buff_));
+   SetNext(reinterpret_cast<Entry*>(buff_));
 }
 
 //------------------------------------------------------------------------------
@@ -338,7 +338,7 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
    //
    if(wrap)
    {
-      where = reinterpret_cast< Entry* >(buff_);
+      where = reinterpret_cast<Entry*>(buff_);
       after = buff_ + size;
    }
 
@@ -346,7 +346,7 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
    if(prev != nullptr) prev->header.next = where;
    where->header.prev = prev;
    where->header.next = nullptr;
-   SetNext(reinterpret_cast< Entry* >(after));
+   SetNext(reinterpret_cast<Entry*>(after));
    next_->header.prev = where;
    return where;
 }
@@ -383,7 +383,7 @@ const LogBuffer::Entry* LogBuffer::Pop()
       {
          //  The buffer is empty; add the next entry at the top.
          //
-         SetNext(reinterpret_cast< Entry* >(buff_));
+         SetNext(reinterpret_cast<Entry*>(buff_));
       }
 
       return nullptr;
@@ -470,7 +470,7 @@ bool LogBuffer::Push(const std::string& log)
    UpdateMax();
    guard.Release();
 
-   auto thread = Singleton< LogThread >::Extant();
+   auto thread = Singleton<LogThread>::Extant();
    if(thread != nullptr) thread->Interrupt();
    return true;
 }

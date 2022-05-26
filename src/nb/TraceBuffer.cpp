@@ -132,7 +132,7 @@ TraceBuffer::TraceBuffer() :
    //  to not be created until after the system had initialized, in which case
    //  initialization could not be traced at all.
    //
-   Singleton< NbTracer >::Instance();
+   Singleton<NbTracer>::Instance();
 
    if(InitFlags::TraceInit())
    {
@@ -164,7 +164,7 @@ TraceBuffer::~TraceBuffer()
 //  OverflowSlots_ provides a per-thread location for constructing function
 //  trace records when the buffer is full.
 //
-static std::map< SysThreadId, FunctionTrace > OverflowSlots_;
+static std::map<SysThreadId, FunctionTrace> OverflowSlots_;
 
 void* TraceBuffer::AddFunction()
 {
@@ -445,7 +445,7 @@ fn_depth TraceBuffer::LastDtorDepth(SysThreadId nid) const
    {
       if((rec != nullptr) && (rec->owner_ == FunctionTracer))
       {
-         auto ft = static_cast< FunctionTrace* >(rec);
+         auto ft = static_cast<FunctionTrace*>(rec);
 
          if((ft->Nid() == nid) &&
             (strstr(ft->Func(), FunctionName::DtorTag) != nullptr))
@@ -476,7 +476,7 @@ const FunctionTrace* TraceBuffer::LastFunction(SysThreadId nid) const
    {
       if((rec != nullptr) && (rec->owner_ == FunctionTracer))
       {
-         auto ft = static_cast< FunctionTrace* >(rec);
+         auto ft = static_cast<FunctionTrace*>(rec);
          if(ft->Nid() == nid) return ft;
       }
    }
@@ -614,7 +614,7 @@ void TraceBuffer::QueryTools(ostream& stream) const
    else
       stream << TracingOff << CRLF;
 
-   auto& tools = Singleton< ToolRegistry >::Instance()->Tools();
+   auto& tools = Singleton<ToolRegistry>::Instance()->Tools();
 
    for(auto t = tools.First(); t != nullptr; tools.Next(t))
    {
@@ -679,7 +679,7 @@ TraceRc TraceBuffer::SetTool(FlagId tid, bool value)
    //  early.  Doing so causes heap corruption in Windows debug mode, but the
    //  reason has not been determined.
    //
-   auto reg = Singleton< ToolRegistry >::Extant();
+   auto reg = Singleton<ToolRegistry>::Extant();
 
    if(reg != nullptr)
    {

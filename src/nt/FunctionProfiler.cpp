@@ -89,12 +89,12 @@ FunctionProfiler::FunctionProfiler() :
 {
    Debug::ft("FunctionProfiler.ctor");
 
-   auto size = sizeof(Q2Way< FunctionStats >) * size_;
-   functionq_ = (Q2Way< FunctionStats >*) Memory::Alloc(size, MemTemporary);
+   auto size = sizeof(Q2Way<FunctionStats>) * size_;
+   functionq_ = (Q2Way<FunctionStats>*) Memory::Alloc(size, MemTemporary);
 
    for(size_t i = 0; i < size_; ++i)
    {
-      new (&functionq_[i]) Q2Way< FunctionStats >();
+      new (&functionq_[i]) Q2Way<FunctionStats>();
       functionq_[i].Init(FunctionStats::LinkDiff());
    }
 
@@ -155,7 +155,7 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
 {
    Debug::ft(FunctionProfiler_Generate);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto rc = TraceOk;
 
    switch(FunctionTrace::GetScope())
@@ -196,7 +196,7 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       {
          TraceRecord* rec = nullptr;
          auto mask = FunctionTrace::FTmask;
-         auto reg = Singleton< ThreadRegistry >::Instance();
+         auto reg = Singleton<ThreadRegistry>::Instance();
 
          for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
          {
@@ -236,7 +236,7 @@ TraceRc FunctionProfiler::Show(ostream& stream, Sort sort)
 {
    Debug::ft("FunctionProfiler.Show");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    stream << FpHeader << buff->strTimePlace() << CRLF << CRLF;
 
    stream << FpColumns << CRLF;

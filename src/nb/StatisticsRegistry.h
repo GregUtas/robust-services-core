@@ -43,7 +43,7 @@ namespace NodeBase
 //
 class StatisticsRegistry : public Dynamic
 {
-   friend class Singleton< StatisticsRegistry >;
+   friend class Singleton<StatisticsRegistry>;
    friend class Statistic;
    friend class StatisticsGroup;
 public:
@@ -115,11 +115,11 @@ private:
 
    //  The global registry of statistics.
    //
-   Registry< Statistic > stats_;
+   Registry<Statistic> stats_;
 
    //  The global registry of statistics groups.
    //
-   Registry< StatisticsGroup > groups_;
+   Registry<StatisticsGroup> groups_;
 
    //  The time when the most recent statistics interval began.
    //

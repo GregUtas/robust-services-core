@@ -45,7 +45,7 @@ namespace NodeBase
 {
 class ImmutableHeap : public NbHeap
 {
-   friend class Singleton< ImmutableHeap >;
+   friend class Singleton<ImmutableHeap>;
 
    ImmutableHeap();
    ~ImmutableHeap();
@@ -53,7 +53,7 @@ class ImmutableHeap : public NbHeap
 
 class ProtectedHeap : public NbHeap
 {
-   friend class Singleton< ProtectedHeap >;
+   friend class Singleton<ProtectedHeap>;
 
    ProtectedHeap();
    ~ProtectedHeap();
@@ -61,7 +61,7 @@ class ProtectedHeap : public NbHeap
 
 class PersistentHeap : public NbHeap
 {
-   friend class Singleton< PersistentHeap >;
+   friend class Singleton<PersistentHeap>;
 
    PersistentHeap();
    ~PersistentHeap();
@@ -69,7 +69,7 @@ class PersistentHeap : public NbHeap
 
 class DynamicHeap : public NbHeap
 {
-   friend class Singleton< DynamicHeap >;
+   friend class Singleton<DynamicHeap>;
 
    DynamicHeap();
    ~DynamicHeap();
@@ -77,7 +77,7 @@ class DynamicHeap : public NbHeap
 
 class TemporaryHeap : public NbHeap
 {
-   friend class Singleton< TemporaryHeap >;
+   friend class Singleton<TemporaryHeap>;
 
    TemporaryHeap();
    ~TemporaryHeap();
@@ -173,12 +173,12 @@ static Heap* EnsureHeap(MemoryType type)
 {
    switch(type)
    {
-   case MemTemporary: return Singleton< TemporaryHeap >::Instance();
-   case MemDynamic: return Singleton< DynamicHeap >::Instance();
-   case MemPersistent: return Singleton< PersistentHeap >::Instance();
-   case MemProtected: return Singleton< ProtectedHeap >::Instance();
+   case MemTemporary: return Singleton<TemporaryHeap>::Instance();
+   case MemDynamic: return Singleton<DynamicHeap>::Instance();
+   case MemPersistent: return Singleton<PersistentHeap>::Instance();
+   case MemProtected: return Singleton<ProtectedHeap>::Instance();
    case MemPermanent: return PermanentHeap::Instance();
-   case MemImmutable: return Singleton< ImmutableHeap >::Instance();
+   case MemImmutable: return Singleton<ImmutableHeap>::Instance();
    }
 
    return nullptr;
@@ -190,12 +190,12 @@ Heap* Memory::AccessHeap(MemoryType type)
 {
    switch(type)
    {
-   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
-   case MemDynamic: return Singleton< DynamicHeap >::Extant();
-   case MemPersistent: return Singleton< PersistentHeap >::Extant();
-   case MemProtected: return Singleton< ProtectedHeap >::Extant();
+   case MemTemporary: return Singleton<TemporaryHeap>::Extant();
+   case MemDynamic: return Singleton<DynamicHeap>::Extant();
+   case MemPersistent: return Singleton<PersistentHeap>::Extant();
+   case MemProtected: return Singleton<ProtectedHeap>::Extant();
    case MemPermanent: return PermanentHeap::Instance();
-   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
+   case MemImmutable: return Singleton<ImmutableHeap>::Extant();
    }
 
    return nullptr;
@@ -240,7 +240,7 @@ void* Memory::Alloc(size_t size, MemoryType type)
    //
    if(Debug::TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
@@ -276,7 +276,7 @@ void* Memory::Alloc(size_t size, MemoryType type, const std::nothrow_t&)
    //
    if(Debug::TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
@@ -304,7 +304,7 @@ fixed_string HeapHeader =
 
 void Memory::DisplayHeaps(ostream& stream, const string& prefix)
 {
-   std::vector< const Heap* > heaps;
+   std::vector<const Heap*> heaps;
    std::ostringstream expl;
 
    for(int m = MemTemporary; m < MemoryType_N; ++m)
@@ -313,7 +313,7 @@ void Memory::DisplayHeaps(ostream& stream, const string& prefix)
    }
 
    stream << prefix << HeapHeader << CRLF;
-   auto config = Singleton< HeapCfg >::Instance();
+   auto config = Singleton<HeapCfg>::Instance();
 
    for(auto h = heaps.cbegin(); h != heaps.cend(); ++h)
    {
@@ -367,7 +367,7 @@ void Memory::Free(void* addr, MemoryType type)
    //
    if(Debug::TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
@@ -443,23 +443,23 @@ void Memory::Shutdown()
 
    if(Restart::ClearsMemory(MemTemporary))
    {
-      Singleton< TemporaryHeap >::Destroy();
+      Singleton<TemporaryHeap>::Destroy();
    }
 
    if(Restart::ClearsMemory(MemDynamic))
    {
-      Singleton< DynamicHeap >::Destroy();
+      Singleton<DynamicHeap>::Destroy();
    }
 
    if(Restart::ClearsMemory(MemPersistent))
    {
-      Singleton< PersistentHeap >::Destroy();
+      Singleton<PersistentHeap>::Destroy();
    }
 
    if(Restart::ClearsMemory(MemProtected))
    {
       Unprotect(MemProtected);
-      Singleton< ProtectedHeap >::Destroy();
+      Singleton<ProtectedHeap>::Destroy();
    }
 }
 

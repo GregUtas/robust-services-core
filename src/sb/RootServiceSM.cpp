@@ -44,7 +44,7 @@ RootServiceSM::RootServiceSM(ServiceId sid) :
 
    //  Register the SSM with its context.
    //
-   ctx_ = static_cast< SsmContext* >(Context::RunningContext());
+   ctx_ = static_cast<SsmContext*>(Context::RunningContext());
 
    if(ctx_ != nullptr) ctx_->SetRoot(this);
 }

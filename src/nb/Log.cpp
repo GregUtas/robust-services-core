@@ -133,7 +133,7 @@ Log::~Log()
 ptrdiff_t Log::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Log* >(&local);
+   auto fake = reinterpret_cast<const Log*>(&local);
    return ptrdiff(&fake->lid_, fake);
 }
 
@@ -187,7 +187,7 @@ ostringstreamPtr Log::Create
    auto log = Find(groupName, id, group);
    if(log == nullptr) return nullptr;
 
-   auto reg = Singleton< AlarmRegistry >::Extant();
+   auto reg = Singleton<AlarmRegistry>::Extant();
    if(reg == nullptr) return nullptr;
 
    auto alarm = reg->Find(alarmName);
@@ -241,7 +241,7 @@ Log* Log::Find(c_string groupName, LogId id, LogGroup*& group)
 {
    Debug::ftnt("Log.Find");
 
-   auto reg = Singleton< LogGroupRegistry >::Extant();
+   auto reg = Singleton<LogGroupRegistry>::Extant();
    if(reg == nullptr) return nullptr;
    group = reg->FindGroup(groupName);
    if(group == nullptr) return nullptr;
@@ -404,7 +404,7 @@ void Log::Submit(ostringstreamPtr& stream)
 
    //  Add the log to the active log buffer.
    //
-   auto buffer = Singleton< LogBufferRegistry >::Extant()->Active();
+   auto buffer = Singleton<LogBufferRegistry>::Extant()->Active();
    if(buffer == nullptr) return;
 
    if(buffer->Push(str))

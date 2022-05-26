@@ -96,7 +96,7 @@ public:
    //  Invokes obj.release() and returns true if OBJ's heap will be
    //  freed during any restart that is currently underway.
    //
-   template< class T > static bool Release(std::unique_ptr< T >& obj)
+   template<class T> static bool Release(std::unique_ptr<T>& obj)
    {
       auto type = (obj == nullptr ? MemNull : obj->MemType());
       if(!ClearsMemory(type)) return false;

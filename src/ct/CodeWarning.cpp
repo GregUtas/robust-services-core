@@ -92,7 +92,7 @@ static size_t WarningCounts_[Warning_N] = { 0 };
 CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
    const CxxToken* item, word offset, const string& info) :
    warning_(warning),
-   item_(const_cast< CxxToken* >(item)),
+   item_(const_cast<CxxToken*>(item)),
    offset_(offset),
    info_(info),
    status_(NotSupported)
@@ -182,7 +182,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       ThisThread::Pause();
    }
 
-   Singleton< CxxRoot >::Instance()->Check(stream != nullptr);
+   Singleton<CxxRoot>::Instance()->Check(stream != nullptr);
 
    //  Return if a report is not required.
    //
@@ -195,7 +195,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       f->file->GetLineCounts();
    }
 
-   std::vector< const CodeWarning* > warnings;
+   std::vector<const CodeWarning*> warnings;
 
    //  Count the total number of warnings of each type that appear in files
    //  belonging to the original SET, extracting them into the local set of
@@ -203,7 +203,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
    //
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto& logs = file->GetWarnings();
 
       for(size_t i = 0; i < logs.size(); ++i)
@@ -890,11 +890,11 @@ size_t CodeWarning::Line() const
 
 //------------------------------------------------------------------------------
 
-std::vector< const CodeWarning* > CodeWarning::LogsToFix(string& expl) const
+std::vector<const CodeWarning*> CodeWarning::LogsToFix(string& expl) const
 {
    Debug::ft("CodeWarning.LogsToFix");
 
-   std::vector< const CodeWarning* > logs;
+   std::vector<const CodeWarning*> logs;
    const CodeWarning* log = nullptr;
 
    if(!Attrs_.at(warning_).fixable_)
@@ -1024,7 +1024,7 @@ bool CodeWarning::Suppress() const
 
    case DataInitOnly:
    {
-      auto data = static_cast< const Data* >(item_);
+      auto data = static_cast<const Data*>(item_);
       auto type = data->GetTypeSpec()->TypeString(true);
       if(type.find("FunctionGuard") != string::npos) return true;
       if(type.find("MutexGuard") != string::npos) return true;
@@ -1066,7 +1066,7 @@ bool CodeWarning::Suppress() const
 
    case DebugFtNotInvoked:
    {
-      auto func = static_cast< Function* >(item_);
+      auto func = static_cast<Function*>(item_);
       auto impl = func->GetImpl();
       if(impl == nullptr) return true;
       if(impl->FirstStatement() == nullptr) return true;
@@ -1146,7 +1146,7 @@ bool CodeWarning::Suppress() const
 
    case DisplayNotOverridden:
    {
-      auto cls = static_cast< const Class* >(item_);
+      auto cls = static_cast<const Class*>(item_);
 
       //  Leaf classes for modules, statistics, and tools do not need
       //  to override Display.
@@ -1170,7 +1170,7 @@ bool CodeWarning::Suppress() const
    {
       //  Classes in example applications do not need to override Patch.
       //
-      auto cls = static_cast< const Class* >(item_);
+      auto cls = static_cast<const Class*>(item_);
       auto& sname = cls->GetSpace()->Name();
 
       if((sname != "NodeBase") &&
@@ -1201,7 +1201,7 @@ bool CodeWarning::Suppress() const
       //
       if(item_->Name().find("operator delete") == 0)
       {
-         auto func = static_cast< const Function* >(item_);
+         auto func = static_cast<const Function*>(item_);
          return (func->MinArgs() > 1);
       }
       break;

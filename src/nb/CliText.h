@@ -62,7 +62,7 @@ public:
 
    //  Returns the registry of parameters.
    //
-   const Registry< CliParm >& Parms() const { return parms_; }
+   const Registry<CliParm>& Parms() const { return parms_; }
 
    //  Adds PARM to the list of parameters that can follow the string.
    //
@@ -79,7 +79,7 @@ public:
 protected:
    //  Returns the registry of parameters.
    //
-   Registry< CliParm >& Parms() { return parms_; }
+   Registry<CliParm>& Parms() { return parms_; }
 
    //  Overridden to access parameters that follow the string.
    //
@@ -110,7 +110,7 @@ private:
 
    //  The parameters that may follow the string.
    //
-   Registry< CliParm > parms_;
+   Registry<CliParm> parms_;
 };
 }
 #endif

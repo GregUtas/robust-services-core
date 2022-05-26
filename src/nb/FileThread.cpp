@@ -197,7 +197,7 @@ void FileThread::Destroy()
 {
    Debug::ft("FileThread.Destroy");
 
-   Singleton< FileThread >::Destroy();
+   Singleton<FileThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ void FileThread::Enter()
    while(true)
    {
       auto msg = DeqMsg(TIMEOUT_NEVER);
-      auto req = static_cast< FileRequest* >(msg);
+      auto req = static_cast<FileRequest*>(msg);
 
       if(req == nullptr) continue;
       stringPtr name(req->TakeName());
@@ -300,7 +300,7 @@ void FileThread::Spool(const string& name,
    //  the client could be preemptable or of higher priority.
    //
    MutexGuard guard(&FileThreadMsgQLock_);
-   Singleton< FileThread >::Instance()->EnqMsg(*request);
+   Singleton<FileThread>::Instance()->EnqMsg(*request);
 }
 
 //------------------------------------------------------------------------------

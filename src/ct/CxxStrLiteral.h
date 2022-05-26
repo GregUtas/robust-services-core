@@ -46,7 +46,7 @@ namespace CodeTools
 {
 //  A string literal ("s", u"s", u8"s", U"s", or L"s").
 //
-template< typename C, class T, Cxx::Encoding E >
+template<typename C, class T, Cxx::Encoding E>
    class CxxStrLiteral : public StringLiteral
 {
 public:
@@ -89,7 +89,7 @@ public:
       typeSpec->Tags()->SetConst(true);
       typeSpec->Tags()->SetPointer(0, true, false);
       data.reset(new FuncData(dataName, typeSpec));
-      data->SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
+      data->SetScope(Singleton<CxxRoot>::Instance()->GlobalNamespace());
       return data;
    }
 
@@ -132,15 +132,15 @@ private:
    static const DataPtr Ref_[Cxx::Encoding_N];
 };
 
-using StringLiteralPtr = std::unique_ptr< StringLiteral >;
+using StringLiteralPtr = std::unique_ptr<StringLiteral>;
 using StrLiteral = CxxStrLiteral<char, std::string, Cxx::ASCII>;
 using u8StrLiteral = CxxStrLiteral<char, std::string, Cxx::ASCII>;
 using u16StrLiteral = CxxStrLiteral<char16_t, std::u16string, Cxx::U16>;
 using u32StrLiteral = CxxStrLiteral<char32_t, std::u32string, Cxx::U32>;
 using wStrLiteral = CxxStrLiteral<wchar_t, std::wstring, Cxx::WIDE>;
 
-template< typename C, class T, Cxx::Encoding E >
-   const DataPtr CxxStrLiteral< C, T, E>::Ref_[Cxx::Encoding_N] =
+template<typename C, class T, Cxx::Encoding E>
+   const DataPtr CxxStrLiteral<C, T, E>::Ref_[Cxx::Encoding_N] =
 {
    StrLiteral::CreateRef(),
    u8StrLiteral::CreateRef(),

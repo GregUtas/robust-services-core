@@ -39,8 +39,8 @@ NtModule::NtModule() : Module()
 
    //  Create the modules required by NodeTools.
    //
-   Singleton< NbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<NbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ void NtModule::Shutdown(RestartLevel level)
 {
    Debug::ft("NtModule.Shutdown");
 
-   auto testdb = Singleton< TestDatabase >::Extant();
+   auto testdb = Singleton<TestDatabase>::Extant();
    if(testdb != nullptr) testdb->Shutdown(level);
 }
 
@@ -66,11 +66,11 @@ void NtModule::Startup(RestartLevel level)
 {
    Debug::ft("NtModule.Startup");
 
-   Singleton< NtIncrement >::Instance()->Startup(level);
+   Singleton<NtIncrement>::Instance()->Startup(level);
 
    //  Define symbols.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("flag.disablerootthread", DisableRootThread);
    reg->BindSymbol("flag.reenterthread", ThreadReenterFlag);
    reg->BindSymbol("flag.recovertrap", ThreadRecoverTrapFlag);

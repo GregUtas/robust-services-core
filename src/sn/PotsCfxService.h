@@ -49,7 +49,7 @@ namespace PotsBase
 {
 class PotsCfxService : public Service
 {
-   friend class Singleton< PotsCfxService >;
+   friend class Singleton<PotsCfxService>;
 
    PotsCfxService();
    ~PotsCfxService();

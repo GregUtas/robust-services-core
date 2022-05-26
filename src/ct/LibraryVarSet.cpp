@@ -51,7 +51,7 @@ word LibraryVarSet::Count(string& result) const
 {
    Debug::ft("LibraryVarSet.Count");
 
-   return Counted(result, Singleton< Library >::Instance()->Variables().size());
+   return Counted(result, Singleton<Library>::Instance()->Variables().size());
 }
 
 //------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void LibraryVarSet::to_str(stringVector& strings, bool verbose) const
 {
    Debug::ft("LibraryVarSet.to_str");
 
-   auto& vars = Singleton< Library >::Instance()->Variables();
+   auto& vars = Singleton<Library>::Instance()->Variables();
 
    for(auto v = vars.cbegin(); v != vars.cend(); ++v)
    {

@@ -87,7 +87,7 @@ private:
 
 IoThreadRecreator::IoThreadRecreator(IoDaemon* daemon,
    const IpService* service, ipport_t port, uint32_t timeout) :
-   Deferred(*Singleton< IpPortRegistry >::Instance(), timeout, false),
+   Deferred(*Singleton<IpPortRegistry>::Instance(), timeout, false),
    daemon_(daemon),
    service_(service),
    port_(port)
@@ -258,7 +258,7 @@ Thread* TcpIoDaemon::CreateIoThread(const IpService* service, ipport_t port)
    Debug::ft("TcpIoDaemon.CreateIoThread");
 
    return new TcpIoThread
-      (this, static_cast< const TcpIpService* >(service), port);
+      (this, static_cast<const TcpIpService*>(service), port);
 }
 
 //------------------------------------------------------------------------------
@@ -267,9 +267,9 @@ TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
 {
    Debug::ft("TcpIoDaemon.GetDaemon");
 
-   auto reg = Singleton< DaemonRegistry >::Instance();
+   auto reg = Singleton<DaemonRegistry>::Instance();
    auto name = MakeTcpName(port);
-   auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
+   auto daemon = static_cast<TcpIoDaemon*>(reg->FindDaemon(name.c_str()));
 
    if(daemon != nullptr) return daemon;
    return new TcpIoDaemon(service, port);
@@ -327,9 +327,9 @@ UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
 {
    Debug::ft("UdpIoDaemon.GetDaemon");
 
-   auto reg = Singleton< DaemonRegistry >::Instance();
+   auto reg = Singleton<DaemonRegistry>::Instance();
    auto name = MakeUdpName(port);
-   auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
+   auto daemon = static_cast<UdpIoDaemon*>(reg->FindDaemon(name.c_str()));
 
    if(daemon != nullptr) return daemon;
    return new UdpIoDaemon(service, port);

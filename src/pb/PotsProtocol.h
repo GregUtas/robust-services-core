@@ -55,7 +55,7 @@ namespace PotsBase
 //
 class PotsProtocol : public TlvProtocol
 {
-   friend class Singleton< PotsProtocol >;
+   friend class Singleton<PotsProtocol>;
 public:
    //  Timer values.
    //

@@ -34,8 +34,8 @@ class TokenTextMap
 public:
    //  Types for the maps.
    //
-   typedef std::map< Token, std::string > TokenToTextMap;
-   typedef std::map< std::string, Token > TextToTokenMap;
+   typedef std::map<Token, std::string> TokenToTextMap;
+   typedef std::map<std::string, Token> TextToTokenMap;
 
    //  Returns the singleton instance of this class.
    //

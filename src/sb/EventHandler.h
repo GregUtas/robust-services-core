@@ -29,7 +29,7 @@
 
 namespace NodeBase
 {
-   template< class T > class Registry;
+   template<class T> class Registry;
 }
 
 namespace SessionBase
@@ -47,7 +47,7 @@ namespace SessionBase
 //
 class EventHandler : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< EventHandler >;
+   friend class NodeBase::Registry<EventHandler>;
 public:
    //  Allows "Id" to refer to an event handler identifier in this class
    //  hierarchy.

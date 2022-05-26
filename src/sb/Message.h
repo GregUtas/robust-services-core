@@ -284,7 +284,7 @@ public:
 
    //  Overridden to enumerate all objects that the message owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Overridden for patching.
    //
@@ -342,11 +342,11 @@ private:
 
    //  Adds the message to the end of WHICHQ.
    //
-   void Enqueue(NodeBase::Q1Way< Message >& whichq);
+   void Enqueue(NodeBase::Q1Way<Message>& whichq);
 
    //  Adds the message to the beginning of WHICHQ.
    //
-   void Henqueue(NodeBase::Q1Way< Message >& whichq);
+   void Henqueue(NodeBase::Q1Way<Message>& whichq);
 
    //  Removes the message from its current queue.
    //
@@ -391,7 +391,7 @@ private:
 
    //  The queue where the message resides (may be nullptr).
    //
-   NodeBase::Q1Way< Message >* whichq_;
+   NodeBase::Q1Way<Message>* whichq_;
 };
 }
 #endif

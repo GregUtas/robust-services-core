@@ -34,7 +34,7 @@ namespace SessionBase
 //
 class TimerThread : public NodeBase::Thread
 {
-   friend class NodeBase::Singleton< TimerThread >;
+   friend class NodeBase::Singleton<TimerThread>;
 public:
    //  Overridden for patching.
    //

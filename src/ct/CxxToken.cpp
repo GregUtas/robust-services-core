@@ -108,7 +108,7 @@ static void PushType(const string& name)
 
    //  Look up NAME and push what it refers to.
    //
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto file = Context::File();
    auto scope = Context::Scope();
    SymbolView view;
@@ -429,7 +429,7 @@ CxxScoped* BoolLiteral::Referent() const
 {
    Debug::ft("BoolLiteral.Referent");
 
-   return Singleton< CxxRoot >::Instance()->BoolTerm();
+   return Singleton<CxxRoot>::Instance()->BoolTerm();
 }
 
 //==============================================================================
@@ -466,7 +466,7 @@ void BraceInit::EnterBlock()
    //  type of structure being initialized, but we'll just return "auto",
    //  which acts as a wildcard when checking LHS and RHS compatibility.
    //
-   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0, false);
+   StackArg arg(Singleton<CxxRoot>::Instance()->AutoTerm(), 0, false);
    Context::PushArg(arg);
 }
 
@@ -776,7 +776,7 @@ void CxxToken::Log(Warning warning,
 CxxToken* CxxToken::PosToItem(size_t pos) const
 {
    return ((GetPos() == pos) && !IsInternal() ?
-      const_cast< CxxToken* >(this) : nullptr);
+      const_cast<CxxToken*>(this) : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -821,7 +821,7 @@ CxxToken* CxxToken::Root() const
 {
    Debug::ft("CxxToken.Root");
 
-   CxxToken* prev = const_cast< CxxToken* >(this);
+   CxxToken* prev = const_cast<CxxToken*>(this);
    CxxToken* curr = prev->RootType();
 
    while(curr != prev)
@@ -946,7 +946,7 @@ bool Expression::AddBinaryOp(TokenPtr& item)
 {
    Debug::ft("Expression.AddBinaryOp");
 
-   auto oper = static_cast< Operation* >(item.get());
+   auto oper = static_cast<Operation*>(item.get());
 
    if(!items_.empty())
    {
@@ -972,7 +972,7 @@ bool Expression::AddBinaryOp(TokenPtr& item)
       }
       else
       {
-         auto ante = static_cast< Operation* >(prev.get());
+         auto ante = static_cast<Operation*>(prev.get());
 
          if(!ante->ElideForward())
          {
@@ -1031,7 +1031,7 @@ bool Expression::AddItem(TokenPtr& item)
    {
       //  We're adding an operator.  See how many arguments it takes.
       //
-      auto oper = static_cast< Operation* >(item.get());
+      auto oper = static_cast<Operation*>(item.get());
 
       switch(CxxOp::Attrs[oper->Op()].arguments)
       {
@@ -1064,7 +1064,7 @@ bool Expression::AddItem(TokenPtr& item)
       return false;
    }
 
-   auto oper = static_cast< Operation* >(prev.get());
+   auto oper = static_cast<Operation*>(prev.get());
    auto op = oper->Op();
    auto& attrs = CxxOp::Attrs[op];
 
@@ -1091,7 +1091,7 @@ bool Expression::AddUnaryOp(TokenPtr& item)
 {
    Debug::ft(Expression_AddUnaryOp);
 
-   auto oper = static_cast< Operation* >(item.get());
+   auto oper = static_cast<Operation*>(item.get());
 
    if(items_.empty())
    {
@@ -1149,7 +1149,7 @@ bool Expression::AddVariableOp(TokenPtr& item)
 {
    Debug::ft(Expression_AddVariableOp);
 
-   auto oper = static_cast< Operation* >(item.get());
+   auto oper = static_cast<Operation*>(item.get());
    auto op = oper->Op();
 
    //  o If nothing preceded the operator, add it as the first item.
@@ -1172,7 +1172,7 @@ bool Expression::AddVariableOp(TokenPtr& item)
 
    if(prev->Type() == Cxx::Operation)
    {
-      auto ante = static_cast< Operation* >(prev.get());
+      auto ante = static_cast<Operation*>(prev.get());
 
       if(ante->ElideForward())
       {
@@ -1333,7 +1333,7 @@ void Expression::Start()
    //  operators.  This allows an expression to push its operators onto the
    //  stack during compilation.
    //
-   Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
+   Context::PushOp(static_cast<Operation*>(StartOfExpr.get()));
 }
 
 //------------------------------------------------------------------------------
@@ -1417,7 +1417,7 @@ CxxScoped* FloatLiteral::Referent() const
 {
    Debug::ft("FloatLiteral.Referent");
 
-   auto base = Singleton< CxxRoot >::Instance();
+   auto base = Singleton<CxxRoot>::Instance();
 
    switch(tags_.size_)
    {
@@ -1544,7 +1544,7 @@ CxxScoped* IntLiteral::Referent() const
 {
    Debug::ft("IntLiteral.Referent");
 
-   auto base = Singleton< CxxRoot >::Instance();
+   auto base = Singleton<CxxRoot>::Instance();
 
    if(tags_.unsigned_)
    {
@@ -1643,7 +1643,7 @@ CxxScoped* NullPtr::Referent() const
 {
    Debug::ft("NullPtr.Referent");
 
-   return Singleton< CxxRoot >::Instance()->NullptrTerm();
+   return Singleton<CxxRoot>::Instance()->NullptrTerm();
 }
 
 //==============================================================================
@@ -1881,12 +1881,12 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
    Class* inClass = nullptr;
    auto inRoot = inArg.item_->Root();
    if((inRoot != nullptr) && (inRoot->Type() == Cxx::Class))
-      inClass = static_cast< Class* >(inRoot);
+      inClass = static_cast<Class*>(inRoot);
 
    Class* outClass = nullptr;
    auto outRoot = outArg.item_->Root();
    if((outRoot != nullptr) && (outRoot->Type() == Cxx::Class))
-      outClass = static_cast< Class* >(outRoot);
+      outClass = static_cast<Class*>(outRoot);
 
    if((inClass != nullptr) && (outClass != nullptr))
    {
@@ -1927,7 +1927,7 @@ void Operation::DisplayArg(ostream& stream, size_t index) const
 
 void Operation::DisplayNew(ostream& stream) const
 {
-   auto call = static_cast< Operation* >(args_.front().get());
+   auto call = static_cast<Operation*>(args_.front().get());
 
    stream << NEW_STR << SPACE;
 
@@ -2322,7 +2322,7 @@ void Operation::ExecuteCall() const
       //  it may be required.  After the matching function has been found,
       //  UpdateThisArg (below) erases the argument if it is not needed.
       //
-      func = static_cast< Function* >(proc.item_);
+      func = static_cast<Function*>(proc.item_);
       func->PushThisArg(args);
 
       switch(func->Operator())
@@ -2336,7 +2336,7 @@ void Operation::ExecuteCall() const
       break;
 
    case Cxx::Class:
-      cls = static_cast< Class* >(proc.item_);
+      cls = static_cast<Class*>(proc.item_);
       cls->Instantiate();
       func = cls->FindCtor(&args, scope, &view);
       if((proc.Name() != nullptr) && (func != nullptr))
@@ -2437,7 +2437,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    if(pod) return;
    arg.item_->RecordUsage();
 
-   auto cls = static_cast< Class* >(arg.item_->Root());
+   auto cls = static_cast<Class*>(arg.item_->Root());
    cls->WasCalled(PureDtor, nullptr);
 }
 
@@ -2474,8 +2474,8 @@ void Operation::ExecuteNew() const
       //  it is the size of the type to be created and, for operator new[],
       //  would be multiplied by the size of each array (determined above).
       //
-      auto newArg = Singleton< CxxRoot >::Instance()->IntTerm();
-      auto newCall = static_cast< Operation* >(args_.front().get());
+      auto newArg = Singleton<CxxRoot>::Instance()->IntTerm();
+      auto newCall = static_cast<Operation*>(args_.front().get());
       Context::PushArg(StackArg(opNew, nullptr));
       Context::PushArg(StackArg(newArg, 0, false));
       newCall->PushArgs();
@@ -2496,7 +2496,7 @@ void Operation::ExecuteNew() const
    //  is more than one, ExecuteCall (below) will find the correct one.
    //
    if(pod) return;
-   auto cls = static_cast< Class* >(spec.item_->Root());
+   auto cls = static_cast<Class*>(spec.item_->Root());
    auto ctor = cls->FindCtor(nullptr, Context::Scope());
    if(ctor == nullptr)
    {
@@ -2517,7 +2517,7 @@ void Operation::ExecuteNew() const
 
    if((op_ == Cxx::OBJECT_CREATE) && (args_.size() >= 3))
    {
-      auto ctorCall = static_cast< Operation* >(args_[2].get());
+      auto ctorCall = static_cast<Operation*>(args_[2].get());
       ctorCall->PushArgs();
    }
 
@@ -2541,7 +2541,7 @@ bool Operation::ExecuteOverload
    auto root = arg1.item_->Root();
    if(root->Type() == Cxx::Class)
    {
-      cls = static_cast< Class* >(root);
+      cls = static_cast<Class*>(root);
       cls->Instantiate();
    }
 
@@ -2580,7 +2580,7 @@ bool Operation::ExecuteOverload
    case Cxx::POSTFIX_INCREMENT:
    case Cxx::POSTFIX_DECREMENT:
    {
-      auto dummyArg = Singleton< CxxRoot >::Instance()->IntTerm();
+      auto dummyArg = Singleton<CxxRoot>::Instance()->IntTerm();
       args.push_back(StackArg(dummyArg, 0, false));
       break;
    }
@@ -2743,7 +2743,7 @@ Function* Operation::FindNewOrDelete
 
    if((targ->Type() == Cxx::Class) && (arg.Ptrs(true) == ptrs))
    {
-      area = static_cast< Class* >(targ);
+      area = static_cast<Class*>(targ);
       pod = false;
       if(!del) area->Creating();
       area->Instantiate();
@@ -3113,7 +3113,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       return;
    }
 
-   auto cls = static_cast< Class* >(root);
+   auto cls = static_cast<Class*>(root);
    cls->Instantiate();
 
    auto ptrs = arg1.Ptrs(true);
@@ -3180,7 +3180,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    {
       if(mem->Type() == Cxx::Function)
       {
-         mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
+         mem = static_cast<Function*>(mem)->InstantiateFunction(tmplt);
       }
       else
       {

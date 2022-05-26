@@ -101,21 +101,21 @@ static void CreateModules()
 {
    Debug::ft("CreateModules");
 
-   //& Singleton< NbModule >::Instance();
-   //& Singleton< NtModule >::Instance();
-   Singleton< CtModule >::Instance();
-   //& Singleton< NwModule >::Instance();
-   //& Singleton< SbModule >::Instance();
-   //& Singleton< StModule >::Instance();
-   //& Singleton< MbModule >::Instance();
-   //& Singleton< CbModule >::Instance();
-   //& Singleton< PbModule >::Instance();
-   Singleton< OnModule >::Instance();
-   Singleton< CnModule >::Instance();
-   Singleton< RnModule >::Instance();
-   Singleton< SnModule >::Instance();
-   Singleton< AnModule >::Instance();
-   //& Singleton< DipModule >::Instance();
+   //& Singleton<NbModule>::Instance();
+   //& Singleton<NtModule>::Instance();
+   Singleton<CtModule>::Instance();
+   //& Singleton<NwModule>::Instance();
+   //& Singleton<SbModule>::Instance();
+   //& Singleton<StModule>::Instance();
+   //& Singleton<MbModule>::Instance();
+   //& Singleton<CbModule>::Instance();
+   //& Singleton<PbModule>::Instance();
+   Singleton<OnModule>::Instance();
+   Singleton<CnModule>::Instance();
+   Singleton<RnModule>::Instance();
+   Singleton<SnModule>::Instance();
+   Singleton<AnModule>::Instance();
+   //& Singleton<DipModule>::Instance();
 }
 
 //------------------------------------------------------------------------------

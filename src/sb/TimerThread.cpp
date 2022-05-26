@@ -36,7 +36,7 @@ using namespace NodeBase;
 namespace SessionBase
 {
 TimerThread::TimerThread() :
-   Thread(PayloadFaction, Singleton< TimerDaemon >::Instance())
+   Thread(PayloadFaction, Singleton<TimerDaemon>::Instance())
 {
    Debug::ft("TimerThread.ctor");
 
@@ -72,7 +72,7 @@ TraceStatus TimerThread::CalcStatus(bool dynamic) const
    //
    auto status = GetStatus();
    if(status != TraceDefault) return status;
-   status = Singleton< SbTracer >::Instance()->TimersStatus();
+   status = Singleton<SbTracer>::Instance()->TimersStatus();
    if(status != TraceDefault) return status;
    return Thread::CalcStatus(dynamic);
 }
@@ -83,7 +83,7 @@ void TimerThread::Destroy()
 {
    Debug::ft("TimerThread.Destroy");
 
-   Singleton< TimerThread >::Destroy();
+   Singleton<TimerThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void TimerThread::Enter()
 
    //  Every second, tell our registry to process the next timer queue.
    //
-   auto reg = Singleton< TimerRegistry >::Instance();
+   auto reg = Singleton<TimerRegistry>::Instance();
    msecs_t sleep(ONE_SEC);
 
    while(true)

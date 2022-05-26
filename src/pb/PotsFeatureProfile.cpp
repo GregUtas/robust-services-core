@@ -79,7 +79,7 @@ void PotsFeatureProfile::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   auto ftr = Singleton< PotsFeatureRegistry >::Instance()->Feature(fid_);
+   auto ftr = Singleton<PotsFeatureRegistry>::Instance()->Feature(fid_);
 
    stream << prefix << "fid  : " << int(fid_);
    stream << " (" << ftr->AbbrName() << ')' << CRLF;
@@ -91,7 +91,7 @@ void PotsFeatureProfile::Display(ostream& stream,
 ptrdiff_t PotsFeatureProfile::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const PotsFeatureProfile* >(&local);
+   auto fake = reinterpret_cast<const PotsFeatureProfile*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

@@ -42,7 +42,7 @@ namespace NetworkBase
 //
 class IpPortRegistry : public NodeBase::Protected
 {
-   friend class NodeBase::Singleton< IpPortRegistry >;
+   friend class NodeBase::Singleton<IpPortRegistry>;
    friend class IpPort;
    friend class LocalAddrHandler;
    friend class SendLocalThread;
@@ -70,7 +70,7 @@ public:
 
    //  Returns the registry of ports.  Used for iteration.
    //
-   const NodeBase::Q1Way< IpPort >& Ports() const { return portq_; }
+   const NodeBase::Q1Way<IpPort>& Ports() const { return portq_; }
 
    //  Returns true if DEST's IP address is the same as SRCE's, a loopback
    //  address, or this element's IP address, *and* the destination port is
@@ -152,11 +152,11 @@ private:
 
    //  Configuration parameter for the element's IP address.
    //
-   std::unique_ptr< LocalAddrCfg > localAddrCfg_;
+   std::unique_ptr<LocalAddrCfg> localAddrCfg_;
 
    //  Information about each IP port that receives messages.
    //
-   NodeBase::Q1Way< IpPort > portq_;
+   NodeBase::Q1Way<IpPort> portq_;
 
    //  The statistics group for IP ports.
    //

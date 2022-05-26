@@ -111,7 +111,7 @@ LibrarySet* LibraryCommand::Evaluate(CliThread& cli)
    cli.ibuf->Read(expr);
    if(!cli.EndOfInput()) return nullptr;
 
-   auto result = Singleton< Library >::Instance()->Evaluate(cli, expr, pos);
+   auto result = Singleton<Library>::Instance()->Evaluate(cli, expr, pos);
    return result;
 }
 
@@ -149,7 +149,7 @@ word AssignCommand::ProcessCommand(CliThread& cli) const
    cli.ibuf->Read(expr);
    if(!cli.EndOfInput()) return -1;
 
-   auto lib = Singleton< Library >::Instance();
+   auto lib = Singleton<Library>::Instance();
    auto rc = lib->Assign(cli, name, expr, pos, expl);
    return cli.Report(rc, expl);
 }
@@ -295,7 +295,7 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("CoverageCommand.ProcessCommand");
 
-   auto database = Singleton< CodeCoverage >::Instance();
+   auto database = Singleton<CodeCoverage>::Instance();
    id_t index;
    word min;
    string name, expl;
@@ -537,7 +537,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       Debug::Progress(string("Exporting parsed code...") + CRLF);
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-      Singleton< Library >::Instance()->Export(*stream, opts);
+      Singleton<Library>::Instance()->Export(*stream, opts);
       auto filename = title + ".lib.txt";
       cli.SendToFile(filename, true);
    }
@@ -548,7 +548,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       auto filename = title + ".trim.txt";
-      Singleton< Library >::Instance()->Trim(*stream);
+      Singleton<Library>::Instance()->Trim(*stream);
       cli.SendToFile(filename, true);
    }
 
@@ -559,7 +559,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       auto filename = title + ".xref.txt";
-      Singleton< CxxSymbols >::Instance()->DisplayXref(*stream, opts);
+      Singleton<CxxSymbols>::Instance()->DisplayXref(*stream, opts);
       cli.SendToFile(filename, true);
    }
 
@@ -595,7 +595,7 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(name, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto file = Singleton< Library >::Instance()->FindFile(name);
+   auto file = Singleton<Library>::Instance()->FindFile(name);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
    file->Display(*cli.obuf, spaces(2), VerboseOpt);
    return 0;
@@ -636,7 +636,7 @@ word FixCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(warning, cli)) return -1;
    if(!GetBoolParm(options.prompt, cli)) return -1;
-   options.warning = static_cast< Warning >(warning);
+   options.warning = static_cast<Warning>(warning);
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -715,7 +715,7 @@ word ImportCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(subdir, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto lib = Singleton< Library >::Instance();
+   auto lib = Singleton<Library>::Instance();
    string path(lib->SourcePath());
    if(!subdir.empty()) path += PATH_SEPARATOR + subdir;
    auto rc = lib->Import(name, path, expl);
@@ -751,7 +751,7 @@ word ItemsCommand::ProcessCommand(CliThread& cli) const
    if(!GetFileName(name, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto file = Singleton< Library >::Instance()->FindFile(name);
+   auto file = Singleton<Library>::Instance()->FindFile(name);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
@@ -872,7 +872,7 @@ word ParseCommand::ProcessCommand(CliThread& cli) const
    auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
    auto file = SysFile::CreateIstream(path.c_str());
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   Singleton< CxxRoot >::Instance()->DefineSymbols(*file.get());
+   Singleton<CxxRoot>::Instance()->DefineSymbols(*file.get());
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -911,7 +911,7 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
       Symbol::InvalidInitialChars())) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto rc = Singleton< Library >::Instance()->Purge(name, expl);
+   auto rc = Singleton<Library>::Instance()->Purge(name, expl);
    return cli.Report(rc, expl);
 }
 
@@ -951,7 +951,7 @@ word RenameCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(newName, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto lib = Singleton< Library >::Instance();
+   auto lib = Singleton<Library>::Instance();
    auto rc = lib->Rename(cli, oldName, newName, expl);
    return cli.Report(rc, expl);
 }
@@ -1000,7 +1000,7 @@ word ScanCommand::ProcessCommand(CliThread& cli) const
    expr = line.substr(0, quote1);
    pattern = line.substr(quote1 + 1, quote2 - (quote1 + 1));
 
-   auto set = Singleton< Library >::Instance()->Evaluate(cli, expr, pos);
+   auto set = Singleton<Library>::Instance()->Evaluate(cli, expr, pos);
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    auto rc = set->Scan(*cli.obuf, pattern, expl);
@@ -1076,11 +1076,11 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
 
       size_t hdrs = 0;
       size_t cpps = 0;
-      auto& dirs = Singleton< Library >::Instance()->Directories().Items();
+      auto& dirs = Singleton<Library>::Instance()->Directories().Items();
 
       for(auto d = dirs.cbegin(); d != dirs.cend(); ++d)
       {
-         auto dir = static_cast< CodeDir* >(*d);
+         auto dir = static_cast<CodeDir*>(*d);
          auto h = dir->HeaderCount();
          *cli.obuf << setw(11) << dir->Name();
          *cli.obuf << setw(6) << h;
@@ -1099,11 +1099,11 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
    case FailIndex:
    {
       auto found = false;
-      auto& files = Singleton< Library >::Instance()->Files().Items();
+      auto& files = Singleton<Library>::Instance()->Files().Items();
 
       for(auto f = files.cbegin(); f != files.cend(); ++f)
       {
-         auto file = static_cast< CodeFile* >(*f);
+         auto file = static_cast<CodeFile*>(*f);
          if(file->ParseStatus() == CodeFile::Failed)
          {
             *cli.obuf << spaces(2) << file->Name() << CRLF;
@@ -1309,7 +1309,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(line, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto file = Singleton< Library >::Instance()->FindFile(filename);
+   auto file = Singleton<Library>::Instance()->FindFile(filename);
 
    if(file == nullptr)
    {

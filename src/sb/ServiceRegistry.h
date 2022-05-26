@@ -35,7 +35,7 @@ namespace SessionBase
 //
 class ServiceRegistry : public NodeBase::Immutable
 {
-   friend class NodeBase::Singleton< ServiceRegistry >;
+   friend class NodeBase::Singleton<ServiceRegistry>;
    friend class Service;
 public:
    //  Deleted to prohibit copying.
@@ -77,7 +77,7 @@ private:
 
    //  The global registry of services.
    //
-   NodeBase::Registry< Service > services_;
+   NodeBase::Registry<Service> services_;
 };
 }
 #endif

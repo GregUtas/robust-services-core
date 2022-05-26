@@ -37,7 +37,7 @@ const char PATH_SEPARATOR =
 static uintptr_t BadPointer()
 {
    uintptr_t value = 0;
-   auto bytes = reinterpret_cast< uint8_t* >(&value);
+   auto bytes = reinterpret_cast<uint8_t*>(&value);
    for(size_t i = 0; i < BYTES_PER_POINTER; ++i) bytes[i] = 0xfd;
    return value;
 }

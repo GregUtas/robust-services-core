@@ -120,7 +120,7 @@ Trigger* Initiator::GetTrigger() const
 {
    Debug::ftnt(Initiator_GetTrigger);
 
-   auto svc = Singleton< ServiceRegistry >::Extant()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Extant()->GetService(sid_);
 
    if(svc == nullptr)
    {
@@ -129,7 +129,7 @@ Trigger* Initiator::GetTrigger() const
       return nullptr;
    }
 
-   auto anc = Singleton< ServiceRegistry >::Extant()->GetService(aid_);
+   auto anc = Singleton<ServiceRegistry>::Extant()->GetService(aid_);
 
    if(anc == nullptr)
    {
@@ -162,7 +162,7 @@ EventHandler::Rc Initiator::InvokeHandler
    //  When an initiator receives an event, it may only pass the event on or
    //  request the creation of its modifier.
    //
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid_);
 
    if(svc->GetStatus() != Service::Enabled) return EventHandler::Pass;
 
@@ -214,7 +214,7 @@ EventHandler::Rc Initiator::InvokeHandler
 ptrdiff_t Initiator::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Initiator* >(&local);
+   auto fake = reinterpret_cast<const Initiator*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

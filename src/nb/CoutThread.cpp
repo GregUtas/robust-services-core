@@ -72,7 +72,7 @@ void CoutThread::Destroy()
 {
    Debug::ft("CoutThread.Destroy");
 
-   Singleton< CoutThread >::Destroy();
+   Singleton<CoutThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ void CoutThread::Enter()
    while(true)
    {
       auto msg = DeqMsg(TIMEOUT_NEVER);
-      auto req = static_cast< StreamRequest* >(msg);
+      auto req = static_cast<StreamRequest*>(msg);
 
       if(req == nullptr) continue;
       ostringstreamPtr stream(req->TakeStream());
@@ -136,7 +136,7 @@ void CoutThread::Spool(ostringstreamPtr& stream)
    //  the client could be preemptable or of higher priority.
    //
    MutexGuard guard(&CoutThreadMsgQLock_);
-   Singleton< CoutThread >::Instance()->EnqMsg(*request);
+   Singleton<CoutThread>::Instance()->EnqMsg(*request);
 }
 
 //------------------------------------------------------------------------------

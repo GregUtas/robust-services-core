@@ -43,7 +43,7 @@ namespace SessionBase
 //
 class Signal : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< Signal >;
+   friend class NodeBase::Registry<Signal>;
 public:
    //  Allows "Id" to refer to a signal identifier in this class hierarchy.
    //

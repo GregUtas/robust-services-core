@@ -134,7 +134,7 @@ void Debug::SetSwFlag(FlagId fid, bool value)
       //
       if((fid == DisableRootThread) && !value)
       {
-         Singleton< RootThread >::Extant()->systhrd_->Proceed();
+         Singleton<RootThread>::Extant()->systhrd_->Proceed();
       }
    }
 }

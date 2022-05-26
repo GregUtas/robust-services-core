@@ -51,7 +51,7 @@ static void* EnterThread(void* arg)
 
    //  Our argument is a pointer to a Thread.
    //
-   auto thread = static_cast< Thread* >(arg);
+   auto thread = static_cast<Thread*>(arg);
    uintptr_t rc = thread->Start();
    return (void*) rc;
 }

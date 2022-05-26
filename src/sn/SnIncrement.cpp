@@ -76,7 +76,7 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< PotsTreatmentRegistry >::Instance();
+   auto reg = Singleton<PotsTreatmentRegistry>::Instance();
 
    if(all)
    {

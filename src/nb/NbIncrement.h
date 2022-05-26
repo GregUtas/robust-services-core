@@ -275,7 +275,7 @@ private:
 //
 class NbIncrement : public CliIncrement
 {
-   friend class Singleton< NbIncrement >;
+   friend class Singleton<NbIncrement>;
 public:
    //  Overridden for patching.
    //

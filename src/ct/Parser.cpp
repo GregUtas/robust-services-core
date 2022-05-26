@@ -73,7 +73,7 @@ static bool SetCompoundType
 {
    Debug::ft(CodeTools_SetCompoundType);
 
-   auto base = Singleton< CxxRoot >::Instance();
+   auto base = Singleton<CxxRoot>::Instance();
 
    switch(type)
    {
@@ -233,7 +233,7 @@ bool Parser::CheckType(const QualNamePtr& name)
    if(name->Size() != 1) return true;
 
    auto type = Cxx::GetType(name->Name());
-   auto root = Singleton< CxxRoot >::Instance();
+   auto root = Singleton<CxxRoot>::Instance();
 
    switch(type)
    {
@@ -452,7 +452,7 @@ bool Parser::GetAlignOf(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::ALIGNOF_TYPE));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    op->AddArg(arg, false);
    expr->AddItem(token);
    return true;
@@ -488,7 +488,7 @@ bool Parser::GetArgList(TokenPtr& call)
 
    call.reset(new Operation(Cxx::FUNCTION_CALL));
    call->SetContext(prev);
-   auto op = static_cast< Operation* >(call.get());
+   auto op = static_cast<Operation*>(call.get());
 
    for(size_t i = 0; i < temps.size(); ++i)
    {
@@ -857,7 +857,7 @@ bool Parser::GetCast(Expression* expr)
 
    TokenPtr token(new Operation(Cxx::CAST));
    token->SetContext(prev);
-   auto cast = static_cast< Operation* >(token.get());
+   auto cast = static_cast<Operation*>(token.get());
    TokenPtr arg1(spec.release());
    TokenPtr arg2(item.release());
    cast->AddArg(arg1, false);
@@ -894,7 +894,7 @@ bool Parser::GetCatch(TokenPtr& statement)
    if(!GetBlock(handler)) return Backup(start, 34);
 
    statement.reset(new Catch(start));
-   auto c = static_cast< Catch* >(statement.get());
+   auto c = static_cast<Catch*>(statement.get());
    c->AddArg(arg);
    c->AddHandler(handler);
    return true;
@@ -1023,8 +1023,8 @@ bool Parser::GetClassData(DataPtr& data)
    data->SetStatic(stat);
    data->SetThreadLocal(tloc);
    data->SetConstexpr(cexp);
-   static_cast< ClassData* >(data.get())->SetMutable(mute);
-   static_cast< ClassData* >(data.get())->SetWidth(width);
+   static_cast<ClassData*>(data.get())->SetMutable(mute);
+   static_cast<ClassData*>(data.get())->SetWidth(width);
    data->SetAssignment(init, eqpos);
    return true;
 }
@@ -1182,7 +1182,7 @@ bool Parser::GetConditional(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::CONDITIONAL));
    token->SetContext(pos);
-   auto cond = static_cast< Operation* >(token.get());
+   auto cond = static_cast<Operation*>(token.get());
    TokenPtr test(new Elision);
    TokenPtr value1(exp1.release());
    TokenPtr value0(exp0.release());
@@ -1455,7 +1455,7 @@ bool Parser::GetCxxCast(Expression* expr, Cxx::Operator op, size_t pos)
 
    TokenPtr token(new Operation(op));
    token->SetContext(pos);
-   auto cast = static_cast< Operation* >(token.get());
+   auto cast = static_cast<Operation*>(token.get());
    TokenPtr arg1(spec.release());
    TokenPtr arg2(item.release());
    cast->AddArg(arg1, false);
@@ -1616,7 +1616,7 @@ bool Parser::GetDefined(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::DEFINED));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    MacroNamePtr macro(new MacroName(name));
    macro->SetContext(mpos);
    TokenPtr arg = std::move(macro);
@@ -1640,7 +1640,7 @@ bool Parser::GetDelete(Expression* expr, Cxx::Operator op, size_t pos)
 
    TokenPtr token(new Operation(op));
    token->SetContext(pos);
-   auto delOp = static_cast< Operation* >(token.get());
+   auto delOp = static_cast<Operation*>(token.get());
    TokenPtr arg(item.release());
    delOp->AddArg(arg, false);
    expr->AddItem(token);
@@ -1666,7 +1666,7 @@ bool Parser::GetDo(TokenPtr& statement)
    if(!lexer_.NextCharIs(';')) return Backup(start, 94);
 
    statement.reset(new Do(begin));
-   auto d = static_cast< Do* >(statement.get());
+   auto d = static_cast<Do*>(statement.get());
    d->AddLoop(loop);
    d->AddCondition(condition);
    return true;
@@ -1864,7 +1864,7 @@ bool Parser::GetFor(TokenPtr& statement)
    if(!GetBlock(loop)) return Backup(start, 117);
 
    statement.reset(new For(begin));
-   auto f = static_cast< For* >(statement.get());
+   auto f = static_cast<For*>(statement.get());
    f->AddInitial(initial);
    f->AddCondition(condition);
    f->AddSubsequent(subsequent);
@@ -1966,7 +1966,7 @@ bool Parser::GetFuncData(DataPtr& data)
       data->SetStatic(stat);
       data->SetThreadLocal(tloc);
       data->SetConstexpr(cexp);
-      static_cast< FuncData* >(data.get())->SetExpression(expr);
+      static_cast<FuncData*>(data.get())->SetExpression(expr);
       return true;
    }
 
@@ -1985,7 +1985,7 @@ bool Parser::GetFuncData(DataPtr& data)
          //  to this item's name override those of the original type, which
          //  is cloned and modified to create the subsequent declaration.
          //
-         typeSpec.reset(static_cast< TypeSpec* >(prev->GetTypeSpec()->Clone()));
+         typeSpec.reset(static_cast<TypeSpec*>(prev->GetTypeSpec()->Clone()));
          typeSpec->CopyContext(prev, true);
          *typeSpec->Tags() = TypeTags();
          GetTypeTags(typeSpec.get());
@@ -2018,7 +2018,7 @@ bool Parser::GetFuncData(DataPtr& data)
       if(data == nullptr)
       {
          data.reset(new FuncData(dataName, typeSpec));
-         curr = static_cast< FuncData* >(data.get());
+         curr = static_cast<FuncData*>(data.get());
          curr->SetFirst(curr);
       }
       else
@@ -2295,13 +2295,13 @@ bool Parser::GetIf(TokenPtr& statement)
          auto first = elseBlock->FirstStatement();
          if(first->Type() == Cxx::If)
          {
-            static_cast< If* >(first)->SetElseIf();
+            static_cast<If*>(first)->SetElseIf();
          }
       }
    }
 
    statement.reset(new If(begin));
-   auto i = static_cast< If* >(statement.get());
+   auto i = static_cast<If*>(statement.get());
    i->AddCondition(condition);
    i->AddThen(thenBlock);
    i->AddElse(elseBlock);
@@ -2463,7 +2463,7 @@ bool Parser::GetNamespace()
    if(!lexer_.NextCharIs('{')) return Backup(start, 142);
 
    auto outer = Context::Scope();
-   auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
+   auto inner = static_cast<Namespace*>(outer)->EnsureNamespace(name);
    inner->SetLoc(Context::File(), begin);
    inner->InsertDefn(Context::File(), begin);
    Context::PushScope(inner, false);
@@ -2505,7 +2505,7 @@ bool Parser::GetNew(Expression* expr, Cxx::Operator op, size_t pos)
    //
    TokenPtr token(new Operation(op));
    token->SetContext(pos);
-   auto newOp = static_cast< Operation* >(token.get());
+   auto newOp = static_cast<Operation*>(token.get());
    expr->AddItem(token);
 
    auto start = CurrPos();
@@ -2524,7 +2524,7 @@ bool Parser::GetNew(Expression* expr, Cxx::Operator op, size_t pos)
       token->SetContext(pos);
    }
 
-   static_cast< Operation* >(token.get())->SetNew();
+   static_cast<Operation*>(token.get())->SetNew();
    newOp->AddArg(token, false);
    start = CurrPos();
 
@@ -2576,7 +2576,7 @@ bool Parser::GetNoExcept(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::NOEXCEPT));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    TokenPtr arg(item.release());
    if(arg != nullptr) op->AddArg(arg, false);
    expr->AddItem(token);
@@ -2990,7 +2990,7 @@ bool Parser::GetReturn(TokenPtr& statement)
    if(!lexer_.NextCharIs(';')) return Backup(start, 171);
 
    statement.reset(new Return(begin));
-   static_cast< Return* >(statement.get())->AddExpr(expr);
+   static_cast<Return*>(statement.get())->AddExpr(expr);
    return true;
 }
 
@@ -3035,7 +3035,7 @@ bool Parser::GetSizeOf(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::SIZEOF_TYPE));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    op->AddArg(arg, false);
    expr->AddItem(token);
    return true;
@@ -3276,7 +3276,7 @@ bool Parser::GetSubscript(Expression* expr, size_t pos)
    //
    TokenPtr token(new Operation(Cxx::ARRAY_SUBSCRIPT));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    expr->AddItem(token);
    TokenPtr index(item.release());
    op->AddArg(index, false);
@@ -3300,7 +3300,7 @@ bool Parser::GetSwitch(TokenPtr& statement)
    if(!GetBlock(cases)) return Backup(start, 188);
 
    statement.reset(new Switch(begin));
-   auto s = static_cast< Switch* >(statement.get());
+   auto s = static_cast<Switch*>(statement.get());
    s->AddExpr(value);
    s->AddCases(cases);
    return true;
@@ -3414,7 +3414,7 @@ bool Parser::GetThrow(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::THROW));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    TokenPtr arg(item.release());
    if(arg != nullptr) op->AddArg(arg, false);
    expr->AddItem(token);
@@ -3446,7 +3446,7 @@ bool Parser::GetTry(TokenPtr& statement)
    if(!GetBlock(work)) return Backup(start, 197);
 
    statement.reset(new Try(begin));
-   auto t = static_cast< Try* >(statement.get());
+   auto t = static_cast<Try*>(statement.get());
    t->AddTry(work);
    while(GetCatch(trap)) t->AddCatch(trap);
    return true;
@@ -3504,7 +3504,7 @@ bool Parser::GetTypeId(Expression* expr, size_t pos)
 
    TokenPtr token(new Operation(Cxx::TYPE_NAME));
    token->SetContext(pos);
-   auto op = static_cast< Operation* >(token.get());
+   auto op = static_cast<Operation*>(token.get());
    TokenPtr arg(type.release());
    op->AddArg(arg, false);
    expr->AddItem(token);
@@ -3794,7 +3794,7 @@ bool Parser::GetWhile(TokenPtr& statement)
    if(!GetBlock(loop)) return Backup(start, 211);
 
    statement.reset(new While(begin));
-   auto w = static_cast< While* >(statement.get());
+   auto w = static_cast<While*>(statement.get());
    w->AddCondition(condition);
    w->AddLoop(loop);
    return true;
@@ -3819,13 +3819,13 @@ bool Parser::HandleDefine()
 
    //  See if NAME has already appeared as a macro name before creating it.
    //
-   auto macro = Singleton< CxxSymbols >::Instance()->FindMacro(name);
+   auto macro = Singleton<CxxSymbols>::Instance()->FindMacro(name);
 
    if(macro == nullptr)
    {
       MacroPtr def(new Define(name, expr));
       def->SetContext(start);
-      Singleton< CxxRoot >::Instance()->AddMacro(def);
+      Singleton<CxxRoot>::Instance()->AddMacro(def);
    }
    else
    {
@@ -4153,7 +4153,7 @@ bool Parser::HandleTilde(Expression* expr, size_t pos)
    {
       if(token->Type() == Cxx::Operation)
       {
-         auto op = static_cast< Operation* >(token)->Op();
+         auto op = static_cast<Operation*>(token)->Op();
 
          if((op == Cxx::POINTER_SELECT) || (op == Cxx::REFERENCE_SELECT))
          {
@@ -4252,7 +4252,7 @@ bool Parser::Parse(CodeFile& file)
    //  namespace as the current scope and start parsing at file scope.
    //
    Context::Trace(CxxTrace::START_FILE, file);
-   auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto gns = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    Context::SetFile(&file);
    Context::PushScope(gns, false);
    Enter(IsFile, file.Name(), nullptr, file.GetCode(), true, &file);
@@ -4309,7 +4309,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
       //
       if(!lexer_.Eof())
       {
-         auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+         auto gns = Singleton<CxxRoot>::Instance()->GlobalNamespace();
          Context::PushScope(gns, false);
          GetFileDecls(gns);
       }
@@ -4414,7 +4414,7 @@ Function* Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
       result = func.get();
       func->SetAccess(tmplt->GetAccess());
       func->SetTemplateArgs(type);
-      func->SetTemplate(const_cast< Function* >(tmplt));
+      func->SetTemplate(const_cast<Function*>(tmplt));
       area->AddFunc(func);
    }
 

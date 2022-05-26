@@ -187,7 +187,7 @@ private:
    //  Data that changes too frequently to unprotect and reprotect memory
    //  when it needs to be modified.
    //
-   std::unique_ptr< LogDynamic > dyn_;
+   std::unique_ptr<LogDynamic> dyn_;
 
    //  The number of times the log was buffered for output.
    //

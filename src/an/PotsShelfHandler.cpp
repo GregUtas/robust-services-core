@@ -63,14 +63,14 @@ void PotsShelfHandler::ReceiveBuff
 {
    Debug::ft("PotsShelfHandler.ReceiveBuff");
 
-   auto sbuff = static_cast< SbIpBuffer* >(buff.get());
+   auto sbuff = static_cast<SbIpBuffer*>(buff.get());
    auto header = sbuff->Header();
-   auto pptr = reinterpret_cast< TlvParm* >(sbuff->PayloadPtr());
-   auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
+   auto pptr = reinterpret_cast<TlvParm*>(sbuff->PayloadPtr());
+   auto phi = reinterpret_cast<PotsHeaderInfo*>(pptr->bytes);
 
    //  Verify that the message is addressed to an existing POTS circuit.
    //
-   auto cct = Singleton< Switch >::Instance()->GetCircuit(phi->port);
+   auto cct = Singleton<Switch>::Instance()->GetCircuit(phi->port);
 
    if(cct == nullptr) return;
 
@@ -104,7 +104,7 @@ void PotsShelfHandler::ReceiveBuff
    //  If traffic is running, give the shelf absolute priority over the
    //  call server so that the call server will enter overload first.
    //
-   auto thr = Singleton< PotsTrafficThread >::Extant();
+   auto thr = Singleton<PotsTrafficThread>::Extant();
 
    if((thr != nullptr) && (thr->GetRate() > 0))
    {

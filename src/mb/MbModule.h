@@ -35,7 +35,7 @@ namespace MediaBase
 //
 class MbModule : public Module
 {
-   friend class Singleton< MbModule >;
+   friend class Singleton<MbModule>;
 
    //  Private because this is a singleton.
    //

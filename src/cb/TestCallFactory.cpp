@@ -76,7 +76,7 @@ Cause::Ind TestCallFactory::VerifyRoute(RouteResult::Id rid) const
    //  There is no point in sending a CIP IAM if the destination DN is not
    //  registered.
    //
-// if(Singleton< PotsProfileRegistry >::Instance()->Profile(rid) == nullptr)
+// if(Singleton<PotsProfileRegistry>::Instance()->Profile(rid) == nullptr)
 // {
 //    return Cause::UnallocatedNumber;
 // }

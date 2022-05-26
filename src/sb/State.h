@@ -37,7 +37,7 @@ namespace SessionBase
 //
 class State : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< State >;
+   friend class NodeBase::Registry<State>;
 public:
    //  Allows "Id" to refer to a state identifier in this class hierarchy.
    //

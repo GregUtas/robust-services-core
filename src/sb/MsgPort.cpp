@@ -71,7 +71,7 @@ MsgPort::MsgPort(ProtocolLayer& upper) : ProtocolLayer(upper, true),
 
    //  We were created on behalf of UPPER's factory.
    //
-   locAddr_.sbAddr_.fid = static_cast< ProtocolSM& >(upper).GetFactory();
+   locAddr_.sbAddr_.fid = static_cast<ProtocolSM&>(upper).GetFactory();
    Initialize(nullptr);
 }
 
@@ -88,7 +88,7 @@ MsgPort::~MsgPort()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -128,7 +128,7 @@ ProtocolLayer* MsgPort::AllocUpper(const Message& msg)
    //
    auto hdr = msg.Header();
    auto fid = hdr->rxAddr.fid;
-   auto fac = Singleton < FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton <FactoryRegistry>::Instance()->GetFactory(fid);
 
    if(fac == nullptr)
    {
@@ -143,7 +143,7 @@ ProtocolLayer* MsgPort::AllocUpper(const Message& msg)
       return nullptr;
    }
 
-   return static_cast< PsmFactory* >(fac)->AllocIcPsm(msg, *this);
+   return static_cast<PsmFactory*>(fac)->AllocIcPsm(msg, *this);
 }
 
 //------------------------------------------------------------------------------
@@ -198,10 +198,10 @@ MsgPort* MsgPort::Find(const LocalAddress& locAddr)
 {
    Debug::ft("MsgPort.Find");
 
-   auto pool = Singleton< MsgPortPool >::Instance();
+   auto pool = Singleton<MsgPortPool>::Instance();
    if(locAddr.pid != pool->Pid()) return nullptr;
 
-   auto port = static_cast< MsgPort* >(pool->BidToObj(locAddr.bid));
+   auto port = static_cast<MsgPort*>(pool->BidToObj(locAddr.bid));
 
    if(port != nullptr)
    {
@@ -217,7 +217,7 @@ MsgPort* MsgPort::FindPeer(const GlobalAddress& remAddr)
 {
    Debug::ft("MsgPort.FindPeer");
 
-   return Singleton< MsgPortPool >::Instance()->FindPeerPort(remAddr);
+   return Singleton<MsgPortPool>::Instance()->FindPeerPort(remAddr);
 }
 
 //------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ void MsgPort::Initialize(const Message* msg)
    locAddr_.sbAddr_.seq = ObjectPool::ObjSeq(this);
    locAddr_.sbAddr_.pid = ObjectPool::ObjPid(this);
 
-   auto reg = Singleton< ObjectPoolRegistry >::Instance();
+   auto reg = Singleton<ObjectPoolRegistry>::Instance();
    auto pool = reg->Pool(locAddr_.sbAddr_.pid);
    locAddr_.sbAddr_.bid = pool->ObjBid(this, true);
 
@@ -253,10 +253,10 @@ void MsgPort::Initialize(const Message* msg)
    //  Inform our factory about our allocation.
    //
    auto fid = locAddr_.sbAddr_.fid;
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
 
    if(fac != nullptr)
-      static_cast< PsmFactory* >(fac)->PortAllocated(*this, msg);
+      static_cast<PsmFactory*>(fac)->PortAllocated(*this, msg);
    else
       Debug::SwLog(MsgPort_Initialize, "factory not found", fid);
 
@@ -267,7 +267,7 @@ void MsgPort::Initialize(const Message* msg)
    if(ctx->TraceOn(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -315,7 +315,7 @@ void* MsgPort::operator new(size_t size)
 {
    Debug::ft("MsgPort.operator new");
 
-   return Singleton< MsgPortPool >::Instance()->DeqBlock(size);
+   return Singleton<MsgPortPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -331,7 +331,7 @@ MsgPort* MsgPort::Port() const
 {
    Debug::ft("MsgPort.Port");
 
-   return const_cast< MsgPort* >(this);
+   return const_cast<MsgPort*>(this);
 }
 
 //------------------------------------------------------------------------------
@@ -441,7 +441,7 @@ void MsgPort::UpdatePeer() const
    //
    if(remAddr_.sbAddr_.bid == NIL_ID) return;
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
    if(!reg->CanBypassStack(locAddr_, remAddr_)) return;
 
    auto peer = Find(remAddr_.sbAddr_);

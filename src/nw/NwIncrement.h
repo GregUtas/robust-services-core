@@ -152,7 +152,7 @@ protected:
 //
 class NwIncrement : public NodeBase::CliIncrement
 {
-   friend class NodeBase::Singleton< NwIncrement >;
+   friend class NodeBase::Singleton<NwIncrement>;
 
    //  Private because this is a singleton.
    //

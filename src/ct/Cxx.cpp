@@ -100,7 +100,7 @@ Cxx::Access FindAccessControl(const std::string& s)
          pos = s.find_first_not_of(WhitespaceChars, pos + strlen(kwd));
          if(pos == string::npos) return Cxx::Access_N;
          if(s[pos] != ':') return Cxx::Access_N;
-         return static_cast< Cxx::Access >(acc);
+         return static_cast<Cxx::Access>(acc);
       }
    }
 

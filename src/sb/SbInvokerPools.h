@@ -34,7 +34,7 @@ namespace SessionBase
 //
 class PayloadInvokerPool : public InvokerPool
 {
-   friend class NodeBase::Singleton< PayloadInvokerPool >;
+   friend class NodeBase::Singleton<PayloadInvokerPool>;
 public:
    //  Returns true if the ingress work queue gets too long or the number of
    //  available Messages gets too low, in which case an overload alarm is

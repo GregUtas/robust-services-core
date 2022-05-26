@@ -79,7 +79,7 @@ size_t SysFile::FindExt(const string& name, const string& ext)
 
 //------------------------------------------------------------------------------
 
-bool SysFile::ListFiles(const string& dir, std::set< string >& names)
+bool SysFile::ListFiles(const string& dir, std::set<string>& names)
 {
    Debug::ft("SysFile.ListFiles");
 

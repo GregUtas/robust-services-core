@@ -512,7 +512,7 @@ private:
    //  Returns the item's underlying type.  Can return nullptr, whereas Root
    //  (above) returns the item that returned nullptr.
    //
-   virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
+   virtual CxxToken* RootType() const { return const_cast<CxxToken*>(this); }
 
    //  The location where the item appeared.
    //

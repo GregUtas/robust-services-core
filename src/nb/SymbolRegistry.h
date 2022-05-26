@@ -41,7 +41,7 @@ namespace NodeBase
 //
 class SymbolRegistry : public Permanent
 {
-   friend class Singleton< SymbolRegistry >;
+   friend class Singleton<SymbolRegistry>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -73,7 +73,7 @@ public:
 
    //  Returns the registry of symbols.  Used for iteration.
    //
-   const Q1Way< Symbol >& Symbols() const { return symbolq_; }
+   const Q1Way<Symbol>& Symbols() const { return symbolq_; }
 
    //  Overridden to display member variables.
    //
@@ -94,7 +94,7 @@ private:
 
    //  The registry of symbols.
    //
-   Q1Way< Symbol > symbolq_;
+   Q1Way<Symbol> symbolq_;
 };
 }
 #endif

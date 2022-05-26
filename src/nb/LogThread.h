@@ -41,7 +41,7 @@ namespace NodeBase
 //
 class LogThread : public Thread
 {
-   friend class Singleton< LogThread >;
+   friend class Singleton<LogThread>;
    friend class Log;
 public:
    //  Overridden to display member variables.

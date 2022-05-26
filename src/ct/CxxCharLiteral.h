@@ -41,7 +41,7 @@ namespace CodeTools
 //  A character literal ('c', u'c', U'c', or L'c').  Note that u8'c' is C++17
 //  and that u8"s" (a string literal) is of type const char* const in C++11.
 //
-template< typename C, Cxx::Encoding E > class CxxCharLiteral : public Literal
+template<typename C, Cxx::Encoding E> class CxxCharLiteral : public Literal
 {
 public:
    explicit CxxCharLiteral(C c) : c_(c) { }
@@ -87,11 +87,11 @@ private:
    {
       switch(E)
       {
-      case Cxx::ASCII: return Singleton< CxxRoot >::Instance()->CharTerm();
-      case Cxx::U8: return Singleton< CxxRoot >::Instance()->CharTerm();
-      case Cxx::U16: return Singleton< CxxRoot >::Instance()->Char16Term();
-      case Cxx::U32: return Singleton< CxxRoot >::Instance()->Char32Term();
-      case Cxx::WIDE: return Singleton< CxxRoot >::Instance()->wCharTerm();
+      case Cxx::ASCII: return Singleton<CxxRoot>::Instance()->CharTerm();
+      case Cxx::U8: return Singleton<CxxRoot>::Instance()->CharTerm();
+      case Cxx::U16: return Singleton<CxxRoot>::Instance()->Char16Term();
+      case Cxx::U32: return Singleton<CxxRoot>::Instance()->Char32Term();
+      case Cxx::WIDE: return Singleton<CxxRoot>::Instance()->wCharTerm();
       }
       return nullptr;
    }

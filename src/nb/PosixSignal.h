@@ -36,7 +36,7 @@ namespace NodeBase
 //
 class PosixSignal : public Immutable
 {
-   friend class Registry< PosixSignal >;
+   friend class Registry<PosixSignal>;
 public:
    //  Deleted to prohibit copying.
    //

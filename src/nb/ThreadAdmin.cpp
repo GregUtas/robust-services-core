@@ -161,7 +161,7 @@ void ThreadsStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   Singleton< ThreadAdmin >::Instance()->DisplayStats(stream, options);
+   Singleton<ThreadAdmin>::Instance()->DisplayStats(stream, options);
 }
 
 //==============================================================================
@@ -196,7 +196,7 @@ void BreakEnabledCfg::SetCurr()
    //
    if(curr && !next)
    {
-      Singleton< InitThread >::Instance()->Interrupt();
+      Singleton<InitThread>::Instance()->Interrupt();
    }
 }
 
@@ -209,7 +209,7 @@ static ThreadAdmin* AccessAdminData()
    //  so verify that protected memory still exists before accessing our data.
    //
    if(Memory::AccessHeap(MemProtected) == nullptr) return nullptr;
-   return Singleton< ThreadAdmin >::Extant();
+   return Singleton<ThreadAdmin>::Extant();
 }
 
 //==============================================================================
@@ -221,7 +221,7 @@ ThreadAdmin::ThreadAdmin()
    stats_.reset(new ThreadsStats);
    statsGroup_.reset(new ThreadsStatsGroup);
 
-   auto creg = Singleton< CfgParmRegistry >::Instance();
+   auto creg = Singleton<CfgParmRegistry>::Instance();
 
    initTimeoutMsecs_.reset(new CfgIntParm("InitTimeoutMsecs",
       "10000", 5000, 180000, "restart timeout (msecs)"));
@@ -531,7 +531,7 @@ void ThreadAdmin::Startup(RestartLevel level)
 
    //  Define symbols related to threads.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("faction.audit", AuditFaction);
    reg->BindSymbol("faction.bkgd", BackgroundFaction);
    reg->BindSymbol("faction.oper", OperationsFaction);
@@ -596,7 +596,7 @@ int ThreadAdmin::WarpFactor()
 
    if(Debug::TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
       if(buff->ToolIsOn(FunctionTracer)) warp += 2;
       if(buff->GetTools().count() > 1) warp += 1;
    }

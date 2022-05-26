@@ -52,7 +52,7 @@ protected:
 
 class PotsCwaService : public PotsCwtService
 {
-   friend class Singleton< PotsCwaService >;
+   friend class Singleton<PotsCwaService>;
 
    PotsCwaService();
    ~PotsCwaService();
@@ -61,7 +61,7 @@ class PotsCwaService : public PotsCwtService
 
 class PotsCwbService : public PotsCwtService
 {
-   friend class Singleton< PotsCwbService >;
+   friend class Singleton<PotsCwbService>;
 
    PotsCwbService();
    ~PotsCwbService();
@@ -70,7 +70,7 @@ class PotsCwbService : public PotsCwtService
 
 class PotsCwmService : public Service
 {
-   friend class Singleton< PotsCwmService >;
+   friend class Singleton<PotsCwmService>;
 
    PotsCwmService();
    ~PotsCwmService();

@@ -82,7 +82,7 @@ bool MscAddress::ExternalFid(FactoryId& fid) const
 ptrdiff_t MscAddress::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const MscAddress* >(&local);
+   auto fake = reinterpret_cast<const MscAddress*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

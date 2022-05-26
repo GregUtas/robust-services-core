@@ -104,13 +104,13 @@ ProxyBcService::ProxyBcService(Id sid, bool modifiable) :
 {
    Debug::ft("ProxyBcService.ctor");
 
-   BindHandler(*Singleton< ProxyBcAnalyzeProxyMessage >::Instance(),
+   BindHandler(*Singleton<ProxyBcAnalyzeProxyMessage>::Instance(),
       ProxyBcEventHandler::AnalyzeProxyMessage);
-   BindHandler(*Singleton< ProxyBcProgressHandler >::Instance(),
+   BindHandler(*Singleton<ProxyBcProgressHandler>::Instance(),
       ProxyBcEventHandler::ProxyProgress);
-   BindHandler(*Singleton< ProxyBcAnswerHandler >::Instance(),
+   BindHandler(*Singleton<ProxyBcAnswerHandler>::Instance(),
       ProxyBcEventHandler::ProxyAnswer);
-   BindHandler(*Singleton< ProxyBcReleaseHandler >::Instance(),
+   BindHandler(*Singleton<ProxyBcReleaseHandler>::Instance(),
       ProxyBcEventHandler::ProxyRelease);
 
    BindEventName(ProxyBcReleaseUserEventStr, ProxyBcEvent::ReleaseUser);
@@ -356,24 +356,24 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
 {
    Debug::ft(ProxyBcAnalyzeProxyMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         pssm = static_cast< ProxyBcSsm& >(ssm);
+   auto&         pssm = static_cast<ProxyBcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
    switch(sid)
    {
    case CipSignal::CPG:
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       return pssm.RaiseProxyProgress(nextEvent, cpi->progress);
 
    case CipSignal::ANM:
       return pssm.RaiseProxyAnswer(nextEvent);
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return pssm.RaiseProxyRelease(nextEvent, cci->cause);
    }
 
@@ -388,7 +388,7 @@ EventHandler::Rc ProxyBcProgressHandler::ProcessEvent
 {
    Debug::ft("ProxyBcProgressHandler.ProcessEvent");
 
-   auto& ppe = static_cast< ProxyBcProgressEvent& >(currEvent);
+   auto& ppe = static_cast<ProxyBcProgressEvent&>(currEvent);
 
    //  If a proxy UPSM reports alerting, see if the NPSM has already sent a
    //  CPG(Alerting).  If it hasn't, apply ringback to the NPSM and relay
@@ -397,7 +397,7 @@ EventHandler::Rc ProxyBcProgressHandler::ProcessEvent
    //
    if(ppe.GetProgress() == Progress::Alerting)
    {
-      auto& pssm = static_cast< ProxyBcSsm& >(ssm);
+      auto& pssm = static_cast<ProxyBcSsm&>(ssm);
       auto npsm = pssm.NPsm();
       auto state = npsm->GetState();
 
@@ -423,8 +423,8 @@ EventHandler::Rc ProxyBcAnswerHandler::ProcessEvent
    //  When a proxy UPSM reports answer, award it the call and release all
    //  other UPSMs.
    //
-   auto& pssm = static_cast< ProxyBcSsm& >(ssm);
-   auto ppsm = static_cast< ProxyBcPsm* >(Context::ContextPsm());
+   auto& pssm = static_cast<ProxyBcSsm&>(ssm);
+   auto ppsm = static_cast<ProxyBcPsm*>(Context::ContextPsm());
    auto npsm = pssm.NPsm();
 
    //  Ensure a media flow between the proxy UPSM that answered and the NPSM.
@@ -528,7 +528,7 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
    //  saved it) after it has been broadcast to all proxy PSMs.  We handle
    //  the message entirely, so tell the PSM not to process it.
    //
-   auto pssm = static_cast< ProxyBcSsm* >(RootSsm());
+   auto pssm = static_cast<ProxyBcSsm*>(RootSsm());
    auto ppsm = this;
    pssm->NextBroadcast(ppsm);
    if(ppsm != nullptr) msg.Retrieve(ppsm);
@@ -669,7 +669,7 @@ ProxyBcPsm* ProxyBcSsm::FirstProxy() const
    {
       if(p->GetFactory() == ProxyCallFactoryId)
       {
-         return static_cast< ProxyBcPsm* >(p);
+         return static_cast<ProxyBcPsm*>(p);
       }
    }
 
@@ -701,7 +701,7 @@ void ProxyBcSsm::NextProxy(ProxyBcPsm*& ppsm) const
    {
       if(psm->GetFactory() == ProxyCallFactoryId)
       {
-         ppsm = static_cast< ProxyBcPsm* >(psm);
+         ppsm = static_cast<ProxyBcPsm*>(psm);
          return;
       }
    }
@@ -906,12 +906,12 @@ RootServiceSM* ProxyBcFactory::AllocRoot
 {
    Debug::ft("ProxyBcFactory.AllocRoot");
 
-   auto& tmsg = static_cast< const CipMessage& >(msg);
-   auto rte = tmsg.FindType< RouteResult >(CipParameter::Route);
+   auto& tmsg = static_cast<const CipMessage&>(msg);
+   auto rte = tmsg.FindType<RouteResult>(CipParameter::Route);
    if(rte == nullptr) return nullptr;
 
-   auto reg = Singleton< FactoryRegistry >::Instance();
-   auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
+   auto reg = Singleton<FactoryRegistry>::Instance();
+   auto fac = static_cast<SsmFactory*>(reg->GetFactory(rte->selector));
    return fac->AllocRoot(msg, psm);
 }
 

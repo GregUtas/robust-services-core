@@ -49,7 +49,7 @@ namespace PotsBase
 {
 class PotsMuxNull : public PotsMuxState
 {
-   friend class Singleton< PotsMuxNull >;
+   friend class Singleton<PotsMuxNull>;
 
    PotsMuxNull();
    ~PotsMuxNull() = default;
@@ -57,7 +57,7 @@ class PotsMuxNull : public PotsMuxState
 
 class PotsMuxPassive : public PotsMuxState
 {
-   friend class Singleton< PotsMuxPassive >;
+   friend class Singleton<PotsMuxPassive>;
 
    PotsMuxPassive();
    ~PotsMuxPassive() = default;
@@ -85,7 +85,7 @@ protected:
 
 class PotsMuxNuAnalyzeNetworkMessage : public PotsMuxEventHandler
 {
-   friend class Singleton< PotsMuxNuAnalyzeNetworkMessage >;
+   friend class Singleton<PotsMuxNuAnalyzeNetworkMessage>;
 
    PotsMuxNuAnalyzeNetworkMessage() = default;
    ~PotsMuxNuAnalyzeNetworkMessage() = default;
@@ -95,7 +95,7 @@ class PotsMuxNuAnalyzeNetworkMessage : public PotsMuxEventHandler
 
 class PotsMuxNuInitiate : public PotsMuxEventHandler
 {
-   friend class Singleton< PotsMuxNuInitiate >;
+   friend class Singleton<PotsMuxNuInitiate>;
 
    PotsMuxNuInitiate() = default;
    ~PotsMuxNuInitiate() = default;
@@ -105,7 +105,7 @@ class PotsMuxNuInitiate : public PotsMuxEventHandler
 
 class PotsMuxPaAnalyzeUserMessage : public PotsMuxEventHandler
 {
-   friend class Singleton< PotsMuxPaAnalyzeUserMessage >;
+   friend class Singleton<PotsMuxPaAnalyzeUserMessage>;
 
    PotsMuxPaAnalyzeUserMessage() = default;
    ~PotsMuxPaAnalyzeUserMessage() = default;
@@ -115,7 +115,7 @@ class PotsMuxPaAnalyzeUserMessage : public PotsMuxEventHandler
 
 class PotsMuxPaAnalyzeNetworkMessage : public PotsMuxEventHandler
 {
-   friend class Singleton< PotsMuxPaAnalyzeNetworkMessage >;
+   friend class Singleton<PotsMuxPaAnalyzeNetworkMessage>;
 
    PotsMuxPaAnalyzeNetworkMessage() = default;
    ~PotsMuxPaAnalyzeNetworkMessage() = default;
@@ -125,7 +125,7 @@ class PotsMuxPaAnalyzeNetworkMessage : public PotsMuxEventHandler
 
 class PotsMuxPaRelay : public PotsMuxEventHandler
 {
-   friend class Singleton< PotsMuxPaRelay >;
+   friend class Singleton<PotsMuxPaRelay>;
 
    PotsMuxPaRelay() = default;
    ~PotsMuxPaRelay() = default;
@@ -180,8 +180,8 @@ ProtocolSM* PotsMuxFactory::AllocIcPsm
 {
    Debug::ft("PotsMuxFactory.AllocIcPsm");
 
-   auto& pmsg = static_cast< const PotsMessage& >(msg);
-   auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto& pmsg = static_cast<const PotsMessage&>(msg);
+   auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    return new PotsMuxPsm(phi->port);
 }
@@ -226,10 +226,10 @@ SsmContext* PotsMuxFactory::FindContext(const Message& msg) const
    //  Find the root SSM for this POTS subscriber.  If it's the POTS
    //  multiplexer, then join its context.
    //
-   auto& pmsg = static_cast< const PotsMessage& >(msg);
-   auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
-   auto tsw = Singleton< Switch >::Instance();
-   auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+   auto& pmsg = static_cast<const PotsMessage&>(msg);
+   auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
+   auto tsw = Singleton<Switch>::Instance();
+   auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(phi->port));
    auto prof = cct->Profile();
    auto addr = prof->ObjAddr();
 
@@ -329,7 +329,7 @@ ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft("PotsMuxPsm.ProcessIcMsg");
 
-   auto& pmsg = static_cast< Pots_UN_Message& >(msg);
+   auto& pmsg = static_cast<Pots_UN_Message&>(msg);
    auto sid = pmsg.GetSignal();
 
    MediaPsm::UpdateIcMedia(pmsg, PotsParameter::Media);
@@ -356,7 +356,7 @@ ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
    {
       //  If this is only a media update, do not raise the AnalyzeMsgEvent.
       //
-      auto ppi = pmsg.FindType< ProgressInfo >(PotsParameter::Progress);
+      auto ppi = pmsg.FindType<ProgressInfo>(PotsParameter::Progress);
       if(ppi->progress == Progress::MediaUpdate) return DiscardMessage;
       break;
    }
@@ -382,7 +382,7 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
 
    //  Send all messages from the multiplexer NPSM with immediate priority.
    //
-   auto& pmsg = static_cast< Pots_UN_Message& >(msg);
+   auto& pmsg = static_cast<Pots_UN_Message&>(msg);
    msg.SetPriority(IMMEDIATE);
 
    if(&msg != ogMsg_)
@@ -561,19 +561,19 @@ PotsMuxService::PotsMuxService() : Service(PotsMuxServiceId, true)
 {
    Debug::ft("PotsMuxService.ctor");
 
-   Singleton< PotsMuxNull >::Instance();
-   Singleton< PotsMuxPassive >::Instance();
+   Singleton<PotsMuxNull>::Instance();
+   Singleton<PotsMuxPassive>::Instance();
 
-   BindHandler(*Singleton< PotsMuxNuAnalyzeNetworkMessage >::Instance(),
+   BindHandler(*Singleton<PotsMuxNuAnalyzeNetworkMessage>::Instance(),
       PotsMuxEventHandler::NuAnalyzeNetworkMessage);
-   BindHandler(*Singleton< PotsMuxNuInitiate >::Instance(),
+   BindHandler(*Singleton<PotsMuxNuInitiate>::Instance(),
       PotsMuxEventHandler::NuInitiate);
 
-   BindHandler(*Singleton< PotsMuxPaAnalyzeUserMessage >::Instance(),
+   BindHandler(*Singleton<PotsMuxPaAnalyzeUserMessage>::Instance(),
       PotsMuxEventHandler::PaAnalyzeUserMessage);
-   BindHandler(*Singleton< PotsMuxPaAnalyzeNetworkMessage >::Instance(),
+   BindHandler(*Singleton<PotsMuxPaAnalyzeNetworkMessage>::Instance(),
       PotsMuxEventHandler::PaAnalyzeNetworkMessage);
-   BindHandler(*Singleton< PotsMuxPaRelay >::Instance(),
+   BindHandler(*Singleton<PotsMuxPaRelay>::Instance(),
       PotsMuxEventHandler::PaRelay);
 
    BindEventName(PotsMuxInitiateEventStr, PotsMuxEvent::Initiate);
@@ -681,10 +681,10 @@ PotsMuxSsm::PotsMuxSsm(const Message& msg, ProtocolSM& psm) :
 {
    Debug::ft("PotsMuxSsm.ctor");
 
-   auto& npsm = static_cast< PotsMuxPsm& >(psm);
+   auto& npsm = static_cast<PotsMuxPsm&>(psm);
    auto port = npsm.TsPort();
-   auto tsw = Singleton< Switch >::Instance();
-   auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(port));
+   auto tsw = Singleton<Switch>::Instance();
+   auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(port));
    auto prof = cct->Profile();
 
    SetProfile(prof);
@@ -749,8 +749,8 @@ EventHandler::Rc PotsMuxSsm::Initiate(Event*& nextEvent)
 {
    Debug::ft("PotsMuxSsm.Initiate");
 
-   auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
-   auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+   auto pmsg = static_cast<PotsMessage*>(Context::ContextMsg());
+   auto pfi = pmsg->FindType<PotsFacilityInfo>(PotsParameter::Facility);
 
    if(pfi != nullptr)
    {
@@ -811,7 +811,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
 {
    Debug::ft("PotsMuxSsm.RelayMsg");
 
-   auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
+   auto pmsg = static_cast<PotsMessage*>(Context::ContextMsg());
    auto sid = pmsg->GetSignal();
 
    //  There should be exactly one call.
@@ -907,8 +907,8 @@ EventHandler::Rc PotsMuxNuAnalyzeNetworkMessage::ProcessEvent
 {
    Debug::ft("PotsMuxNuAnalyzeNetworkMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto pmsg = static_cast< Pots_NU_Message* >(ame.Msg());
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto pmsg = static_cast<Pots_NU_Message*>(ame.Msg());
    auto sid = pmsg->GetSignal();
 
    if(sid == PotsSignal::Facility)
@@ -928,7 +928,7 @@ EventHandler::Rc PotsMuxNuInitiate::ProcessEvent
 {
    Debug::ft("PotsMuxNuInitiate.ProcessEvent");
 
-   auto& mux = static_cast< PotsMuxSsm& >(ssm);
+   auto& mux = static_cast<PotsMuxSsm&>(ssm);
 
    return mux.Initiate(nextEvent);
 }
@@ -953,8 +953,8 @@ EventHandler::Rc PotsMuxPaAnalyzeNetworkMessage::ProcessEvent
 
    //  Message received from NPSM while in Passive state.
    //
-   auto& mux = static_cast< PotsMuxSsm& >(ssm);
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& mux = static_cast<PotsMuxSsm&>(ssm);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
 
    //  Relay anything other than a Facility message.
@@ -975,7 +975,7 @@ EventHandler::Rc PotsMuxPaRelay::ProcessEvent
 {
    Debug::ft("PotsMuxPaRelay.ProcessEvent");
 
-   auto& mux = static_cast< PotsMuxSsm& >(ssm);
+   auto& mux = static_cast<PotsMuxSsm&>(ssm);
 
    return mux.RelayMsg();
 }

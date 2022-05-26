@@ -42,7 +42,7 @@ namespace NodeBase
 //
 class CfgParmRegistry : public Protected
 {
-   friend class Singleton< CfgParmRegistry >;
+   friend class Singleton<CfgParmRegistry>;
    friend class CfgParm;
    friend class CfgTuple;
 public:
@@ -125,12 +125,12 @@ private:
    //  The tuples (key-value pairs) in the registry.  They are kept
    //  in a queue that is sorted in alphabetical order, by key.
    //
-   Q1Way< CfgTuple > tupleq_;
+   Q1Way<CfgTuple> tupleq_;
 
    //  The configuration parameters in the registry.  They are kept
    //  in a queue that is sorted in alphabetical order.
    //
-   Q1Way< CfgParm > parmq_;
+   Q1Way<CfgParm> parmq_;
 };
 }
 #endif

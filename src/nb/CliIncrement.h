@@ -119,7 +119,7 @@ private:
 
    //  The increment's commands.
    //
-   Registry< CliCommand > commands_;
+   Registry<CliCommand> commands_;
 };
 }
 #endif

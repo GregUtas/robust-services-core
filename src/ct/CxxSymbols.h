@@ -44,8 +44,8 @@ namespace CodeTools
 {
 //  Types for accessing symbol information.
 //
-typedef std::vector< CxxScoped* > SymbolVector;
-typedef std::vector< SymbolView > ViewVector;
+typedef std::vector<CxxScoped*> SymbolVector;
+typedef std::vector<SymbolView> ViewVector;
 
 //  Specifies the type of item that could resolve a symbol.
 //
@@ -96,7 +96,7 @@ extern const NodeBase::Flags VALUE_REFS;
 //
 class CxxSymbols: public NodeBase::Base
 {
-   friend class NodeBase::Singleton< CxxSymbols >;
+   friend class NodeBase::Singleton<CxxSymbols>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -195,31 +195,31 @@ private:
 
    //  Types for symbol tables.
    //
-   typedef std::unordered_multimap< std::string, Class* > ClassTable;
-   typedef std::unordered_multimap< std::string, Data* > DataTable;
-   typedef std::unordered_multimap< std::string, Enum* > EnumTable;
-   typedef std::unordered_multimap< std::string, Enumerator* > EtorTable;
-   typedef std::unordered_multimap< std::string, Forward* > ForwTable;
-   typedef std::unordered_multimap< std::string, Friend* > FriendTable;
-   typedef std::unordered_multimap< std::string, Function* > FuncTable;
-   typedef std::unordered_multimap< std::string, Macro* > MacroTable;
-   typedef std::unordered_multimap< std::string, Namespace* > SpaceTable;
-   typedef std::unordered_multimap< std::string, Terminal* > TermTable;
-   typedef std::unordered_multimap< std::string, Typedef* > TypeTable;
+   typedef std::unordered_multimap<std::string, Class*> ClassTable;
+   typedef std::unordered_multimap<std::string, Data*> DataTable;
+   typedef std::unordered_multimap<std::string, Enum*> EnumTable;
+   typedef std::unordered_multimap<std::string, Enumerator*> EtorTable;
+   typedef std::unordered_multimap<std::string, Forward*> ForwTable;
+   typedef std::unordered_multimap<std::string, Friend*> FriendTable;
+   typedef std::unordered_multimap<std::string, Function*> FuncTable;
+   typedef std::unordered_multimap<std::string, Macro*> MacroTable;
+   typedef std::unordered_multimap<std::string, Namespace*> SpaceTable;
+   typedef std::unordered_multimap<std::string, Terminal*> TermTable;
+   typedef std::unordered_multimap<std::string, Typedef*> TypeTable;
 
    //  Types for unique_ptrs that own symbol tables.
    //
-   typedef std::unique_ptr< ClassTable > ClassTablePtr;
-   typedef std::unique_ptr< DataTable > DataTablePtr;
-   typedef std::unique_ptr< EnumTable > EnumTablePtr;
-   typedef std::unique_ptr< EtorTable > EtorTablePtr;
-   typedef std::unique_ptr< ForwTable > ForwTablePtr;
-   typedef std::unique_ptr< FriendTable > FriendTablePtr;
-   typedef std::unique_ptr< FuncTable > FuncTablePtr;
-   typedef std::unique_ptr< MacroTable > MacroTablePtr;
-   typedef std::unique_ptr< SpaceTable > SpaceTablePtr;
-   typedef std::unique_ptr< TermTable > TermTablePtr;
-   typedef std::unique_ptr< TypeTable > TypeTablePtr;
+   typedef std::unique_ptr<ClassTable> ClassTablePtr;
+   typedef std::unique_ptr<DataTable> DataTablePtr;
+   typedef std::unique_ptr<EnumTable> EnumTablePtr;
+   typedef std::unique_ptr<EtorTable> EtorTablePtr;
+   typedef std::unique_ptr<ForwTable> ForwTablePtr;
+   typedef std::unique_ptr<FriendTable> FriendTablePtr;
+   typedef std::unique_ptr<FuncTable> FuncTablePtr;
+   typedef std::unique_ptr<MacroTable> MacroTablePtr;
+   typedef std::unique_ptr<SpaceTable> SpaceTablePtr;
+   typedef std::unique_ptr<TermTable> TermTablePtr;
+   typedef std::unique_ptr<TypeTable> TypeTablePtr;
 
    //  Private because this is a singleton.
    //
@@ -255,8 +255,8 @@ size_t FindNearestItem(const SymbolVector& list);
 //
 //  Removes ITEM from TABLE.
 //
-template< typename T > void EraseSymbol(const CxxScoped* item,
-   std::unordered_multimap< std::string, T >& table)
+template<typename T> void EraseSymbol(const CxxScoped* item,
+   std::unordered_multimap<std::string, T>& table)
 {
    auto str = Normalize(item->Name());
    auto range = table.equal_range(str);
@@ -275,8 +275,8 @@ template< typename T > void EraseSymbol(const CxxScoped* item,
 //
 //  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
 //
-template< typename T > void ListSymbols(const std::string& name,
-   const std::unordered_multimap< std::string, T >& table, SymbolVector& list)
+template<typename T> void ListSymbols(const std::string& name,
+   const std::unordered_multimap<std::string, T>& table, SymbolVector& list)
 {
    //  Assemble a list of matching symbols.
    //

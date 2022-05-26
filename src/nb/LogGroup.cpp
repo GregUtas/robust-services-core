@@ -71,7 +71,7 @@ LogGroup::LogGroup(c_string name, c_string expl) :
 
    logs_.Init(MaxLogs, Log::CellDiff(), MemImmutable);
 
-   Singleton< LogGroupRegistry >::Instance()->BindGroup(*this);
+   Singleton<LogGroupRegistry>::Instance()->BindGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ LogGroup::~LogGroup()
    Debug::ftnt(LogGroup_dtor);
 
    Debug::SwLog(LogGroup_dtor, UnexpectedInvocation, 0);
-   Singleton< LogGroupRegistry >::Extant()->UnbindGroup(*this);
+   Singleton<LogGroupRegistry>::Extant()->UnbindGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ bool LogGroup::BindLog(Log& log)
 ptrdiff_t LogGroup::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const LogGroup* >(&local);
+   auto fake = reinterpret_cast<const LogGroup*>(&local);
    return ptrdiff(&fake->gid_, fake);
 }
 

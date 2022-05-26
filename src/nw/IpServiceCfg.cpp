@@ -71,7 +71,7 @@ void IpServiceCfg::SetCurr()
    //
    if(CurrValue())
    {
-      auto reg = Singleton< IpPortRegistry >::Instance();
+      auto reg = Singleton<IpPortRegistry>::Instance();
       auto port = reg->GetPort(service_->Port(), service_->Protocol());
 
       if(port != nullptr)

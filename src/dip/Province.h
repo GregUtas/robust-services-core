@@ -28,7 +28,7 @@ namespace Diplomacy
 //  specifies how the adjacent locations can be reached (by an army, by any
 //  fleet, or by a fleet on a specific coast).
 //
-typedef std::map< Token, LocationSet > AdjacentSet;
+typedef std::map<Token, LocationSet> AdjacentSet;
 
 //  Information about a province.
 //

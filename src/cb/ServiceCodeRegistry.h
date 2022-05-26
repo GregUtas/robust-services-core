@@ -38,7 +38,7 @@ namespace CallBase
 //
 class ServiceCodeRegistry : public Protected
 {
-   friend class Singleton< ServiceCodeRegistry >;
+   friend class Singleton<ServiceCodeRegistry>;
 public:
    //  Deleted to prohibit copying.
    //

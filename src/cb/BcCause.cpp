@@ -80,7 +80,7 @@ void CauseInfo::Display(ostream& stream, const string& prefix) const
 //==============================================================================
 
 CauseParameter::CauseParameter(ProtocolId prid, Id pid) :
-   TlvIntParameter< Cause::Ind >(prid, pid)
+   TlvIntParameter<Cause::Ind>(prid, pid)
 {
    Debug::ft("CauseParameter.ctor");
 }
@@ -109,6 +109,6 @@ CliParm* CauseParameter::CreateCliParm(Usage use) const
 void CauseParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const CauseInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const CauseInfo*>(bytes)->Display(stream, prefix);
 }
 }

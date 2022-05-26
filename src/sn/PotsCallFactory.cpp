@@ -46,8 +46,8 @@ static void SendRelease(const Message& msg1)
 {
    Debug::ft("PotsBase.SendRelease");
 
-   auto& icmsg = static_cast< const PotsMessage& >(msg1);
-   auto icphi = icmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto& icmsg = static_cast<const PotsMessage&>(msg1);
+   auto icphi = icmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
    auto ogmsg = new Pots_NU_Message(nullptr, 20);
 
    ogmsg->SetSignal(PotsSignal::Release);
@@ -113,8 +113,8 @@ ProtocolSM* PotsCallFactory::AllocIcPsm
 {
    Debug::ft("PotsCallFactory.AllocIcPsm");
 
-   auto& pmsg = static_cast< const Pots_UN_Message& >(msg);
-   auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto& pmsg = static_cast<const Pots_UN_Message&>(msg);
+   auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    return new PotsCallPsm(lower, false, phi->port);
 }
@@ -187,18 +187,18 @@ void PotsCallFactory::PortAllocated
    //  still on the ingress work queue.
    //
    PotsCircuit* cct = nullptr;
-   auto tsw = Singleton< Switch >::Instance();
+   auto tsw = Singleton<Switch>::Instance();
 
    if(msg != nullptr)
    {
-      auto pmsg = static_cast< const PotsMessage* >(msg);
-      auto phi = pmsg->FindType< PotsHeaderInfo >(PotsParameter::Header);
-      cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+      auto pmsg = static_cast<const PotsMessage*>(msg);
+      auto phi = pmsg->FindType<PotsHeaderInfo>(PotsParameter::Header);
+      cct = static_cast<PotsCircuit*>(tsw->GetCircuit(phi->port));
    }
    else
    {
-      auto ppsm = static_cast< const PotsCallPsm* >(port.Upper());
-      cct = static_cast< PotsCircuit* >(tsw->GetCircuit(ppsm->TsPort()));
+      auto ppsm = static_cast<const PotsCallPsm*>(port.Upper());
+      cct = static_cast<PotsCircuit*>(tsw->GetCircuit(ppsm->TsPort()));
    }
 
    auto prof = cct->Profile();
@@ -226,7 +226,7 @@ bool PotsCallFactory::ScreenFirstMsg
 
 //------------------------------------------------------------------------------
 
-bool PotsCallFactory::ScreenIcMsgs(Q1Way< Message >& msgq)
+bool PotsCallFactory::ScreenIcMsgs(Q1Way<Message>& msgq)
 {
    Debug::ft("PotsCallFactory.ScreenIcMsgs");
 
@@ -268,7 +268,7 @@ Cause::Ind PotsCallFactory::VerifyRoute(RouteResult::Id rid) const
    //  There is no point in sending a CIP IAM if the destination DN is not
    //  registered.
    //
-   if(Singleton< PotsProfileRegistry >::Instance()->Profile(rid) == nullptr)
+   if(Singleton<PotsProfileRegistry>::Instance()->Profile(rid) == nullptr)
    {
       return Cause::UnallocatedNumber;
    }

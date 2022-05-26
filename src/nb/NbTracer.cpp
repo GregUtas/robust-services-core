@@ -45,7 +45,7 @@ static bool ThreadsEmpty()
 {
    Debug::ft("NodeBase.ThreadsEmpty");
 
-   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
+   auto threads = Singleton<ThreadRegistry>::Instance()->GetThreads();
 
    for(auto t = threads.cbegin(); t != threads.cend(); ++t)
    {
@@ -64,7 +64,7 @@ fixed_string TraceBufferToolExpl = "internal use";
 
 class TraceBufferTool : public Tool
 {
-   friend class Singleton< TraceBufferTool >;
+   friend class Singleton<TraceBufferTool>;
 
    TraceBufferTool() : Tool(ToolBuffer, NUL, true) { }
    ~TraceBufferTool() = default;
@@ -81,7 +81,7 @@ fixed_string FunctionTraceToolExpl = "traces function calls";
 
 class FunctionTraceTool : public Tool
 {
-   friend class Singleton< FunctionTraceTool >;
+   friend class Singleton<FunctionTraceTool>;
 
    FunctionTraceTool() : Tool(FunctionTracer, 'f', true) { }
    ~FunctionTraceTool() = default;
@@ -111,7 +111,7 @@ fixed_string MemoryTraceToolExpl = "traces memory allocations/deallocations";
 
 class MemoryTraceTool : public Tool
 {
-   friend class Singleton< MemoryTraceTool >;
+   friend class Singleton<MemoryTraceTool>;
 
    MemoryTraceTool() : Tool(MemoryTracer, 'm', true) { }
    ~MemoryTraceTool() = default;
@@ -125,9 +125,9 @@ NbTracer::NbTracer() : factions_{TraceDefault}
 {
    Debug::ft("NbTracer.ctor");
 
-   Singleton< TraceBufferTool >::Instance();
-   Singleton< FunctionTraceTool >::Instance();
-   Singleton< MemoryTraceTool >::Instance();
+   Singleton<TraceBufferTool>::Instance();
+   Singleton<FunctionTraceTool>::Instance();
+   Singleton<MemoryTraceTool>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -149,8 +149,8 @@ TraceRc NbTracer::ClearSelections(FlagId filter)
 {
    Debug::ft(NbTracer_ClearSelections);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
-   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
+   auto buff = Singleton<TraceBuffer>::Instance();
+   auto threads = Singleton<ThreadRegistry>::Instance()->GetThreads();
 
    switch(filter)
    {
@@ -208,7 +208,7 @@ void NbTracer::QuerySelections(ostream& stream) const
 {
    Debug::ft("NbTracer.QuerySelections");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    if(buff->FilterIsOn(TraceAll)) stream << AllSelected << CRLF;
 
@@ -238,7 +238,7 @@ void NbTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
+      auto threads = Singleton<ThreadRegistry>::Instance()->GetThreads();
 
       for(auto t = threads.cbegin(); t != threads.cend(); ++t)
       {
@@ -257,7 +257,7 @@ TraceRc NbTracer::SelectFaction(Faction faction, TraceStatus status)
 {
    Debug::ft("NbTracer.SelectFaction");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    factions_[faction] = status;
 
@@ -287,13 +287,13 @@ TraceRc NbTracer::SelectThread(ThreadId tid, TraceStatus status)
 {
    Debug::ft("NbTracer.SelectThread");
 
-   auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
+   auto thr = Singleton<ThreadRegistry>::Instance()->GetThread(tid);
 
    if(thr == nullptr) return NoSuchItem;
 
    thr->SetStatus(status);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    if(status == TraceDefault)
    {

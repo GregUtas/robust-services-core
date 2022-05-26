@@ -39,7 +39,7 @@ namespace NetworkBase
 //
 class NwTracer : public NodeBase::Permanent
 {
-   friend class NodeBase::Singleton< NwTracer >;
+   friend class NodeBase::Singleton<NwTracer>;
 public:
    //  Deleted to prohibit copying.
    //

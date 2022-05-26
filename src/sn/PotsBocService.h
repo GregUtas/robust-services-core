@@ -44,7 +44,7 @@ private:
 
 class PotsBocService : public Service
 {
-   friend class Singleton< PotsBocService >;
+   friend class Singleton<PotsBocService>;
 
    PotsBocService();
    ~PotsBocService();

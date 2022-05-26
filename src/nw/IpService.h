@@ -43,7 +43,7 @@ namespace NetworkBase
 {
 class IpService : public Immutable
 {
-   friend class Registry< IpService >;
+   friend class Registry<IpService>;
    friend class IpServiceCfg;
 public:
    //  Deleted to prohibit copying.

@@ -86,7 +86,7 @@ void SbIpBuffer::Display(ostream& stream,
    header->Display(stream, prefix + spaces(2));
    stream << prefix << "Parameters:" << CRLF;
 
-   auto reg = Singleton< ProtocolRegistry >::Instance();
+   auto reg = Singleton<ProtocolRegistry>::Instance();
    auto pro = reg->GetProtocol(header->protocol);
 
    if(pro != nullptr)
@@ -124,9 +124,9 @@ void* SbIpBuffer::operator new(size_t size, SbPoolUser user)
    switch(user)
    {
    case PayloadUser:
-      return Singleton< SbIpBufferPool >::Instance()->DeqBlock(size);
+      return Singleton<SbIpBufferPool>::Instance()->DeqBlock(size);
    case ToolUser:
-      return Singleton< BtIpBufferPool >::Instance()->DeqBlock(size);
+      return Singleton<BtIpBufferPool>::Instance()->DeqBlock(size);
    }
 
    Debug::SwLog(SbIpBuffer_opnew, "invalid user", user);

@@ -39,7 +39,7 @@ namespace SessionBase
 //
 class SbIpBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< SbIpBufferPool >;
+   friend class NodeBase::Singleton<SbIpBufferPool>;
 public:
    //  Overridden for patching.
    //
@@ -60,7 +60,7 @@ private:
 //
 class ContextPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< ContextPool >;
+   friend class NodeBase::Singleton<ContextPool>;
 public:
    //  Overridden to claim blocks on work queues.
    //
@@ -85,7 +85,7 @@ private:
 //
 class MessagePool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< MessagePool >;
+   friend class NodeBase::Singleton<MessagePool>;
 public:
    //  Overridden for patching.
    //
@@ -106,7 +106,7 @@ private:
 //
 class MsgPortPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< MsgPortPool >;
+   friend class NodeBase::Singleton<MsgPortPool>;
 public:
    //  Finds the port that is communicating with remAddr.  This function is
    //  used when a port on another processor sends a subsequent message to a
@@ -136,7 +136,7 @@ private:
 //
 class ProtocolSMPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< ProtocolSMPool >;
+   friend class NodeBase::Singleton<ProtocolSMPool>;
 public:
    //  Overridden to claim objects in the PSM's context.
    //
@@ -166,7 +166,7 @@ private:
 //
 class TimerPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< TimerPool >;
+   friend class NodeBase::Singleton<TimerPool>;
 public:
    //  Increments the number of timeouts sent.
    //
@@ -212,7 +212,7 @@ private:
 //
 class ServiceSMPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< ServiceSMPool >;
+   friend class NodeBase::Singleton<ServiceSMPool>;
 public:
    //  Overridden for patching.
    //
@@ -233,7 +233,7 @@ private:
 //
 class EventPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< EventPool >;
+   friend class NodeBase::Singleton<EventPool>;
 public:
    //  Overridden for patching.
    //
@@ -256,7 +256,7 @@ private:
 //
 class BtIpBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< BtIpBufferPool >;
+   friend class NodeBase::Singleton<BtIpBufferPool>;
 public:
    //  Overridden to claim blocks held by the trace buffer.
    //

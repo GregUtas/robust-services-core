@@ -662,7 +662,7 @@ private:
 
    //  The wrapper for the native thread.
    //
-   std::unique_ptr< SysThread > systhrd_;
+   std::unique_ptr<SysThread> systhrd_;
 
    //  The thread's manager, if any.
    //
@@ -682,15 +682,15 @@ private:
 
    //  The thread's message queue.
    //
-   Q1Way< MsgBuffer > msgq_;
+   Q1Way<MsgBuffer> msgq_;
 
    //  Per-thread data that is not required in the header.
    //
-   std::unique_ptr< ThreadPriv > priv_;
+   std::unique_ptr<ThreadPriv> priv_;
 
    //  Per-thread statistics.
    //
-   std::unique_ptr< ThreadStats > stats_;
+   std::unique_ptr<ThreadStats> stats_;
 };
 
 //------------------------------------------------------------------------------

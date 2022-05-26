@@ -48,7 +48,7 @@ Signal::Signal(ProtocolId prid, Id sid) : prid_(prid)
    //  Register the signal with its protocol.
    //
    sid_.SetId(sid);
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid_);
 
    if(pro == nullptr)
    {
@@ -69,7 +69,7 @@ Signal::~Signal()
 
    Debug::SwLog(Signal_dtor, UnexpectedInvocation, 0);
 
-   auto pro = Singleton< ProtocolRegistry >::Extant()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Extant()->GetProtocol(prid_);
    if(pro != nullptr) pro->UnbindSignal(*this);
 }
 
@@ -78,7 +78,7 @@ Signal::~Signal()
 ptrdiff_t Signal::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Signal* >(&local);
+   auto fake = reinterpret_cast<const Signal*>(&local);
    return ptrdiff(&fake->sid_, fake);
 }
 

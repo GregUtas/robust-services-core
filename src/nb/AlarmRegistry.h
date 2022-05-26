@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class AlarmRegistry : public Immutable
 {
-   friend class Singleton< AlarmRegistry >;
+   friend class Singleton<AlarmRegistry>;
    friend class Alarm;
 public:
    //  Deleted to prohibit copying.
@@ -57,7 +57,7 @@ public:
 
    //  Returns the registry.
    //
-   const Registry< Alarm >& Alarms() const { return alarms_; }
+   const Registry<Alarm>& Alarms() const { return alarms_; }
 
    //  Overridden to display member variables.
    //
@@ -94,7 +94,7 @@ private:
 
    //  The registry of alarms.
    //
-   Registry< Alarm > alarms_;
+   Registry<Alarm> alarms_;
 };
 }
 #endif

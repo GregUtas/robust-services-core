@@ -44,7 +44,7 @@ namespace NodeBase
 //
 class CliBuffer : public Temporary
 {
-   friend std::unique_ptr< CliBuffer >::deleter_type;
+   friend std::unique_ptr<CliBuffer>::deleter_type;
    friend class CliThread;
 public:
    //  The character that explicitly tags an optional parameter.
@@ -190,7 +190,7 @@ private:
    //  at the bottom, and files from which input is being read being pushed
    //  onto the stack.
    //
-   std::list< CliSource > sources_;
+   std::list<CliSource> sources_;
 };
 }
 #endif

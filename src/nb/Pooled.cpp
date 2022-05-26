@@ -58,7 +58,7 @@ void Pooled::Claim()
 
    if(Debug::TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ObjPoolTracer))
       {
@@ -111,7 +111,7 @@ void Pooled::Display(ostream& stream,
 ptrdiff_t Pooled::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Pooled* >(&local);
+   auto fake = reinterpret_cast<const Pooled*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -122,7 +122,7 @@ MemoryType Pooled::MemType() const
    Debug::ft("Pooled.MemType");
 
    auto pid = ObjectPool::ObjPid(this);
-   auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid);
+   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pool(pid);
    if(pool != nullptr) return pool->BlockType();
    return MemNull;
 }
@@ -135,7 +135,7 @@ void Pooled::operator delete(void* addr)
 
    auto obj = (Pooled*) addr;
    auto pid = ObjectPool::ObjPid(obj);
-   auto pool = Singleton< ObjectPoolRegistry >::Extant()->Pool(pid);
+   auto pool = Singleton<ObjectPoolRegistry>::Extant()->Pool(pid);
    if(pool != nullptr) pool->EnqBlock(obj, true);
 }
 

@@ -82,17 +82,17 @@ const Flags VALUE_REFS = Flags(DATA_MASK | ETOR_MASK | MACRO_MASK | TERM_MASK);
 //
 //  Key-value pairs for hash tables.
 //
-typedef std::pair< string, Class* > ClassPair;
-typedef std::pair< string, Data* > DataPair;
-typedef std::pair< string, Enum* > EnumPair;
-typedef std::pair< string, Enumerator* > EtorPair;
-typedef std::pair< string, Forward* > ForwPair;
-typedef std::pair< string, Friend* > FriendPair;
-typedef std::pair< string, Function* > FuncPair;
-typedef std::pair< string, Macro* > MacroPair;
-typedef std::pair< string, Namespace* > SpacePair;
-typedef std::pair< string, Terminal* > TermPair;
-typedef std::pair< string, Typedef* > TypePair;
+typedef std::pair<string, Class*> ClassPair;
+typedef std::pair<string, Data*> DataPair;
+typedef std::pair<string, Enum*> EnumPair;
+typedef std::pair<string, Enumerator*> EtorPair;
+typedef std::pair<string, Forward*> ForwPair;
+typedef std::pair<string, Friend*> FriendPair;
+typedef std::pair<string, Function*> FuncPair;
+typedef std::pair<string, Macro*> MacroPair;
+typedef std::pair<string, Namespace*> SpacePair;
+typedef std::pair<string, Terminal*> TermPair;
+typedef std::pair<string, Typedef*> TypePair;
 
 //------------------------------------------------------------------------------
 //
@@ -248,8 +248,8 @@ static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 //
 //  Adds all symbols in TABLE to ITEMS.
 //
-template< typename T > void GetSymbols
-   (const std::unordered_multimap< string, T >& table, CxxScopedVector& items)
+template<typename T> void GetSymbols
+   (const std::unordered_multimap<string, T>& table, CxxScopedVector& items)
 {
    for(auto i = table.cbegin(); i != table.cend(); ++i)
    {
@@ -540,7 +540,7 @@ Macro* CxxSymbols::FindMacro(const string& name) const
       Context::SwLog(CxxSymbols_FindMacro, expl, macros.size());
    }
 
-   return static_cast< Macro* >(macros.front());
+   return static_cast<Macro*>(macros.front());
 }
 
 //------------------------------------------------------------------------------
@@ -577,7 +577,7 @@ CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
 
    for(auto s = spaces.cbegin(); s != spaces.cend(); ++s)
    {
-      if((*s)->ScopedName(false) == name) return static_cast< CxxScope* >(*s);
+      if((*s)->ScopedName(false) == name) return static_cast<CxxScope*>(*s);
    }
 
    SymbolVector classes;
@@ -585,7 +585,7 @@ CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
 
    for(auto c = classes.cbegin(); c != classes.cend(); ++c)
    {
-      if((*c)->ScopedName(false) == name) return static_cast< CxxScope* >(*c);
+      if((*c)->ScopedName(false) == name) return static_cast<CxxScope*>(*c);
    }
 
    //  A full match failed, so look for a partial one.
@@ -593,13 +593,13 @@ CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
    for(auto s = spaces.cbegin(); s != spaces.cend(); ++s)
    {
       auto pos = NameCouldReferTo((*s)->ScopedName(false), name);
-      if(pos != string::npos) return static_cast< CxxScope* >(*s);
+      if(pos != string::npos) return static_cast<CxxScope*>(*s);
    }
 
    for(auto c = classes.cbegin(); c != classes.cend(); ++c)
    {
       auto pos = NameCouldReferTo((*c)->ScopedName(false), name);
-      if(pos != string::npos) return static_cast< CxxScope* >(*c);
+      if(pos != string::npos) return static_cast<CxxScope*>(*c);
    }
 
    return nullptr;
@@ -660,7 +660,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
 
       if(list2.empty())
       {
-         auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+         auto gns = Singleton<CxxRoot>::Instance()->GlobalNamespace();
 
          for(size_t i = 0; i < size; ++i)
          {

@@ -252,15 +252,15 @@ private:
 
    //  The addresses (PSMs and factories) in the MSC.
    //
-   Q1Way< MscAddress > addressq_;
+   Q1Way<MscAddress> addressq_;
 
    //  The contexts in the MSC (SSMs, PSMs, and factories).
    //
-   Q1Way< MscContext > contextq_;
+   Q1Way<MscContext> contextq_;
 
    //  Pairs of communicating *internal* contexts in an MSC.
    //
-   Q1Way< MscContextPair > pairq_;
+   Q1Way<MscContextPair> pairq_;
 
    //  The context group (1 to n) whose MSC is currently being generated.
    //

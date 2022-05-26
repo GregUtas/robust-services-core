@@ -527,7 +527,7 @@ void TokenMessage::set_as_ascii(const string& text)
 {
    Debug::ft("TokenMessage.set_as_ascii");
 
-   std::unique_ptr< Token[] > tokens(new Token[text.size()]);
+   std::unique_ptr<Token[]> tokens(new Token[text.size()]);
 
    for(size_t index = 0; index < text.size(); ++index)
    {
@@ -651,7 +651,7 @@ size_t TokenMessage::set_from(const string& text)
    size_t text_index = 0;
    size_t token_index = 0;
    int nesting = 0;
-   std::unique_ptr< Token[] > tokens(new Token[text.size()]);
+   std::unique_ptr<Token[]> tokens(new Token[text.size()]);
    auto text_to_token_map = &TokenTextMap::instance()->text_to_token_map();
 
    while((location == NO_ERROR) && (text_index < text.size()))

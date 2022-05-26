@@ -1225,7 +1225,7 @@ protected:
 //
 class BcNuAnalyzeRemoteMessage : public BcEventHandler
 {
-   friend class Singleton< BcNuAnalyzeRemoteMessage >;
+   friend class Singleton<BcNuAnalyzeRemoteMessage>;
 
    BcNuAnalyzeRemoteMessage() = default;
    ~BcNuAnalyzeRemoteMessage() = default;
@@ -1235,7 +1235,7 @@ class BcNuAnalyzeRemoteMessage : public BcEventHandler
 
 class BcScAnalyzeRemoteMessage : public BcEventHandler
 {
-   friend class Singleton< BcScAnalyzeRemoteMessage >;
+   friend class Singleton<BcScAnalyzeRemoteMessage>;
 
    BcScAnalyzeRemoteMessage() = default;
    ~BcScAnalyzeRemoteMessage() = default;
@@ -1245,7 +1245,7 @@ class BcScAnalyzeRemoteMessage : public BcEventHandler
 
 class BcOaAnalyzeRemoteMessage : public BcEventHandler
 {
-   friend class Singleton< BcOaAnalyzeRemoteMessage >;
+   friend class Singleton<BcOaAnalyzeRemoteMessage>;
 
    BcOaAnalyzeRemoteMessage() = default;
    ~BcOaAnalyzeRemoteMessage() = default;
@@ -1255,7 +1255,7 @@ class BcOaAnalyzeRemoteMessage : public BcEventHandler
 
 class BcPcAnalyzeRemoteMessage : public BcEventHandler
 {
-   friend class Singleton< BcPcAnalyzeRemoteMessage >;
+   friend class Singleton<BcPcAnalyzeRemoteMessage>;
 
    BcPcAnalyzeRemoteMessage() = default;
    ~BcPcAnalyzeRemoteMessage() = default;
@@ -1265,7 +1265,7 @@ class BcPcAnalyzeRemoteMessage : public BcEventHandler
 
 class BcAcAnalyzeRemoteMessage : public BcEventHandler
 {
-   friend class Singleton< BcAcAnalyzeRemoteMessage >;
+   friend class Singleton<BcAcAnalyzeRemoteMessage>;
 
    BcAcAnalyzeRemoteMessage() = default;
    ~BcAcAnalyzeRemoteMessage() = default;
@@ -1282,7 +1282,7 @@ class BcAcAnalyzeRemoteMessage : public BcEventHandler
 //
 class TestCallFactory : public BcFactory
 {
-   friend class Singleton< TestCallFactory >;
+   friend class Singleton<TestCallFactory>;
 
    //  Private because this is a singleton.
    //

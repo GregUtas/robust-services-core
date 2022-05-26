@@ -37,7 +37,7 @@ namespace CodeTools
 //
 class CxxRoot : public NodeBase::Base
 {
-   friend class NodeBase::Singleton< CxxRoot >;
+   friend class NodeBase::Singleton<CxxRoot>;
    friend NamespacePtr::deleter_type;
 public:
    //  Deleted to prohibit copying.

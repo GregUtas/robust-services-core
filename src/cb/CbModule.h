@@ -35,7 +35,7 @@ namespace CallBase
 //
 class CbModule : public Module
 {
-   friend class Singleton< CbModule >;
+   friend class Singleton<CbModule>;
 
    //  Private because this is a singleton.
    //

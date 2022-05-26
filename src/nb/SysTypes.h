@@ -91,10 +91,10 @@ extern const uintptr_t BAD_POINTER;
 
 //  For wrapping dynamically allocated strings and streams.
 //
-typedef std::unique_ptr< std::string > stringPtr;
-typedef std::unique_ptr< std::ostringstream > ostringstreamPtr;
-typedef std::unique_ptr< std::istream > istreamPtr;
-typedef std::unique_ptr< std::ostream > ostreamPtr;
+typedef std::unique_ptr<std::string> stringPtr;
+typedef std::unique_ptr<std::ostringstream> ostringstreamPtr;
+typedef std::unique_ptr<std::istream> istreamPtr;
+typedef std::unique_ptr<std::ostream> ostreamPtr;
 
 //  Used when char* is for pointer arithmetic.
 //
@@ -134,7 +134,7 @@ typedef int16_t fn_depth;
 typedef uint8_t FlagId;
 constexpr FlagId MaxFlagId = 31;
 constexpr FlagId FLAGS_SIZE = MaxFlagId + 1;
-typedef std::bitset< FLAGS_SIZE > Flags;
+typedef std::bitset<FLAGS_SIZE> Flags;
 extern const Flags NoFlags;
 
 //  Maximum line length for formatted console output.

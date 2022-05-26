@@ -62,7 +62,7 @@ public:
 
    //  Returns the template parameter that corresponds to NAME.  For example,
    //  returns the template parameter for "T" when "T" appears somewhere in
-   //    template< typename T > class <name> { ... };
+   //    template<typename T> class <name> { ... };
    //
    TemplateParm* NameToTemplateParm(const std::string& name) const;
 
@@ -1286,7 +1286,7 @@ public:
    //  the function does not match ARGS.
    //
    Function* CanInvokeWith(StackArgVector& args,
-      stringVector& argTypes, std::vector< TypeMatch >& matches) const;
+      stringVector& argTypes, std::vector<TypeMatch>& matches) const;
 
    //  THAT is an argument whose type is thatType.  If this is a constructor
    //  that can be invoked implicitly with THAT, determines how compatible
@@ -1415,7 +1415,7 @@ public:
    //  Overridden to return the function itself.
    //
    Function* GetFunction() const override
-      { return const_cast< Function* >(this); }
+      { return const_cast<Function*>(this); }
 
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.

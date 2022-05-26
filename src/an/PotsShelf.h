@@ -40,7 +40,7 @@ namespace PotsBase
 //
 class PotsShelfIpService : public UdpIpService
 {
-   friend class Singleton< PotsShelfIpService >;
+   friend class Singleton<PotsShelfIpService>;
 
    //  Private because this is a singleton.
    //
@@ -94,7 +94,7 @@ private:
 //
 class PotsShelfFactory : public MsgFactory
 {
-   friend class Singleton< PotsShelfFactory >;
+   friend class Singleton<PotsShelfFactory>;
 
    //  Private because this is a singleton.
    //

@@ -70,7 +70,7 @@ void LogStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
+   auto reg = Singleton<LogGroupRegistry>::Instance();
 
    if(id == 0)
    {

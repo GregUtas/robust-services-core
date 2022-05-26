@@ -53,8 +53,8 @@ namespace CodeTools
 {
 //  Built-in macros: __DATE__, __FILE__, __func__, __TIME__, and __LINE__.
 //
-typedef std::unique_ptr< StrLiteral > StrLiteralPtr;
-typedef std::vector< StrLiteralPtr > StrLiteralPtrVector;
+typedef std::unique_ptr<StrLiteral> StrLiteralPtr;
+typedef std::vector<StrLiteralPtr> StrLiteralPtrVector;
 
 class MacroDATE : public Macro
 {
@@ -239,7 +239,7 @@ fixed_string ParserTraceToolExpl = "traces parser's \"code generation\"";
 
 class ParserTraceTool : public Tool
 {
-   friend class Singleton< ParserTraceTool >;
+   friend class Singleton<ParserTraceTool>;
 
    ParserTraceTool() : Tool(ParserTracer, 'p', false) { }
    ~ParserTraceTool() = default;
@@ -444,6 +444,6 @@ void CxxRoot::Startup(RestartLevel level)
 
    //  Create the parser trace tool.
    //
-   Singleton< ParserTraceTool >::Instance();
+   Singleton<ParserTraceTool>::Instance();
 }
 }

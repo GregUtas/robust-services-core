@@ -47,7 +47,7 @@ Protocol::Protocol(Id prid, Id base) : base_(base)
    parameters_.Init(Parameter::MaxId, Parameter::CellDiff(), MemImmutable);
 
    prid_.SetId(prid);
-   Singleton< ProtocolRegistry >::Instance()->BindProtocol(*this);
+   Singleton<ProtocolRegistry>::Instance()->BindProtocol(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ Protocol::~Protocol()
    Debug::ftnt(Protocol_dtor);
 
    Debug::SwLog(Protocol_dtor, UnexpectedInvocation, 0);
-   Singleton< ProtocolRegistry >::Extant()->UnbindProtocol(*this);
+   Singleton<ProtocolRegistry>::Extant()->UnbindProtocol(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ bool Protocol::BindSignal(Signal& signal)
 ptrdiff_t Protocol::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Protocol* >(&local);
+   auto fake = reinterpret_cast<const Protocol*>(&local);
    return ptrdiff(&fake->prid_, fake);
 }
 
@@ -157,7 +157,7 @@ Parameter* Protocol::GetParameter(ParameterId pid) const
    auto parm = parameters_.At(pid);
    if(parm != nullptr) return parm;
    if(base_ == NIL_ID) return nullptr;
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(base_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(base_);
    if(pro == nullptr) return nullptr;
    return pro->GetParameter(pid);
 }
@@ -169,7 +169,7 @@ Signal* Protocol::GetSignal(SignalId sid) const
    auto sig = signals_.At(sid);
    if(sig != nullptr) return sig;
    if(base_ == NIL_ID) return nullptr;
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(base_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(base_);
    if(pro == nullptr) return nullptr;
    return pro->GetSignal(sid);
 }
@@ -233,7 +233,7 @@ bool Protocol::Understands(Id prid1, Id prid2)
 
    if(prid1 == prid2) return true;
 
-   auto reg = Singleton< ProtocolRegistry >::Instance();
+   auto reg = Singleton<ProtocolRegistry>::Instance();
    auto pro = reg->GetProtocol(prid1);
 
    while(pro != nullptr)

@@ -62,7 +62,7 @@ public:
 
    //  Returns the files in alphabetical order.
    //
-   std::vector< CodeFile* > SortInAlphaOrder() const;
+   std::vector<CodeFile*> SortInAlphaOrder() const;
 
    //  Checks the code files in the set.
    //

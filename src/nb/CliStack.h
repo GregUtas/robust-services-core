@@ -41,7 +41,7 @@ namespace NodeBase
 //
 class CliStack : public Temporary
 {
-   friend std::unique_ptr< CliStack >::deleter_type;
+   friend std::unique_ptr<CliStack>::deleter_type;
    friend class CliThread;
 public:
    //  Deleted to prohibit copying.
@@ -101,7 +101,7 @@ private:
 
    //  The stack of active increments.
    //
-   std::vector< CliIncrement* > increments_;
+   std::vector<CliIncrement*> increments_;
 };
 }
 #endif

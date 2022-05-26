@@ -52,10 +52,10 @@ constexpr int NIL_MOVE_NUMBER = -1;        // a move that hasn't been numbered
 
 //  Basic collection types.
 //
-typedef std::list< ProvinceId > UnitList;
-typedef std::set< ProvinceId > UnitSet;
-typedef std::set< PowerId > PowerSet;
-typedef std::set< ProvinceId > ProvinceSet;
+typedef std::list<ProvinceId> UnitList;
+typedef std::set<ProvinceId> UnitSet;
+typedef std::set<PowerId> PowerSet;
+typedef std::set<ProvinceId> ProvinceSet;
 
 //  Default server and client port numbers.
 //
@@ -72,7 +72,7 @@ class DipIpBuffer;
 
 //  For managing a DipIpBuffer.
 //
-typedef std::unique_ptr< DipIpBuffer > DipIpBufferPtr;
+typedef std::unique_ptr<DipIpBuffer> DipIpBufferPtr;
 
 //  For defining internal events.
 //

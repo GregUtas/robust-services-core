@@ -110,7 +110,7 @@ CliParm* CliParm::AccessParm(CliCookie& cookie, uint32_t depth) const
 ptrdiff_t CliParm::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const CliParm* >(&local);
+   auto fake = reinterpret_cast<const CliParm*>(&local);
    return ptrdiff(&fake->pid_, fake);
 }
 

@@ -33,7 +33,7 @@ namespace NodeBase
 {
 class SigBus : public PosixSignal
 {
-   friend class Singleton< SigBus >;
+   friend class Singleton<SigBus>;
 
    SigBus();
    ~SigBus() = default;
@@ -49,7 +49,7 @@ void SysSignals::CreateNativeSignals()
 {
    Debug::ft("SysSignals.CreateNativeSignals");
 
-   Singleton< SigBus >::Instance();
+   Singleton<SigBus>::Instance();
 }
 }
 #endif

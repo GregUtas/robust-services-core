@@ -33,7 +33,7 @@ namespace NetworkBase
 //
 class IpBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< IpBufferPool >;
+   friend class NodeBase::Singleton<IpBufferPool>;
 public:
    //  Overridden for patching.
    //
@@ -54,7 +54,7 @@ private:
 //
 class TinyBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< TinyBufferPool >;
+   friend class NodeBase::Singleton<TinyBufferPool>;
 public:
    //  Overridden for patching.
    //
@@ -75,7 +75,7 @@ private:
 //
 class SmallBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< SmallBufferPool >;
+   friend class NodeBase::Singleton<SmallBufferPool>;
 public:
    //  Overridden for patching.
    //
@@ -96,7 +96,7 @@ private:
 //
 class MediumBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< MediumBufferPool >;
+   friend class NodeBase::Singleton<MediumBufferPool>;
 public:
    //  Overridden for patching.
    //
@@ -117,7 +117,7 @@ private:
 //
 class LargeBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< LargeBufferPool >;
+   friend class NodeBase::Singleton<LargeBufferPool>;
 public:
    //  Overridden for patching.
    //
@@ -138,7 +138,7 @@ private:
 //
 class HugeBufferPool : public NodeBase::ObjectPool
 {
-   friend class NodeBase::Singleton< HugeBufferPool >;
+   friend class NodeBase::Singleton<HugeBufferPool>;
 public:
    //  Overridden for patching.
    //

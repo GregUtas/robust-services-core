@@ -39,8 +39,8 @@ AnModule::AnModule() : Module()
 
    //  Create the modules required by AccessNode.
    //
-   Singleton< PbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<PbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -63,8 +63,8 @@ void AnModule::Startup(RestartLevel level)
 {
    Debug::ft("AnModule.Startup");
 
-   Singleton< PotsShelfFactory >::Instance()->Startup(level);
-   Singleton< PotsShelfIpService >::Instance()->Startup(level);
-   Singleton< AnIncrement >::Instance()->Startup(level);
+   Singleton<PotsShelfFactory>::Instance()->Startup(level);
+   Singleton<PotsShelfIpService>::Instance()->Startup(level);
+   Singleton<AnIncrement>::Instance()->Startup(level);
 }
 }

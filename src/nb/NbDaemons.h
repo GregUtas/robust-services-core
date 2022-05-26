@@ -41,7 +41,7 @@ extern fixed_string CliDaemonName;
 
 class CliDaemon : public Daemon
 {
-   friend class Singleton< CliDaemon >;
+   friend class Singleton<CliDaemon>;
 public:
    void Patch(sel_t selector, void* arguments) override;
 private:
@@ -57,7 +57,7 @@ extern fixed_string DeferredDaemonName;
 
 class DeferredDaemon : public Daemon
 {
-   friend class Singleton< DeferredDaemon >;
+   friend class Singleton<DeferredDaemon>;
 public:
    void Patch(sel_t selector, void* arguments) override;
 private:
@@ -73,7 +73,7 @@ extern fixed_string LogDaemonName;
 
 class LogDaemon : public Daemon
 {
-   friend class Singleton< LogDaemon >;
+   friend class Singleton<LogDaemon>;
 public:
    void Patch(sel_t selector, void* arguments) override;
 private:
@@ -89,7 +89,7 @@ extern fixed_string ObjectDaemonName;
 
 class ObjectDaemon : public Daemon
 {
-   friend class Singleton< ObjectDaemon >;
+   friend class Singleton<ObjectDaemon>;
 public:
    void Patch(sel_t selector, void* arguments) override;
 private:
@@ -104,7 +104,7 @@ extern fixed_string StatisticsDaemonName;
 
 class StatisticsDaemon : public Daemon
 {
-   friend class Singleton< StatisticsDaemon >;
+   friend class Singleton<StatisticsDaemon>;
 public:
    void Patch(sel_t selector, void* arguments) override;
 private:

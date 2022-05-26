@@ -64,7 +64,7 @@ StatisticsGroup::StatisticsGroup(const string& expl) : expl_(expl.c_str())
       Debug::SwLog(StatisticsGroup_ctor, "expl length", expl_.size());
    }
 
-   Singleton< StatisticsRegistry >::Instance()->BindGroup(*this);
+   Singleton<StatisticsRegistry>::Instance()->BindGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ StatisticsGroup::~StatisticsGroup()
    Debug::ftnt(StatisticsGroup_dtor);
 
    Debug::SwLog(StatisticsGroup_dtor, UnexpectedInvocation, 0);
-   Singleton< StatisticsRegistry >::Extant()->UnbindGroup(*this);
+   Singleton<StatisticsRegistry>::Extant()->UnbindGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ StatisticsGroup::~StatisticsGroup()
 ptrdiff_t StatisticsGroup::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const StatisticsGroup* >(&local);
+   auto fake = reinterpret_cast<const StatisticsGroup*>(&local);
    return ptrdiff(&fake->gid_, fake);
 }
 

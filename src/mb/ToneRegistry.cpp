@@ -85,7 +85,7 @@ Switch::PortId ToneRegistry::ToneToPort(Tone::Id tid)
 {
    Debug::ft("ToneRegistry.ToneToPort");
 
-   auto tone = Singleton< ToneRegistry >::Instance()->GetTone(tid);
+   auto tone = Singleton<ToneRegistry>::Instance()->GetTone(tid);
    if(tone != nullptr) return tone->TsPort();
    return NIL_ID;
 }

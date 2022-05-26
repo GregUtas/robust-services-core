@@ -105,7 +105,7 @@ void PotsStatistics::Incr(Id id)
 
    if(id <= MaxId)
    {
-      Singleton< PotsStatistics >::Instance()->basicCalls_[id]->Incr();
+      Singleton<PotsStatistics>::Instance()->basicCalls_[id]->Incr();
       return;
    }
 
@@ -122,7 +122,7 @@ void PotsStatistics::IncrCause(Cause::Ind cause)
 
    if(cause <= Cause::MaxInd)
    {
-      Singleton< PotsStatistics >::Instance()->treatments_[cause]->Incr();
+      Singleton<PotsStatistics>::Instance()->treatments_[cause]->Incr();
       return;
    }
 

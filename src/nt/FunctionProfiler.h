@@ -94,15 +94,15 @@ private:
    //  The hash table for FunctionStats records.  Function names with the
    //  same hash value appear in the same queue.
    //
-   Q2Way< FunctionStats >* functionq_;
+   Q2Way<FunctionStats>* functionq_;
 
    //  A queue where all of the FunctionStats are placed prior to sorting.
    //
-   Q2Way< FunctionStats > holdq_;
+   Q2Way<FunctionStats> holdq_;
 
    //  The queue of sorted FunctionStats.
    //
-   Q2Way< FunctionStats > sortq_;
+   Q2Way<FunctionStats> sortq_;
 };
 }
 #endif

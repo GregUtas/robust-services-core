@@ -154,7 +154,7 @@ ModuleRegistry::ModuleRegistry()
    //  available, so create MainArgs in order to save main()'s arguments
    //  in immutable memory.
    //
-   Singleton< MainArgs >::Instance();
+   Singleton<MainArgs>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -348,7 +348,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    *Stream() << to_string(zeroTime, LowAlpha) << CRLF;
    Log::Submit(stream_);
 
-   auto reg = Singleton< ThreadRegistry >::Instance();
+   auto reg = Singleton<ThreadRegistry>::Instance();
    auto exiting = reg->Restarting(level);
    auto target = exiting.size();
 

@@ -35,7 +35,7 @@ namespace MediaBase
 //
 class MediaEndptPool : public ObjectPool
 {
-   friend class Singleton< MediaEndptPool >;
+   friend class Singleton<MediaEndptPool>;
 
    //  Private because this is a singleton.
    //

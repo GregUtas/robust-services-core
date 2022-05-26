@@ -35,7 +35,7 @@ namespace NodeBase
 //
 class ObjectPoolAudit : public Thread
 {
-   friend class Singleton< ObjectPoolAudit >;
+   friend class Singleton<ObjectPoolAudit>;
    friend class ObjectPoolRegistry;
 public:
    //  Sets the audit interval.

@@ -46,7 +46,7 @@ public:
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Overridden for patching.
    //

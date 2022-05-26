@@ -82,7 +82,7 @@ void BotThread::Destroy()
 {
    Debug::ft("BotThread.Destroy");
 
-   Singleton< BotThread >::Destroy();
+   Singleton<BotThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ void BotThread::ProcessEvent()
    wakeups_.erase(first);
 
    DipIpBufferPtr buff(new DipIpBuffer(MsgIncoming, DipHeaderSize));
-   auto msg = reinterpret_cast< BM_Message* >(buff->PayloadPtr());
+   auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
    msg->header.signal = BM_MESSAGE;
    msg->header.spare = event;
    msg->header.length = 0;
@@ -200,11 +200,11 @@ void BotThread::ProcessMsg(MsgBuffer* msg) const
    //  A message has arrived.  Have the bot process it and then delete it
    //  (which occurs automatically, because we assign it to a unique_ptr).
    //
-   DipIpBufferPtr ipb(static_cast< DipIpBuffer* >(msg));
+   DipIpBufferPtr ipb(static_cast<DipIpBuffer*>(msg));
 
    if(Debug::TraceOn())
    {
-      auto tbuff = Singleton< TraceBuffer >::Instance();
+      auto tbuff = Singleton<TraceBuffer>::Instance();
 
       if(tbuff->ToolIsOn(DipTracer))
       {
@@ -213,7 +213,7 @@ void BotThread::ProcessMsg(MsgBuffer* msg) const
       }
    }
 
-   auto message = reinterpret_cast< const DipMessage* >(ipb->HeaderPtr());
+   auto message = reinterpret_cast<const DipMessage*>(ipb->HeaderPtr());
    bot_->process_message(*message);
 }
 

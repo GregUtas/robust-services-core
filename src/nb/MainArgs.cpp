@@ -33,7 +33,7 @@ namespace NodeBase
 {
 //  For holding the arguments to main() until immutable memory is available.
 //
-static std::vector< string > MainParms;
+static std::vector<string> MainParms;
 
 //------------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ c_string MainArgs::At(size_t n)
 {
    Debug::ftnt("MainArgs.At");
 
-   auto reg = Singleton< MainArgs >::Extant();
+   auto reg = Singleton<MainArgs>::Extant();
    if(reg == nullptr) return MainParms.at(n).c_str();
    return reg->args_.at(n).c_str();
 }
@@ -93,7 +93,7 @@ string MainArgs::Find(c_string tag)
 {
    Debug::ft("MainArgs.Find");
 
-   auto reg = Singleton< MainArgs >::Extant();
+   auto reg = Singleton<MainArgs>::Extant();
 
    if(reg == nullptr)
    {
@@ -141,7 +141,7 @@ void MainArgs::PushBack(const string& arg)
 
 size_t MainArgs::Size()
 {
-   auto reg = Singleton< MainArgs >::Extant();
+   auto reg = Singleton<MainArgs>::Extant();
    if(reg == nullptr) return MainParms.size();
    return reg->args_.size();
 }

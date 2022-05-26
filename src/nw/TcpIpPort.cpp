@@ -58,19 +58,19 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
    //  If there is no I/O thread running on this port, create it after
    //  generating a log.
    //
-   auto thread = static_cast< TcpIoThread* >(GetThread());
+   auto thread = static_cast<TcpIoThread*>(GetThread());
 
    if(thread == nullptr)
    {
       if(Restart::GetStage() == ShuttingDown) return nullptr;
       Debug::SwLog(TcpIpPort_CreateAppSocket, "I/O thread not found", 0);
-      thread = static_cast< TcpIoThread* >(CreateThread());
+      thread = static_cast<TcpIoThread*>(CreateThread());
       if(thread == nullptr) return nullptr;
    }
 
    //  Create the socket and register it with the I/O thread.
    //
-   auto svc = static_cast< const TcpIpService* >(GetService());
+   auto svc = static_cast<const TcpIpService*>(GetService());
    auto rc = SysSocket::AllocFailed;
 
    SysTcpSocketPtr socket(new SysTcpSocket(NilIpPort, svc, rc));
@@ -90,7 +90,7 @@ IoThread* TcpIpPort::CreateIoThread()
 {
    Debug::ft("TcpIpPort.CreateIoThread");
 
-   auto svc = static_cast< const TcpIpService* >(GetService());
+   auto svc = static_cast<const TcpIpService*>(GetService());
    auto daemon = TcpIoDaemon::GetDaemon(svc, GetPort());
    return new TcpIoThread(daemon, svc, GetPort());
 }

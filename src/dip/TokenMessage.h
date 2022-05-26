@@ -177,12 +177,12 @@ private:
 
    //  For storing the message's contents.
    //
-   typedef std::unique_ptr< Token[] > TokensPtr;
+   typedef std::unique_ptr<Token[]> TokensPtr;
 
    //  For storing the starting location of each of the message's
    //  parameters.
    //
-   typedef std::unique_ptr< size_t[] > ParmBeginsPtr;
+   typedef std::unique_ptr<size_t[]> ParmBeginsPtr;
 
    //  The number of tokens in the message.
    //

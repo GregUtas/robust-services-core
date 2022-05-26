@@ -56,7 +56,7 @@ Parameter::Parameter(ProtocolId prid, Id pid) :
 
    //  Register the parameter with its protocol.
    //
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid_);
 
    if(pro == nullptr)
    {
@@ -77,7 +77,7 @@ Parameter::~Parameter()
 
    Debug::SwLog(Parameter_dtor, UnexpectedInvocation, 0);
 
-   auto pro = Singleton< ProtocolRegistry >::Extant()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Extant()->GetProtocol(prid_);
    if(pro == nullptr) return;
    pro->UnbindParameter(*this);
 }
@@ -105,7 +105,7 @@ bool Parameter::BindUsage(SignalId sid, Usage usage)
 ptrdiff_t Parameter::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Parameter* >(&local);
+   auto fake = reinterpret_cast<const Parameter*>(&local);
    return ptrdiff(&fake->pid_, fake);
 }
 

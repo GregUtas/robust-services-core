@@ -39,7 +39,7 @@ fixed_string BotTraceToolExpl = "traces Diplomacy messages";
 
 class BotTraceTool : public Tool
 {
-   friend class Singleton< BotTraceTool >;
+   friend class Singleton<BotTraceTool>;
 
    BotTraceTool() : Tool(DipTracer, 'd', true) { }
    ~BotTraceTool() = default;
@@ -53,7 +53,7 @@ BotTracer::BotTracer()
 {
    Debug::ft("BotTracer.ctor");
 
-   Singleton< BotTraceTool >::Instance();
+   Singleton<BotTraceTool>::Instance();
 }
 
 //------------------------------------------------------------------------------

@@ -136,7 +136,7 @@ static IndentRule ClassifyIndent(string& id)
 //
 //  Returns true if in a nested brace initialization.
 //
-static bool InNestedBraceInit(const std::vector< LeftBraceRole >& roles)
+static bool InNestedBraceInit(const std::vector<LeftBraceRole>& roles)
 {
    Debug::ft("CodeTools.InNestedBraceInit");
 
@@ -238,8 +238,8 @@ void Lexer::CalcDepths()
    size_t rparPos;        // position of right parenthesis that sets depths
    bool elseif = false;   // if processing an "else if"
 
-   std::vector< LeftBraceRole > lbStack;
-   std::vector< size_t > lbDepths;
+   std::vector<LeftBraceRole> lbStack;
+   std::vector<size_t> lbDepths;
    lbStack.push_back(LB_None);
    lbDepths.push_back(SIZE_MAX);
    kwd = Cxx::NIL_KEYWORD;
@@ -904,7 +904,7 @@ void Lexer::CheckLines()
 
    auto last = lines_.size() - 1;
    string s;
-   std::set< Warning > warnings;
+   std::set<Warning> warnings;
 
    for(size_t n = 0; n <= last; ++n)
    {
@@ -3172,9 +3172,9 @@ void Lexer::Preprocess()
    //  Keep fetching identifiers, erasing any that are #defined symbols that
    //  map to empty strings.  Skip preprocessor directives.
    //
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto file = Context::File();
-   auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto scope = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    auto pos = NextPos(0);
    string id;
 
@@ -3191,7 +3191,7 @@ void Lexer::Preprocess()
 
       if(item != nullptr)
       {
-         auto def = static_cast< Define* >(item);
+         auto def = static_cast<Define*>(item);
 
          if(def->Empty())
          {

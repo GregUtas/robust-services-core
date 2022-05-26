@@ -67,7 +67,7 @@ static const msecs_t SleepInterval = msecs_t(SECS_TO_MS * ShortIntervalSecs);
 //------------------------------------------------------------------------------
 
 StatisticsThread::StatisticsThread() :
-   Thread(BackgroundFaction, Singleton< StatisticsDaemon >::Instance()),
+   Thread(BackgroundFaction, Singleton<StatisticsDaemon>::Instance()),
    countdown_(WakeupsBetweenReports),
    delayed_(false)
 {
@@ -144,7 +144,7 @@ void StatisticsThread::Destroy()
 {
    Debug::ft("StatisticsThread.Destroy");
 
-   Singleton< StatisticsThread >::Destroy();
+   Singleton<StatisticsThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ void StatisticsThread::Enter()
 {
    Debug::ft("StatisticsThread.Enter");
 
-   auto reg = Singleton< StatisticsRegistry >::Instance();
+   auto reg = Singleton<StatisticsRegistry>::Instance();
    auto sleep = CalcFirstDelay();
 
    while(true)
@@ -227,7 +227,7 @@ bool StatisticsThread::ExitOnRestart(RestartLevel level) const
    //  Generate a statistics report if statistics will disappear
    //  during the restart.
    //
-   auto reg = Singleton< StatisticsRegistry >::Instance();
+   auto reg = Singleton<StatisticsRegistry>::Instance();
 
    if(Restart::ClearsMemory(reg->MemType()))
    {

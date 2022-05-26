@@ -40,7 +40,7 @@ namespace SessionBase
 //
 class ProtocolRegistry : public NodeBase::Immutable
 {
-   friend class NodeBase::Singleton< ProtocolRegistry >;
+   friend class NodeBase::Singleton<ProtocolRegistry>;
    friend class Protocol;
 public:
    //  Deleted to prohibit copying.
@@ -84,7 +84,7 @@ private:
 
    //  The global registry of protocols.
    //
-   NodeBase::Registry< Protocol > protocols_;
+   NodeBase::Registry<Protocol> protocols_;
 };
 }
 #endif

@@ -34,7 +34,7 @@ namespace NodeBase
 //
 class ClassRegistry : public Immutable
 {
-   friend class Singleton< ClassRegistry >;
+   friend class Singleton<ClassRegistry>;
    friend class Class;
 public:
    //  Deleted to prohibit copying.
@@ -88,7 +88,7 @@ private:
 
    //  The global registry of classes.
    //
-   Registry< Class > classes_;
+   Registry<Class> classes_;
 };
 }
 #endif

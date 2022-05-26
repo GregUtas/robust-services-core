@@ -64,7 +64,7 @@ namespace CodeTools
       NameAndPtrs(): ptrs(0) { }
    };
 
-   typedef std::vector< NameAndPtrs> NameVector;
+   typedef std::vector<NameAndPtrs> NameVector;
 
    //  Returns the last string that follows a '.' in FILE.  Returns an empty
    //  string if FILE contains no '.'

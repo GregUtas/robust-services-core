@@ -104,7 +104,7 @@ TcpIoThread::TcpIoThread(Daemon* daemon,
 {
    Debug::ft(TcpIoThread_ctor);
 
-   ipPort_ = Singleton< IpPortRegistry >::Instance()->GetPort(port_, IpTcp);
+   ipPort_ = Singleton<IpPortRegistry>::Instance()->GetPort(port_, IpTcp);
 
    if(ipPort_ != nullptr)
       ipPort_->SetThread(this);
@@ -212,7 +212,7 @@ bool TcpIoThread::AllocateListener()
 
    //  Release any listener registered with our port.
    //
-   auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
+   auto registrant = static_cast<SysTcpSocket*>(ipPort_->GetSocket());
 
    if(registrant != nullptr)
    {
@@ -222,7 +222,7 @@ bool TcpIoThread::AllocateListener()
 
    //  Allocate a new listener.
    //
-   auto svc = static_cast< const TcpIpService* >(ipPort_->GetService());
+   auto svc = static_cast<const TcpIpService*>(ipPort_->GetService());
    auto rc = SysSocket::AllocFailed;
    SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
@@ -307,7 +307,7 @@ bool TcpIoThread::EnsureListener()
    //  o to replace the listener if it has failed
    //
    if(!listen_) return true;
-   auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
+   auto registrant = static_cast<SysTcpSocket*>(ipPort_->GetSocket());
    auto listener = Listener();
 
    if(registrant == nullptr)
@@ -469,7 +469,7 @@ bool TcpIoThread::InsertSocket(SysSocket* socket)
    if(socket->Protocol() != IpTcp) return false;
 
    auto interrupt = sockets_.Empty();
-   auto sock = static_cast< SysTcpSocket* >(socket);
+   auto sock = static_cast<SysTcpSocket*>(socket);
 
    if(sockets_.PushBack(sock))
    {

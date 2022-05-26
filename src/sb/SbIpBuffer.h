@@ -59,7 +59,7 @@ public:
    //  Returns a pointer to the SessionBase message header.
    //
    MsgHeader* Header() const
-      { return reinterpret_cast< MsgHeader* >(HeaderPtr()); }
+      { return reinterpret_cast<MsgHeader*>(HeaderPtr()); }
 
    //  Obtains a buffer from the object pool used by USER.
    //

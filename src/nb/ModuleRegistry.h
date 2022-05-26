@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class ModuleRegistry : public Immutable
 {
-   friend class Singleton< ModuleRegistry >;
+   friend class Singleton<ModuleRegistry>;
    friend class Module;
    friend class InitThread;
    friend class RootThread;
@@ -108,7 +108,7 @@ private:
 
    //  The global registry of modules.
    //
-   Registry< Module > modules_;
+   Registry<Module> modules_;
 };
 }
 #endif

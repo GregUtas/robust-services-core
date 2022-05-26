@@ -72,7 +72,7 @@ void LocalAddrHandler::ReceiveBuff
 
    //  Record that the source address successfully received a message.
    //
-   Singleton< IpPortRegistry >::Instance()->TestAdvance();
+   Singleton<IpPortRegistry>::Instance()->TestAdvance();
 }
 
 //==============================================================================
@@ -86,7 +86,7 @@ SendLocalIpService::SendLocalIpService()
 
    enabled_.reset
       (new IpServiceCfg(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ void SendLocalIpService::Startup(RestartLevel level)
       FunctionGuard guard(Guard_ImmUnprotect);
       enabled_.reset
          (new IpServiceCfg(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
-      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+      Singleton<CfgParmRegistry>::Instance()->BindParm(*enabled_);
    }
 
    IpService::Startup(level);
@@ -190,7 +190,7 @@ void SendLocalThread::Destroy()
 {
    Debug::ft("SendLocalThread.Destroy");
 
-   Singleton< SendLocalThread >::Destroy();
+   Singleton<SendLocalThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -211,8 +211,8 @@ void SendLocalThread::Enter()
 
    //  Exit if the local address service is not enabled.
    //
-   auto reg = Singleton< IpPortRegistry >::Instance();
-   auto svc = Singleton< SendLocalIpService >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
+   auto svc = Singleton<SendLocalIpService>::Instance();
    if(!svc->Enabled()) return;
 
    //  Inform the registry that the test is starting.  Wait briefly if the
@@ -240,7 +240,7 @@ void SendLocalThread::Enter()
       //
       SysIpL3Addr addr(IpPortRegistry::LocalAddr(), port);
       IpBufferPtr buff(new IpBuffer(MsgOutgoing, 0, sizeof(SysIpL3Addr)));
-      auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
+      auto payload = reinterpret_cast<SysIpL3Addr*>(buff->PayloadPtr());
 
       buff->SetTxAddr(addr);
       buff->SetRxAddr(addr);
@@ -260,7 +260,7 @@ void SendLocalThread::Enter()
 
    if(retest_)
    {
-      Singleton< CliThread >::Instance()->Interrupt();
+      Singleton<CliThread>::Instance()->Interrupt();
    }
 }
 
@@ -284,7 +284,7 @@ void SendLocalThread::Retest()
 //==============================================================================
 
 LocalAddrRetest::LocalAddrRetest(uint32_t timeout) :
-   Deferred(*Singleton< IpPortRegistry >::Instance(), timeout, false)
+   Deferred(*Singleton<IpPortRegistry>::Instance(), timeout, false)
 {
    Debug::ft("LocalAddrRetest.ctor");
 }
@@ -306,10 +306,10 @@ void LocalAddrRetest::EventHasOccurred(Event event)
    //  its design changes to just sleep until the next test, it would need
    //  to be awoken instead.
    //
-   auto thread = Singleton< SendLocalThread >::Extant();
+   auto thread = Singleton<SendLocalThread>::Extant();
 
    if(thread == nullptr)
-      Singleton< SendLocalThread >::Instance();
+      Singleton<SendLocalThread>::Instance();
    else
       thread->Interrupt();
 }

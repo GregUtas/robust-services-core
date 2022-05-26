@@ -368,7 +368,7 @@ void CxxStatement::Delete()
 {
    Debug::ft("CxxStatement.Delete");
 
-   static_cast< Block* >(GetScope())->EraseItem(this);
+   static_cast<Block*>(GetScope())->EraseItem(this);
    delete this;
 }
 
@@ -1150,7 +1150,7 @@ void Return::EnterBlock()
       {
          if((result.item_->Type() == Cxx::Class) && !result.IsIndirect())
          {
-            static_cast< Class* >(result.item_)->InvokeCopyCtor();
+            static_cast<Class*>(result.item_)->InvokeCopyCtor();
          }
       }
    }

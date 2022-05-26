@@ -36,7 +36,7 @@ namespace PotsBase
 {
 class PotsCfbFeature : public PotsFeature
 {
-   friend class Singleton< PotsCfbFeature >;
+   friend class Singleton<PotsCfbFeature>;
 
    PotsCfbFeature();
    ~PotsCfbFeature();

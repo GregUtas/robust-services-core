@@ -68,7 +68,7 @@
 //
 namespace NodeBase
 {
-template< typename T > struct DynamicAllocator
+template<typename T> struct DynamicAllocator
 {
    typedef T value_type;
 
@@ -76,17 +76,17 @@ template< typename T > struct DynamicAllocator
 
    ~DynamicAllocator() = default;
 
-   template< typename U > DynamicAllocator
-      (const DynamicAllocator< U >& that) noexcept { }
+   template<typename U> DynamicAllocator
+      (const DynamicAllocator<U>& that) noexcept { }
 
-   template< typename U > bool operator==
-      (const DynamicAllocator< U >& that) const noexcept
+   template<typename U> bool operator==
+      (const DynamicAllocator<U>& that) const noexcept
    {
       return true;
    }
 
-   template< typename U > bool operator!=
-      (const DynamicAllocator< U >& that) const noexcept
+   template<typename U> bool operator!=
+      (const DynamicAllocator<U>& that) const noexcept
    {
       return false;
    }
@@ -96,7 +96,7 @@ template< typename T > struct DynamicAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemDynamic, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemDynamic);
-      return static_cast< T* >(addr);
+      return static_cast<T*>(addr);
    }
 
    void deallocate(T* const addr, size_t n) const
@@ -107,7 +107,7 @@ template< typename T > struct DynamicAllocator
 
 //------------------------------------------------------------------------------
 
-template< typename T > struct ImmutableAllocator
+template<typename T> struct ImmutableAllocator
 {
    typedef T value_type;
 
@@ -115,17 +115,17 @@ template< typename T > struct ImmutableAllocator
 
    ~ImmutableAllocator() = default;
 
-   template< typename U > ImmutableAllocator
-      (const ImmutableAllocator< U >& that) noexcept { }
+   template<typename U> ImmutableAllocator
+      (const ImmutableAllocator<U>& that) noexcept { }
 
-   template< typename U > bool operator==
-      (const ImmutableAllocator< U >& that) const noexcept
+   template<typename U> bool operator==
+      (const ImmutableAllocator<U>& that) const noexcept
    {
       return true;
    }
 
-   template< typename U > bool operator!=
-      (const ImmutableAllocator< U >& that) const noexcept
+   template<typename U> bool operator!=
+      (const ImmutableAllocator<U>& that) const noexcept
    {
       return false;
    }
@@ -135,7 +135,7 @@ template< typename T > struct ImmutableAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemImmutable, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemImmutable);
-      return static_cast< T* >(addr);
+      return static_cast<T*>(addr);
    }
 
    void deallocate(T* const addr, size_t n) const
@@ -146,7 +146,7 @@ template< typename T > struct ImmutableAllocator
 
 //------------------------------------------------------------------------------
 
-template< typename T > struct PermanentAllocator
+template<typename T> struct PermanentAllocator
 {
    typedef T value_type;
 
@@ -154,17 +154,17 @@ template< typename T > struct PermanentAllocator
 
    ~PermanentAllocator() = default;
 
-   template< typename U > PermanentAllocator
-      (const PermanentAllocator< U >& that) noexcept { }
+   template<typename U> PermanentAllocator
+      (const PermanentAllocator<U>& that) noexcept { }
 
-   template< typename U > bool operator==
-      (const PermanentAllocator< U >& that) const noexcept
+   template<typename U> bool operator==
+      (const PermanentAllocator<U>& that) const noexcept
    {
       return true;
    }
 
-   template< typename U > bool operator!=
-      (const PermanentAllocator< U >& that) const noexcept
+   template<typename U> bool operator!=
+      (const PermanentAllocator<U>& that) const noexcept
    {
       return false;
    }
@@ -174,7 +174,7 @@ template< typename T > struct PermanentAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemPermanent, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemPermanent);
-      return static_cast< T* >(addr);
+      return static_cast<T*>(addr);
    }
 
    void deallocate(T* const addr, size_t n) const
@@ -185,7 +185,7 @@ template< typename T > struct PermanentAllocator
 
 //------------------------------------------------------------------------------
 
-template< typename T > struct PersistentAllocator
+template<typename T> struct PersistentAllocator
 {
    typedef T value_type;
 
@@ -193,17 +193,17 @@ template< typename T > struct PersistentAllocator
 
    ~PersistentAllocator() = default;
 
-   template< typename U > PersistentAllocator
-      (const PersistentAllocator< U >& that) noexcept { }
+   template<typename U> PersistentAllocator
+      (const PersistentAllocator<U>& that) noexcept { }
 
-   template< typename U > bool operator==
-      (const PersistentAllocator< U >& that) const noexcept
+   template<typename U> bool operator==
+      (const PersistentAllocator<U>& that) const noexcept
    {
       return true;
    }
 
-   template< typename U > bool operator!=
-      (const PersistentAllocator< U >& that) const noexcept
+   template<typename U> bool operator!=
+      (const PersistentAllocator<U>& that) const noexcept
    {
       return false;
    }
@@ -213,7 +213,7 @@ template< typename T > struct PersistentAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemPersistent, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemPersistent);
-      return static_cast< T* >(addr);
+      return static_cast<T*>(addr);
    }
 
    void deallocate(T* const addr, size_t n) const
@@ -224,7 +224,7 @@ template< typename T > struct PersistentAllocator
 
 //------------------------------------------------------------------------------
 
-template< typename T > struct ProtectedAllocator
+template<typename T> struct ProtectedAllocator
 {
    typedef T value_type;
 
@@ -232,17 +232,17 @@ template< typename T > struct ProtectedAllocator
 
    ~ProtectedAllocator() = default;
 
-   template< typename U > ProtectedAllocator
-      (const ProtectedAllocator< U >& that) noexcept { }
+   template<typename U> ProtectedAllocator
+      (const ProtectedAllocator<U>& that) noexcept { }
 
-   template< typename U > bool operator==
-      (const ProtectedAllocator< U >& that) const noexcept
+   template<typename U> bool operator==
+      (const ProtectedAllocator<U>& that) const noexcept
    {
       return true;
    }
 
-   template< typename U > bool operator!=
-      (const ProtectedAllocator< U >& that) const noexcept
+   template<typename U> bool operator!=
+      (const ProtectedAllocator<U>& that) const noexcept
    {
       return false;
    }
@@ -252,7 +252,7 @@ template< typename T > struct ProtectedAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemProtected, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemProtected);
-      return static_cast< T* >(addr);
+      return static_cast<T*>(addr);
    }
 
    void deallocate(T* const addr, size_t n) const
@@ -263,7 +263,7 @@ template< typename T > struct ProtectedAllocator
 
 //------------------------------------------------------------------------------
 
-template< typename T > struct TemporaryAllocator
+template<typename T> struct TemporaryAllocator
 {
    typedef T value_type;
 
@@ -271,17 +271,17 @@ template< typename T > struct TemporaryAllocator
 
    ~TemporaryAllocator() = default;
 
-   template< typename U > TemporaryAllocator
-      (const TemporaryAllocator< U >& that) noexcept { }
+   template<typename U> TemporaryAllocator
+      (const TemporaryAllocator<U>& that) noexcept { }
 
-   template< typename U > bool operator==
-      (const TemporaryAllocator< U >& that) const noexcept
+   template<typename U> bool operator==
+      (const TemporaryAllocator<U>& that) const noexcept
    {
       return true;
    }
 
-   template< typename U > bool operator!=
-      (const TemporaryAllocator< U >& that) const noexcept
+   template<typename U> bool operator!=
+      (const TemporaryAllocator<U>& that) const noexcept
    {
       return false;
    }
@@ -291,7 +291,7 @@ template< typename T > struct TemporaryAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemTemporary, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemTemporary);
-      return static_cast< T* >(addr);
+      return static_cast<T*>(addr);
    }
 
    void deallocate(T* const addr, size_t n) const

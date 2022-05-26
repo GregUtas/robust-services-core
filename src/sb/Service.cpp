@@ -65,7 +65,7 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
 
    //  Add the service to the global service registry.
    //
-   if(!Singleton< ServiceRegistry >::Instance()->BindService(*this)) return;
+   if(!Singleton<ServiceRegistry>::Instance()->BindService(*this)) return;
 
    status_ = Enabled;
 
@@ -75,7 +75,7 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
    //  receive this event.
    //
    BindSystemHandler
-      (*Singleton< SbAnalyzeMessage >::Instance(), EventHandler::AnalyzeMsg);
+      (*Singleton<SbAnalyzeMessage>::Instance(), EventHandler::AnalyzeMsg);
    BindEventName(AnalyzeMsgEventStr, Event::AnalyzeMsg);
    BindEventName(AnalyzeSapEventStr, Event::AnalyzeSap);
    BindEventName(AnalyzeSnpEventStr, Event::AnalyzeSnp);
@@ -86,16 +86,16 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
    if(modifier_)
    {
       BindSystemHandler
-         (*Singleton< SbAnalyzeSap >::Instance(), EventHandler::AnalyzeSap);
+         (*Singleton<SbAnalyzeSap>::Instance(), EventHandler::AnalyzeSap);
       BindSystemHandler
-         (*Singleton< SbAnalyzeSnp >::Instance(), EventHandler::AnalyzeSnp);
+         (*Singleton<SbAnalyzeSnp>::Instance(), EventHandler::AnalyzeSnp);
    }
 
    //  Only modifiable services require the Force Transition event handler.
    //
    if(modifiable_)
    {
-      BindSystemHandler(*Singleton< SbForceTransition >::Instance(),
+      BindSystemHandler(*Singleton<SbForceTransition>::Instance(),
          EventHandler::ForceTransition);
       BindEventName(ForceTransitionEventStr, Event::ForceTransition);
    }
@@ -104,7 +104,7 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
    //
    if(modifiable_ || modifier_)
    {
-      BindSystemHandler(*Singleton< SbInitiationReq >::Instance(),
+      BindSystemHandler(*Singleton<SbInitiationReq>::Instance(),
          EventHandler::InitiationReq);
       BindEventName(InitiationEventStr, Event::InitiationReq);
    }
@@ -119,7 +119,7 @@ Service::~Service()
    Debug::ftnt(Service_dtor);
 
    Debug::SwLog(Service_dtor, UnexpectedInvocation, 0);
-   Singleton< ServiceRegistry >::Extant()->UnbindService(*this);
+   Singleton<ServiceRegistry>::Extant()->UnbindService(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ bool Service::BindTrigger(Trigger& trigger)
 ptrdiff_t Service::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Service* >(&local);
+   auto fake = reinterpret_cast<const Service*>(&local);
    return ptrdiff(&fake->sid_, fake);
 }
 

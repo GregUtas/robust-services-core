@@ -59,7 +59,7 @@ protected:
 
 class PotsCcwNull : public PotsCcwState
 {
-   friend class Singleton< PotsCcwNull >;
+   friend class Singleton<PotsCcwNull>;
 
    PotsCcwNull();
    ~PotsCcwNull() = default;
@@ -67,7 +67,7 @@ class PotsCcwNull : public PotsCcwState
 
 class PotsCcwActive : public PotsCcwState
 {
-   friend class Singleton< PotsCcwActive >;
+   friend class Singleton<PotsCcwActive>;
 
    PotsCcwActive();
    ~PotsCcwActive() = default;
@@ -75,7 +75,7 @@ class PotsCcwActive : public PotsCcwState
 
 class PotsCcwAcCollectInformation : public EventHandler
 {
-   friend class Singleton< PotsCcwAcCollectInformation >;
+   friend class Singleton<PotsCcwAcCollectInformation>;
 
    PotsCcwAcCollectInformation() = default;
    ~PotsCcwAcCollectInformation() = default;
@@ -104,10 +104,10 @@ PotsCcwService::PotsCcwService() : Service(PotsCcwServiceId, false, true)
 {
    Debug::ft("PotsCcwService.ctor");
 
-   Singleton< PotsCcwNull >::Instance();
-   Singleton< PotsCcwActive >::Instance();
+   Singleton<PotsCcwNull>::Instance();
+   Singleton<PotsCcwActive>::Instance();
 
-   Singleton< PotsCcwAcCollectInformation >::Instance();
+   Singleton<PotsCcwAcCollectInformation>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ EventHandler::Rc PotsCcwSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCcwSsm.ProcessInitAck");
 
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto stid = pssm.CurrState();
 
    if(stid == BcState::AnalyzingInformation)
@@ -201,7 +201,7 @@ EventHandler::Rc PotsCcwSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
          return pssm.RaiseReleaseCall(nextEvent, Cause::FacilityRejected);
       }
 
-      auto handler = Singleton< PotsCcwAcCollectInformation >::Instance();
+      auto handler = Singleton<PotsCcwAcCollectInformation>::Instance();
       pssm.SetNextState(BcState::CollectingInformation);
       pssm.SetNextSap(BcTrigger::CollectInformationSap);
       nextEvent = new ForceTransitionEvent(pssm, *handler);
@@ -241,7 +241,7 @@ EventHandler::Rc PotsCcwSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
    if(stid == PotsCcwState::Active)
    {
-      auto& ire = static_cast< InitiationReqEvent& >(currEvent);
+      auto& ire = static_cast<InitiationReqEvent&>(currEvent);
 
       if(ire.GetModifier() == PotsCwaServiceId)
       {
@@ -262,7 +262,7 @@ EventHandler::Rc PotsCcwSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCcwSsm.ProcessSnp");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
 
    if(pssm->HasIdled()) SetNextState(Null);
    return EventHandler::Pass;
@@ -275,7 +275,7 @@ EventHandler::Rc PotsCcwAcCollectInformation::ProcessEvent
 {
    Debug::ft("PotsCcwAcCollectInformation.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto ppsm = PotsCallPsm::Cast(pssm.UPsm());
 
    pssm.DialedDigits().Clear();

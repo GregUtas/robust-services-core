@@ -72,7 +72,7 @@ protected:
 
 class PotsWmlNull : public PotsWmlState
 {
-   friend class Singleton< PotsWmlNull >;
+   friend class Singleton<PotsWmlNull>;
 
    PotsWmlNull();
    ~PotsWmlNull() = default;
@@ -80,7 +80,7 @@ class PotsWmlNull : public PotsWmlState
 
 class PotsWmlActivating : public PotsWmlState
 {
-   friend class Singleton< PotsWmlActivating >;
+   friend class Singleton<PotsWmlActivating>;
 
    PotsWmlActivating();
    ~PotsWmlActivating() = default;
@@ -88,7 +88,7 @@ class PotsWmlActivating : public PotsWmlState
 
 class PotsWmlTiming : public PotsWmlState
 {
-   friend class Singleton< PotsWmlTiming >;
+   friend class Singleton<PotsWmlTiming>;
 
    PotsWmlTiming();
    ~PotsWmlTiming() = default;
@@ -123,7 +123,7 @@ protected:
 
 class PotsWmlAcAnalyzeMessage : public PotsWmlEventHandler
 {
-   friend class Singleton< PotsWmlAcAnalyzeMessage >;
+   friend class Singleton<PotsWmlAcAnalyzeMessage>;
 
    PotsWmlAcAnalyzeMessage() = default;
    ~PotsWmlAcAnalyzeMessage() = default;
@@ -133,7 +133,7 @@ class PotsWmlAcAnalyzeMessage : public PotsWmlEventHandler
 
 class PotsWmlTiAnalyzeMessage : public PotsWmlEventHandler
 {
-   friend class Singleton< PotsWmlTiAnalyzeMessage >;
+   friend class Singleton<PotsWmlTiAnalyzeMessage>;
 
    PotsWmlTiAnalyzeMessage() = default;
    ~PotsWmlTiAnalyzeMessage() = default;
@@ -143,7 +143,7 @@ class PotsWmlTiAnalyzeMessage : public PotsWmlEventHandler
 
 class PotsWmlTiTimeout : public PotsWmlEventHandler
 {
-   friend class Singleton< PotsWmlTiTimeout >;
+   friend class Singleton<PotsWmlTiTimeout>;
 
    PotsWmlTiTimeout() = default;
    ~PotsWmlTiTimeout() = default;
@@ -190,9 +190,9 @@ EventHandler::Rc PotsWmlInitiator::ProcessEvent
 {
    Debug::ft("PotsWmlInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
-   auto wmlp = static_cast< PotsWmlFeatureProfile* >(prof->FindFeature(WML));
+   auto wmlp = static_cast<PotsWmlFeatureProfile*>(prof->FindFeature(WML));
 
    if((wmlp != nullptr) && wmlp->IsActive() && pssm.DialedDigits().Empty())
    {
@@ -211,15 +211,15 @@ PotsWmlService::PotsWmlService() : Service(PotsWmlServiceId, false, true)
 {
    Debug::ft("PotsWmlService.ctor");
 
-   Singleton< PotsWmlNull >::Instance();
-   Singleton< PotsWmlActivating >::Instance();
-   Singleton< PotsWmlTiming >::Instance();
+   Singleton<PotsWmlNull>::Instance();
+   Singleton<PotsWmlActivating>::Instance();
+   Singleton<PotsWmlTiming>::Instance();
 
-   BindHandler(*Singleton< PotsWmlAcAnalyzeMessage >::Instance(),
+   BindHandler(*Singleton<PotsWmlAcAnalyzeMessage>::Instance(),
       PotsWmlEventHandler::AcAnalyzeMessage);
-   BindHandler(*Singleton< PotsWmlTiAnalyzeMessage >::Instance(),
+   BindHandler(*Singleton<PotsWmlTiAnalyzeMessage>::Instance(),
       PotsWmlEventHandler::TiAnalyzeMessage);
-   BindHandler(*Singleton< PotsWmlTiTimeout >::Instance(),
+   BindHandler(*Singleton<PotsWmlTiTimeout>::Instance(),
       PotsWmlEventHandler::TiTimeout);
 
    BindEventName(PotsWmlTimeoutEventStr, PotsWmlEvent::Timeout);
@@ -388,7 +388,7 @@ void PotsWmlSsm::Cancel()
 {
    Debug::ft("PotsWmlSsm.Cancel");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
    auto upsm = pssm->UPsm();
 
    if(timer_) upsm->StopTimer(*this, 0);
@@ -412,14 +412,14 @@ EventHandler::Rc PotsWmlSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsWmlSsm.ProcessInitAck");
 
-   auto& ire = static_cast< InitiationReqEvent& >(currEvent);
+   auto& ire = static_cast<InitiationReqEvent&>(currEvent);
    auto sid = ire.GetModifier();
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto stid = pssm.CurrState();
    auto prof = pssm.Profile();
    auto ppsm = PotsCallPsm::Cast(pssm.UPsm());
 
-   wmlp_ = static_cast< PotsWmlFeatureProfile* >(prof->FindFeature(WML));
+   wmlp_ = static_cast<PotsWmlFeatureProfile*>(prof->FindFeature(WML));
 
    switch(sid)
    {
@@ -486,10 +486,10 @@ EventHandler::Rc PotsWmlSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsWmlSsm.ProcessSap");
 
-   auto& sap = static_cast< AnalyzeSapEvent& >(currEvent);
+   auto& sap = static_cast<AnalyzeSapEvent&>(currEvent);
    auto tid = sap.GetTrigger();
    auto stid = CurrState();
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto result = pssm.GetAnalysis();
 
    switch(stid)
@@ -549,7 +549,7 @@ EventHandler::Rc PotsWmlSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
    if(stid == PotsWmlState::Activating)
    {
-      auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+      auto& pssm = static_cast<PotsBcSsm&>(*Parent());
 
       pssm.RaiseReleaseCall(nextEvent, Cause::InvalidAddress);
       SetNextState(PotsWmlState::Null);
@@ -567,7 +567,7 @@ EventHandler::Rc PotsWmlSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsWmlSsm.ProcessSnp");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
 
    if(pssm->HasIdled()) Cancel();
    return EventHandler::Pass;
@@ -590,14 +590,14 @@ EventHandler::Rc PotsWmlTiAnalyzeMessage::ProcessEvent
 {
    Debug::ft("PotsWmlTiAnalyzeMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
 
    if(sid == Signal::Timeout)
    {
-      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
-      auto& wssm = static_cast< PotsWmlSsm& >(ssm);
+      auto tmsg = static_cast<TlvMessage*>(ame.Msg());
+      auto toi = tmsg->FindType<TimeoutInfo>(Parameter::Timeout);
+      auto& wssm = static_cast<PotsWmlSsm&>(ssm);
 
       if(toi->owner == &wssm)
       {
@@ -616,8 +616,8 @@ EventHandler::Rc PotsWmlTiTimeout::ProcessEvent
 {
    Debug::ft("PotsWmlTiTimeout.ProcessEvent");
 
-   auto& wssm = static_cast< PotsWmlSsm& >(ssm);
-   auto& pssm = static_cast< PotsBcSsm& >(*wssm.Parent());
+   auto& wssm = static_cast<PotsWmlSsm&>(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(*wssm.Parent());
    auto wmlp = wssm.Profile();
    auto dn = wmlp->GetDN();
    DigitString ds(dn);

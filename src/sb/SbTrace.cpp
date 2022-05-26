@@ -67,7 +67,7 @@ namespace SessionBase
 //
 static void DisplayEvent(ostream& stream, ServiceId sid, EventId eid)
 {
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
 
    if(svc != nullptr)
    {
@@ -188,18 +188,18 @@ bool TransTrace::Display(ostream& stream, const string& opts)
    {
       if(service_)
       {
-         auto reg = Singleton< ServiceRegistry >::Instance();
+         auto reg = Singleton<ServiceRegistry>::Instance();
          stream << strClass(reg->GetService(ServiceId(cid_)), false);
       }
       else
       {
-         auto reg = Singleton< FactoryRegistry >::Instance();
+         auto reg = Singleton<FactoryRegistry>::Instance();
          stream << strClass(reg->GetFactory(FactoryId(cid_)), false);
       }
    }
    else
    {
-      auto reg = Singleton< ProtocolRegistry >::Instance();
+      auto reg = Singleton<ProtocolRegistry>::Instance();
       auto pro = reg->GetProtocol(prid_);
 
       if(pro != nullptr) stream << strClass(pro->GetSignal(sid_), false);
@@ -345,7 +345,7 @@ bool BuffTrace::Display(ostream& stream, const string& opts)
    }
 
    auto fid = ActiveFid();
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
    stream << "factory=" << int(fid);
    stream << " (" << strClass(fac, false) << ')' << CRLF;
 
@@ -387,7 +387,7 @@ BuffTrace* BuffTrace::NextIcMsg
 {
    Debug::ft(BuffTrace_NextIcMsg);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    buff->Lock();
    {
@@ -399,7 +399,7 @@ BuffTrace* BuffTrace::NextIcMsg
       {
          //  Skip messages that were already verified or that were injected.
          //
-         bt = static_cast< BuffTrace* >(rec);
+         bt = static_cast<BuffTrace*>(rec);
          if(bt->verified_) continue;
 
          auto header = bt->Header();
@@ -461,7 +461,7 @@ Message* BuffTrace::Rewrap()
 
    if(buff_ == nullptr) return nullptr;
 
-   auto reg = Singleton< FactoryRegistry >::Instance();
+   auto reg = Singleton<FactoryRegistry>::Instance();
    auto fac = reg->GetFactory(Header()->rxAddr.fid);
    SbIpBufferPtr ipb(new (ToolUser) SbIpBuffer(*buff_));
 
@@ -517,7 +517,7 @@ bool SsmTrace::Display(ostream& stream, const string& opts)
 {
    if(!SboTrace::Display(stream, opts)) return false;
 
-   auto reg = Singleton< ServiceRegistry >::Instance();
+   auto reg = Singleton<ServiceRegistry>::Instance();
 
    stream << spaces(TraceDump::ObjToDesc);
    stream << strClass(reg->GetService(sid_), false);
@@ -559,7 +559,7 @@ bool PsmTrace::Display(ostream& stream, const string& opts)
 {
    if(!SboTrace::Display(stream, opts)) return false;
 
-   auto reg = Singleton< FactoryRegistry >::Instance();
+   auto reg = Singleton<FactoryRegistry>::Instance();
 
    stream << OutputId("port=", bid_);
    stream << strClass(reg->GetFactory(fid_), false);
@@ -599,7 +599,7 @@ bool PortTrace::Display(ostream& stream, const string& opts)
 {
    if(!SboTrace::Display(stream, opts)) return false;
 
-   auto reg = Singleton< FactoryRegistry >::Instance();
+   auto reg = Singleton<FactoryRegistry>::Instance();
 
    stream << OutputId("port=", bid_);
    stream << strClass(reg->GetFactory(fid_), false);
@@ -672,7 +672,7 @@ bool MsgTrace::Display(ostream& stream, const string& opts)
 
    stream << OutputId("port=", locAddr_.bid);
 
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid_);
    Signal* sig = nullptr;
 
    if(pro != nullptr) sig = pro->GetSignal(sid_);
@@ -832,7 +832,7 @@ bool HandlerTrace::Display(ostream& stream, const string& opts)
 
 void HandlerTrace::DisplayState(ostream& stream) const
 {
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid_);
 
    if(svc != nullptr)
       stream << strClass(svc->GetState(stid_), false);
@@ -852,10 +852,10 @@ SxpTrace::SxpTrace
    switch(sxp.Eid())
    {
    case Event::AnalyzeSap:
-      curr_ = static_cast< const AnalyzeSapEvent& >(sxp).CurrEvent()->Eid();
+      curr_ = static_cast<const AnalyzeSapEvent&>(sxp).CurrEvent()->Eid();
       break;
    case Event::AnalyzeSnp:
-      curr_ = static_cast< const AnalyzeSnpEvent& >(sxp).CurrEvent()->Eid();
+      curr_ = static_cast<const AnalyzeSnpEvent&>(sxp).CurrEvent()->Eid();
    }
 }
 
@@ -882,7 +882,7 @@ bool SxpTrace::Display(ostream& stream, const string& opts)
 SipTrace::SipTrace
    (ServiceId sid, const State& state, const Event& sip, EventHandler::Rc rc) :
    HandlerTrace(sid, state, sip, rc),
-   mod_((static_cast< const InitiationReqEvent& >(sip)).GetModifier())
+   mod_((static_cast<const InitiationReqEvent&>(sip)).GetModifier())
 {
    rid_ = SipEvent;
 }
@@ -897,7 +897,7 @@ bool SipTrace::Display(ostream& stream, const string& opts)
    DisplayEvent(stream, sid_, eid_);
 
    stream << '(';
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(mod_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(mod_);
    if(svc != nullptr)
       stream << strClass(svc, false);
    else

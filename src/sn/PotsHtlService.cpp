@@ -43,7 +43,7 @@ namespace PotsBase
 {
 class PotsHtlNull : public State
 {
-   friend class Singleton< PotsHtlNull >;
+   friend class Singleton<PotsHtlNull>;
 
    PotsHtlNull();
    ~PotsHtlNull() = default;
@@ -78,7 +78,7 @@ EventHandler::Rc PotsHtlInitiator::ProcessEvent
 {
    Debug::ft("PotsHtlInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(HTL))
@@ -96,7 +96,7 @@ PotsHtlService::PotsHtlService() : Service(PotsHtlServiceId, false, true)
 {
    Debug::ft("PotsHtlService.ctor");
 
-   Singleton< PotsHtlNull >::Instance();
+   Singleton<PotsHtlNull>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -151,13 +151,13 @@ EventHandler::Rc PotsHtlSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsHtlSsm.ProcessInitAck");
 
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto stid = pssm.CurrState();
 
    if(stid == BcState::CollectingInformation)
    {
       auto prof = pssm.Profile();
-      auto htlp = static_cast< PotsHtlFeatureProfile* >(prof->FindFeature(HTL));
+      auto htlp = static_cast<PotsHtlFeatureProfile*>(prof->FindFeature(HTL));
       if(htlp == nullptr) Context::Kill("HTL not assigned", 0);
 
       auto dn = htlp->GetDN();

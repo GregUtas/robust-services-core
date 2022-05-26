@@ -166,7 +166,7 @@ public:
 
    //  Overridden to enumerate all objects that the buffer owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Overridden for patching.
    //
@@ -183,7 +183,7 @@ private:
 
    //  The container allocated for the buffer's contents.
    //
-   std::unique_ptr< ByteBuffer > buff_;
+   std::unique_ptr<ByteBuffer> buff_;
 
    //  The maximum number of bytes that buff_ can hold.
    //

@@ -71,7 +71,7 @@ void InvokerPoolStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   auto reg = Singleton< InvokerPoolRegistry >::Instance();
+   auto reg = Singleton<InvokerPoolRegistry>::Instance();
 
    if(id == 0)
    {

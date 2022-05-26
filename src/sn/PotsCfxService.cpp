@@ -67,7 +67,7 @@ protected:
 
 class PotsCfxNull : public PotsCfxState
 {
-   friend class Singleton< PotsCfxNull >;
+   friend class Singleton<PotsCfxNull>;
 
    PotsCfxNull();
    ~PotsCfxNull() = default;
@@ -75,7 +75,7 @@ class PotsCfxNull : public PotsCfxState
 
 class PotsCfuActivating : public PotsCfxState
 {
-   friend class Singleton< PotsCfuActivating >;
+   friend class Singleton<PotsCfuActivating>;
 
    PotsCfuActivating();
    ~PotsCfuActivating() = default;
@@ -83,7 +83,7 @@ class PotsCfuActivating : public PotsCfxState
 
 class PotsCfbTiming : public PotsCfxState
 {
-   friend class Singleton< PotsCfbTiming >;
+   friend class Singleton<PotsCfbTiming>;
 
    PotsCfbTiming();
    ~PotsCfbTiming() = default;
@@ -118,7 +118,7 @@ protected:
 
 class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
 {
-   friend class Singleton< PotsCfxUnAnalyzeMessage >;
+   friend class Singleton<PotsCfxUnAnalyzeMessage>;
 
    PotsCfxUnAnalyzeMessage() = default;
    ~PotsCfxUnAnalyzeMessage() = default;
@@ -128,7 +128,7 @@ class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
 
 class PotsCfbTiAnalyzeMessage : public PotsCfxEventHandler
 {
-   friend class Singleton< PotsCfbTiAnalyzeMessage >;
+   friend class Singleton<PotsCfbTiAnalyzeMessage>;
 
    PotsCfbTiAnalyzeMessage() = default;
    ~PotsCfbTiAnalyzeMessage() = default;
@@ -138,7 +138,7 @@ class PotsCfbTiAnalyzeMessage : public PotsCfxEventHandler
 
 class PotsCfbTiTimeout : public PotsCfxEventHandler
 {
-   friend class Singleton< PotsCfbTiTimeout >;
+   friend class Singleton<PotsCfbTiTimeout>;
 
    PotsCfbTiTimeout() = default;
    ~PotsCfbTiTimeout() = default;
@@ -154,15 +154,15 @@ PotsCfxService::PotsCfxService() : Service(PotsCfxServiceId, false, true)
 {
    Debug::ft("PotsCfxService.ctor");
 
-   Singleton< PotsCfxNull >::Instance();
-   Singleton< PotsCfuActivating >::Instance();
-   Singleton< PotsCfbTiming >::Instance();
+   Singleton<PotsCfxNull>::Instance();
+   Singleton<PotsCfuActivating>::Instance();
+   Singleton<PotsCfbTiming>::Instance();
 
-   BindHandler(*Singleton< PotsCfxUnAnalyzeMessage >::Instance(),
+   BindHandler(*Singleton<PotsCfxUnAnalyzeMessage>::Instance(),
       PotsCfxEventHandler::UnAnalyzeMessage);
-   BindHandler(*Singleton< PotsCfbTiAnalyzeMessage >::Instance(),
+   BindHandler(*Singleton<PotsCfbTiAnalyzeMessage>::Instance(),
       PotsCfxEventHandler::TiAnalyzeMessage);
-   BindHandler(*Singleton< PotsCfbTiTimeout >::Instance(),
+   BindHandler(*Singleton<PotsCfbTiTimeout>::Instance(),
       PotsCfxEventHandler::TiTimeout);
 
    BindEventName(PotsCfbTimeoutEventStr, PotsCfxEvent::Timeout);
@@ -261,14 +261,14 @@ EventHandler::Rc PotsCfbTiAnalyzeMessage::ProcessEvent
 {
    Debug::ft("PotsCfbTiAnalyzeMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
 
    if(sid == Signal::Timeout)
    {
-      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
-      auto& cssm = static_cast< PotsCfxSsm& >(ssm);
+      auto tmsg = static_cast<TlvMessage*>(ame.Msg());
+      auto toi = tmsg->FindType<TimeoutInfo>(Parameter::Timeout);
+      auto& cssm = static_cast<PotsCfxSsm&>(ssm);
 
       if(toi->owner == &cssm)
       {
@@ -287,8 +287,8 @@ EventHandler::Rc PotsCfbTiTimeout::ProcessEvent
 {
    Debug::ft("PotsCfbTiTimeout.ProcessEvent");
 
-   auto& cssm = static_cast< PotsCfxSsm& >(ssm);
-   auto& pssm = static_cast< PotsBcSsm& >(*cssm.Parent());
+   auto& cssm = static_cast<PotsCfxSsm&>(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(*cssm.Parent());
 
    if(pssm.CurrState() == BcState::TermAlerting)
    {
@@ -332,7 +332,7 @@ void PotsCfxSsm::Cancel()
 
    if(timer_)
    {
-      auto pssm = static_cast< PotsBcSsm* >(Parent());
+      auto pssm = static_cast<PotsBcSsm*>(Parent());
       auto upsm = pssm->UPsm();
       upsm->StopTimer(*this, 0);
    }
@@ -357,7 +357,7 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
 {
    Debug::ft("PotsCfxSsm.ForwardCall");
 
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto upsm = pssm.UPsm();
    auto npsm = pssm.NPsm();
 
@@ -371,15 +371,15 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
 
    auto umsg = new CipMessage(ppsm, 44);
 
-   auto clg = nmsg->FindType< DigitString >(CipParameter::Calling);
+   auto clg = nmsg->FindType<DigitString>(CipParameter::Calling);
    if(clg == nullptr)
       return ReleaseCall(nextEvent, Cause::ParameterAbsent, umsg);
 
-   auto cld = nmsg->FindType< DigitString >(CipParameter::Called);
+   auto cld = nmsg->FindType<DigitString>(CipParameter::Called);
    if(cld == nullptr)
       return ReleaseCall(nextEvent, Cause::ParameterAbsent, umsg);
 
-   if(nmsg->FindType< DigitString >(CipParameter::OriginalCalled) != nullptr)
+   if(nmsg->FindType<DigitString>(CipParameter::OriginalCalled) != nullptr)
       return ReleaseCall(nextEvent, Cause::ExcessiveRedirection, umsg);
 
    umsg->SetSignal(CipSignal::IAM);
@@ -392,7 +392,7 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
    umsg->AddAddress(*cld, CipParameter::Calling);
    umsg->AddAddress(cfxp_->GetDN(), CipParameter::Called);
 
-   auto oclg = nmsg->FindType< DigitString >(CipParameter::OriginalCalling);
+   auto oclg = nmsg->FindType<DigitString>(CipParameter::OriginalCalling);
 
    if(oclg != nullptr)
    {
@@ -434,9 +434,9 @@ EventHandler::Rc PotsCfxSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCfxSsm.ProcessInitAck");
 
-   auto& ire = static_cast< InitiationReqEvent& >(currEvent);
+   auto& ire = static_cast<InitiationReqEvent&>(currEvent);
    auto sid = ire.GetModifier();
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto ppsm = PotsCallPsm::Cast(pssm.UPsm());
    auto stid = pssm.CurrState();
    auto prof = pssm.Profile();
@@ -449,7 +449,7 @@ EventHandler::Rc PotsCfxSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
    case PotsCfuActivation:
       if(stid == BcState::AnalyzingInformation)
       {
-         cfxp = static_cast< DnRouteFeatureProfile* >(prof->FindFeature(CFU));
+         cfxp = static_cast<DnRouteFeatureProfile*>(prof->FindFeature(CFU));
 
          if(cfxp == nullptr)
          {
@@ -471,7 +471,7 @@ EventHandler::Rc PotsCfxSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
    case PotsCfuDeactivation:
       if(stid == BcState::AnalyzingInformation)
       {
-         cfxp = static_cast< DnRouteFeatureProfile* >(prof->FindFeature(CFU));
+         cfxp = static_cast<DnRouteFeatureProfile*>(prof->FindFeature(CFU));
 
          if(cfxp == nullptr)
          {
@@ -485,19 +485,19 @@ EventHandler::Rc PotsCfxSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
       break;
 
    case PotsCfuServiceId:
-      cfxp = static_cast< DnRouteFeatureProfile* >(prof->FindFeature(CFU));
+      cfxp = static_cast<DnRouteFeatureProfile*>(prof->FindFeature(CFU));
       if(cfxp == nullptr) Context::Kill("CFU not assigned", pack2(stid, sid));
       SetProfile(cfxp);
       return ForwardCall(nextEvent);
 
    case PotsCfbServiceId:
-      cfxp = static_cast< DnRouteFeatureProfile* >(prof->FindFeature(CFB));
+      cfxp = static_cast<DnRouteFeatureProfile*>(prof->FindFeature(CFB));
       if(cfxp == nullptr) Context::Kill("CFB not assigned", pack2(stid, sid));
       SetProfile(cfxp);
       return ForwardCall(nextEvent);
 
    case PotsCfnServiceId:
-      cfnp = static_cast< PotsCfnFeatureProfile* >(prof->FindFeature(CFN));
+      cfnp = static_cast<PotsCfnFeatureProfile*>(prof->FindFeature(CFN));
       if(cfnp == nullptr) Context::Kill("CFN not assigned", pack2(stid, sid));
       SetProfile(cfnp);
       timer_ = ppsm->StartTimer(cfnp->Timeout(), *this, 0);
@@ -526,10 +526,10 @@ EventHandler::Rc PotsCfxSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
    Debug::ft("PotsCfxSsm.ProcessSap");
 
    auto stid = CurrState();
-   auto& sap = static_cast< AnalyzeSapEvent& >(currEvent);
+   auto& sap = static_cast<AnalyzeSapEvent&>(currEvent);
    auto tid = sap.GetTrigger();
    auto cfup = Profile();
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
    auto result = pssm.GetAnalysis();
 
    if(stid == PotsCfxState::Activating)
@@ -584,14 +584,14 @@ EventHandler::Rc PotsCfxSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
    if(stid == PotsCfxState::Activating)
    {
-      auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+      auto& pssm = static_cast<PotsBcSsm&>(*Parent());
 
       pssm.RaiseReleaseCall(nextEvent, Cause::InvalidAddress);
       SetNextState(PotsCfxState::Null);
       return EventHandler::Revert;
    }
 
-   auto& ire = static_cast< InitiationReqEvent& >(currEvent);
+   auto& ire = static_cast<InitiationReqEvent&>(currEvent);
 
    ire.DenyRequest();
    Debug::SwLog(PotsCfxSsm_ProcessSip,
@@ -605,7 +605,7 @@ EventHandler::Rc PotsCfxSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCfxSsm.ProcessSnp");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
 
    if(pssm->HasIdled())
    {
@@ -613,7 +613,7 @@ EventHandler::Rc PotsCfxSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
    }
    else if(CurrState() == PotsCfxState::Timing)
    {
-      auto& snp = static_cast< AnalyzeSnpEvent& >(currEvent);
+      auto& snp = static_cast<AnalyzeSnpEvent&>(currEvent);
       auto tid = snp.GetTrigger();
 
       if(tid == BcTrigger::LocalAnswerSnp) Cancel();
@@ -629,7 +629,7 @@ EventHandler::Rc PotsCfxSsm::ReleaseCall
 {
    Debug::ft("PotsCfxSsm.ReleaseCall");
 
-   auto& pssm = static_cast< PotsBcSsm& >(*Parent());
+   auto& pssm = static_cast<PotsBcSsm&>(*Parent());
 
    delete msg;
    pssm.RaiseReleaseCall(nextEvent, cause);

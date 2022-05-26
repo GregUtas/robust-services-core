@@ -142,7 +142,7 @@ void IpPortStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
 
    if(id == 0)
    {
@@ -177,7 +177,7 @@ IpPortRegistry::IpPortRegistry() :
 
    portq_.Init(IpPort::LinkDiff());
    localAddrCfg_.reset(new LocalAddrCfg);
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*localAddrCfg_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*localAddrCfg_);
    statsGroup_.reset(new IpPortStatsGroup);
 }
 
@@ -307,7 +307,7 @@ const SysIpL2Addr& IpPortRegistry::LocalAddr()
    //  If this is invoked before we've even been constructed, return
    //  the IPv4 loopback address.
    //
-   auto reg = Singleton< IpPortRegistry >::Extant();
+   auto reg = Singleton<IpPortRegistry>::Extant();
    if(reg == nullptr) return SysIpL2Addr::LoopbackIpAddr();
    return reg->localAddr_;
 }
@@ -470,7 +470,7 @@ void IpPortRegistry::TestEnd() const
 
    //  Raise an alarm to report the state of the local address.
    //
-   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto reg = Singleton<AlarmRegistry>::Instance();
    auto alarm = reg->Find(LocAddrAlarmName);
    auto ok = (localState_ == Verified);
 
@@ -508,7 +508,7 @@ void IpPortRegistry::UnbindPort(IpPort& port)
 
 bool IpPortRegistry::UseIPv6()
 {
-   auto reg = Singleton< IpPortRegistry >::Extant();
+   auto reg = Singleton<IpPortRegistry>::Extant();
    if(reg == nullptr) return SysIpL2Addr::SupportsIPv6();
    return reg->ipv6Enabled_;
 }

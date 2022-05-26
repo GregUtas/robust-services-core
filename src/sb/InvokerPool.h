@@ -55,7 +55,7 @@ class InvokerPool : public NodeBase::Dynamic
    friend class InvokerPoolRegistry;
    friend class InvokerThread;
    friend class Message;
-   friend class NodeBase::Registry< InvokerPool >;
+   friend class NodeBase::Registry<InvokerPool>;
    friend class SbInputHandler;
 public:
    //  Deleted to prohibit copying.
@@ -205,11 +205,11 @@ private:
 
    //  The pool's pending work.
    //
-   std::unique_ptr< InvokerWork > work_[MAX_PRIORITY + 1];
+   std::unique_ptr<InvokerWork> work_[MAX_PRIORITY + 1];
 
    //  The pool's invoker(s)
    //
-   NodeBase::Registry< InvokerThread > invokers_;
+   NodeBase::Registry<InvokerThread> invokers_;
 
    //  Used while the audit traverses the work queues.
    //
@@ -217,7 +217,7 @@ private:
 
    //  The pool's statistics.
    //
-   std::unique_ptr< InvokerPoolStats > stats_;
+   std::unique_ptr<InvokerPoolStats> stats_;
 };
 }
 #endif

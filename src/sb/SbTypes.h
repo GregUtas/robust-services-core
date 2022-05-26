@@ -150,7 +150,7 @@ class Timer;
 class Trigger;
 struct MsgHeader;
 
-typedef std::unique_ptr< SbIpBuffer > SbIpBufferPtr;
+typedef std::unique_ptr<SbIpBuffer> SbIpBufferPtr;
 
 //  Test session identifier, used by InjectCommand and VerifyCommand.
 //

@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class DaemonRegistry : public Permanent
 {
-   friend class Singleton< DaemonRegistry >;
+   friend class Singleton<DaemonRegistry>;
    friend class Daemon;
 public:
    //  Deleted to prohibit copying.
@@ -57,7 +57,7 @@ public:
 
    //  Returns the daemons in the registry.
    //
-   const Registry< Daemon >& Daemons() const { return daemons_; }
+   const Registry<Daemon>& Daemons() const { return daemons_; }
 
    //  Overridden to display member variables.
    //
@@ -94,7 +94,7 @@ private:
 
    //  The daemons in the registry.
    //
-   Registry< Daemon > daemons_;
+   Registry<Daemon> daemons_;
 };
 }
 #endif

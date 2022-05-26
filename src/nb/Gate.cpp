@@ -47,7 +47,7 @@ void Gate::Notify()
    //    the next work item doesn't arrive for quite some time, leaving
    //    the previous item queued during that time.
    //
-   std::unique_lock< std::mutex > lock(mutex_);
+   std::unique_lock<std::mutex> lock(mutex_);
    flag_.store(true);
    gate_.notify_one();
 }
@@ -66,7 +66,7 @@ std::cv_status Gate::WaitFor(const msecs_t& timeout)
       //  the wait returns, it unlocks the mutex, which allows Notify to
       //  obtain it and unblock the waiting thread.
       //
-      std::unique_lock< std::mutex > lock(mutex_);
+      std::unique_lock<std::mutex> lock(mutex_);
 
       if(timeout == TIMEOUT_NEVER)
       {

@@ -93,7 +93,7 @@ PotsCallPsm* PotsCallPsm::Cast(ProtocolSM* psm)
 
    if((psm != nullptr) && (psm->GetFactory() == PotsCallFactoryId))
    {
-      return static_cast< PotsCallPsm* >(psm);
+      return static_cast<PotsCallPsm*>(psm);
    }
 
    return nullptr;
@@ -159,7 +159,7 @@ ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft("PotsCallPsm.ProcessIcMsg");
 
-   auto& pmsg = static_cast< Pots_UN_Message& >(msg);
+   auto& pmsg = static_cast<Pots_UN_Message&>(msg);
    auto sid = pmsg.GetSignal();
 
    MediaPsm::UpdateIcMedia(pmsg, PotsParameter::Media);
@@ -174,7 +174,7 @@ ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& event)
    {
       //  If this is only a media update, do not raise the AnalyzeMsgEvent.
       //
-      auto ppi = pmsg.FindType< ProgressInfo >(PotsParameter::Progress);
+      auto ppi = pmsg.FindType<ProgressInfo>(PotsParameter::Progress);
       if(ppi->progress == Progress::MediaUpdate) return DiscardMessage;
       //  [[fallthrough]]
    }
@@ -194,7 +194,7 @@ ProtocolSM::OutgoingRc PotsCallPsm::ProcessOgMsg(Message& msg)
 {
    Debug::ft(PotsCallPsm_ProcessOgMsg);
 
-   auto& pmsg = static_cast< Pots_NU_Message& >(msg);
+   auto& pmsg = static_cast<Pots_NU_Message&>(msg);
 
    if(&msg == ogMsg_)
    {

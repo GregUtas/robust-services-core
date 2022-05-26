@@ -88,7 +88,7 @@ Library::Library() :
 
    sourcePathCfg_.reset(new CfgStrParm
       ("SourcePath", EMPTY_STR, "source code directory"));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*sourcePathCfg_);
 }
 
 //------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ LibrarySet* Library::EnsureVar(CliThread& cli, const string& s) const
 
    CxxNamed* item;
    SymbolVector items;
-   Singleton< CxxSymbols >::Instance()->FindItems(s, ITEM_REFS, items);
+   Singleton<CxxSymbols>::Instance()->FindItems(s, ITEM_REFS, items);
 
    if(items.empty())
    {
@@ -421,7 +421,7 @@ LibrarySet* Library::Evaluate
       curr = next;
    }
 
-   std::unique_ptr< Interpreter > interpreter(new Interpreter(expr, pos));
+   std::unique_ptr<Interpreter> interpreter(new Interpreter(expr, pos));
    auto set = interpreter->Evaluate(cli);
    interpreter.reset();
    return set;
@@ -435,7 +435,7 @@ void Library::Export(ostream& stream, const string& opts) const
 
    if(opts.find(NamespaceView) != string::npos)
    {
-      auto root = Singleton< CxxRoot >::Instance();
+      auto root = Singleton<CxxRoot>::Instance();
       auto gns = root->GlobalNamespace();
       Flags options(FQ_Mask | NS_Mask);
       if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
@@ -640,7 +640,7 @@ word Library::Rename(CliThread& cli,
    CxxNamed* item;
    auto solo = true;
    SymbolVector items1;
-   Singleton< CxxSymbols >::Instance()->FindItems(oldName, RENAME_REFS, items1);
+   Singleton<CxxSymbols>::Instance()->FindItems(oldName, RENAME_REFS, items1);
 
    if(items1.empty())
    {
@@ -665,7 +665,7 @@ word Library::Rename(CliThread& cli,
 
          if(elem->Type() == Cxx::Function)
          {
-            auto f = static_cast< const Function* >(elem);
+            auto f = static_cast<const Function*>(elem);
             if(f->IsOverride()) continue;
             if(f->FuncType() != FuncStandard) continue;
             if(f->FuncRole() != FuncOther) continue;
@@ -758,7 +758,7 @@ void Library::Startup(RestartLevel level)
       FunctionGuard guard(Guard_MemUnprotect);
       sourcePathCfg_.reset(new CfgStrParm
          ("SourcePath", EMPTY_STR, "source code directory"));
-      Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
+      Singleton<CfgParmRegistry>::Instance()->BindParm(*sourcePathCfg_);
    }
 
    //  Create the library's sets if they don't exist.

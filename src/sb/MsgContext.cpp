@@ -72,6 +72,6 @@ void MsgContext::ProcessIcMsg(Message& msg)
    auto fac = msg.RxFactory();
 
    TraceMsg(msg.GetProtocol(), msg.GetSignal(), MsgIncoming);
-   static_cast< MsgFactory* >(fac)->ProcessIcMsg(msg);
+   static_cast<MsgFactory*>(fac)->ProcessIcMsg(msg);
 }
 }

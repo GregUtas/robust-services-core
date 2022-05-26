@@ -38,7 +38,7 @@ namespace PotsBase
 //
 class PotsStatistics : public StatisticsGroup
 {
-   friend class Singleton< PotsStatistics >;
+   friend class Singleton<PotsStatistics>;
 public:
    //  The type that identifies each statistic.
    //

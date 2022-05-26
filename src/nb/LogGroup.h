@@ -138,7 +138,7 @@ private:
 
    //  The logs in the group.
    //
-   Registry< Log > logs_;
+   Registry<Log> logs_;
 };
 }
 #endif

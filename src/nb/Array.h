@@ -37,7 +37,7 @@
 //
 namespace NodeBase
 {
-template< typename T, class A = std::allocator< T >> class Array
+template<typename T, class A = std::allocator<T>> class Array
 {
 public:
    //  Creates an empty array.
@@ -216,7 +216,7 @@ private:
 
    //  The array of items.
    //
-   std::vector< T, A > vector_;
+   std::vector<T, A> vector_;
 };
 }
 #endif

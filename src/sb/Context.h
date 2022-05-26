@@ -52,14 +52,14 @@ namespace SessionBase
 //
 class Context : public NodeBase::Pooled
 {
-   friend std::unique_ptr< Context >::deleter_type;
+   friend std::unique_ptr<Context>::deleter_type;
    friend class InvokerPool;
    friend class InvokerThread;
    friend class MsgFactory;
    friend class MsgPort;
    friend class ProtocolSM;
    friend class PsmFactory;
-   friend class NodeBase::Q2Way< Context >;
+   friend class NodeBase::Q2Way<Context>;
    friend class SsmFactory;
 public:
    //  Returns the incoming message that is currently being processed.
@@ -172,7 +172,7 @@ public:
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Overridden for patching.
    //
@@ -269,8 +269,7 @@ private:
    //  Adds the context to the work queue associated with PRIO.  HENQ is set
    //  if the context should be placed at the front of that queue.
    //
-   void Enqueue(NodeBase::Q2Way< Context >& whichq,
-      MsgPriority prio, bool henq);
+   void Enqueue(NodeBase::Q2Way<Context>& whichq, MsgPriority prio, bool henq);
 
    //  Removes the context from its work queue.
    //
@@ -285,7 +284,7 @@ private:
    //  the thread running the transaction.  Returns true if the context still
    //  exists after processing the message, and false if it was deleted.
    //
-   bool ProcessMsg(NodeBase::Q1Way< Message >& msgq, const InvokerThread* inv);
+   bool ProcessMsg(NodeBase::Q1Way<Message>& msgq, const InvokerThread* inv);
 
    //  Invoked to record a transaction.  MSG is the message being processed,
    //  and START is when the transaction started.
@@ -302,7 +301,7 @@ private:
 
    //  The invoker pool work queue where the context resides.
    //
-   NodeBase::Q2Way< Context >* whichq_;
+   NodeBase::Q2Way<Context>* whichq_;
 
    //  The queue link for the invoker pool work queue.
    //
@@ -310,11 +309,11 @@ private:
 
    //  The queue of incoming messages with immediate priority.
    //
-   NodeBase::Q1Way< Message > priMsgq_;
+   NodeBase::Q1Way<Message> priMsgq_;
 
    //  The queue of incoming messages of non-immediate priority.
    //
-   NodeBase::Q1Way< Message > stdMsgq_;
+   NodeBase::Q1Way<Message> stdMsgq_;
 
    //  The time when the context was enqueued.
    //

@@ -55,7 +55,7 @@ typedef void* StackFrames[MaxFrames];
 
 //  For holding stack frames.
 //
-typedef std::unique_ptr< void*[] > StackFramesPtr;
+typedef std::unique_ptr<void*[]> StackFramesPtr;
 
 //------------------------------------------------------------------------------
 //

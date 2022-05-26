@@ -53,16 +53,16 @@ EventHandler::Rc PotsProxyNuAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsProxyNuAnalyzeLocalMessage_ProcessEvent);
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto msg = static_cast< CipMessage* >(ame.Msg());
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto msg = static_cast<CipMessage*>(ame.Msg());
    auto sid = msg->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto cause = Cause::MessageInvalidForState;
 
    if(sid == CipSignal::IAM)
    {
-      auto clg = msg->FindType< DigitString >(CipParameter::Calling);
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto clg = msg->FindType<DigitString>(CipParameter::Calling);
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
       auto prof = reg->Profile(clg->ToDN());
 
       if(prof != nullptr)
@@ -88,7 +88,7 @@ EventHandler::Rc PotsProxyNuOriginate::ProcessEvent
 {
    Debug::ft("PotsProxyNuOriginate.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetModel(BcSsm::ObcModel);
    PotsStatistics::Incr(PotsStatistics::ProxyAttempted);
@@ -102,13 +102,13 @@ EventHandler::Rc PotsProxyCiCollectInformation::ProcessEvent
 {
    Debug::ft("PotsProxyCiCollectInformation.ProcessEvent");
 
-   auto msg = static_cast< CipMessage* >(Context::ContextMsg());
+   auto msg = static_cast<CipMessage*>(Context::ContextMsg());
    auto sid = msg->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    if(sid == CipSignal::IAM)
    {
-      auto cld = msg->FindType< DigitString >(CipParameter::Called);
+      auto cld = msg->FindType<DigitString>(CipParameter::Called);
 
       pssm.DialedDigits().AddDigits(*cld);
       return pssm.RaiseAnalyzeInformation(nextEvent);
@@ -129,10 +129,10 @@ EventHandler::Rc PotsProxyScAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsProxyScAnalyzeLocalMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         pssm = static_cast< PotsBcSsm& >(ssm);
+   auto&         pssm = static_cast<PotsBcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
@@ -144,13 +144,13 @@ EventHandler::Rc PotsProxyScAnalyzeLocalMessage::ProcessEvent
       //  handle without any service level processing.  If we get here,
       //  some other progress indicator arrived.
       //
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       Debug::SwLog(PotsProxyScAnalyzeLocalMessage_ProcessEvent,
          "unexpected Progress::Ind", cpi->progress);
       break;
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return pssm.RaiseReleaseCall(nextEvent, cci->cause);
 
    default:
@@ -168,7 +168,7 @@ EventHandler::Rc PotsProxyScSendCall::ProcessEvent
 {
    Debug::ft("PotsProxyScSendCall.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto ogIam = pssm.BuildCipIam();
 
    if(ogIam == nullptr)
@@ -178,7 +178,7 @@ EventHandler::Rc PotsProxyScSendCall::ProcessEvent
 
    ogIam->AddAddress(pssm.Profile()->GetDN(), CipParameter::Calling);
 
-   auto upsm = static_cast< ProxyBcPsm* >(pssm.UPsm());
+   auto upsm = static_cast<ProxyBcPsm*>(pssm.UPsm());
    auto icIam = upsm->FindRcvdMsg(CipSignal::IAM);
 
    if(icIam == nullptr)
@@ -186,8 +186,8 @@ EventHandler::Rc PotsProxyScSendCall::ProcessEvent
       return pssm.RaiseReleaseCall(nextEvent, Cause::TemporaryFailure);
    }
 
-   ogIam->CopyType< DigitString >(*icIam, CipParameter::OriginalCalling);
-   ogIam->CopyType< DigitString >(*icIam, CipParameter::OriginalCalled);
+   ogIam->CopyType<DigitString>(*icIam, CipParameter::OriginalCalling);
+   ogIam->CopyType<DigitString>(*icIam, CipParameter::OriginalCalled);
 
    return Suspend;
 }
@@ -199,7 +199,7 @@ EventHandler::Rc PotsProxyScRemoteProgress::ProcessEvent
 {
    Debug::ft("PotsProxyScRemoteProgress.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = pssm.FirstProxy();
 
    pssm.Relay(*upsm);
@@ -214,7 +214,7 @@ EventHandler::Rc PotsProxyScRemoteAlerting::ProcessEvent
 {
    Debug::ft("PotsProxyScRemoteAlerting.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = pssm.FirstProxy();
 
    pssm.Relay(*upsm);
@@ -233,17 +233,17 @@ EventHandler::Rc PotsProxyPcAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsProxyPcAnalyzeLocalMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         pssm = static_cast< PotsBcSsm& >(ssm);
+   auto&         pssm = static_cast<PotsBcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
    switch(sid)
    {
    case CipSignal::CPG:
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       switch(cpi->progress)
       {
       case Progress::EndOfSelection:
@@ -261,7 +261,7 @@ EventHandler::Rc PotsProxyPcAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseLocalAnswer(nextEvent);
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return pssm.RaiseLocalRelease(nextEvent, cci->cause);
 
    default:
@@ -279,7 +279,7 @@ EventHandler::Rc PotsProxyPcLocalProgress::ProcessEvent
 {
    Debug::ft("PotsProxyPcLocalProgress.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
 
    pssm.SetNextSnp(BcTrigger::LocalProgressSnp);
@@ -297,17 +297,17 @@ EventHandler::Rc PotsProxyTaAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsProxyTaAnalyzeLocalMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         pssm = static_cast< PotsBcSsm& >(ssm);
+   auto&         pssm = static_cast<PotsBcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
    switch(sid)
    {
    case CipSignal::CPG:
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       switch(cpi->progress)
       {
       case Progress::EndOfSelection:
@@ -324,7 +324,7 @@ EventHandler::Rc PotsProxyTaAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseLocalAnswer(nextEvent);
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return pssm.RaiseLocalRelease(nextEvent, cci->cause);
    }
 
@@ -343,17 +343,17 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsProxyAcAnalyzeLocalMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         pssm = static_cast< PotsBcSsm& >(ssm);
+   auto&         pssm = static_cast<PotsBcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
    switch(sid)
    {
    case CipSignal::CPG:
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       switch(cpi->progress)
       {
       case Progress::Suspend:
@@ -374,7 +374,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
       break;
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return pssm.RaiseLocalRelease(nextEvent, cci->cause);
 
    case CipSignal::ANM:
@@ -395,7 +395,7 @@ EventHandler::Rc PotsProxyAcLocalSuspend::ProcessEvent
 {
    Debug::ft("PotsProxyAcLocalSuspend.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
 
    pssm.Relay(*npsm);
@@ -410,7 +410,7 @@ EventHandler::Rc PotsProxyAcRemoteSuspend::ProcessEvent
 {
    Debug::ft("PotsProxyAcRemoteSuspend.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = pssm.FirstProxy();
 
    pssm.Relay(*upsm);
@@ -425,7 +425,7 @@ EventHandler::Rc PotsProxyLsLocalResume::ProcessEvent
 {
    Debug::ft("PotsProxyLsLocalResume.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
 
    pssm.Relay(*npsm);
@@ -440,7 +440,7 @@ EventHandler::Rc PotsProxyRsRemoteResume::ProcessEvent
 {
    Debug::ft("PotsProxyRsRemoteResume.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = pssm.FirstProxy();
 
    pssm.Relay(*upsm);
@@ -455,7 +455,7 @@ EventHandler::Rc PotsProxyLocalAlerting::ProcessEvent
 {
    Debug::ft("PotsProxyLocalAlerting.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
 
    //  If the NPSM has a peer media PSM, connect media from that PSM,
@@ -486,8 +486,8 @@ EventHandler::Rc PotsProxyLocalAnswer::ProcessEvent
 {
    Debug::ft("PotsProxyLocalAnswer.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
-   auto upsm = static_cast< MediaPsm* >(Context::ContextPsm());
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
+   auto upsm = static_cast<MediaPsm*>(Context::ContextPsm());
    auto npsm = pssm.NPsm();
 
    //  Ensure a media flow between the UPSM and NPSM.
@@ -514,7 +514,7 @@ EventHandler::Rc PotsProxyRemoteAnswer::ProcessEvent
 {
    Debug::ft("PotsProxyRemoteAnswer.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = pssm.FirstProxy();
 
    pssm.Relay(*upsm);
@@ -530,8 +530,8 @@ EventHandler::Rc PotsProxyLocalRelease::ProcessEvent
 {
    Debug::ft("PotsProxyLocalRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
-   auto upsm = static_cast< MediaPsm* >(Context::ContextPsm());
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
+   auto upsm = static_cast<MediaPsm*>(Context::ContextPsm());
 
    //  Disable media on the UPSM.
    //
@@ -558,7 +558,7 @@ EventHandler::Rc PotsProxyRemoteRelease::ProcessEvent
 {
    Debug::ft("PotsProxyRemoteRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
    auto upsm = pssm.FirstProxy();
 
@@ -576,8 +576,8 @@ EventHandler::Rc PotsProxyReleaseCall::ProcessEvent
 {
    Debug::ft("PotsProxyReleaseCall.ProcessEvent");
 
-   auto& cte = static_cast< BcReleaseCallEvent& >(currEvent);
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& cte = static_cast<BcReleaseCallEvent&>(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
 
    CauseInfo cci;

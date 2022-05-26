@@ -51,6 +51,6 @@ protected:
 //  A CallbackRequest is allocated from the general heap and should therefore
 //  be managed by a unique_ptr.
 //
-typedef std::unique_ptr< CallbackRequest > CallbackRequestPtr;
+typedef std::unique_ptr<CallbackRequest> CallbackRequestPtr;
 }
 #endif

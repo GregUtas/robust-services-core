@@ -195,7 +195,7 @@ MsgPort* PsmContext::FindPort(const Message& msg) const
 
 //------------------------------------------------------------------------------
 
-void PsmContext::GetSubtended(std::vector< Base* >& objects) const
+void PsmContext::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("PsmContext.GetSubtended");
 

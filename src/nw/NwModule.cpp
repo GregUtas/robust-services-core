@@ -46,8 +46,8 @@ NwModule::NwModule() : Module()
 
    //  Create the modules required by NetworkBase.
    //
-   Singleton< NbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<NbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -70,8 +70,8 @@ void NwModule::Shutdown(RestartLevel level)
 {
    Debug::ft("NwModule.Shutdown");
 
-   Singleton< IpPortRegistry >::Instance()->Shutdown(level);
-   Singleton< IpServiceRegistry >::Instance()->Shutdown(level);
+   Singleton<IpPortRegistry>::Instance()->Shutdown(level);
+   Singleton<IpServiceRegistry>::Instance()->Shutdown(level);
 
    if(level >= RestartCold) SysSocket::StopLayer();
 }
@@ -89,17 +89,17 @@ void NwModule::Startup(RestartLevel level)
       SysSocket::StartLayer();
    }
 
-   Singleton< NwTracer >::Instance()->Startup(level);
-   Singleton< IpServiceRegistry >::Instance()->Startup(level);
-   Singleton< IpPortRegistry >::Instance()->Startup(level);
-   Singleton< IpBufferPool >::Instance()->Startup(level);
-   Singleton< TinyBufferPool >::Instance()->Startup(level);
-   Singleton< SmallBufferPool >::Instance()->Startup(level);
-   Singleton< MediumBufferPool >::Instance()->Startup(level);
-   Singleton< LargeBufferPool >::Instance()->Startup(level);
-   Singleton< HugeBufferPool >::Instance()->Startup(level);
-   Singleton< SendLocalIpService >::Instance()->Startup(level);
-   Singleton< SendLocalThread >::Instance()->Startup(level);
-   Singleton< NwIncrement >::Instance()->Startup(level);
+   Singleton<NwTracer>::Instance()->Startup(level);
+   Singleton<IpServiceRegistry>::Instance()->Startup(level);
+   Singleton<IpPortRegistry>::Instance()->Startup(level);
+   Singleton<IpBufferPool>::Instance()->Startup(level);
+   Singleton<TinyBufferPool>::Instance()->Startup(level);
+   Singleton<SmallBufferPool>::Instance()->Startup(level);
+   Singleton<MediumBufferPool>::Instance()->Startup(level);
+   Singleton<LargeBufferPool>::Instance()->Startup(level);
+   Singleton<HugeBufferPool>::Instance()->Startup(level);
+   Singleton<SendLocalIpService>::Instance()->Startup(level);
+   Singleton<SendLocalThread>::Instance()->Startup(level);
+   Singleton<NwIncrement>::Instance()->Startup(level);
 }
 }

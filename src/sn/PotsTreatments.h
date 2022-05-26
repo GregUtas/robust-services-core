@@ -118,7 +118,7 @@ private:
 
    //  The queue of treatments.
    //
-   Q1Way< PotsTreatment > treatmentq_;
+   Q1Way<PotsTreatment> treatmentq_;
 };
 
 //------------------------------------------------------------------------------

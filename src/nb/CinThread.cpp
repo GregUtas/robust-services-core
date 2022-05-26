@@ -73,7 +73,7 @@ void CinThread::Destroy()
 {
    Debug::ft("CinThread.Destroy");
 
-   Singleton< CinThread >::Destroy();
+   Singleton<CinThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ std::streamsize CinThread::GetLine(string& buff)
    //
    FunctionGuard guard(Guard_MakeUnpreemptable);
 
-   auto server = Singleton< CinThread >::Instance();
+   auto server = Singleton<CinThread>::Instance();
 
    if(server->buff_.empty())
    {

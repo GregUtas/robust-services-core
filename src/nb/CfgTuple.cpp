@@ -67,7 +67,7 @@ CfgTuple::~CfgTuple()
    Debug::ftnt(CfgTuple_dtor);
 
    Debug::SwLog(CfgTuple_dtor, UnexpectedInvocation, 0);
-   Singleton< CfgParmRegistry >::Extant()->UnbindTuple(*this);
+   Singleton<CfgParmRegistry>::Extant()->UnbindTuple(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void CfgTuple::Display(ostream& stream,
 ptrdiff_t CfgTuple::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const CfgTuple* >(&local);
+   auto fake = reinterpret_cast<const CfgTuple*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

@@ -87,11 +87,11 @@ LibrarySet* CodeDirSet::Files() const
    //
    auto& dirSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& files = Singleton< Library >::Instance()->Files().Items();
+   auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto dir = file->Dir();
 
       if(dir != nullptr)
@@ -118,7 +118,7 @@ void CodeDirSet::to_str(stringVector& strings, bool verbose) const
 
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
-      auto dir = static_cast< CodeDir* >(*d);
+      auto dir = static_cast<CodeDir*>(*d);
       auto size = dir->Name().size();
       if(size > width) width = size;
    }
@@ -127,7 +127,7 @@ void CodeDirSet::to_str(stringVector& strings, bool verbose) const
 
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
-      auto dir = static_cast< CodeDir* >(*d);
+      auto dir = static_cast<CodeDir*>(*d);
 
       if(verbose)
       {

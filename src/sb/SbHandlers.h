@@ -26,7 +26,7 @@
 
 namespace NodeBase
 {
-   template< class T > class Singleton;
+   template<class T> class Singleton;
 }
 
 //------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ namespace SessionBase
 //
 class SbAnalyzeMessage : public EventHandler
 {
-   friend class NodeBase::Singleton< SbAnalyzeMessage >;
+   friend class NodeBase::Singleton<SbAnalyzeMessage>;
 
    SbAnalyzeMessage() = default;
    ~SbAnalyzeMessage() = default;
@@ -54,7 +54,7 @@ class SbAnalyzeMessage : public EventHandler
 //
 class SbAnalyzeSap : public EventHandler
 {
-   friend class NodeBase::Singleton< SbAnalyzeSap >;
+   friend class NodeBase::Singleton<SbAnalyzeSap>;
 
    SbAnalyzeSap() = default;
    ~SbAnalyzeSap() = default;
@@ -69,7 +69,7 @@ class SbAnalyzeSap : public EventHandler
 //
 class SbAnalyzeSnp : public EventHandler
 {
-   friend class NodeBase::Singleton< SbAnalyzeSnp >;
+   friend class NodeBase::Singleton<SbAnalyzeSnp>;
 
    SbAnalyzeSnp() = default;
    ~SbAnalyzeSnp() = default;
@@ -84,7 +84,7 @@ class SbAnalyzeSnp : public EventHandler
 //
 class SbForceTransition : public EventHandler
 {
-   friend class NodeBase::Singleton< SbForceTransition >;
+   friend class NodeBase::Singleton<SbForceTransition>;
 
    SbForceTransition() = default;
    ~SbForceTransition() = default;
@@ -99,7 +99,7 @@ class SbForceTransition : public EventHandler
 //
 class SbInitiationReq : public EventHandler
 {
-   friend class NodeBase::Singleton< SbInitiationReq >;
+   friend class NodeBase::Singleton<SbInitiationReq>;
 
    SbInitiationReq() = default;
    ~SbInitiationReq() = default;

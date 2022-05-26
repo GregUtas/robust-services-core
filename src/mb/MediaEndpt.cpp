@@ -123,7 +123,7 @@ void* MediaEndpt::operator new(size_t size)
 {
    Debug::ft("MediaEndpt.operator new");
 
-   return Singleton< MediaEndptPool >::Instance()->DeqBlock(size);
+   return Singleton<MediaEndptPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------

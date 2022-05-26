@@ -95,7 +95,7 @@ Alarm::Alarm(c_string name, c_string expl, uint32_t delay) :
    }
 
    dyn_.reset(new AlarmDynamic);
-   Singleton< AlarmRegistry >::Instance()->BindAlarm(*this);
+   Singleton<AlarmRegistry>::Instance()->BindAlarm(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ Alarm::~Alarm()
    Debug::ftnt(Alarm_dtor);
 
    Debug::SwLog(Alarm_dtor, UnexpectedInvocation, 0);
-   Singleton< AlarmRegistry >::Extant()->UnbindAlarm(*this);
+   Singleton<AlarmRegistry>::Extant()->UnbindAlarm(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ Alarm::~Alarm()
 ptrdiff_t Alarm::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Alarm* >(&local);
+   auto fake = reinterpret_cast<const Alarm*>(&local);
    return ptrdiff(&fake->aid_, fake);
 }
 

@@ -60,7 +60,7 @@ StTestData* StTestData::Access(CliThread& cli)
 
    auto data = cli.GetAppData(TestSessionAppId);
    if(data == nullptr) data = new StTestData(cli);
-   return static_cast< StTestData* >(data);
+   return static_cast<StTestData*>(data);
 }
 
 //------------------------------------------------------------------------------

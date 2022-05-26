@@ -74,10 +74,9 @@ void IpServiceRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-std::vector< IpService* > IpServiceRegistry::GetServices
-   (const string& name) const
+std::vector<IpService*> IpServiceRegistry::GetServices(const string& name) const
 {
-   std::vector< IpService* > services;
+   std::vector<IpService*> services;
 
    for(auto s = services_.First(); s != nullptr; services_.Next(s))
    {

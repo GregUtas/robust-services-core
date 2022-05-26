@@ -69,7 +69,7 @@ Statistic::Statistic(const string& expl, size_t divisor) :
       Debug::SwLog(Statistic_ctor, "expl length", expl.size());
    }
 
-   Singleton< StatisticsRegistry >::Instance()->BindStat(*this);
+   Singleton<StatisticsRegistry>::Instance()->BindStat(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ Statistic::~Statistic()
 {
    Debug::ftnt("Statistic.dtor");
 
-   Singleton< StatisticsRegistry >::Extant()->UnbindStat(*this);
+   Singleton<StatisticsRegistry>::Extant()->UnbindStat(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ Statistic::~Statistic()
 ptrdiff_t Statistic::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Statistic* >(&local);
+   auto fake = reinterpret_cast<const Statistic*>(&local);
    return ptrdiff(&fake->sid_, fake);
 }
 

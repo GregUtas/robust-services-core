@@ -46,7 +46,7 @@ private:
 
 class PotsCfbService : public Service
 {
-   friend class Singleton< PotsCfbService >;
+   friend class Singleton<PotsCfbService>;
 
    PotsCfbService();
    ~PotsCfbService();

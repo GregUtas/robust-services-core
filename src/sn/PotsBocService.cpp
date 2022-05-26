@@ -42,7 +42,7 @@ namespace PotsBase
 {
 class PotsBocNull : public State
 {
-   friend class Singleton< PotsBocNull >;
+   friend class Singleton<PotsBocNull>;
 
    PotsBocNull();
    ~PotsBocNull() = default;
@@ -77,7 +77,7 @@ EventHandler::Rc PotsBocInitiator::ProcessEvent
 {
    Debug::ft("PotsBocInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(BOC))
@@ -95,7 +95,7 @@ PotsBocService::PotsBocService() : Service(PotsBocServiceId, false, true)
 {
    Debug::ft("PotsBocService.ctor");
 
-   Singleton< PotsBocNull >::Instance();
+   Singleton<PotsBocNull>::Instance();
 }
 
 //------------------------------------------------------------------------------

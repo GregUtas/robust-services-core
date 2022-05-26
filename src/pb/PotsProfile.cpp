@@ -62,7 +62,7 @@ PotsProfile::PotsProfile(DN dn)
    featureq_.Init(PotsFeatureProfile::LinkDiff());
    dyn_.reset(new PotsProfileDynamic);
 
-   Singleton< PotsProfileRegistry >::Instance()->BindProfile(*this);
+   Singleton<PotsProfileRegistry>::Instance()->BindProfile(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ PotsProfile::~PotsProfile()
 
    //  Remove the profile from the registry.
    //
-   Singleton< PotsProfileRegistry >::Extant()->UnbindProfile(*this);
+   Singleton<PotsProfileRegistry>::Extant()->UnbindProfile(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ PotsProfile::~PotsProfile()
 ptrdiff_t PotsProfile::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const PotsProfile* >(&local);
+   auto fake = reinterpret_cast<const PotsProfile*>(&local);
    return ptrdiff(&fake->dn_, fake);
 }
 
@@ -273,7 +273,7 @@ bool PotsProfile::Subscribe(PotsFeature::Id fid, CliThread& cli)
 {
    Debug::ft("PotsProfile.Subscribe");
 
-   auto reg = Singleton< PotsFeatureRegistry >::Instance();
+   auto reg = Singleton<PotsFeatureRegistry>::Instance();
 
    for(auto fp = featureq_.First(); fp != nullptr; featureq_.Next(fp))
    {

@@ -62,11 +62,11 @@ size_t CodeDir::CppCount() const
 
    size_t count = 0;
 
-   auto& files = Singleton< Library >::Instance()->Files().Items();
+   auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       if((file->Dir() == this) && file->IsCpp()) ++count;
    }
 
@@ -90,8 +90,8 @@ word CodeDir::Extract(string& expl)
 {
    Debug::ft("CodeDir.Extract");
 
-   auto lib = Singleton< Library >::Instance();
-   std::set< string > files;
+   auto lib = Singleton<Library>::Instance();
+   std::set<string> files;
 
    if(!SysFile::ListFiles(path_, files))
    {
@@ -119,11 +119,11 @@ void CodeDir::GetDecls(CxxNamedSet& items)
 {
    Debug::ft("CodeDir.GetDecls");
 
-   auto& files = Singleton< Library >::Instance()->Files().Items();
+   auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       file->GetDecls(items);
    }
 }
@@ -136,11 +136,11 @@ size_t CodeDir::HeaderCount() const
 
    size_t count = 0;
 
-   auto& files = Singleton< Library >::Instance()->Files().Items();
+   auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       if((file->Dir() == this) && file->IsHeader()) ++count;
    }
 

@@ -97,7 +97,7 @@ bool BotTrace::Display(ostream& stream, const string& opts)
 
    if(!buff_->IsInvalid())
    {
-      auto message = reinterpret_cast< const DipMessage* >(buff_->HeaderPtr());
+      auto message = reinterpret_cast<const DipMessage*>(buff_->HeaderPtr());
       message->Display(stream);
    }
 
@@ -126,7 +126,7 @@ c_string BotTrace::EventString() const
 DipHeader* BotTrace::Header() const
 {
    if(buff_ == nullptr) return nullptr;
-   return reinterpret_cast< DipHeader* >(buff_->HeaderPtr());
+   return reinterpret_cast<DipHeader*>(buff_->HeaderPtr());
 }
 
 //------------------------------------------------------------------------------

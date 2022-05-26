@@ -35,7 +35,7 @@ namespace NodeBase
 //
 class CoutThread : public Thread
 {
-   friend class Singleton< CoutThread >;
+   friend class Singleton<CoutThread>;
 public:
    //  Queues STREAM for output to the console.  CoutThread takes ownership
    //  of STREAM, which is set to nullptr before returning.  STREAM is also

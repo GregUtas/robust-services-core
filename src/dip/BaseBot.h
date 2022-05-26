@@ -213,7 +213,7 @@ protected:
    //  Lists the tokens that the bot understands.  The default returns
    //  an empty list, so a bot should override this.
    //
-   virtual const std::vector< Token >& get_try_tokens() const;
+   virtual const std::vector<Token>& get_try_tokens() const;
 
    //  Handles an incoming FRM.  The default replies with HUH(message)
    //  and a TRY containing the tokens returned by get_try_tokens.
@@ -567,20 +567,20 @@ protected:
    //  The powers that are currently in civil disorder.  Updated when
    //  a CCD or NOT(CCD) arrives.
    //
-   std::set< Token > cd_powers;
+   std::set<Token> cd_powers;
 
    //  The powers that have been eliminated.  Updated when an SCO or
    //  OUT arrives.
    //
-   std::set< Token > out_powers;
+   std::set<Token> out_powers;
 
    //  The centres owned by each power.  Updated when an SCO arrives.
    //
-   std::vector< PowerCentres > centres;
+   std::vector<PowerCentres> centres;
 
    //  The units owned by each power.  Updated when a NOW arrives.
    //
-   std::vector< PowerUnits > units;
+   std::vector<PowerUnits> units;
 private:
    //  The state of the Diplomacy AI protocol.
    //
@@ -675,7 +675,7 @@ private:
 
    //  For maintaining a database of sent press.
    //
-   typedef std::list< SentPressInfo > SentPress;
+   typedef std::list<SentPressInfo> SentPress;
 
    //  If the database of unacknowledged press includes any press that was
    //  sent to INACTIVE_POWER (which has just gone into civil disorder or

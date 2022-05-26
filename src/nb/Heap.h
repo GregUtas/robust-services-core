@@ -231,11 +231,11 @@ private:
    //  size is negative when a block whose allocation was not recorded is
    //  freed.
    //
-   typedef std::pair< void*, word > TraceEntry;
+   typedef std::pair<void*, word> TraceEntry;
 
    //  Tracks allocated blocks to assist with detecting memory leaks.
    //
-   std::map< void*, word > blocks_;
+   std::map<void*, word> blocks_;
 };
 }
 #endif

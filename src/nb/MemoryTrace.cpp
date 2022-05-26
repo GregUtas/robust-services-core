@@ -79,13 +79,13 @@ bool MemoryTrace::Display(ostream& stream, const string& opts)
 
    //  If there is no record of this memory being freed, flag it.
    //
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    Flags mask(1 << MemoryTracer);
    TraceRecord* rec = this;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
-      auto curr = static_cast< MemoryTrace* >(rec);
+      auto curr = static_cast<MemoryTrace*>(rec);
 
       if((curr->addr_ == addr_) && (curr->rid_ == Free)) return true;
    }

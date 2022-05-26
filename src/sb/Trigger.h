@@ -30,7 +30,7 @@
 
 namespace NodeBase
 {
-   template< class T > class Registry;
+   template<class T> class Registry;
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ namespace SessionBase
 //
 class Trigger : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< Trigger >;
+   friend class NodeBase::Registry<Trigger>;
    friend class Initiator;
    friend class ServiceSM;
 public:
@@ -120,7 +120,7 @@ private:
 
    //  The queue of initiators registered with this trigger.
    //
-   NodeBase::Q1Way< Initiator > initq_;
+   NodeBase::Q1Way<Initiator> initq_;
 };
 }
 #endif

@@ -193,7 +193,7 @@ private:
    //  The log itself is included in the result unless it does not
    //  need to be fixed.
    //
-   std::vector< const CodeWarning* > LogsToFix(std::string& expl) const;
+   std::vector<const CodeWarning*> LogsToFix(std::string& expl) const;
 
    //  Returns the other log associated with a warning that involves
    //  fixing both a declaration and a definition.
@@ -215,11 +215,11 @@ private:
 
    //  For inserting elements into the attributes map.
    //
-   typedef std::pair< Warning, WarningAttrs > WarningPair;
+   typedef std::pair<Warning, WarningAttrs> WarningPair;
 
    //  A type for mapping warnings to their attributes.
    //
-   typedef std::map< Warning, WarningAttrs > AttrsMap;
+   typedef std::map<Warning, WarningAttrs> AttrsMap;
 
    //  The type of warning.
    //

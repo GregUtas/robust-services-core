@@ -48,7 +48,7 @@ namespace SessionBase
 //
 class ProtocolSM : public ProtocolLayer
 {
-   friend class NodeBase::Q1Way< ProtocolSM >;
+   friend class NodeBase::Q1Way<ProtocolSM>;
    friend class Message;
    friend class PsmContext;
    friend class Timer;
@@ -193,7 +193,7 @@ public:
 
    //  Overridden to enumerate all objects that the PSM owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Overridden for patching.
    //
@@ -349,19 +349,19 @@ private:
 
    //  The queue of received messages (actually a stack).
    //
-   NodeBase::Q1Way< Message > rcvdMsgq_;
+   NodeBase::Q1Way<Message> rcvdMsgq_;
 
    //  The queue of pending outgoing messages.
    //
-   NodeBase::Q1Way< Message > ogMsgq_;
+   NodeBase::Q1Way<Message> ogMsgq_;
 
    //  The queue of sent outgoing messages (actually a stack).
    //
-   NodeBase::Q1Way< Message > sentMsgq_;
+   NodeBase::Q1Way<Message> sentMsgq_;
 
    //  The queue of timers running on this PSM.
    //
-   NodeBase::Q1Way< Timer > timerq_;
+   NodeBase::Q1Way<Timer> timerq_;
 
    //  The factory that created this PSM.
    //

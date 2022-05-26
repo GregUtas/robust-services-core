@@ -69,14 +69,14 @@ public:
    //  Returns the first parameter that matches PID.  Returns nullptr if no
    //  such parameter exists.  T is the type for the parameter's contents,
    //  omitting the TLV header.  The syntax for invocation on MSG is
-   //    auto info = msg.FindType< T >(pid);
+   //    auto info = msg.FindType<T>(pid);
    //
-   template< class T > T* FindType(ParameterId pid) const
+   template<class T> T* FindType(ParameterId pid) const
    {
       NodeBase::Debug::ft(TlvMessage_FindType());
       auto pptr = FindParm(pid);
       if(pptr == nullptr) return nullptr;
-      return reinterpret_cast< T* >(pptr->bytes);
+      return reinterpret_cast<T*>(pptr->bytes);
    }
 
    //  Adds a parameter of type T (PARM) that is identified by PID.
@@ -85,12 +85,12 @@ public:
    //  where PARM is of type T, with its fields already filled in
    //  (although they can also be filled in afterwards).
    //
-   template< class T > T* AddType(const T& parm, ParameterId pid)
+   template<class T> T* AddType(const T& parm, ParameterId pid)
    {
       NodeBase::Debug::ft(TlvMessage_AddType());
       auto pptr = AddParm(pid, sizeof(T));
       if(pptr == nullptr) return nullptr;
-      auto dest = reinterpret_cast< T* >(pptr->bytes);
+      auto dest = reinterpret_cast<T*>(pptr->bytes);
       *dest = parm;
       return dest;
    }
@@ -99,14 +99,14 @@ public:
    //  one is found, it is copied into this message using the identifier
    //  ogPid.  If ogPid is not provided, icPid is also used for the copy.
    //  The syntax for invocation on MSG is
-   //    auto info = msg.CopyType< T >(icMsg, icPid, ogPid);
+   //    auto info = msg.CopyType<T>(icMsg, icPid, ogPid);
    //
-   template< class T > T* CopyType
+   template<class T> T* CopyType
       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
    {
       NodeBase::Debug::ft(TlvMessage_CopyType());
       if(ogPid == NodeBase::NIL_ID) ogPid = icPid;
-      auto pptr = icMsg.FindType< T >(icPid);
+      auto pptr = icMsg.FindType<T>(icPid);
       if(pptr != nullptr) return AddType(*pptr, ogPid);
       return nullptr;
    }
@@ -119,13 +119,13 @@ public:
    //    T* parm;
    //    auto rc = msg.VerifyParm(pid, use, parm);
    //
-   template< class T > Parameter::TestRc VerifyParm
+   template<class T> Parameter::TestRc VerifyParm
       (ParameterId pid, Parameter::Usage use, T*& parm) const
    {
       NodeBase::Debug::ft(TlvMessage_VerifyParm());
 
       auto pptr = FindParm(pid);
-      parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
+      parm = (pptr == nullptr ? nullptr : reinterpret_cast<T*>(pptr->bytes));
 
       if((pptr == nullptr) && (use == Parameter::Mandatory))
          return Parameter::MessageMissingMandatoryParm;
@@ -185,7 +185,7 @@ public:
    //  is its length in bytes.  The syntax for invocation on MSG, where
    //  T is the type for the parameter's contents, is
    //    auto pptr = msg.AddParm(pid, plen);
-   //    auto info = reinterpret_cast< T* >(pptr->bytes);
+   //    auto info = reinterpret_cast<T*>(pptr->bytes);
    //  after which INFO's fields can be filled in.
    //
    virtual TlvParm* AddParm(ParameterId pid, size_t plen);
@@ -278,7 +278,7 @@ protected:
    //  Returns the entire TLV message (header plus parameters).
    //
    TlvMsgLayout* TlvLayout() const
-      { return reinterpret_cast< TlvMsgLayout* >(Buffer()->HeaderPtr()); }
+      { return reinterpret_cast<TlvMsgLayout*>(Buffer()->HeaderPtr()); }
 
    //  Returns the number of bytes that precede the parameter referenced by
    //  PPTR.  Returns SIZE_MAX if PPTR is nullptr or not within this message.

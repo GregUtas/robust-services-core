@@ -136,7 +136,7 @@ TraceRc MscBuilder::AnalyzeEvents()
          //
          //  Add this context to the MSC to build its set of vertical lines.
          //
-         tt = static_cast< const TransTrace* >(rec);
+         tt = static_cast<const TransTrace*>(rec);
          ctx = EnsureContext(*tt);
          break;
 
@@ -144,7 +144,7 @@ TraceRc MscBuilder::AnalyzeEvents()
          //
          //  Only MsgTrace events have been extracted.
          //
-         auto mt = static_cast< const MsgTrace* >(rec);
+         auto mt = static_cast<const MsgTrace*>(rec);
 
          if(mt->NoCtx())
          {
@@ -156,7 +156,7 @@ TraceRc MscBuilder::AnalyzeEvents()
             //
             if(!mt->Self() && (mt->Route() == Message::Internal))
             {
-               auto reg = Singleton< FactoryRegistry >::Instance();
+               auto reg = Singleton<FactoryRegistry>::Instance();
                auto fac = reg->GetFactory(mt->LocAddr().fid);
 
                if(fac != nullptr)
@@ -468,7 +468,7 @@ void MscBuilder::EnsureFactories()
    //  3. The address was communicating externally.  Ensure that the external
    //     factory has a context.
    //
-   auto reg = Singleton< FactoryRegistry >::Instance();
+   auto reg = Singleton<FactoryRegistry>::Instance();
 
    for(auto addr = addressq_.First(); addr != nullptr; addressq_.Next(addr))
    {
@@ -522,7 +522,7 @@ TraceRc MscBuilder::ExtractEvents()
 {
    Debug::ft("MscBuilder.ExtractEvents");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto mask = (TTmask | CTmask);
    TraceRecord* rec = nullptr;
 
@@ -671,8 +671,8 @@ const MsgTrace* MscBuilder::FindRxMsg(size_t index) const
 {
    Debug::ft("MscBuilder.FindRxMsg");
 
-   auto rxnet = static_cast< const TransTrace* >(events_[index]);
-   auto trans = static_cast< const TransTrace* >(nullptr);
+   auto rxnet = static_cast<const TransTrace*>(events_[index]);
+   auto trans = static_cast<const TransTrace*>(nullptr);
 
    for(size_t i = index + 1; i < nextEvent_; ++i)
    {
@@ -688,7 +688,7 @@ const MsgTrace* MscBuilder::FindRxMsg(size_t index) const
          //
          if(rec->Rid() == TransTrace::Trans)
          {
-            trans = static_cast< const TransTrace* >(rec);
+            trans = static_cast<const TransTrace*>(rec);
 
             if(trans->Buff() != rxnet->Buff()) trans = nullptr;
          }
@@ -700,7 +700,7 @@ const MsgTrace* MscBuilder::FindRxMsg(size_t index) const
          //
          if((trans != nullptr) && (rec->Rid() == MsgTrace::Reception))
          {
-            return static_cast< const MsgTrace* >(rec);
+            return static_cast<const MsgTrace*>(rec);
          }
          break;
       }
@@ -715,7 +715,7 @@ const TransTrace* MscBuilder::FindTrans(size_t index) const
 {
    Debug::ft("MscBuilder.FindTrans");
 
-   auto txmsg = static_cast< const MsgTrace* >(events_[index]);
+   auto txmsg = static_cast<const MsgTrace*>(events_[index]);
 
    //  If the message was not internal, don't bother to look for the
    //  transaction that processed it.
@@ -725,7 +725,7 @@ const TransTrace* MscBuilder::FindTrans(size_t index) const
    //  Track the most recent "TRANS" event and return it when we stumble on
    //  an "rxmsg" event whose remote address matches TXMSG's local address.
    //
-   auto trans = static_cast< const TransTrace* >(nullptr);
+   auto trans = static_cast<const TransTrace*>(nullptr);
 
    for(size_t i = index + 1; i < nextEvent_; ++i)
    {
@@ -736,14 +736,14 @@ const TransTrace* MscBuilder::FindTrans(size_t index) const
       case TransTracer:
          if(rec->Rid() == TransTrace::Trans)
          {
-            trans = static_cast< const TransTrace* >(rec);
+            trans = static_cast<const TransTrace*>(rec);
          }
          break;
 
       case ContextTracer:
          if(rec->Rid() == MsgTrace::Reception)
          {
-            auto rxmsg = static_cast< const MsgTrace* >(rec);
+            auto rxmsg = static_cast<const MsgTrace*>(rec);
 
             if(rxmsg->RemAddr() == txmsg->LocAddr()) return trans;
          }
@@ -766,7 +766,7 @@ TraceRc MscBuilder::Generate(ostream& stream)
    //
    stream_ = &stream;
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto rc = TraceOk;
 
    buff->Lock();
@@ -896,7 +896,7 @@ void MscBuilder::OutputChart()
       switch(rec->Owner())
       {
       case TransTracer:
-         tt = static_cast< const TransTrace* >(rec);
+         tt = static_cast<const TransTrace*>(rec);
 
          switch(rid)
          {
@@ -932,7 +932,7 @@ void MscBuilder::OutputChart()
          //
          if(rid == MsgTrace::Transmission)
          {
-            mt = static_cast< const MsgTrace* >(rec);
+            mt = static_cast<const MsgTrace*>(rec);
             tt = FindTrans(i);
             OutputMessage(ctx, *mt, tt);
          }
@@ -1014,7 +1014,7 @@ void MscBuilder::OutputHeader() const
 {
    Debug::ft("MscBuilder.OutputHeader");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    *stream_ << MscHeader << buff->strTimePlace() << CRLF;
 }
 
@@ -1154,7 +1154,7 @@ bool MscBuilder::OutputMessage
    //  Find the message's signal so that it can be displayed.  Strip out
    //  the word "Signal".
    //
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(mt.Prid());
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(mt.Prid());
    if(pro == nullptr)
       return Error("protocol not found", pack2(mt.Prid(), mt.Sid()));
 
@@ -1274,13 +1274,13 @@ void MscBuilder::OutputTrailer() const
    //  To filter out other trace records, disable other tools
    //  and reenable them afterwards.
    //
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto tools = buff->GetTools();
    buff->ClearTools();
    buff->SetTool(TransTracer, true);
    buff->SetTool(ContextTracer, true);
    *stream_ << CRLF;
-   Singleton< TraceBuffer >::Instance()->DisplayTrace(stream_, EMPTY_STR);
+   Singleton<TraceBuffer>::Instance()->DisplayTrace(stream_, EMPTY_STR);
    *stream_ << MscTrailer;
    buff->SetTools(tools);
 }

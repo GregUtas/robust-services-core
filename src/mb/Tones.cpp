@@ -41,7 +41,7 @@ Tone::Tone(Id tid)
    Debug::ft("Tone.ctor");
 
    tid_.SetId(tid);
-   Singleton< ToneRegistry >::Instance()->BindTone(*this);
+   Singleton<ToneRegistry>::Instance()->BindTone(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Tone::~Tone()
 {
    Debug::ftnt("Tone.dtor");
 
-   Singleton< ToneRegistry >::Extant()->UnbindTone(*this);
+   Singleton<ToneRegistry>::Extant()->UnbindTone(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ Tone::~Tone()
 ptrdiff_t Tone::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Tone* >(&local);
+   auto fake = reinterpret_cast<const Tone*>(&local);
    return ptrdiff(&fake->tid_, fake);
 }
 

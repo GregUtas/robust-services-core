@@ -32,7 +32,7 @@ namespace NodeBase
 {
 //  Class template for singletons.  A singleton for MyClass is created and/or
 //  accessed by
-//    auto c = Singleton< MyClass >::Instance();
+//    auto c = Singleton<MyClass>::Instance();
 //  This has the side effect of creating the singleton if it doesn't yet exist.
 //
 //  MyClass must define its constructor or destructor as private.  That way, it
@@ -41,7 +41,7 @@ namespace NodeBase
 //
 //    class MyClass : public Base  // actually a *subclass* of Base: see below
 //    {
-//       friend class Singleton< MyClass >;
+//       friend class Singleton<MyClass>;
 //    public:
 //       // interface for clients
 //    private:
@@ -60,7 +60,7 @@ namespace NodeBase
 //
 //  Singletons should be created during system initialization and restarts.
 //
-template< class T > class Singleton
+template<class T> class Singleton
 {
 public:
    //  Creates the singleton if necessary and returns a pointer to it.
@@ -136,6 +136,6 @@ private:
 
 //  Initialization of the singleton instance.
 //
-template< class T > T* NodeBase::Singleton< T >::Instance_ = nullptr;
+template<class T> T* NodeBase::Singleton<T>::Instance_ = nullptr;
 
 #endif

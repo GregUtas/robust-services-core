@@ -37,8 +37,8 @@ CnModule::CnModule() : Module()
 
    //  Create the modules required by ControlNode.
    //
-   Singleton< SbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<SbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------

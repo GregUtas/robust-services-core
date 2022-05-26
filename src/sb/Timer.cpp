@@ -64,7 +64,7 @@ Timer::Timer
 {
    Debug::ft("Timer.ctor");
 
-   auto reg = Singleton< TimerRegistry >::Instance();
+   auto reg = Singleton<TimerRegistry>::Instance();
    qid_ = reg->CalcQId(secs_);
    reg->timerq_[qid_].Henq(*this);
    psm_->timerq_.Henq(*this);
@@ -76,7 +76,7 @@ Timer::Timer
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -104,7 +104,7 @@ Timer::~Timer()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -140,7 +140,7 @@ void Timer::Deregister()
    //  Remove the timer from the timer registry and clear our queue
    //  identifier so that we no longer think we're on a queue.
    //
-   Singleton< TimerRegistry >::Extant()->timerq_[qid_].Exq(*this);
+   Singleton<TimerRegistry>::Extant()->timerq_[qid_].Exq(*this);
    qid_ = NilQId;
 }
 
@@ -185,7 +185,7 @@ void Timer::Exqueue()
 ptrdiff_t Timer::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Timer* >(&local);
+   auto fake = reinterpret_cast<const Timer*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -195,7 +195,7 @@ void* Timer::operator new(size_t size)
 {
    Debug::ft("Timer.operator new");
 
-   return Singleton< TimerPool >::Instance()->DeqBlock(size);
+   return Singleton<TimerPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ void Timer::Restart()
 {
    Debug::ft("Timer.Restart");
 
-   auto reg = Singleton< TimerRegistry >::Instance();
+   auto reg = Singleton<TimerRegistry>::Instance();
 
    if(qid_ < MaxQId)
    {

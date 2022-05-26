@@ -86,6 +86,6 @@ std::ostream& operator<<(std::ostream& stream, const Location& loc);
 
 //  For holding a set of locations.
 //
-typedef std::set< Location > LocationSet;
+typedef std::set<Location> LocationSet;
 }
 #endif

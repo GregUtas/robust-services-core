@@ -48,7 +48,7 @@ UdpIoThread::UdpIoThread(Daemon* daemon,
 {
    Debug::ft(UdpIoThread_ctor);
 
-   ipPort_ = Singleton< IpPortRegistry >::Instance()->GetPort(port_, IpUdp);
+   ipPort_ = Singleton<IpPortRegistry>::Instance()->GetPort(port_, IpUdp);
 
    if(ipPort_ != nullptr)
       ipPort_->SetThread(this);
@@ -93,11 +93,11 @@ void UdpIoThread::Enter()
    //  create one, of the desired size, bound to our port.  Generate a
    //  log and exit if this fails.
    //
-   auto socket = static_cast< SysUdpSocket* >(ipPort_->GetSocket());
+   auto socket = static_cast<SysUdpSocket*>(ipPort_->GetSocket());
 
    if(socket == nullptr)
    {
-      auto svc = static_cast< const UdpIpService* >(ipPort_->GetService());
+      auto svc = static_cast<const UdpIpService*>(ipPort_->GetService());
       auto rc = SysSocket::AllocOk;
 
       socket = new SysUdpSocket(port_, svc, rc);
@@ -198,7 +198,7 @@ void UdpIoThread::ReleaseResources()
 
    if(ipPort_ != nullptr)
    {
-      auto socket = static_cast< SysUdpSocket* >(ipPort_->GetSocket());
+      auto socket = static_cast<SysUdpSocket*>(ipPort_->GetSocket());
       delete socket;
       ipPort_->SetSocket(nullptr);
    }

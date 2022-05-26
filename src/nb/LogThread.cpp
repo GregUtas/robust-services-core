@@ -76,14 +76,14 @@ static void CopyToConsole(const string& logs)
 //------------------------------------------------------------------------------
 
 LogThread::LogThread() :
-   Thread(BackgroundFaction, Singleton< LogDaemon >::Instance())
+   Thread(BackgroundFaction, Singleton<LogDaemon>::Instance())
 {
    Debug::ft("LogThread.ctor");
 
-   auto reg = Singleton< CfgParmRegistry >::Instance();
+   auto reg = Singleton<CfgParmRegistry>::Instance();
 
    noSpoolingMessageCount_.reset
-      (static_cast< CfgIntParm* >(reg->FindParm("NoSpoolingMessageCount")));
+      (static_cast<CfgIntParm*>(reg->FindParm("NoSpoolingMessageCount")));
 
    if(noSpoolingMessageCount_ == nullptr)
    {
@@ -122,7 +122,7 @@ void LogThread::Destroy()
 {
    Debug::ft("LogThread.Destroy");
 
-   Singleton< LogThread >::Destroy();
+   Singleton<LogThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -142,8 +142,8 @@ void LogThread::Enter()
 {
    Debug::ft("LogThread.Enter");
 
-   auto reg = Singleton< LogBufferRegistry >::Instance();
-   auto msgs = Singleton< MsgBufferPool >::Instance();
+   auto reg = Singleton<LogBufferRegistry>::Instance();
+   auto msgs = Singleton<MsgBufferPool>::Instance();
    auto delay = TIMEOUT_NEVER;
 
    //  The log thread usually pauses forever and is interrupted when a log
@@ -232,7 +232,7 @@ void LogThread::Spool(const string& str, const Log* log)
       }
    }
 
-   auto name = Singleton< LogBufferRegistry >::Extant()->FileName();
+   auto name = Singleton<LogBufferRegistry>::Extant()->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
 
    MutexGuard guard(&LogFileLock_);

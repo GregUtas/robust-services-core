@@ -36,7 +36,7 @@ namespace PotsBase
 //
 class PotsProxyService : public ProxyBcService
 {
-   friend class Singleton< PotsProxyService >;
+   friend class Singleton<PotsProxyService>;
 
    //  Private because this is a singleton.  Registers all
    //  POTS states, event handlers, and triggers.
@@ -54,7 +54,7 @@ class PotsProxyService : public ProxyBcService
 //
 class PotsProxyNull : public ProxyBcNull
 {
-   friend class Singleton< PotsProxyNull >;
+   friend class Singleton<PotsProxyNull>;
 
    PotsProxyNull();
    ~PotsProxyNull() = default;
@@ -62,7 +62,7 @@ class PotsProxyNull : public ProxyBcNull
 
 class PotsProxyAuthorizingOrigination : public ProxyBcAuthorizingOrigination
 {
-   friend class Singleton< PotsProxyAuthorizingOrigination >;
+   friend class Singleton<PotsProxyAuthorizingOrigination>;
 
    PotsProxyAuthorizingOrigination();
    ~PotsProxyAuthorizingOrigination() = default;
@@ -70,7 +70,7 @@ class PotsProxyAuthorizingOrigination : public ProxyBcAuthorizingOrigination
 
 class PotsProxyCollectingInformation : public ProxyBcCollectingInformation
 {
-   friend class Singleton< PotsProxyCollectingInformation >;
+   friend class Singleton<PotsProxyCollectingInformation>;
 
    PotsProxyCollectingInformation();
    ~PotsProxyCollectingInformation() = default;
@@ -78,7 +78,7 @@ class PotsProxyCollectingInformation : public ProxyBcCollectingInformation
 
 class PotsProxyAnalyzingInformation : public ProxyBcAnalyzingInformation
 {
-   friend class Singleton< PotsProxyAnalyzingInformation >;
+   friend class Singleton<PotsProxyAnalyzingInformation>;
 
    PotsProxyAnalyzingInformation();
    ~PotsProxyAnalyzingInformation() = default;
@@ -86,7 +86,7 @@ class PotsProxyAnalyzingInformation : public ProxyBcAnalyzingInformation
 
 class PotsProxySelectingRoute : public ProxyBcSelectingRoute
 {
-   friend class Singleton< PotsProxySelectingRoute >;
+   friend class Singleton<PotsProxySelectingRoute>;
 
    PotsProxySelectingRoute();
    ~PotsProxySelectingRoute() = default;
@@ -94,7 +94,7 @@ class PotsProxySelectingRoute : public ProxyBcSelectingRoute
 
 class PotsProxyAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
 {
-   friend class Singleton< PotsProxyAuthorizingCallSetup >;
+   friend class Singleton<PotsProxyAuthorizingCallSetup>;
 
    PotsProxyAuthorizingCallSetup();
    ~PotsProxyAuthorizingCallSetup() = default;
@@ -102,7 +102,7 @@ class PotsProxyAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
 
 class PotsProxySendingCall : public ProxyBcSendingCall
 {
-   friend class Singleton< PotsProxySendingCall >;
+   friend class Singleton<PotsProxySendingCall>;
 
    PotsProxySendingCall();
    ~PotsProxySendingCall() = default;
@@ -110,7 +110,7 @@ class PotsProxySendingCall : public ProxyBcSendingCall
 
 class PotsProxyOrigAlerting : public ProxyBcOrigAlerting
 {
-   friend class Singleton< PotsProxyOrigAlerting >;
+   friend class Singleton<PotsProxyOrigAlerting>;
 
    PotsProxyOrigAlerting();
    ~PotsProxyOrigAlerting() = default;
@@ -118,7 +118,7 @@ class PotsProxyOrigAlerting : public ProxyBcOrigAlerting
 
 class PotsProxyAuthorizingTermination : public ProxyBcAuthorizingTermination
 {
-   friend class Singleton< PotsProxyAuthorizingTermination >;
+   friend class Singleton<PotsProxyAuthorizingTermination>;
 
    PotsProxyAuthorizingTermination();
    ~PotsProxyAuthorizingTermination() = default;
@@ -126,7 +126,7 @@ class PotsProxyAuthorizingTermination : public ProxyBcAuthorizingTermination
 
 class PotsProxySelectingFacility : public ProxyBcSelectingFacility
 {
-   friend class Singleton< PotsProxySelectingFacility >;
+   friend class Singleton<PotsProxySelectingFacility>;
 
    PotsProxySelectingFacility();
    ~PotsProxySelectingFacility() = default;
@@ -134,7 +134,7 @@ class PotsProxySelectingFacility : public ProxyBcSelectingFacility
 
 class PotsProxyPresentingCall : public ProxyBcPresentingCall
 {
-   friend class Singleton< PotsProxyPresentingCall >;
+   friend class Singleton<PotsProxyPresentingCall>;
 
    PotsProxyPresentingCall();
    ~PotsProxyPresentingCall() = default;
@@ -142,7 +142,7 @@ class PotsProxyPresentingCall : public ProxyBcPresentingCall
 
 class PotsProxyTermAlerting : public ProxyBcTermAlerting
 {
-   friend class Singleton< PotsProxyTermAlerting >;
+   friend class Singleton<PotsProxyTermAlerting>;
 
    PotsProxyTermAlerting();
    ~PotsProxyTermAlerting() = default;
@@ -150,7 +150,7 @@ class PotsProxyTermAlerting : public ProxyBcTermAlerting
 
 class PotsProxyActive : public ProxyBcActive
 {
-   friend class Singleton< PotsProxyActive >;
+   friend class Singleton<PotsProxyActive>;
 
    PotsProxyActive();
    ~PotsProxyActive() = default;
@@ -158,7 +158,7 @@ class PotsProxyActive : public ProxyBcActive
 
 class PotsProxyLocalSuspending : public ProxyBcLocalSuspending
 {
-   friend class Singleton< PotsProxyLocalSuspending >;
+   friend class Singleton<PotsProxyLocalSuspending>;
 
    PotsProxyLocalSuspending();
    ~PotsProxyLocalSuspending() = default;
@@ -166,7 +166,7 @@ class PotsProxyLocalSuspending : public ProxyBcLocalSuspending
 
 class PotsProxyRemoteSuspending : public ProxyBcRemoteSuspending
 {
-   friend class Singleton< PotsProxyRemoteSuspending >;
+   friend class Singleton<PotsProxyRemoteSuspending>;
 
    PotsProxyRemoteSuspending();
    ~PotsProxyRemoteSuspending() = default;
@@ -174,7 +174,7 @@ class PotsProxyRemoteSuspending : public ProxyBcRemoteSuspending
 
 class PotsProxyException : public ProxyBcException
 {
-   friend class Singleton< PotsProxyException >;
+   friend class Singleton<PotsProxyException>;
 
    PotsProxyException();
    ~PotsProxyException() = default;

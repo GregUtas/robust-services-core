@@ -52,7 +52,7 @@ namespace SessionBase
 //
 class Protocol : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< Protocol >;
+   friend class NodeBase::Registry<Protocol>;
    friend class Parameter;
    friend class Signal;
 public:
@@ -167,11 +167,11 @@ private:
 
    //  The signals registered with the protocol.
    //
-   NodeBase::Registry< Signal > signals_;
+   NodeBase::Registry<Signal> signals_;
 
    //  The parameters registered with the protocol.
    //
-   NodeBase::Registry< Parameter > parameters_;
+   NodeBase::Registry<Parameter> parameters_;
 };
 }
 #endif

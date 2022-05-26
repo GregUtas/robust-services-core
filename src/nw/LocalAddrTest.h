@@ -41,7 +41,7 @@ namespace NetworkBase
 //
 class SendLocalThread : public Thread
 {
-   friend class Singleton< SendLocalThread >;
+   friend class Singleton<SendLocalThread>;
 public:
    //  Invoked from the CLI to retest the addresses.
    //
@@ -109,7 +109,7 @@ private:
 //
 class SendLocalIpService : public UdpIpService
 {
-   friend class Singleton< SendLocalIpService >;
+   friend class Singleton<SendLocalIpService>;
    friend class SendLocalThread;
 public:
    //  Overridden for restarts.

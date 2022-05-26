@@ -65,7 +65,7 @@ static LibrarySet* GetParseSet(const LibItemSet& files)
 
    //  Expand FILES with substitute files and those that affect FILES.
    //
-   auto library = Singleton< Library >::Instance();
+   auto library = Singleton<Library>::Instance();
    LibItemSet parseSet(files);
    SetUnion(parseSet, library->SubsFiles().Items());
 
@@ -77,7 +77,7 @@ static LibrarySet* GetParseSet(const LibItemSet& files)
    //
    for(auto f = items.begin(); f != items.end(); NO_OP)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(file->ParseStatus() != CodeFile::Unparsed)
          f = items.erase(f);
@@ -190,7 +190,7 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(file->ParseStatus() != CodeFile::Passed)
       {
@@ -249,7 +249,7 @@ LibrarySet* CodeFileSet::CommonAffecters() const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(f == fileSet.cbegin())
          SetUnion(caSet, file->Affecters());
@@ -274,7 +274,7 @@ word CodeFileSet::Countlines(string& result) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       count += file->GetLexer().LineCount();
    }
 
@@ -304,8 +304,8 @@ LibrarySet* CodeFileSet::DeclaredBy() const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      std::set< CxxNamed* > items;
-      auto file = static_cast< CodeFile* >(*f);
+      std::set<CxxNamed*> items;
+      auto file = static_cast<CodeFile*>(*f);
       file->GetDecls(items);
 
       for(auto i = items.cbegin(); i != items.cend(); ++i)
@@ -331,7 +331,7 @@ LibrarySet* CodeFileSet::Directories() const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto dir = file->Dir();
       if(dir != nullptr) dirSet.insert(dir);
    }
@@ -359,7 +359,7 @@ LibrarySet* CodeFileSet::FileName(const LibrarySet* that) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(file->Name().find(fn) == 0)
       {
@@ -402,7 +402,7 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto& name = file->Name();
       auto nsize = name.size();
       auto fsize = ft.size();
@@ -456,7 +456,7 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       rc = file->Fix(cli, opts, expl);
       if(rc != 0) return rc;
    }
@@ -482,7 +482,7 @@ word CodeFileSet::Format(string& expl) const
    {
       err.clear();
 
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(file->GetLexer().LineCount() > 0)
       {
@@ -508,14 +508,14 @@ LibrarySet* CodeFileSet::FoundIn(const LibrarySet* that) const
    //  Iterate over the set of code files to find those which appear
    //  in one of THAT's directories.
    //
-   auto& dirSet = static_cast< const CodeDirSet* >(that)->Items();
+   auto& dirSet = static_cast<const CodeDirSet*>(that)->Items();
    auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& foundSet = result->Items();
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto dir = file->Dir();
 
       if(dir != nullptr)
@@ -555,7 +555,7 @@ LibrarySet* CodeFileSet::Implements() const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       SetUnion(imSet, file->Implementers());
    }
 
@@ -582,7 +582,7 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto& code = file->GetCode();
       if(code.find(s) != string::npos) msSet.insert(*f);
    }
@@ -736,7 +736,7 @@ LibrarySet* CodeFileSet::ReferencedBy() const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       CxxUsageSets usages;
       file->GetUsageInfo(usages);
       result->CopyUsages(usages);
@@ -764,7 +764,7 @@ word CodeFileSet::Scan
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto& code = file->GetCode();
 
       auto pos = code.find(pattern);
@@ -864,12 +864,12 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
-std::vector< CodeFile* > CodeFileSet::SortInAlphaOrder() const
+std::vector<CodeFile*> CodeFileSet::SortInAlphaOrder() const
 {
    Debug::ft("CodeFileSet.SortInAlphaOrder");
 
    auto& fileSet = Items();
-   std::vector< CodeFile* > files;
+   std::vector<CodeFile*> files;
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
@@ -893,14 +893,14 @@ BuildOrder CodeFileSet::SortInBuildOrder() const
    //  in INCLS.
    //
    auto& fileSet = Items();
-   auto& fullSet = Singleton< Library >::Instance()->Files().Items();
+   auto& fullSet = Singleton<Library>::Instance()->Files().Items();
    auto size = fullSet.size();
-   std::vector< LibItemSet > incls;
-   std::vector< CodeFile* > files;
+   std::vector<LibItemSet> incls;
+   std::vector<CodeFile*> files;
 
    for(auto f = fullSet.cbegin(); f != fullSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       incls.push_back(file->InclList());
       files.push_back(file);
    }
@@ -980,7 +980,7 @@ void CodeFileSet::to_str(stringVector& strings, bool verbose) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(verbose)
          strings.push_back(file->Path());
@@ -1007,7 +1007,7 @@ LibrarySet* CodeFileSet::UsedBy(bool self) const
       //
       if(self) usedSet.insert(*f);
 
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto& used = file->InclList();
 
       for(auto u = used.cbegin(); u != used.cend(); ++u)
@@ -1037,7 +1037,7 @@ LibrarySet* CodeFileSet::Users(bool self) const
       //
       if(self) userSet.insert(*f);
 
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
       auto& users = file->UserList();
 
       for(auto u = users.cbegin(); u != users.cend(); ++u)

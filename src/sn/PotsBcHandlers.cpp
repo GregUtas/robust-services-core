@@ -55,10 +55,10 @@ EventHandler::Rc PotsBcNuAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft("PotsBcNuAnalyzeLocalMessage.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto prof = pssm.Profile();
    auto state = prof->GetState();
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
 
@@ -93,7 +93,7 @@ EventHandler::Rc PotsBcNuOriginate::ProcessEvent
 {
    Debug::ft("PotsBcNuOriginate.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetModel(BcSsm::ObcModel);
    return pssm.RaiseAuthorizeOrigination(nextEvent);
@@ -106,9 +106,9 @@ EventHandler::Rc PotsBcAoAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft("PotsBcAoAnalyzeLocalMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    if(sid == PotsSignal::Onhook)
    {
@@ -125,7 +125,7 @@ EventHandler::Rc PotsBcAoAuthorizeOrigination::ProcessEvent
 {
    Debug::ft("PotsBcAoAuthorizeOrigination.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.RaiseCollectInformation(nextEvent);
 }
@@ -137,8 +137,8 @@ EventHandler::Rc PotsBcAoOriginationDenied::ProcessEvent
 {
    Debug::ft("PotsBcAoOriginationDenied.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
-   auto& ode = static_cast< BcOriginationDeniedEvent& >(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
+   auto& ode = static_cast<BcOriginationDeniedEvent&>(currEvent);
 
    return pssm.RaiseReleaseCall(nextEvent, ode.GetCause());
 }
@@ -153,19 +153,19 @@ EventHandler::Rc PotsBcCiAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsBcCiAnalyzeLocalMessage_ProcessEvent);
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    switch(sid)
    {
    case PotsSignal::Digits:
    {
-      auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
+      auto pmsg = static_cast<Pots_UN_Message*>(ame.Msg());
 
       pssm.StopTimer(PotsProtocol::CollectionTimeoutId);
 
-      auto digs = pmsg->FindType< DigitString >(PotsParameter::Digits);
+      auto digs = pmsg->FindType<DigitString>(PotsParameter::Digits);
       auto dsrc = pssm.DialedDigits().AddDigits(*digs);
 
       if((dsrc == DigitString::IllegalDigit) ||
@@ -182,8 +182,8 @@ EventHandler::Rc PotsBcCiAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseLocalRelease(nextEvent, Cause::NormalCallClearing);
 
    case Signal::Timeout:
-      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
+      auto tmsg = static_cast<TlvMessage*>(ame.Msg());
+      auto toi = tmsg->FindType<TimeoutInfo>(Parameter::Timeout);
 
       if((toi->owner == &pssm) &&
          (toi->tid == PotsProtocol::CollectionTimeoutId))
@@ -207,7 +207,7 @@ EventHandler::Rc PotsBcCiCollectInformation::ProcessEvent
 {
    Debug::ft("PotsBcCiCollectInformation.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
 
    if(pssm.DialedDigits().Empty())
@@ -234,7 +234,7 @@ EventHandler::Rc PotsBcCiCollectionTimeout::ProcessEvent
 {
    Debug::ft("PotsBcCiCollectionTimeout.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
 
    upsm->ReportDigits(false);
@@ -248,7 +248,7 @@ EventHandler::Rc PotsBcCiLocalInformation::ProcessEvent
 {
    Debug::ft("PotsBcCiLocalInformation.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    if(pssm.DialedDigits().IsCompleteAddress())
    {
@@ -269,7 +269,7 @@ EventHandler::Rc PotsBcAiAnalyzeInformation::ProcessEvent
 {
    Debug::ft("PotsBcAiAnalyzeInformation.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.AnalyzeInformation(nextEvent);
 }
@@ -281,7 +281,7 @@ EventHandler::Rc PotsBcAiInvalidInformation::ProcessEvent
 {
    Debug::ft("PotsBcAiInvalidInformation.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.RaiseReleaseCall(nextEvent, Cause::InvalidAddress);
 }
@@ -293,7 +293,7 @@ EventHandler::Rc PotsBcSrSelectRoute::ProcessEvent
 {
    Debug::ft("PotsBcSrSelectRoute.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.SelectRoute(nextEvent);
 }
@@ -305,7 +305,7 @@ EventHandler::Rc PotsBcAsAuthorizeCallSetup::ProcessEvent
 {
    Debug::ft("PotsBcAsAuthorizeCallSetup.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.RaiseSendCall(nextEvent);
 }
@@ -317,9 +317,9 @@ EventHandler::Rc PotsBcScAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft("PotsBcScAnalyzeLocalMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    if(sid == PotsSignal::Onhook)
    {
@@ -336,7 +336,7 @@ EventHandler::Rc PotsBcScSendCall::ProcessEvent
 {
    Debug::ft("PotsBcScSendCall.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto iam = pssm.BuildCipIam();
 
    if(iam == nullptr)
@@ -355,7 +355,7 @@ EventHandler::Rc PotsBcScRemoteBusy::ProcessEvent
 {
    Debug::ft("PotsBcScRemoteBusy.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.RaiseReleaseCall(nextEvent, Cause::UserBusy);
 }
@@ -367,7 +367,7 @@ EventHandler::Rc PotsBcScRemoteProgress::ProcessEvent
 {
    Debug::ft("PotsBcScRemoteProgress.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetNextSnp(BcTrigger::RemoteProgressSnp);
    return Suspend;
@@ -380,7 +380,7 @@ EventHandler::Rc PotsBcScRemoteAlerting::ProcessEvent
 {
    Debug::ft("PotsBcScRemoteAlerting.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetNextSnp(BcTrigger::RemoteAlertingSnp);
    pssm.SetNextState(BcState::OrigAlerting);
@@ -394,8 +394,8 @@ EventHandler::Rc PotsBcScRemoteRelease::ProcessEvent
 {
    Debug::ft("PotsBcScRemoteRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
-   auto& rre = static_cast< BcRemoteReleaseEvent& >(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
+   auto& rre = static_cast<BcRemoteReleaseEvent&>(currEvent);
    auto cause = rre.GetCause();
 
    pssm.SetNextSnp(BcTrigger::RemoteReleaseSnp);
@@ -409,7 +409,7 @@ EventHandler::Rc PotsBcOaRemoteNoAnswer::ProcessEvent
 {
    Debug::ft("PotsBcOaRemoteNoAnswer.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.RaiseReleaseCall(nextEvent, Cause::AnswerTimeout);
 }
@@ -421,11 +421,11 @@ EventHandler::Rc PotsBcNuTerminate::ProcessEvent
 {
    Debug::ft("PotsBcNuTerminate.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto npsm = pssm.NPsm();
-   auto cmsg = static_cast< CipMessage* >(npsm->FirstRcvdMsg());
-   auto rte = cmsg->FindType< RouteResult >(CipParameter::Route);
-   auto reg = Singleton< PotsProfileRegistry >::Instance();
+   auto cmsg = static_cast<CipMessage*>(npsm->FirstRcvdMsg());
+   auto rte = cmsg->FindType<RouteResult>(CipParameter::Route);
+   auto reg = Singleton<PotsProfileRegistry>::Instance();
    auto prof = reg->Profile(rte->identifier);
 
    if(prof == nullptr)
@@ -450,7 +450,7 @@ EventHandler::Rc PotsBcAtAuthorizeTermination::ProcessEvent
 {
    Debug::ft("PotsBcAtAuthorizeTermination.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.RaiseSelectFacility(nextEvent);
 }
@@ -462,8 +462,8 @@ EventHandler::Rc PotsBcAtTerminationDenied::ProcessEvent
 {
    Debug::ft("PotsBcAtTerminationDenied.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
-   auto& tde = static_cast< BcTerminationDeniedEvent& >(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
+   auto& tde = static_cast<BcTerminationDeniedEvent&>(currEvent);
 
    return pssm.ClearCall(tde.GetCause());
 }
@@ -475,8 +475,8 @@ EventHandler::Rc PotsBcSfAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft("PotsBcSfAnalyzeLocalMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    //  This can occur during a service such as call waiting, which sends its
    //  first message (to a multiplexer) during the Selecting Facility state
@@ -494,7 +494,7 @@ EventHandler::Rc PotsBcSfSelectFacility::ProcessEvent
 {
    Debug::ft("PotsBcSfSelectFacility.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    if(pssm.Profile()->GetState() == PotsProfile::Idle)
    {
@@ -511,7 +511,7 @@ EventHandler::Rc PotsBcSfLocalBusy::ProcessEvent
 {
    Debug::ft("PotsBcSfLocalBusy.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.ClearCall(Cause::UserBusy);
 }
@@ -523,9 +523,9 @@ EventHandler::Rc PotsBcPcAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft("PotsBcPcAnalyzeLocalMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    switch(sid)
    {
@@ -548,7 +548,7 @@ EventHandler::Rc PotsBcPcPresentCall::ProcessEvent
 {
    Debug::ft("PotsBcPcPresentCall.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto prof = pssm.Profile();
    auto npsm = pssm.NPsm();
    auto port = prof->GetCircuit()->TsPort();
@@ -574,7 +574,7 @@ EventHandler::Rc PotsBcPcFacilityFailure::ProcessEvent
 {
    Debug::ft("PotsBcPcFacilityFailure.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.ClearCall(Cause::AlertingTimeout);
 }
@@ -586,7 +586,7 @@ EventHandler::Rc PotsBcPcLocalAlerting::ProcessEvent
 {
    Debug::ft("PotsBcPcLocalAlerting.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.StartTimer(PotsProtocol::AnswerTimeoutId, PotsProtocol::AnswerTimeout);
    return pssm.HandleLocalAlerting();
@@ -599,7 +599,7 @@ EventHandler::Rc PotsBcPcRemoteRelease::ProcessEvent
 {
    Debug::ft("PotsBcPcRemoteRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.StopTimer(PotsProtocol::AlertingTimeoutId);
    return pssm.HandleRemoteRelease(currEvent);
@@ -612,9 +612,9 @@ EventHandler::Rc PotsBcTaAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft("PotsBcTaAnalyzeLocalMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    if(sid == PotsSignal::Offhook)
    {
@@ -632,7 +632,7 @@ EventHandler::Rc PotsBcTaLocalNoAnswer::ProcessEvent
 {
    Debug::ft("PotsBcTaLocalNoAnswer.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    return pssm.ClearCall(Cause::AnswerTimeout);
 }
@@ -644,7 +644,7 @@ EventHandler::Rc PotsBcTaRemoteRelease::ProcessEvent
 {
    Debug::ft("PotsBcTaRemoteRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.StopTimer(PotsProtocol::AnswerTimeoutId);
    return pssm.HandleRemoteRelease(currEvent);
@@ -660,9 +660,9 @@ EventHandler::Rc PotsBcAcAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsBcAcAnalyzeLocalMessage_ProcessEvent);
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    switch(sid)
    {
@@ -679,8 +679,8 @@ EventHandler::Rc PotsBcAcAnalyzeLocalMessage::ProcessEvent
       break;
 
    case Signal::Timeout:
-      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
+      auto tmsg = static_cast<TlvMessage*>(ame.Msg());
+      auto toi = tmsg->FindType<TimeoutInfo>(Parameter::Timeout);
 
       if((toi->owner == &pssm) &&
          (toi->tid == PotsProtocol::SuspendTimeoutId))
@@ -704,7 +704,7 @@ EventHandler::Rc PotsBcAcLocalSuspend::ProcessEvent
 {
    Debug::ft("PotsBcAcLocalSuspend.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.StartTimer
       (PotsProtocol::SuspendTimeoutId, PotsProtocol::SuspendTimeout);
@@ -720,7 +720,7 @@ EventHandler::Rc PotsBcAcRemoteSuspend::ProcessEvent
 {
    Debug::ft("PotsBcAcRemoteSuspend.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetNextState(BcState::RemoteSuspending);
    return Suspend;
@@ -733,7 +733,7 @@ EventHandler::Rc PotsBcLsLocalResume::ProcessEvent
 {
    Debug::ft("PotsBcLsLocalResume.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    PotsStatistics::Incr(PotsStatistics::Resumed);
    pssm.StopTimer(PotsProtocol::SuspendTimeoutId);
@@ -749,7 +749,7 @@ EventHandler::Rc PotsBcLsRemoteRelease::ProcessEvent
 {
    Debug::ft("PotsBcLsRemoteRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.StopTimer(PotsProtocol::SuspendTimeoutId);
    return pssm.HandleRemoteRelease(currEvent);
@@ -762,7 +762,7 @@ EventHandler::Rc PotsBcRsRemoteResume::ProcessEvent
 {
    Debug::ft("PotsBcRsRemoteResume.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetNextState(BcState::Active);
    return Suspend;
@@ -778,9 +778,9 @@ EventHandler::Rc PotsBcExAnalyzeLocalMessage::ProcessEvent
 {
    Debug::ft(PotsBcExAnalyzeLocalMessage_ProcessEvent);
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    switch(sid)
    {
@@ -789,8 +789,8 @@ EventHandler::Rc PotsBcExAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseLocalRelease(nextEvent, Cause::NormalCallClearing);
 
    case Signal::Timeout:
-      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
+      auto tmsg = static_cast<TlvMessage*>(ame.Msg());
+      auto toi = tmsg->FindType<TimeoutInfo>(Parameter::Timeout);
 
       if((toi->owner == &pssm) &&
          (toi->tid == PotsProtocol::TreatmentTimeoutId))
@@ -814,8 +814,8 @@ EventHandler::Rc PotsBcExApplyTreatment::ProcessEvent
 {
    Debug::ft("PotsBcExApplyTreatment.ProcessEvent");
 
-   auto& ate = static_cast< BcApplyTreatmentEvent& >(currEvent);
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& ate = static_cast<BcApplyTreatmentEvent&>(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
    auto trmt = pssm.GetTreatment();
 
@@ -825,7 +825,7 @@ EventHandler::Rc PotsBcExApplyTreatment::ProcessEvent
       upsm->SendCause(cause);
       PotsStatistics::IncrCause(cause);
 
-      auto reg = Singleton< PotsTreatmentRegistry >::Instance();
+      auto reg = Singleton<PotsTreatmentRegistry>::Instance();
       auto tq = reg->CauseToTreatmentQ(cause);
       if(tq == nullptr) tq = reg->CauseToTreatmentQ(Cause::TemporaryFailure);
       trmt = tq->FirstTreatment();
@@ -851,7 +851,7 @@ EventHandler::Rc PotsBcLocalAnswer::ProcessEvent
 {
    Debug::ft("PotsBcLocalAnswer.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
 
    upsm->ApplyRinging(false);
@@ -865,7 +865,7 @@ EventHandler::Rc PotsBcRemoteAnswer::ProcessEvent
 {
    Debug::ft("PotsBcRemoteAnswer.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
 
    pssm.SetNextSnp(BcTrigger::RemoteAnswerSnp);
    pssm.SetNextState(BcState::Active);
@@ -879,8 +879,8 @@ EventHandler::Rc PotsBcLocalRelease::ProcessEvent
 {
    Debug::ft("PotsBcLocalRelease.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
-   auto& lre = static_cast< BcLocalReleaseEvent& >(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
+   auto& lre = static_cast<BcLocalReleaseEvent&>(currEvent);
 
    pssm.SetNextSnp(BcTrigger::LocalReleaseSnp);
    return pssm.ClearCall(lre.GetCause());
@@ -893,8 +893,8 @@ EventHandler::Rc PotsBcReleaseCall::ProcessEvent
 {
    Debug::ft("PotsBcReleaseCall.ProcessEvent");
 
-   auto& cte = static_cast< BcReleaseCallEvent& >(currEvent);
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& cte = static_cast<BcReleaseCallEvent&>(currEvent);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = pssm.UPsm();
    auto stid = pssm.CurrState();
 
@@ -926,7 +926,7 @@ EventHandler::Rc PotsBcReleaseUser::ProcessEvent
 {
    Debug::ft("PotsBcReleaseUser.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
 
    if(upsm == nullptr) return Suspend;
@@ -947,7 +947,7 @@ EventHandler::Rc PotsBcReleaseUser::ProcessEvent
          peer->SetIcTone(Tone::Ringback);
    }
 
-   auto& rue = static_cast< ProxyBcReleaseUserEvent& >(currEvent);
+   auto& rue = static_cast<ProxyBcReleaseUserEvent&>(currEvent);
 
    upsm->SendSignal(PotsSignal::Release);
    upsm->SendCause(rue.GetCause());

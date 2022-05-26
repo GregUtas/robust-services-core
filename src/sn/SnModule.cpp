@@ -58,8 +58,8 @@ SnModule::SnModule() : Module()
 
    //  Create the modules required by ServiceNode.
    //
-   Singleton< PbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<PbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void SnModule::Shutdown(RestartLevel level)
 {
    Debug::ft("SnModule.Shutdown");
 
-   Singleton< PotsTreatmentRegistry >::Instance()->Shutdown(level);
+   Singleton<PotsTreatmentRegistry>::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -84,36 +84,36 @@ void SnModule::Startup(RestartLevel level)
 {
    Debug::ft("SnModule.Startup");
 
-   Singleton< SnIncrement >::Instance()->Startup(level);
+   Singleton<SnIncrement>::Instance()->Startup(level);
 
-   Singleton< PotsBcService >::Instance()->Startup(level);
-   Singleton< PotsProxyService >::Instance()->Startup(level);
-   Singleton< PotsCallFactory >::Instance()->Startup(level);
-   Singleton< PotsMuxFactory >::Instance()->Startup(level);
-   Singleton< PotsCallIpService >::Instance()->Startup(level);
-   Singleton< PotsTreatmentRegistry >::Instance()->Startup(level);
+   Singleton<PotsBcService>::Instance()->Startup(level);
+   Singleton<PotsProxyService>::Instance()->Startup(level);
+   Singleton<PotsCallFactory>::Instance()->Startup(level);
+   Singleton<PotsMuxFactory>::Instance()->Startup(level);
+   Singleton<PotsCallIpService>::Instance()->Startup(level);
+   Singleton<PotsTreatmentRegistry>::Instance()->Startup(level);
 
-   Singleton< PotsBicService >::Instance()->Startup(level);
-   Singleton< PotsBocService >::Instance()->Startup(level);
-   Singleton< PotsCcwService >::Instance()->Startup(level);
-   Singleton< PotsCfbService >::Instance()->Startup(level);
-   Singleton< PotsCfnService >::Instance()->Startup(level);
-   Singleton< PotsCfxService >::Instance()->Startup(level);
-   Singleton< PotsCfuActivate >::Instance()->Startup(level);
-   Singleton< PotsCfuDeactivate >::Instance()->Startup(level);
-   Singleton< PotsCfuService >::Instance()->Startup(level);
-   Singleton< PotsCwaService >::Instance()->Startup(level);
-   Singleton< PotsCwbService >::Instance()->Startup(level);
-   Singleton< PotsCwmService >::Instance()->Startup(level);
-   Singleton< PotsDiscService >::Instance()->Startup(level);
-   Singleton< PotsHtlService >::Instance()->Startup(level);
-   Singleton< PotsMuxService >::Instance()->Startup(level);
-   Singleton< PotsSusService >::Instance()->Startup(level);
-   Singleton< PotsWmlActivate >::Instance()->Startup(level);
-   Singleton< PotsWmlDeactivate >::Instance()->Startup(level);
-   Singleton< PotsWmlService >::Instance()->Startup(level);
+   Singleton<PotsBicService>::Instance()->Startup(level);
+   Singleton<PotsBocService>::Instance()->Startup(level);
+   Singleton<PotsCcwService>::Instance()->Startup(level);
+   Singleton<PotsCfbService>::Instance()->Startup(level);
+   Singleton<PotsCfnService>::Instance()->Startup(level);
+   Singleton<PotsCfxService>::Instance()->Startup(level);
+   Singleton<PotsCfuActivate>::Instance()->Startup(level);
+   Singleton<PotsCfuDeactivate>::Instance()->Startup(level);
+   Singleton<PotsCfuService>::Instance()->Startup(level);
+   Singleton<PotsCwaService>::Instance()->Startup(level);
+   Singleton<PotsCwbService>::Instance()->Startup(level);
+   Singleton<PotsCwmService>::Instance()->Startup(level);
+   Singleton<PotsDiscService>::Instance()->Startup(level);
+   Singleton<PotsHtlService>::Instance()->Startup(level);
+   Singleton<PotsMuxService>::Instance()->Startup(level);
+   Singleton<PotsSusService>::Instance()->Startup(level);
+   Singleton<PotsWmlActivate>::Instance()->Startup(level);
+   Singleton<PotsWmlDeactivate>::Instance()->Startup(level);
+   Singleton<PotsWmlService>::Instance()->Startup(level);
 
-   Singleton< PotsStatistics >::Instance()->Startup(level);
+   Singleton<PotsStatistics>::Instance()->Startup(level);
 
    //  Create initiators.
    //
@@ -133,7 +133,7 @@ void SnModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
 
    reg->BindSymbol("factory.pots.shelf", PotsShelfFactoryId);
    reg->BindSymbol("factory.pots.call", PotsCallFactoryId);

@@ -108,7 +108,7 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
 
    EnsureAlarm();
    stats_.reset(new IpPortStats);
-   Singleton< IpPortRegistry >::Instance()->BindPort(*this);
+   Singleton<IpPortRegistry>::Instance()->BindPort(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ IpPort::~IpPort()
       SetThread(nullptr);
    }
 
-   Singleton< IpPortRegistry >::Extant()->UnbindPort(*this);
+   Singleton<IpPortRegistry>::Extant()->UnbindPort(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ void IpPort::EnsureAlarm()
 
    //  If the port's alarm is not registered, create it.
    //
-   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto reg = Singleton<AlarmRegistry>::Instance();
    auto alarmName = "PORT" + std::to_string(port_);
    alarm_ = reg->Find(alarmName);
 
@@ -304,7 +304,7 @@ void IpPort::InvalidDiscarded() const
 ptrdiff_t IpPort::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const IpPort* >(&local);
+   auto fake = reinterpret_cast<const IpPort*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 

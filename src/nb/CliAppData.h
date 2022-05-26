@@ -38,7 +38,7 @@ namespace NodeBase
 //
 class CliAppData : public Temporary
 {
-   friend std::unique_ptr< CliAppData >::deleter_type;
+   friend std::unique_ptr<CliAppData>::deleter_type;
 public:
    //  Identifier for an application that associates data with a CLI thread.
    //  NIL_ID is used as a valid identifier.

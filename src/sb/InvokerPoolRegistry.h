@@ -39,7 +39,7 @@ namespace SessionBase
 //
 class InvokerPoolRegistry : public NodeBase::Dynamic
 {
-   friend class NodeBase::Singleton< InvokerPoolRegistry >;
+   friend class NodeBase::Singleton<InvokerPoolRegistry>;
    friend class InvokerPool;
 public:
    //  Deleted to prohibit copying.
@@ -56,7 +56,7 @@ public:
 
    //  Returns the registry of invoker pools.  Used for iteration.
    //
-   const NodeBase::Registry< InvokerPool >& Pools() const { return pools_; }
+   const NodeBase::Registry<InvokerPool>& Pools() const { return pools_; }
 
    //  Overridden to mark the objects in each pool as being in use.
    //
@@ -97,7 +97,7 @@ private:
 
    //  The global registry of invoker pools.
    //
-   NodeBase::Registry< InvokerPool > pools_;
+   NodeBase::Registry<InvokerPool> pools_;
 
    //  The statistics group for invoker pools.
    //

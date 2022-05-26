@@ -79,7 +79,7 @@ extern NodeBase::fixed_string TimerDaemonName;
 
 class TimerDaemon : public NodeBase::Daemon
 {
-   friend class NodeBase::Singleton< TimerDaemon >;
+   friend class NodeBase::Singleton<TimerDaemon>;
 public:
    void Patch(sel_t selector, void* arguments) override;
 private:

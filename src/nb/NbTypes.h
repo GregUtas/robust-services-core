@@ -85,7 +85,7 @@ enum Faction
 
 //  A set of flags that indicates which factions can be scheduled.
 //
-typedef std::bitset< Faction_N > FactionFlags;
+typedef std::bitset<Faction_N> FactionFlags;
 
 //  Inserts a string for FACTION into STREAM.
 //
@@ -199,19 +199,19 @@ class HighWatermark;
 class LowWatermark;
 class StatisticsGroup;
 
-typedef std::unique_ptr< CfgBoolParm > CfgBoolParmPtr;
-typedef std::unique_ptr< CfgFlagParm > CfgFlagParmPtr;
-typedef std::unique_ptr< CfgIntParm > CfgIntParmPtr;
-typedef std::unique_ptr< CfgStrParm > CfgStrParmPtr;
-typedef std::unique_ptr< Counter > CounterPtr;
-typedef std::unique_ptr< Accumulator > AccumulatorPtr;
-typedef std::unique_ptr< HighWatermark > HighWatermarkPtr;
-typedef std::unique_ptr< LowWatermark > LowWatermarkPtr;
-typedef std::unique_ptr< StatisticsGroup > StatisticsGroupPtr;
+typedef std::unique_ptr<CfgBoolParm> CfgBoolParmPtr;
+typedef std::unique_ptr<CfgFlagParm> CfgFlagParmPtr;
+typedef std::unique_ptr<CfgIntParm> CfgIntParmPtr;
+typedef std::unique_ptr<CfgStrParm> CfgStrParmPtr;
+typedef std::unique_ptr<Counter> CounterPtr;
+typedef std::unique_ptr<Accumulator> AccumulatorPtr;
+typedef std::unique_ptr<HighWatermark> HighWatermarkPtr;
+typedef std::unique_ptr<LowWatermark> LowWatermarkPtr;
+typedef std::unique_ptr<StatisticsGroup> StatisticsGroupPtr;
 
 //  Forward declarations of templates.
 //
-template< class T > class Singleton;
+template<class T> class Singleton;
 
 //  Versions of std::string that support the various MemTypes.  See the
 //  comments in Allocators.h.  There is no PermanentString, as it would

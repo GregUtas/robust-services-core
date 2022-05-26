@@ -155,7 +155,7 @@ private:
 //
 class NtIncrement : public CliIncrement
 {
-   friend class Singleton< NtIncrement >;
+   friend class Singleton<NtIncrement>;
 
    //  Private because this is a singleton.
    //

@@ -80,7 +80,7 @@ LibrarySet::LibrarySet(const string& name) :
       name_.erase(0, 1);
    }
 
-   Singleton< Library >::Instance()->AddVar(*this);
+   Singleton<Library>::Instance()->AddVar(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ LibrarySet::~LibrarySet()
 {
    Debug::ftnt("LibrarySet.dtor");
 
-   Singleton< Library >::Extant()->EraseVar(this);
+   Singleton<Library>::Extant()->EraseVar(this);
 }
 
 //------------------------------------------------------------------------------

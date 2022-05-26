@@ -42,7 +42,7 @@ namespace PotsBase
 {
 class PotsSusNull : public State
 {
-   friend class Singleton< PotsSusNull >;
+   friend class Singleton<PotsSusNull>;
 
    PotsSusNull();
    ~PotsSusNull() = default;
@@ -76,7 +76,7 @@ EventHandler::Rc PotsSusInitiator::ProcessEvent
 {
    Debug::ft("PotsSusInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(SUS))
@@ -112,7 +112,7 @@ PotsSusService::PotsSusService() : Service(PotsSusServiceId, false, true)
 {
    Debug::ft("PotsSusService.ctor");
 
-   Singleton< PotsSusNull >::Instance();
+   Singleton<PotsSusNull>::Instance();
 }
 
 //------------------------------------------------------------------------------

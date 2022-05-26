@@ -80,7 +80,7 @@ struct ProgressInfo
 //
 //  Virtual base class for supporting a ProgressInfo parameter.
 //
-class ProgressParameter : public TlvIntParameter< Progress::Ind >
+class ProgressParameter : public TlvIntParameter<Progress::Ind>
 {
 protected:
    //  Protected because this class is virtual.

@@ -47,9 +47,9 @@ CtModule::CtModule() : Module()
 
    //  Create the modules required by CodeTools.
    //
-   Singleton< NbModule >::Instance();
-   Singleton< NtModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<NbModule>::Instance();
+   Singleton<NtModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -65,13 +65,13 @@ void CtModule::Shutdown(RestartLevel level)
 {
    Debug::ft("CtModule.Shutdown");
 
-   auto coverdb = Singleton< CodeCoverage >::Extant();
+   auto coverdb = Singleton<CodeCoverage>::Extant();
    if(coverdb != nullptr) coverdb->Shutdown(level);
 
    Context::Shutdown(level);
-   Singleton< CxxRoot >::Instance()->Shutdown(level);
-   Singleton< Library >::Instance()->Shutdown(level);
-   Singleton< CxxSymbols >::Instance()->Shutdown(level);
+   Singleton<CxxRoot>::Instance()->Shutdown(level);
+   Singleton<Library>::Instance()->Shutdown(level);
+   Singleton<CxxSymbols>::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -85,10 +85,10 @@ void CtModule::Startup(RestartLevel level)
 
    //  Create/start singletons.
    //
-   Singleton< CtIncrement >::Instance()->Startup(level);
-   Singleton< CxxSymbols >::Instance()->Startup(level);
-   Singleton< Library >::Instance()->Startup(level);
-   Singleton< CxxRoot >::Instance()->Startup(level);
+   Singleton<CtIncrement>::Instance()->Startup(level);
+   Singleton<CxxSymbols>::Instance()->Startup(level);
+   Singleton<Library>::Instance()->Startup(level);
+   Singleton<CxxRoot>::Instance()->Startup(level);
    Context::Startup(level);
 }
 }

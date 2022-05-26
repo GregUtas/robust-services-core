@@ -41,7 +41,7 @@ namespace SessionBase
 //
 class Service : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< Service >;
+   friend class NodeBase::Registry<Service>;
    friend class State;
 public:
    //  Allows "Id" to refer to a service identifier in this class hierarchy.
@@ -149,16 +149,16 @@ public:
 
    //  Returns the registry of states.  Used for iteration.
    //
-   const NodeBase::Registry< State >& States() const { return states_; }
+   const NodeBase::Registry<State>& States() const { return states_; }
 
    //  Returns the registry of event handlers.  Used for iteration.
    //
-   const NodeBase::Registry< EventHandler >& Handlers() const
+   const NodeBase::Registry<EventHandler>& Handlers() const
       { return handlers_; }
 
    //  Returns the registry of triggers.  Used for iteration.
    //
-   const NodeBase::Registry< Trigger >& Triggers() const { return triggers_; }
+   const NodeBase::Registry<Trigger>& Triggers() const { return triggers_; }
 
    //  Returns the offset to sid_.
    //
@@ -225,11 +225,11 @@ private:
 
    //  Registry for the service's states.
    //
-   NodeBase::Registry< State > states_;
+   NodeBase::Registry<State> states_;
 
    //  Registry for the service's event handlers.
    //
-   NodeBase::Registry< EventHandler > handlers_;
+   NodeBase::Registry<EventHandler> handlers_;
 
    //  Registry for the service's event names.
    //
@@ -237,7 +237,7 @@ private:
 
    //  Registry for the service's triggers (if it is modifiable).
    //
-   NodeBase::Registry< Trigger > triggers_;
+   NodeBase::Registry<Trigger> triggers_;
 
    //  Set if the service supports modifiers.
    //

@@ -41,7 +41,7 @@ namespace PotsBase
 //
 class PotsFeatureProfile : public Protected
 {
-   friend class Q1Way< PotsFeatureProfile >;
+   friend class Q1Way<PotsFeatureProfile>;
    friend class PotsProfile;
 public:
    //  Deleted to prohibit copying.

@@ -37,7 +37,7 @@ using std::string;
 namespace NodeBase
 {
 ObjectPoolAudit::ObjectPoolAudit() :
-   Thread(AuditFaction, Singleton< ObjectDaemon >::Instance()),
+   Thread(AuditFaction, Singleton<ObjectDaemon>::Instance()),
    interval_(msecs_t(5000)),
    phase_(CheckingFreeq),
    pid_(NIL_ID)
@@ -67,7 +67,7 @@ void ObjectPoolAudit::Destroy()
 {
    Debug::ft("ObjectPoolAudit.Destroy");
 
-   Singleton< ObjectPoolAudit >::Destroy();
+   Singleton<ObjectPoolAudit>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void ObjectPoolAudit::Enter()
    while(true)
    {
       Pause(interval_);
-      Singleton< ObjectPoolRegistry >::Instance()->AuditPools();
+      Singleton<ObjectPoolRegistry>::Instance()->AuditPools();
    }
 }
 

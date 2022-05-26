@@ -112,7 +112,7 @@ namespace SessionBase
 {
 class SbTracer : public NodeBase::Permanent
 {
-   friend class NodeBase::Singleton< SbTracer >;
+   friend class NodeBase::Singleton<SbTracer>;
 public:
    //  Deleted to prohibit copying.
    //

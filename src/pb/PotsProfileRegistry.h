@@ -43,7 +43,7 @@ namespace PotsBase
 //
 class PotsProfileRegistry : public Protected
 {
-   friend class Singleton< PotsProfileRegistry >;
+   friend class Singleton<PotsProfileRegistry>;
    friend class PotsProfile;
 public:
    //  Deleted to prohibit copying.
@@ -98,7 +98,7 @@ private:
 
    //  The registry of POTS profiles.
    //
-   Registry< PotsProfile > profiles_;
+   Registry<PotsProfile> profiles_;
 };
 }
 #endif

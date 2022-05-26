@@ -124,15 +124,15 @@ private:
 
    //  The stack of pending operators.
    //
-   std::stack< LibTokenType > operators_;
+   std::stack<LibTokenType> operators_;
 
    //  The stack of pending operands.
    //
-   std::stack< LibrarySet* > operands_;
+   std::stack<LibrarySet*> operands_;
 
    //  The opcodes generated so far.
    //
-   std::queue< LibraryOpcode* > opcodes_;
+   std::queue<LibraryOpcode*> opcodes_;
 };
 }
 #endif

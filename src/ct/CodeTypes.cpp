@@ -313,7 +313,7 @@ LineType CalcLineType(string& s, bool& cont)
 
 //------------------------------------------------------------------------------
 
-void CheckLine(string& s, std::set< Warning >& warnings)
+void CheckLine(string& s, std::set<Warning>& warnings)
 {
    Debug::ft("CodeTools.CheckLine");
 

@@ -53,7 +53,7 @@ CliDaemon::~CliDaemon()
 Thread* CliDaemon::CreateThread()
 {
    Debug::ft("CliDaemon.CreateThread");
-   return Singleton< CliThread >::Instance();
+   return Singleton<CliThread>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ DeferredDaemon::~DeferredDaemon()
 Thread* DeferredDaemon::CreateThread()
 {
    Debug::ft("DeferredDaemon.CreateThread");
-   return Singleton< DeferredThread >::Instance();
+   return Singleton<DeferredThread>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ LogDaemon::~LogDaemon()
 Thread* LogDaemon::CreateThread()
 {
    Debug::ft("LogDaemon.CreateThread");
-   return Singleton< LogThread >::Instance();
+   return Singleton<LogThread>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ ObjectDaemon::~ObjectDaemon()
 Thread* ObjectDaemon::CreateThread()
 {
    Debug::ft("ObjectDaemon.CreateThread");
-   return Singleton< ObjectPoolAudit >::Instance();
+   return Singleton<ObjectPoolAudit>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ StatisticsDaemon::~StatisticsDaemon()
 Thread* StatisticsDaemon::CreateThread()
 {
    Debug::ft("StatisticsDaemon.CreateThread");
-   return Singleton< StatisticsThread >::Instance();
+   return Singleton<StatisticsThread>::Instance();
 }
 
 //------------------------------------------------------------------------------

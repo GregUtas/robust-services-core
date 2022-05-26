@@ -54,7 +54,7 @@ enum PollFlag
    PollFlag_N     // number of flags
 };
 
-typedef std::bitset< PollFlag_N > PollFlags;
+typedef std::bitset<PollFlag_N> PollFlags;
 
 //------------------------------------------------------------------------------
 //
@@ -287,7 +287,7 @@ private:
    //  socket is waiting for a reply to a Connect or is otherwise blocked.
    //  The messages are sent when the socket becomes writeable.
    //
-   NodeBase::Q1Way< IpBuffer > ogMsgq_;
+   NodeBase::Q1Way<IpBuffer> ogMsgq_;
 };
 }
 #endif

@@ -161,8 +161,8 @@ class SysSocket;
 class SysTcpSocket;
 class IpServiceCfg;
 
-typedef std::unique_ptr< IpBuffer > IpBufferPtr;
-typedef std::unique_ptr< SysTcpSocket > SysTcpSocketPtr;
-typedef std::unique_ptr< IpServiceCfg > IpServiceCfgPtr;
+typedef std::unique_ptr<IpBuffer> IpBufferPtr;
+typedef std::unique_ptr<SysTcpSocket> SysTcpSocketPtr;
+typedef std::unique_ptr<IpServiceCfg> IpServiceCfgPtr;
 }
 #endif

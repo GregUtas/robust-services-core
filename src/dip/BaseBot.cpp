@@ -103,7 +103,7 @@ void BaseBot::cancel_event(BotEvent event)
 {
    Debug::ft("BaseBot.cancel_event");
 
-   Singleton< BotThread >::Instance()->CancelEvent(event);
+   Singleton<BotThread>::Instance()->CancelEvent(event);
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ BaseBot::StartupResult BaseBot::create_socket()
    //
    server_addr_.ReleaseSocket();
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
    auto port = reg->GetPort(ClientIpPort);
    auto socket = port->CreateAppSocket();
    if(socket == nullptr) return FAILED_TO_ALLOCATE_SOCKET;
@@ -211,7 +211,7 @@ void BaseBot::disconnect_from_server(ProtocolError error)
    buff->SetTxAddr(client_addr_);
    buff->SetRxAddr(server_addr_);
 
-   auto em = reinterpret_cast< EM_Message* >(buff->PayloadPtr());
+   auto em = reinterpret_cast<EM_Message*>(buff->PayloadPtr());
    em->header.signal = signal;
    em->header.spare = 0;
    em->header.length = length - DipHeaderSize;
@@ -331,12 +331,12 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
 
    //  Create our IP port.
    //
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
    auto port = reg->GetPort(ClientIpPort);
 
    if(port == nullptr)
    {
-      auto service = Singleton< BotTcpService >::Instance();
+      auto service = Singleton<BotTcpService>::Instance();
       port = service->Provision(ClientIpPort);
       if(port == nullptr) return FAILED_TO_ALLOCATE_PORT;
    }
@@ -345,7 +345,7 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
    {
       auto iot = port->GetThread();
       NbTracer::SelectThread(iot->Tid(), TraceIncluded);
-      auto nwt = Singleton< NwTracer >::Instance();
+      auto nwt = Singleton<NwTracer>::Instance();
       nwt->SelectPeer(server_addr_, TraceIncluded);
    }
 
@@ -373,11 +373,11 @@ bool BaseBot::get_reconnect_details(Token& power, int& passcode) const
 
 //------------------------------------------------------------------------------
 
-const std::vector< Token >& BaseBot::get_try_tokens() const
+const std::vector<Token>& BaseBot::get_try_tokens() const
 {
    Debug::ft("BaseBot.get_try_tokens");
 
-   static std::vector< Token > no_tokens;
+   static std::vector<Token> no_tokens;
 
    return no_tokens;
 }
@@ -394,7 +394,7 @@ BaseBot::StartupResult BaseBot::initialise()
 
    if(config_.log_level > 0)
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
       buff->StopTracing();
       buff->Clear();
       buff->ClearTools();
@@ -402,7 +402,7 @@ BaseBot::StartupResult BaseBot::initialise()
       if(config_.log_level >= 2) buff->SetTool(NetworkTracer, true);
       if(config_.log_level >= 3) buff->SetTool(FunctionTracer, true);
 
-      auto nbt = Singleton< NbTracer >::Instance();
+      auto nbt = Singleton<NbTracer>::Instance();
       nbt->ClearSelections(TraceAll);
       ThisThread::IncludeInTrace();
       ThisThread::StartTracing(EMPTY_STR);
@@ -510,8 +510,8 @@ void BaseBot::process_dm_message(const DipMessage& message)
 {
    Debug::ft("BaseBot.process_dm_message");
 
-   auto& dm = reinterpret_cast< const DM_Message& >(message);
-   auto tokens = reinterpret_cast< const Token* >(&dm.tokens);
+   auto& dm = reinterpret_cast<const DM_Message&>(message);
+   auto tokens = reinterpret_cast<const Token*>(&dm.tokens);
 
    if(tokens[0] == TOKEN_COMMAND_PRN)
    {
@@ -637,7 +637,7 @@ void BaseBot::process_em_message(const DipMessage& message)
 
    //  The server has closed the connection because of an error.
    //
-   auto& em = reinterpret_cast< const EM_Message& >(message);
+   auto& em = reinterpret_cast<const EM_Message&>(message);
    delete_socket(em.error);
 }
 
@@ -1290,7 +1290,7 @@ void BaseBot::process_rm_message(const DipMessage& message)
       //  by a 6-byte parameter in which the first 2 bytes are the token
       //  and the last 4 bytes are its null-terminated name.
       //
-      auto& rm = reinterpret_cast< const RM_Message& >(message);
+      auto& rm = reinterpret_cast<const RM_Message&>(message);
       auto count = message.header.length / 6;
 
       for(auto i = 0; i < count; ++i)
@@ -1621,7 +1621,7 @@ bool BaseBot::queue_event(BotEvent event, int secs)
 {
    Debug::ft("BaseBot.queue_event");
 
-   auto thread = Singleton< BotThread >::Instance();
+   auto thread = Singleton<BotThread>::Instance();
 
    if(event == RECONNECT_EVENT)
    {
@@ -1806,7 +1806,7 @@ void BaseBot::report_exit(c_string reason)
    std::ostringstream stream;
    stream << "EXITING: " << reason << CRLF;
    send_to_console(stream);
-   Singleton< BotThread >::Instance()->SetExit();
+   Singleton<BotThread>::Instance()->SetExit();
 }
 
 //------------------------------------------------------------------------------
@@ -2079,14 +2079,14 @@ void BaseBot::send_bm_message(const byte_t* payload, uint16_t length) const
    buff->SetTxAddr(client_addr_);
    buff->SetRxAddr(client_addr_);
 
-   auto bm = reinterpret_cast< DipMessage* >(buff->PayloadPtr());
+   auto bm = reinterpret_cast<DipMessage*>(buff->PayloadPtr());
    bm->header.signal = BM_MESSAGE;
    bm->header.spare = 0;
    bm->header.length = length;
    if(length > 0) memcpy(&bm->first_payload_byte, payload, length);
 
    FunctionGuard guard(Guard_MakeUnpreemptable);
-   Singleton< BotThread >::Instance()->QueueMsg(buff);
+   Singleton<BotThread>::Instance()->QueueMsg(buff);
 }
 
 //------------------------------------------------------------------------------
@@ -2120,7 +2120,7 @@ bool BaseBot::send_buff(DipIpBuffer& buff)
 
    if(Debug::TraceOn())
    {
-      auto tbuff = Singleton< TraceBuffer >::Instance();
+      auto tbuff = Singleton<TraceBuffer>::Instance();
 
       if(tbuff->ToolIsOn(DipTracer))
       {
@@ -2151,7 +2151,7 @@ void BaseBot::send_im_message()
    buff->SetTxAddr(client_addr_);
    buff->SetRxAddr(server_addr_);
 
-   auto im = reinterpret_cast< IM_Message* >(buff->PayloadPtr());
+   auto im = reinterpret_cast<IM_Message*>(buff->PayloadPtr());
    im->header.signal = IM_MESSAGE;
    im->header.spare = 0;
    im->header.length = length - DipHeaderSize;
@@ -2248,7 +2248,7 @@ void BaseBot::send_to_console(std::ostringstream& report)
    Debug::ft("BaseBot.send_to_console");
 
    report << CRLF;
-   Singleton< CliThread >::Instance()->Inform(report);
+   Singleton<CliThread>::Instance()->Inform(report);
 }
 
 //------------------------------------------------------------------------------
@@ -2292,11 +2292,11 @@ bool BaseBot::send_to_server(const TokenMessage& message)
    buff->SetTxAddr(client_addr_);
    buff->SetRxAddr(server_addr_);
 
-   auto dm = reinterpret_cast< DM_Message* >(buff->PayloadPtr());
+   auto dm = reinterpret_cast<DM_Message*>(buff->PayloadPtr());
    dm->header.signal = DM_MESSAGE;
    dm->header.spare = 0;
    dm->header.length = length;
-   message.get_tokens(reinterpret_cast< Token* >(&dm->tokens), count);
+   message.get_tokens(reinterpret_cast<Token*>(&dm->tokens), count);
 
    if(!send_buff(*buff))
    {

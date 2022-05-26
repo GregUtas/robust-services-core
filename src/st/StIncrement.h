@@ -35,7 +35,7 @@ namespace SessionTools
 //
 class StIncrement : public CliIncrement
 {
-   friend class Singleton< StIncrement >;
+   friend class Singleton<StIncrement>;
 
    //  Private because this is a singleton.
    //

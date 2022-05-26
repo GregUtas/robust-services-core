@@ -44,7 +44,7 @@ Tool::Tool(FlagId tid, char abbr, bool safe) :
    Debug::ft("Tool.ctor");
 
    tid_.SetId(tid);
-   Singleton< ToolRegistry >::Instance()->BindTool(*this);
+   Singleton<ToolRegistry>::Instance()->BindTool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ Tool::~Tool()
    Debug::ftnt(Tool_dtor);
 
    Debug::SwLog(Tool_dtor, UnexpectedInvocation, 0);
-   Singleton< ToolRegistry >::Extant()->UnbindTool(*this);
+   Singleton<ToolRegistry>::Extant()->UnbindTool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ Tool::~Tool()
 ptrdiff_t Tool::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Tool* >(&local);
+   auto fake = reinterpret_cast<const Tool*>(&local);
    return ptrdiff(&fake->tid_, fake);
 }
 
@@ -127,7 +127,7 @@ fixed_string ToolOff = "off";
 
 string Tool::Status() const
 {
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    return (buff->ToolIsOn(Tid()) ? ToolOn : ToolOff);
 }
 }

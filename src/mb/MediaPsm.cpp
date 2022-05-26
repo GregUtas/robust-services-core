@@ -225,7 +225,7 @@ MediaSsm* MediaPsm::GetMediaSsm() const
       return nullptr;
    }
 
-   if(root->Sid() != TestServiceId) return static_cast< MediaSsm* >(root);
+   if(root->Sid() != TestServiceId) return static_cast<MediaSsm*>(root);
    return nullptr;
 }
 
@@ -238,7 +238,7 @@ MediaPsm* MediaPsm::GetOgPsm() const
 
 //------------------------------------------------------------------------------
 
-void MediaPsm::GetSubtended(std::vector< Base* >& objects) const
+void MediaPsm::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("MediaPsm.GetSubtended");
 
@@ -292,7 +292,7 @@ void MediaPsm::MakeEdge(Switch::PortId port)
          {
             IcPortUpdated();
 
-            auto tsw = Singleton< Switch >::Instance();
+            auto tsw = Singleton<Switch>::Instance();
             auto cct = tsw->GetCircuit(icMedia_.rxFrom);
 
             if(cct->RxFrom() != ogMediaCurr_.rxFrom)
@@ -394,7 +394,7 @@ void MediaPsm::SetOgPort(Switch::PortId ogport)
 
       if(edge_)
       {
-         auto tsw = Singleton< Switch >::Instance();
+         auto tsw = Singleton<Switch>::Instance();
          auto cct = tsw->GetCircuit(icMedia_.rxFrom);
 
          if(cct != nullptr) cct->MakeConn(ogMediaCurr_.rxFrom);
@@ -526,7 +526,7 @@ void MediaPsm::UpdateIcMedia(TlvMessage& msg, ParameterId pid)
 
    if(pptr != nullptr)
    {
-      auto cxi = reinterpret_cast< MediaInfo* >(pptr->bytes);
+      auto cxi = reinterpret_cast<MediaInfo*>(pptr->bytes);
 
       if(icMedia_.rxFrom != cxi->rxFrom)
       {

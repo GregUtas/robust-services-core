@@ -69,7 +69,7 @@ constexpr char CliPrompt = '>';
 //------------------------------------------------------------------------------
 
 CliThread::CliThread() :
-   Thread(OperationsFaction, Singleton< CliDaemon >::Instance()),
+   Thread(OperationsFaction, Singleton<CliDaemon>::Instance()),
    command_(nullptr),
    result_(0)
 {
@@ -85,7 +85,7 @@ CliThread::~CliThread()
 {
    Debug::ftnt("CliThread.dtor");
 
-   auto thread = Singleton< CinThread >::Extant();
+   auto thread = Singleton<CinThread>::Extant();
    if(thread != nullptr) thread->ClearClient(this);
 }
 
@@ -173,7 +173,7 @@ void CliThread::Destroy()
 {
    Debug::ft("CliThread.Destroy");
 
-   Singleton< CliThread >::Destroy();
+   Singleton<CliThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -291,7 +291,7 @@ void CliThread::Enter()
 
    //  Put the root increment on the stack and start reading commands.
    //
-   stack_->SetRoot(*Singleton< NbIncrement >::Instance());
+   stack_->SetRoot(*Singleton<NbIncrement>::Instance());
    while(true) ReadCommands();
 }
 
@@ -365,7 +365,7 @@ bool CliThread::GenerateReportPreemptably()
 
       if(BoolPrompt(StopTracingPrompt))
       {
-         Singleton< TraceBuffer >::Instance()->StopTracing();
+         Singleton<TraceBuffer>::Instance()->StopTracing();
          return true;
       }
 
@@ -532,7 +532,7 @@ const CliCommand* CliThread::ParseCommand() const
 
    if(incr == nullptr)
    {
-      incr = Singleton< CliRegistry >::Instance()->FindIncrement(token1);
+      incr = Singleton<CliRegistry>::Instance()->FindIncrement(token1);
 
       if(incr == nullptr)
       {
@@ -702,7 +702,7 @@ bool CliThread::Recover()
    Debug::ft("CliThread.Recover");
 
    auto sig = GetSignal();
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
 
    if(reg->Attrs(sig).test(PosixSignal::Break))
    {
@@ -843,7 +843,7 @@ void CliThread::SetResult(word result)
    Debug::ft("CliThread.SetResult");
 
    result_ = result;
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    auto sym = reg->EnsureSymbol("cli.result");
    if(sym != nullptr) sym->SetValue(std::to_string(result_), false);
 }

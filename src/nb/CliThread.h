@@ -54,7 +54,7 @@ namespace NodeBase
 //
 class CliThread : public Thread
 {
-   friend class Singleton< CliThread >;
+   friend class Singleton<CliThread>;
    friend class HelpCommand;
    friend class QuitCommand;
 public:
@@ -208,7 +208,7 @@ public:
 
    //  The input buffer.
    //
-   std::unique_ptr< CliBuffer > ibuf;
+   std::unique_ptr<CliBuffer> ibuf;
 
    //  The output buffer where each CliCommand writes its results.
    //
@@ -274,7 +274,7 @@ private:
 
    //  The stack of active increments.
    //
-   std::unique_ptr< CliStack > stack_;
+   std::unique_ptr<CliStack> stack_;
 
    //  The current prompt for user input.
    //
@@ -300,11 +300,11 @@ private:
    //  sent to outFiles_.back().  If empty, output is sent to the console
    //  via CoutThread, which copies it to the console transcript file.
    //
-   std::vector< std::string > outFiles_;
+   std::vector<std::string> outFiles_;
 
    //  Application-specific data.
    //
-   std::map< CliAppData::Id, std::unique_ptr< CliAppData >> appsData_;
+   std::map<CliAppData::Id, std::unique_ptr<CliAppData>> appsData_;
 };
 }
 #endif

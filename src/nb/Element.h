@@ -34,7 +34,7 @@ namespace NodeBase
 //
 class Element : public Protected
 {
-   friend class Singleton< Element >;
+   friend class Singleton<Element>;
 public:
    //  Deleted to prohibit copying.
    //

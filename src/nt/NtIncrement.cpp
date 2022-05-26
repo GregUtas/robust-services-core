@@ -138,7 +138,7 @@ word CorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(!GetIntParm(n, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid);
+   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pool(pid);
    if(pool == nullptr) return cli.Report(-2, NoPoolExpl);
    if(!pool->Corrupt(n)) return cli.Report(-3, EndOfFreeQueue);
    return cli.Report(0, SuccessExpl);
@@ -273,7 +273,7 @@ word NtLogsCommand::Sort
    //  number) is non-zero.  If NUM is zero, it means that a log has yet to
    //  be found.
    //
-   std::map< size_t, string > logs;
+   std::map<size_t, string> logs;
    string line, log;
    size_t num = 0;
    string location = "on " + Element::Name();
@@ -294,7 +294,7 @@ word NtLogsCommand::Sort
       {
          if(!log.empty() && (num != 0))
          {
-            logs.insert(std::pair< size_t, string >(num, log));
+            logs.insert(std::pair<size_t, string>(num, log));
          }
 
          num = 0;
@@ -323,7 +323,7 @@ word NtLogsCommand::Sort
 
    if(!log.empty() && (num != 0))
    {
-      logs.insert(std::pair< size_t, string >(num, log));
+      logs.insert(std::pair<size_t, string>(num, log));
    }
 
    infile.reset();
@@ -433,7 +433,7 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    FunctionTrace::Process(EMPTY_STR);
-   std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);
+   std::unique_ptr<FunctionProfiler> fp(new FunctionProfiler);
    rc = fp->Generate(*stream, sort);
    fp.reset();
 
@@ -856,13 +856,13 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    case TestRetestIndex:
       if(!cli.EndOfInput()) return -1;
-      rc = Singleton< TestDatabase >::Instance()->Retest(expl);
+      rc = Singleton<TestDatabase>::Instance()->Retest(expl);
       return cli.Report(rc, expl);
 
    case TestEraseIndex:
       if(!GetString(text, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
-      rc = Singleton< TestDatabase >::Instance()->Erase(text, expl);
+      rc = Singleton<TestDatabase>::Instance()->Erase(text, expl);
       return cli.Report(rc, expl);
 
    case TestResetIndex:
@@ -883,7 +883,7 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 class TestHeap : public NbHeap
 {
-   friend class Singleton< TestHeap >;
+   friend class Singleton<TestHeap>;
 public:
    static void SetSize(size_t size) { Size_ = size; }
    static void SetType(MemoryType type) { Type_ = type; }
@@ -1006,7 +1006,7 @@ HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
 
 static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
 {
-   heap = Singleton< TestHeap >::Extant();
+   heap = Singleton<TestHeap>::Extant();
 
    if(heap == nullptr)
    {
@@ -1073,7 +1073,7 @@ word HeapCreateCommand::ProcessCommand(CliThread& cli) const
 
    TestHeap::SetType(type);
    TestHeap::SetSize(size);
-   heap = Singleton< TestHeap >::Instance();
+   heap = Singleton<TestHeap>::Instance();
    *cli.obuf << "  Heap: " << heap << CRLF;
    return 0;
 }
@@ -1096,8 +1096,8 @@ word HeapDestroyCommand::ProcessCommand(CliThread& cli) const
    auto rc = CheckHeap(true, cli, heap);
    if(rc != 0) return rc;
 
-   Singleton< TestHeap >::Destroy();
-   heap = Singleton< TestHeap >::Extant();
+   Singleton<TestHeap>::Destroy();
+   heap = Singleton<TestHeap>::Extant();
    *cli.obuf << "  Heap: " << heap << CRLF;
    return 0;
 }
@@ -1243,7 +1243,7 @@ word HeapValidateCommand::ProcessCommand(CliThread& cli) const
 //
 class LbcPool : public Temporary
 {
-   friend class Singleton< LbcPool >;
+   friend class Singleton<LbcPool>;
 public:
    LbcPool(const LbcPool& that) = delete;
    LbcPool& operator=(const LbcPool& that) = delete;
@@ -1315,7 +1315,7 @@ word LbcInitCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(limit, cli)) return -1;
    if(!GetIntParm(secs, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< LbcPool >::Instance();
+   auto pool = Singleton<LbcPool>::Instance();
    pool->lbc_.Initialize(limit, secs);
    pool->lbc_.Output(*cli.obuf, 2, true);
    return 0;
@@ -1334,7 +1334,7 @@ word LbcEventCommand::ProcessCommand(CliThread& cli) const
 
    if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2);
-   auto pool = Singleton< LbcPool >::Instance();
+   auto pool = Singleton<LbcPool>::Instance();
    if(pool->lbc_.HasReachedLimit())
       *cli.obuf << "The counter overflowed.";
    else
@@ -1367,7 +1367,7 @@ private:
 
 class Q1WayPool : public Temporary
 {
-   friend class Singleton< Q1WayPool >;
+   friend class Singleton<Q1WayPool>;
 public:
    Q1WayPool(const Q1WayPool& that) = delete;
    Q1WayPool& operator=(const Q1WayPool& that) = delete;
@@ -1376,8 +1376,8 @@ public:
       const string& prefix, const Flags& options) const override;
 
    static const size_t MaxItems = 8;
-   std::unique_ptr< Q1WayItem > items_[MaxItems + 1];
-   Q1Way< Q1WayItem > itemq_;
+   std::unique_ptr<Q1WayItem> items_[MaxItems + 1];
+   Q1Way<Q1WayItem> itemq_;
 private:
    Q1WayPool();
    ~Q1WayPool() = default;
@@ -1477,7 +1477,7 @@ Q1WayItem::Q1WayItem(word index) : index_(index) { }
 
 Q1WayItem::~Q1WayItem()
 {
-   Singleton< Q1WayPool >::Extant()->items_[index_].release();
+   Singleton<Q1WayPool>::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -1496,7 +1496,7 @@ void Q1WayItem::Display(ostream& stream,
 ptrdiff_t Q1WayItem::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Q1WayItem* >(&local);
+   auto fake = reinterpret_cast<const Q1WayItem*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -1577,7 +1577,7 @@ word Countq1Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Countq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    *cli.obuf << "  size=" << pool->itemq_.Size() << CRLF;
    pool->Output(*cli.obuf, 2, false);
    return 0;
@@ -1595,7 +1595,7 @@ word Deq1Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Deq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    auto item = pool->itemq_.Deq();
    if(item != nullptr)
       item->Output(*cli.obuf, 2, true);
@@ -1617,7 +1617,7 @@ word Emptyq1Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Emptyq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    auto empty = pool->itemq_.Empty();
    *cli.obuf << "  empty=" << empty << CRLF;
    pool->Output(*cli.obuf, 2, false);
@@ -1647,7 +1647,7 @@ word Enq1Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    pool->itemq_.Enq(*pool->items_[id1]);
    pool->Output(*cli.obuf, 2, false);
    return 0;
@@ -1676,7 +1676,7 @@ word Exq1Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    pool->itemq_.Exq(*pool->items_[id1]);
    pool->items_[id1]->Output(*cli.obuf, 2, true);
    pool->Output(*cli.obuf, 2, false);
@@ -1695,7 +1695,7 @@ word Firstq1Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Firstq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
 
    auto item = pool->itemq_.First();
    if(item != nullptr)
@@ -1729,7 +1729,7 @@ word Henq1Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    pool->itemq_.Henq(*pool->items_[id1]);
    pool->Output(*cli.obuf, 2, false);
    return 0;
@@ -1760,7 +1760,7 @@ word Insertq1Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    pool->itemq_.Insert(pool->items_[id1].get(), *pool->items_[id2]);
    pool->Output(*cli.obuf, 2, false);
    return 0;
@@ -1785,7 +1785,7 @@ word Nextq1Command::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    auto item = pool->items_[id1].get();
 
    *cli.obuf << "Next(T*&): " << CRLF;
@@ -1825,7 +1825,7 @@ word Purgeq1Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Purgeq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q1WayPool >::Instance();
+   auto pool = Singleton<Q1WayPool>::Instance();
    pool->itemq_.Purge();
    pool->Output(*cli.obuf, 2, false);
    pool->Reallocate();
@@ -1853,7 +1853,7 @@ private:
 
 class Q2WayPool : public Temporary
 {
-   friend class Singleton< Q2WayPool >;
+   friend class Singleton<Q2WayPool>;
 public:
    Q2WayPool(const Q2WayPool& that) = delete;
    Q2WayPool& operator=(const Q2WayPool& that) = delete;
@@ -1862,8 +1862,8 @@ public:
       const string& prefix, const Flags& options) const override;
 
    static const size_t MaxItems = 8;
-   std::unique_ptr< Q2WayItem > items_[MaxItems + 1];
-   Q2Way< Q2WayItem > itemq_;
+   std::unique_ptr<Q2WayItem> items_[MaxItems + 1];
+   Q2Way<Q2WayItem> itemq_;
 private:
    Q2WayPool();
    ~Q2WayPool() = default;
@@ -1971,7 +1971,7 @@ Q2WayItem::Q2WayItem(word index) : index_(index) { }
 
 Q2WayItem::~Q2WayItem()
 {
-   Singleton< Q2WayPool >::Extant()->items_[index_].release();
+   Singleton<Q2WayPool>::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -1990,7 +1990,7 @@ void Q2WayItem::Display(ostream& stream,
 ptrdiff_t Q2WayItem::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Q2WayItem* >(&local);
+   auto fake = reinterpret_cast<const Q2WayItem*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -2072,7 +2072,7 @@ word Countq2Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Countq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    *cli.obuf << "  size=" << pool->itemq_.Size() << CRLF;
    pool->Output(*cli.obuf, 2, false);
    return 0;
@@ -2090,7 +2090,7 @@ word Deq2Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Deq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    auto item = pool->itemq_.Deq();
    if(item != nullptr)
       item->Output(*cli.obuf, 2, true);
@@ -2112,7 +2112,7 @@ word Emptyq2Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Emptyq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    auto empty = pool->itemq_.Empty();
    *cli.obuf << "  empty=" << empty << CRLF;
    pool->Output(*cli.obuf, 2, false);
@@ -2142,7 +2142,7 @@ word Enq2Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    pool->itemq_.Enq(*pool->items_[id1]);
    pool->Output(*cli.obuf, 2, true);
    return 0;
@@ -2171,7 +2171,7 @@ word Exq2Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    pool->itemq_.Exq(*pool->items_[id1]);
    pool->items_[id1]->Output(*cli.obuf, 2, true);
    pool->Output(*cli.obuf, 2, true);
@@ -2190,7 +2190,7 @@ word Firstq2Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Firstq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
 
    *cli.obuf << "T*=First(): " << CRLF;
    auto item = pool->itemq_.First();
@@ -2226,7 +2226,7 @@ word Henq2Command::ProcessCommand(CliThread& cli) const
       *cli.obuf << NullPtrInvalid << CRLF;
       return -1;
    }
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    pool->itemq_.Henq(*pool->items_[id1]);
    pool->Output(*cli.obuf, 2, true);
    return 0;
@@ -2244,7 +2244,7 @@ word Lastq2Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Lastq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
 
    *cli.obuf << "T*=Last(): " << CRLF;
    auto item = pool->itemq_.Last();
@@ -2276,7 +2276,7 @@ word Nextq2Command::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    auto item = pool->items_[id1].get();
 
    *cli.obuf << "Next(T*&): " << CRLF;
@@ -2323,7 +2323,7 @@ word Prevq2Command::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    auto item = pool->items_[id1].get();
 
    *cli.obuf << "Prev(T*&): " << CRLF;
@@ -2363,7 +2363,7 @@ word Purgeq2Command::ProcessCommand(CliThread& cli) const
    Debug::ft("Purgeq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< Q2WayPool >::Instance();
+   auto pool = Singleton<Q2WayPool>::Instance();
    pool->itemq_.Purge();
    pool->Output(*cli.obuf, 2, false);
    pool->Reallocate();
@@ -2392,7 +2392,7 @@ private:
 
 class RegistryPool : public Temporary
 {
-   friend class Singleton< RegistryPool >;
+   friend class Singleton<RegistryPool>;
 public:
    RegistryPool(const RegistryPool& that) = delete;
    RegistryPool& operator=(const RegistryPool& that) = delete;
@@ -2400,8 +2400,8 @@ public:
       const string& prefix, const Flags& options) const override;
 
    static const size_t MaxItems = 8;
-   std::unique_ptr< RegistryItem > items_[MaxItems + 1];
-   Registry< RegistryItem > registry_;
+   std::unique_ptr<RegistryItem> items_[MaxItems + 1];
+   Registry<RegistryItem> registry_;
 private:
    RegistryPool();
    ~RegistryPool() = default;
@@ -2493,7 +2493,7 @@ RegistryItem::RegistryItem(word index) : index_(index) { }
 
 RegistryItem::~RegistryItem()
 {
-   Singleton< RegistryPool >::Extant()->items_[index_].release();
+   Singleton<RegistryPool>::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -2501,7 +2501,7 @@ RegistryItem::~RegistryItem()
 ptrdiff_t RegistryItem::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const RegistryItem* >(&local);
+   auto fake = reinterpret_cast<const RegistryItem*>(&local);
    return ptrdiff(&fake->rid_, fake);
 }
 
@@ -2584,7 +2584,7 @@ word InitCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    auto result = pool->registry_.Init
       (id1, RegistryItem::CellDiff(), MemTemporary, false);
    *cli.obuf << "  rc=" << result << CRLF;
@@ -2620,7 +2620,7 @@ word InsertCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    if(id1 > 0)
    {
       if(fixed)
@@ -2662,7 +2662,7 @@ word RemoveCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    if(fixed)
       result = pool->registry_.Erase(*pool->items_[id1], id2);
    else
@@ -2690,7 +2690,7 @@ word AtCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    auto item = pool->registry_.At(id1);
    if(item != nullptr)
       item->Output(*cli.obuf, 2, true);
@@ -2727,7 +2727,7 @@ word FirstCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    if(start)
    {
       rid = id1;
@@ -2764,7 +2764,7 @@ word NextCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    auto item = pool->items_[id1].get();
 
    *cli.obuf << "Next(T*&): " << CRLF;
@@ -2804,7 +2804,7 @@ word LastCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("LastCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    auto item = pool->registry_.Last();
    if(item != nullptr)
       item->Output(*cli.obuf, 2, true);
@@ -2833,7 +2833,7 @@ word PrevCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    auto item = pool->items_[id1].get();
 
    *cli.obuf << "Prev(T*&): " << CRLF;
@@ -2873,7 +2873,7 @@ word CountCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("CountCommand.ProcessCommand[>nt]");
 
    if(!cli.EndOfInput()) return -1;
-   auto pool = Singleton< RegistryPool >::Instance();
+   auto pool = Singleton<RegistryPool>::Instance();
    *cli.obuf << "  size=" << pool->registry_.Size() << CRLF;
    pool->Output(*cli.obuf, 2, true);
    return 0;
@@ -2885,7 +2885,7 @@ word CountCommand::ProcessCommand(CliThread& cli) const
 //
 class RecoveryDaemon : public Daemon
 {
-   friend class Singleton< RecoveryDaemon >;
+   friend class Singleton<RecoveryDaemon>;
 
    RecoveryDaemon();
    ~RecoveryDaemon();
@@ -2897,7 +2897,7 @@ class RecoveryDaemon : public Daemon
 
 class RecoveryThread : public Thread
 {
-   friend class Singleton< RecoveryThread >;
+   friend class Singleton<RecoveryThread>;
 public:
    enum Test
    {
@@ -2958,7 +2958,7 @@ RecoveryDaemon::RecoveryDaemon() : Daemon(RecoveryDaemonName, 1)
 {
    Debug::ft("RecoveryDaemon.ctor");
 
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("recovery.daemon", Did(), false);
 }
 
@@ -2970,7 +2970,7 @@ RecoveryDaemon::~RecoveryDaemon()
 Thread* RecoveryDaemon::CreateThread()
 {
    Debug::ft("RecoveryDaemon.CreateThread");
-   return Singleton< RecoveryThread >::Instance();
+   return Singleton<RecoveryThread>::Instance();
 }
 
 AlarmStatus RecoveryDaemon::GetAlarmLevel() const
@@ -2982,13 +2982,13 @@ AlarmStatus RecoveryDaemon::GetAlarmLevel() const
 //------------------------------------------------------------------------------
 
 RecoveryThread::RecoveryThread() :
-   Thread(LoadTestFaction, Singleton< RecoveryDaemon >::Instance()),
+   Thread(LoadTestFaction, Singleton<RecoveryDaemon>::Instance()),
    test_(Sleep),
    signal_(0)
 {
    Debug::ft("RecoveryThread.ctor");
 
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("recovery.thread", Tid(), false);
 
    //  Set ThreadCtorTrapFlag to cause a trap during thread creation.  This
@@ -3051,7 +3051,7 @@ void RecoveryThread::Destroy()
 {
    Debug::ft("RecoveryThread.Destroy");
 
-   Singleton< RecoveryThread >::Destroy();
+   Singleton<RecoveryThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -3080,7 +3080,7 @@ void RecoveryThread::DoDelete()
 {
    Debug::ft("RecoveryThread.DoDelete");
 
-   Singleton< RecoveryThread >::Destroy();
+   Singleton<RecoveryThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -3452,10 +3452,10 @@ RecoveryThread* RecoverCommand::EnsureThread(id_t subcommand)
 {
    Debug::ft(RecoverCommand_EnsureThread);
 
-   auto thr = Singleton< RecoveryThread >::Extant();
+   auto thr = Singleton<RecoveryThread>::Extant();
    if(thr != nullptr) return thr;
 
-   thr = Singleton< RecoveryThread >::Instance();
+   thr = Singleton<RecoveryThread>::Instance();
    if(subcommand == RecoveryThread::Create) return thr;
 
    Debug::SwLog(RecoverCommand_EnsureThread, "recovery thread created", 0);
@@ -3479,7 +3479,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
 
    auto thr = EnsureThread(index);
    auto test = RecoveryThread::Test(index);
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
 
    switch(index)
    {
@@ -3514,7 +3514,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       }
       else
       {
-         Singleton< RecoveryThread >::Destroy();
+         Singleton<RecoveryThread>::Destroy();
       }
       break;
 

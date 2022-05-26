@@ -72,12 +72,12 @@ PotsBcSsm::PotsBcSsm(ServiceId sid, const Message& msg, ProtocolSM& psm) :
    {
       //  Make the POTS PSM an edge PSM and find the subscriber's profile.
       //
-      auto& ppsm = static_cast< PotsCallPsm& >(psm);
+      auto& ppsm = static_cast<PotsCallPsm&>(psm);
       auto port = ppsm.TsPort();
       ppsm.MakeEdge(port);
 
-      auto tsw = Singleton< Switch >::Instance();
-      auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(port));
+      auto tsw = Singleton<Switch>::Instance();
+      auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(port));
       auto prof = cct->Profile();
       SetProfile(prof);
       SetUPsm(ppsm);
@@ -85,11 +85,11 @@ PotsBcSsm::PotsBcSsm(ServiceId sid, const Message& msg, ProtocolSM& psm) :
    }
 
    case CipTbcFactoryId:
-      SetNPsm(static_cast< CipPsm& >(psm));
+      SetNPsm(static_cast<CipPsm&>(psm));
       break;
 
    case ProxyCallFactoryId:
-      SetUPsm(static_cast< MediaPsm& >(psm));
+      SetUPsm(static_cast<MediaPsm&>(psm));
       break;
 
    default:
@@ -125,7 +125,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
    auto errval = 0;
    auto sid = ame.Msg()->GetSignal();
    auto stid = CurrState();
-   auto pmsg = static_cast< PotsMessage* >(ame.Msg());
+   auto pmsg = static_cast<PotsMessage*>(ame.Msg());
 
    switch(sid)
    {
@@ -245,7 +245,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
    {
       //  In a basic call, this is only valid when it initiates a service.
       //
-      auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+      auto pfi = pmsg->FindType<PotsFacilityInfo>(PotsParameter::Facility);
 
       if(pfi != nullptr)
       {
@@ -266,7 +266,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
       //  PSMs handle without any service level processing.  If we get
       //  here, some other progress indicator arrived.
       //
-      auto ppi = pmsg->FindType< ProgressInfo >(PotsParameter::Progress);
+      auto ppi = pmsg->FindType<ProgressInfo>(PotsParameter::Progress);
       if(ppi != nullptr) errval = ppi->progress;
       break;
    }
@@ -275,7 +275,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
    {
       //  This occurs when a multiplexer releases a call.
       //
-      auto pci = pmsg->FindType< CauseInfo >(PotsParameter::Cause);
+      auto pci = pmsg->FindType<CauseInfo>(PotsParameter::Cause);
       return RaiseReleaseCall(nextEvent, pci->cause);
    }
    }
@@ -307,7 +307,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeNPsmTimeout
 {
    Debug::ft(PotsBcSsm_AnalyzeNPsmTimeout);
 
-   auto toi = msg.FindType< TimeoutInfo >(Parameter::Timeout);
+   auto toi = msg.FindType<TimeoutInfo>(Parameter::Timeout);
 
    if(toi->owner == this)
    {

@@ -44,7 +44,7 @@ private:
 
 class PotsWmlService : public Service
 {
-   friend class Singleton< PotsWmlService >;
+   friend class Singleton<PotsWmlService>;
 
    PotsWmlService();
    ~PotsWmlService();
@@ -53,7 +53,7 @@ class PotsWmlService : public Service
 
 class PotsWmlActivate : public Service
 {
-   friend class Singleton< PotsWmlActivate >;
+   friend class Singleton<PotsWmlActivate>;
 
    PotsWmlActivate();
    ~PotsWmlActivate();
@@ -62,7 +62,7 @@ class PotsWmlActivate : public Service
 
 class PotsWmlDeactivate : public Service
 {
-   friend class Singleton< PotsWmlDeactivate >;
+   friend class Singleton<PotsWmlDeactivate>;
 
    PotsWmlDeactivate();
    ~PotsWmlDeactivate();

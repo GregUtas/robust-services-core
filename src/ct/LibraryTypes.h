@@ -37,8 +37,8 @@ class LibrarySet;
 class CodeFile;
 class CodeDir;
 
-using CodeDirPtr = std::unique_ptr< CodeDir >;
-using CodeFilePtr = std::unique_ptr< CodeFile >;
+using CodeDirPtr = std::unique_ptr<CodeDir>;
+using CodeFilePtr = std::unique_ptr<CodeFile>;
 
 //  What a set of library items can contain.
 //
@@ -66,7 +66,7 @@ struct FileLevel
    FileLevel(CodeFile* f, size_t l) : file(f), level(l) { }
 };
 
-using BuildOrder = std::vector< FileLevel >;
+using BuildOrder = std::vector<FileLevel>;
 
 //  Tokens when parsing the expression associated with a library command.
 //

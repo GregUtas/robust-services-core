@@ -161,7 +161,7 @@ class LibraryOpcode
 public:
    //  Constructs an opcode for OP, taking arguments from ARGS.
    //
-   LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args);
+   LibraryOpcode(LibTokenType op, std::stack<LibrarySet*>& args);
 
    //  Releases LibrarySets that were arguments, which causes them
    //  to be deleted if they were temporary.
@@ -204,7 +204,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
+LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack<LibrarySet*>& args) :
    lhs_(nullptr),
    rhs1_(nullptr),
    rhs2_(nullptr),
@@ -796,7 +796,7 @@ LibExprErr Interpreter::HandleToken(CliThread& cli)
       //  Find this operand or create it.  Push it onto the stack and apply
       //  any pending operator.
       //
-      set = Singleton< Library >::Instance()->EnsureVar(cli, token_);
+      set = Singleton<Library>::Instance()->EnsureVar(cli, token_);
       operand = true;
 
       if(set == nullptr)

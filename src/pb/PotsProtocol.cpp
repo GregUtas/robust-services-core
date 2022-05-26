@@ -51,7 +51,7 @@ namespace PotsBase
 //
 class PotsAlertingSignal : public PotsSignal
 {
-   friend class Singleton< PotsAlertingSignal >;
+   friend class Singleton<PotsAlertingSignal>;
 
    PotsAlertingSignal();
    ~PotsAlertingSignal() = default;
@@ -60,7 +60,7 @@ class PotsAlertingSignal : public PotsSignal
 
 class PotsDigitsSignal : public PotsSignal
 {
-   friend class Singleton< PotsDigitsSignal >;
+   friend class Singleton<PotsDigitsSignal>;
 
    PotsDigitsSignal();
    ~PotsDigitsSignal() = default;
@@ -69,7 +69,7 @@ class PotsDigitsSignal : public PotsSignal
 
 class PotsFacilitySignal : public PotsSignal
 {
-   friend class Singleton< PotsFacilitySignal >;
+   friend class Singleton<PotsFacilitySignal>;
 
    PotsFacilitySignal();
    ~PotsFacilitySignal() = default;
@@ -78,7 +78,7 @@ class PotsFacilitySignal : public PotsSignal
 
 class PotsFlashSignal : public PotsSignal
 {
-   friend class Singleton< PotsFlashSignal >;
+   friend class Singleton<PotsFlashSignal>;
 
    PotsFlashSignal();
    ~PotsFlashSignal() = default;
@@ -87,7 +87,7 @@ class PotsFlashSignal : public PotsSignal
 
 class PotsReleaseSignal : public PotsSignal
 {
-   friend class Singleton< PotsReleaseSignal >;
+   friend class Singleton<PotsReleaseSignal>;
 
    PotsReleaseSignal();
    ~PotsReleaseSignal() = default;
@@ -96,7 +96,7 @@ class PotsReleaseSignal : public PotsSignal
 
 class PotsLockoutSignal : public PotsSignal
 {
-   friend class Singleton< PotsLockoutSignal >;
+   friend class Singleton<PotsLockoutSignal>;
 
    PotsLockoutSignal();
    ~PotsLockoutSignal() = default;
@@ -105,7 +105,7 @@ class PotsLockoutSignal : public PotsSignal
 
 class PotsOffhookSignal : public PotsSignal
 {
-   friend class Singleton< PotsOffhookSignal >;
+   friend class Singleton<PotsOffhookSignal>;
 
    PotsOffhookSignal();
    ~PotsOffhookSignal() = default;
@@ -114,7 +114,7 @@ class PotsOffhookSignal : public PotsSignal
 
 class PotsOnhookSignal : public PotsSignal
 {
-   friend class Singleton< PotsOnhookSignal >;
+   friend class Singleton<PotsOnhookSignal>;
 
    PotsOnhookSignal();
    ~PotsOnhookSignal() = default;
@@ -123,7 +123,7 @@ class PotsOnhookSignal : public PotsSignal
 
 class PotsProgressSignal : public PotsSignal
 {
-   friend class Singleton< PotsProgressSignal >;
+   friend class Singleton<PotsProgressSignal>;
 
    PotsProgressSignal();
    ~PotsProgressSignal() = default;
@@ -132,7 +132,7 @@ class PotsProgressSignal : public PotsSignal
 
 class PotsSuperviseSignal : public PotsSignal
 {
-   friend class Singleton< PotsSuperviseSignal >;
+   friend class Singleton<PotsSuperviseSignal>;
 
    PotsSuperviseSignal();
    ~PotsSuperviseSignal() = default;
@@ -143,7 +143,7 @@ class PotsSuperviseSignal : public PotsSignal
 //
 class PotsCauseParameter : public CauseParameter
 {
-   friend class Singleton< PotsCauseParameter >;
+   friend class Singleton<PotsCauseParameter>;
 
    PotsCauseParameter();
    ~PotsCauseParameter() = default;
@@ -151,7 +151,7 @@ class PotsCauseParameter : public CauseParameter
 
 class PotsDigitsParameter : public AddressParameter
 {
-   friend class Singleton< PotsDigitsParameter >;
+   friend class Singleton<PotsDigitsParameter>;
 
    PotsDigitsParameter();
    ~PotsDigitsParameter() = default;
@@ -160,7 +160,7 @@ class PotsDigitsParameter : public AddressParameter
 
 class PotsFacilityParameter : public PotsParameter
 {
-   friend class Singleton< PotsFacilityParameter >;
+   friend class Singleton<PotsFacilityParameter>;
 
    PotsFacilityParameter();
    ~PotsFacilityParameter() = default;
@@ -184,7 +184,7 @@ public: FacilityOptParm();
 
 class PotsHeaderParameter : public PotsParameter
 {
-   friend class Singleton< PotsHeaderParameter >;
+   friend class Singleton<PotsHeaderParameter>;
 
    PotsHeaderParameter();
    ~PotsHeaderParameter() = default;
@@ -198,7 +198,7 @@ class PotsHeaderParameter : public PotsParameter
 
 class PotsMediaParameter : public MediaParameter
 {
-   friend class Singleton< PotsMediaParameter >;
+   friend class Singleton<PotsMediaParameter>;
 
    PotsMediaParameter();
    ~PotsMediaParameter() = default;
@@ -206,7 +206,7 @@ class PotsMediaParameter : public MediaParameter
 
 class PotsProgressParameter : public ProgressParameter
 {
-   friend class Singleton< PotsProgressParameter >;
+   friend class Singleton<PotsProgressParameter>;
 
    PotsProgressParameter();
    ~PotsProgressParameter() = default;
@@ -214,7 +214,7 @@ class PotsProgressParameter : public ProgressParameter
 
 class PotsRingParameter : public PotsParameter
 {
-   friend class Singleton< PotsRingParameter >;
+   friend class Singleton<PotsRingParameter>;
 
    PotsRingParameter();
    ~PotsRingParameter() = default;
@@ -227,7 +227,7 @@ class PotsRingParameter : public PotsParameter
 
 class PotsScanParameter : public PotsParameter
 {
-   friend class Singleton< PotsScanParameter >;
+   friend class Singleton<PotsScanParameter>;
 
    PotsScanParameter();
    ~PotsScanParameter() = default;
@@ -246,25 +246,25 @@ PotsProtocol::PotsProtocol() : TlvProtocol(PotsProtocolId, TimerProtocolId)
 
    //  Create POTS signals and parameters.
    //
-   Singleton< PotsOffhookSignal >::Instance();
-   Singleton< PotsDigitsSignal >::Instance();
-   Singleton< PotsAlertingSignal >::Instance();
-   Singleton< PotsFlashSignal >::Instance();
-   Singleton< PotsOnhookSignal >::Instance();
-   Singleton< PotsFacilitySignal >::Instance();
-   Singleton< PotsProgressSignal >::Instance();
-   Singleton< PotsSuperviseSignal >::Instance();
-   Singleton< PotsLockoutSignal >::Instance();
-   Singleton< PotsReleaseSignal >::Instance();
+   Singleton<PotsOffhookSignal>::Instance();
+   Singleton<PotsDigitsSignal>::Instance();
+   Singleton<PotsAlertingSignal>::Instance();
+   Singleton<PotsFlashSignal>::Instance();
+   Singleton<PotsOnhookSignal>::Instance();
+   Singleton<PotsFacilitySignal>::Instance();
+   Singleton<PotsProgressSignal>::Instance();
+   Singleton<PotsSuperviseSignal>::Instance();
+   Singleton<PotsLockoutSignal>::Instance();
+   Singleton<PotsReleaseSignal>::Instance();
 
-   Singleton< PotsHeaderParameter >::Instance();
-   Singleton< PotsDigitsParameter >::Instance();
-   Singleton< PotsRingParameter >::Instance();
-   Singleton< PotsScanParameter >::Instance();
-   Singleton< PotsMediaParameter >::Instance();
-   Singleton< PotsCauseParameter >::Instance();
-   Singleton< PotsProgressParameter >::Instance();
-   Singleton< PotsFacilityParameter >::Instance();
+   Singleton<PotsHeaderParameter>::Instance();
+   Singleton<PotsDigitsParameter>::Instance();
+   Singleton<PotsRingParameter>::Instance();
+   Singleton<PotsScanParameter>::Instance();
+   Singleton<PotsMediaParameter>::Instance();
+   Singleton<PotsCauseParameter>::Instance();
+   Singleton<PotsProgressParameter>::Instance();
+   Singleton<PotsFacilityParameter>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -450,7 +450,7 @@ CliParm* PotsFacilityParameter::CreateCliParm(Usage use) const
 void PotsFacilityParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const PotsFacilityInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const PotsFacilityInfo*>(bytes)->Display(stream, prefix);
 }
 
 //------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ Parameter::TestRc PotsFacilityParameter::InjectMsg
    id_t             index;
    word             sid, ind;
    PotsFacilityInfo info;
-   auto&            pmsg = static_cast< PotsMessage& >(msg);
+   auto&            pmsg = static_cast<PotsMessage&>(msg);
 
    switch(cli.Command()->GetTextIndexRc(index, cli))
    {
@@ -520,7 +520,7 @@ Parameter::TestRc PotsFacilityParameter::VerifyMsg
    Debug::ft("PotsFacilityParameter.VerifyMsg");
 
    TestRc            rc;
-   auto&             pmsg = static_cast< const PotsMessage& >(msg);
+   auto&             pmsg = static_cast<const PotsMessage&>(msg);
    PotsFacilityInfo* info;
    id_t              index;
    word              sid, ind;
@@ -595,7 +595,7 @@ PotsFacilityInfo::PotsFacilityInfo() :
 
 void PotsFacilityInfo::Display(ostream& stream, const string& prefix) const
 {
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
 
    stream << prefix << "sid : " << sid;
    stream << " (" << strClass(svc, false) << ')' << CRLF;
@@ -632,7 +632,7 @@ CliParm* PotsHeaderParameter::CreateCliParm(Usage use) const
 void PotsHeaderParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const PotsHeaderInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const PotsHeaderInfo*>(bytes)->Display(stream, prefix);
 }
 
 //------------------------------------------------------------------------------
@@ -644,7 +644,7 @@ Parameter::TestRc PotsHeaderParameter::InjectMsg
 
    word           port;
    PotsHeaderInfo info;
-   auto&          pmsg = static_cast< PotsMessage& >(msg);
+   auto&          pmsg = static_cast<PotsMessage&>(msg);
 
    if(!cli.Command()->GetIntParm(port, cli)) return StreamMissingMandatoryParm;
 
@@ -668,7 +668,7 @@ Parameter::TestRc PotsHeaderParameter::VerifyMsg
    Debug::ft("PotsHeaderParameter.VerifyMsg");
 
    TestRc          rc;
-   auto&           pmsg = static_cast< const PotsMessage& >(msg);
+   auto&           pmsg = static_cast<const PotsMessage&>(msg);
    word            port;
    PotsHeaderInfo* info;
 
@@ -694,8 +694,8 @@ PotsHeaderInfo::PotsHeaderInfo() :
 
 void PotsHeaderInfo::Display(ostream& stream, const string& prefix) const
 {
-   auto sig = Singleton< PotsProtocol >::Instance()->GetSignal(signal);
-   auto cct = Singleton< Switch >::Instance()->CircuitName(port);
+   auto sig = Singleton<PotsProtocol>::Instance()->GetSignal(signal);
+   auto cct = Singleton<Switch>::Instance()->CircuitName(port);
 
    stream << prefix << "signal : " << signal;
    stream << " (" << strClass(sig, false) << ')' << CRLF;
@@ -745,7 +745,7 @@ CliParm* PotsRingParameter::CreateCliParm(Usage use) const
 void PotsRingParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const PotsRingInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const PotsRingInfo*>(bytes)->Display(stream, prefix);
 }
 
 //------------------------------------------------------------------------------
@@ -756,7 +756,7 @@ Parameter::TestRc PotsRingParameter::VerifyMsg
    Debug::ft("PotsRingParameter.VerifyMsg");
 
    TestRc        rc;
-   auto&         pmsg = static_cast< const PotsMessage& >(msg);
+   auto&         pmsg = static_cast<const PotsMessage&>(msg);
    PotsRingInfo* info;
    bool          ring = false;
    auto          exists = false;
@@ -827,7 +827,7 @@ CliParm* PotsScanParameter::CreateCliParm(Usage use) const
 void PotsScanParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const PotsScanInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const PotsScanInfo*>(bytes)->Display(stream, prefix);
 }
 
 //------------------------------------------------------------------------------
@@ -838,7 +838,7 @@ Parameter::TestRc PotsScanParameter::VerifyMsg
    Debug::ft("PotsScanParameter.VerifyMsg");
 
    TestRc        rc;
-   auto&         pmsg = static_cast< const PotsMessage& >(msg);
+   auto&         pmsg = static_cast<const PotsMessage&>(msg);
    PotsScanInfo* info;
    string        scan;
    auto          digits = false;

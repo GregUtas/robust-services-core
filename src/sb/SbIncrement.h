@@ -158,7 +158,7 @@ private:
 //
 class SbIncrement : public NodeBase::CliIncrement
 {
-   friend class NodeBase::Singleton< SbIncrement >;
+   friend class NodeBase::Singleton<SbIncrement>;
 
    //  Private because this is a singleton.
    //

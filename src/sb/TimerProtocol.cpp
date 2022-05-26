@@ -57,8 +57,8 @@ TimerProtocol::TimerProtocol() : TlvProtocol(TimerProtocolId, NIL_ID)
 
    //  Create the timeout signal and parameter.
    //
-   Singleton< TimeoutSignal >::Instance();
-   Singleton< TimeoutParameter >::Instance();
+   Singleton<TimeoutSignal>::Instance();
+   Singleton<TimeoutParameter>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ TimeoutParameter::~TimeoutParameter()
 void TimeoutParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   auto toi = reinterpret_cast< const TimeoutInfo* >(bytes);
+   auto toi = reinterpret_cast<const TimeoutInfo*>(bytes);
    toi->Display(stream, prefix);
 }
 }

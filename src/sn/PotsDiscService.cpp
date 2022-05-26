@@ -33,7 +33,7 @@ namespace PotsBase
 {
 class PotsDiscNull : public State
 {
-   friend class Singleton< PotsDiscNull >;
+   friend class Singleton<PotsDiscNull>;
 
    PotsDiscNull();
    ~PotsDiscNull() = default;
@@ -56,7 +56,7 @@ PotsDiscService::PotsDiscService() : Service(PotsDiscServiceId, false, true)
 {
    Debug::ft("PotsDiscService.ctor");
 
-   Singleton< PotsDiscNull >::Instance();
+   Singleton<PotsDiscNull>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -112,10 +112,10 @@ EventHandler::Rc PotsDiscSsm::ProcessInitAck
 {
    Debug::ft("PotsDiscSsm.ProcessInitAck");
 
-   auto& pssm = static_cast< BcSsm& >(*Parent());
+   auto& pssm = static_cast<BcSsm&>(*Parent());
    auto stid = pssm.CurrState();
-   auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
-   auto pci = pmsg->FindType< CauseInfo >(PotsParameter::Cause);
+   auto pmsg = static_cast<PotsMessage*>(Context::ContextMsg());
+   auto pci = pmsg->FindType<CauseInfo>(PotsParameter::Cause);
 
    if((stid == BcState::Null) && (pci != nullptr))
    {

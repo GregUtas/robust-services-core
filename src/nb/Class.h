@@ -46,7 +46,7 @@ namespace NodeBase
 //
 class Class : public Immutable
 {
-   friend class Registry< Class >;
+   friend class Registry<Class>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -59,7 +59,7 @@ public:
    //  Overridden by a subclass to call any of SetVptr, SetTemplate, and
    //  SetQuasiSingleton after its singleton is created.  The singleton is
    //  created during system initialization by
-   //    Singleton< MyClass >::Instance()->Initialize();
+   //    Singleton<MyClass>::Instance()->Initialize();
    //  If a subclass uses all of these techniques, its Initialize function
    //  looks like this:
    //    auto obj1 = new MyObject(...);
@@ -176,7 +176,7 @@ private:
    //  Data that changes too frequently to unprotect and reprotect memory
    //  when it needs to be modified.
    //
-   std::unique_ptr< ClassDynamic > dyn_;
+   std::unique_ptr<ClassDynamic> dyn_;
 };
 }
 #endif

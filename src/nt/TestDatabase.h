@@ -40,7 +40,7 @@ namespace NodeTools
 //
 class TestDatabase : public NodeBase::Temporary
 {
-   friend class NodeBase::Singleton< TestDatabase >;
+   friend class NodeBase::Singleton<TestDatabase>;
 public:
    //  The state of a test.
    //
@@ -152,11 +152,11 @@ private:
 
    //  A tuple for a test's name and its associated information.
    //
-   typedef std::pair< std::string, TestInfo > TestData;
+   typedef std::pair<std::string, TestInfo> TestData;
 
    //  A database of tests.
    //
-   typedef std::map< std::string, TestInfo > Tests;
+   typedef std::map<std::string, TestInfo> Tests;
 
    //  The tests in the database.
    //

@@ -1451,7 +1451,7 @@ private:
 //  Parameters associated with a template declaration.
 //
 //  This is defined here, rather than in CxxToken, because its parms_
-//  member causes the instantiation of std::unique_ptr< TemplateParm >,
+//  member causes the instantiation of std::unique_ptr<TemplateParm>,
 //  which needs to see the definition of TemplateParm (above).
 //
 class TemplateParms : public CxxToken

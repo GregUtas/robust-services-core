@@ -786,7 +786,7 @@ CodeFile* Include::FindFile() const
 {
    Debug::ft("Include.FindFile");
 
-   auto lib = Singleton< Library >::Instance();
+   auto lib = Singleton<Library>::Instance();
    if(Name().empty()) return nullptr;
    return lib->FindFile(Name());
 }
@@ -815,8 +815,8 @@ Macro::Macro(const string& name) :
 {
    Debug::ft("Macro.ctor");
 
-   SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
-   Singleton< CxxSymbols >::Instance()->InsertMacro(this);
+   SetScope(Singleton<CxxRoot>::Instance()->GlobalNamespace());
+   Singleton<CxxSymbols>::Instance()->InsertMacro(this);
 }
 
 //------------------------------------------------------------------------------
@@ -825,7 +825,7 @@ Macro::~Macro()
 {
    Debug::ftnt("Macro.dtor");
 
-   Singleton< CxxSymbols >::Extant()->EraseMacro(this);
+   Singleton<CxxSymbols>::Extant()->EraseMacro(this);
 }
 
 //------------------------------------------------------------------------------
@@ -973,7 +973,7 @@ void MacroName::EnterBlock()
 
 CxxScope* MacroName::GetScope() const
 {
-   return Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   return Singleton<CxxRoot>::Instance()->GlobalNamespace();
 }
 
 //------------------------------------------------------------------------------
@@ -1007,15 +1007,15 @@ CxxScoped* MacroName::Referent() const
    //  but only in a conditional compilation directive that caused it to be
    //  added to the symbol table, which is done at the bottom of this function.
    //
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto file = Context::File();
-   auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto scope = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    SymbolView view;
    ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, view);
 
    if(ref_ != nullptr)
    {
-      auto macro = static_cast< Macro* >(ref_);
+      auto macro = static_cast<Macro*>(ref_);
       predefined_ = macro->IsDefined();
       macro->WasRead();
       return ref_;
@@ -1028,7 +1028,7 @@ CxxScoped* MacroName::Referent() const
 
    if(ref_ != nullptr)
    {
-      auto macro = static_cast< Macro* >(ref_);
+      auto macro = static_cast<Macro*>(ref_);
       macro->WasRead();
       return ref_;
    }
@@ -1039,7 +1039,7 @@ CxxScoped* MacroName::Referent() const
    auto name = name_;
    MacroPtr macro(new Define(name));
    ref_ = macro.get();
-   Singleton< CxxRoot >::Instance()->AddMacro(macro);
+   Singleton<CxxRoot>::Instance()->AddMacro(macro);
    ref_->WasRead();
    return ref_;
 }

@@ -35,7 +35,7 @@ namespace ServiceNode
 //
 class SnModule : public Module
 {
-   friend class Singleton< SnModule >;
+   friend class Singleton<SnModule>;
 
    //  Private because this is a singleton.
    //

@@ -49,7 +49,7 @@ fixed_string TransTraceToolExpl = "traces SessionBase transactions";
 
 class TransTraceTool : public Tool
 {
-   friend class Singleton< TransTraceTool >;
+   friend class Singleton<TransTraceTool>;
 
    TransTraceTool() : Tool(TransTracer, 't', true) { }
    ~TransTraceTool() = default;
@@ -64,7 +64,7 @@ fixed_string BufferTraceToolExpl = "traces SessionBase IP buffers";
 
 class BufferTraceTool : public Tool
 {
-   friend class Singleton< BufferTraceTool >;
+   friend class Singleton<BufferTraceTool>;
 
    BufferTraceTool() : Tool(BufferTracer, 'b', true) { }
    ~BufferTraceTool() = default;
@@ -79,7 +79,7 @@ fixed_string ContextTraceToolExpl = "traces SessionBase contexts";
 
 class ContextTraceTool : public Tool
 {
-   friend class Singleton< ContextTraceTool >;
+   friend class Singleton<ContextTraceTool>;
 
    ContextTraceTool() : Tool(ContextTracer, 'c', true) { }
    ~ContextTraceTool() = default;
@@ -113,9 +113,9 @@ SbTracer::SbTracer() :
 {
    Debug::ft("SbTracer.ctor");
 
-   Singleton< TransTraceTool >::Instance();
-   Singleton< BufferTraceTool >::Instance();
-   Singleton< ContextTraceTool >::Instance();
+   Singleton<TransTraceTool>::Instance();
+   Singleton<BufferTraceTool>::Instance();
+   Singleton<ContextTraceTool>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
 {
    Debug::ft(SbTracer_ClearSelections);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    switch(filter)
    {
@@ -167,7 +167,7 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
       break;
 
    case TraceAll:
-      Singleton< NwTracer >::Instance()->ClearSelections(TraceAll);
+      Singleton<NwTracer>::Instance()->ClearSelections(TraceAll);
       ClearSelections(TraceFactory);
       ClearSelections(TraceProtocol);
       ClearSelections(TraceSignal);
@@ -220,13 +220,13 @@ TraceStatus SbTracer::MsgStatus(const Message& msg, MsgDirection dir) const
 
    TraceStatus status;
 
-   if(Singleton< TraceBuffer >::Instance()->FilterIsOn(TraceSignal))
+   if(Singleton<TraceBuffer>::Instance()->FilterIsOn(TraceSignal))
    {
       status = SignalStatus(msg.GetProtocol(), msg.GetSignal());
       if(status != TraceDefault) return status;
    }
 
-   status = Singleton< NwTracer >::Instance()->BuffStatus(*msg.Buffer(), dir);
+   status = Singleton<NwTracer>::Instance()->BuffStatus(*msg.Buffer(), dir);
    if(status != TraceDefault) return status;
 
    status = factories_[msg.RxSbAddr().fid];
@@ -265,13 +265,13 @@ void SbTracer::QuerySelections(ostream& stream) const
 {
    Debug::ft("SbTracer.QuerySelections");
 
-   auto nwt = Singleton< NwTracer >::Instance();
+   auto nwt = Singleton<NwTracer>::Instance();
 
    nwt->QuerySelections(stream);
 
    stream << FactoriesSelected << CRLF;
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    if(!buff->FilterIsOn(TraceFactory))
    {
@@ -279,7 +279,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      auto reg = Singleton< FactoryRegistry >::Instance();
+      auto reg = Singleton<FactoryRegistry>::Instance();
 
       for(auto i = 0; i <= Factory::MaxId; ++i)
       {
@@ -299,7 +299,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      auto reg = Singleton< ProtocolRegistry >::Instance();
+      auto reg = Singleton<ProtocolRegistry>::Instance();
 
       for(auto i = 0; i <= Protocol::MaxId; ++i)
       {
@@ -319,7 +319,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      auto reg = Singleton< ProtocolRegistry >::Instance();
+      auto reg = Singleton<ProtocolRegistry>::Instance();
 
       for(auto i = 0; i < MaxSignalEntries; ++i)
       {
@@ -341,7 +341,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      auto reg = Singleton< ServiceRegistry >::Instance();
+      auto reg = Singleton<ServiceRegistry>::Instance();
 
       for(auto i = 0; i <= Service::MaxId; ++i)
       {
@@ -365,12 +365,12 @@ TraceRc SbTracer::SelectFactory(FactoryId fid, TraceStatus status)
 {
    Debug::ft("SbTracer.SelectFactory");
 
-   if(Singleton< FactoryRegistry >::Instance()->GetFactory(fid) == nullptr)
+   if(Singleton<FactoryRegistry>::Instance()->GetFactory(fid) == nullptr)
    {
       return NoSuchItem;
    }
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    factories_[fid] = status;
 
@@ -390,12 +390,12 @@ TraceRc SbTracer::SelectProtocol(ProtocolId prid, TraceStatus status)
 {
    Debug::ft("SbTracer.SelectProtocol");
 
-   if(Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid) == nullptr)
+   if(Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid) == nullptr)
    {
       return NoSuchItem;
    }
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    protocols_[prid] = status;
 
@@ -415,12 +415,12 @@ TraceRc SbTracer::SelectService(ServiceId sid, TraceStatus status)
 {
    Debug::ft("SbTracer.SelectService");
 
-   if(Singleton< ServiceRegistry >::Instance()->GetService(sid) == nullptr)
+   if(Singleton<ServiceRegistry>::Instance()->GetService(sid) == nullptr)
    {
       return NoSuchItem;
    }
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    services_[sid] = status;
 
@@ -441,13 +441,13 @@ TraceRc SbTracer::SelectSignal
 {
    Debug::ft("SbTracer.SelectSignal");
 
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
 
    if(pro == nullptr) return NoSuchItem;
 
    if(pro->GetSignal(sid) == nullptr) return NoSuchItem;
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    auto i = FindSignal(prid, sid);
 
    if(i >= 0)
@@ -481,7 +481,7 @@ TraceRc SbTracer::SelectTimers(TraceStatus status)
 {
    Debug::ft("SbTracer.SelectTimers");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    timers_ = status;
 
@@ -504,7 +504,7 @@ bool SbTracer::ServiceIsTraced(ServiceId sid) const
    auto status = services_[sid];
    if(status == TraceIncluded) return true;
    if(status == TraceExcluded) return false;
-   return Singleton< TraceBuffer >::Instance()->FilterIsOn(TraceAll);
+   return Singleton<TraceBuffer>::Instance()->FilterIsOn(TraceAll);
 }
 
 //------------------------------------------------------------------------------

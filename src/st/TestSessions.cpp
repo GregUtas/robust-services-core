@@ -53,7 +53,7 @@ namespace SessionTools
 //
 class TestInjectSignal : public TestSignal
 {
-   friend class Singleton< TestInjectSignal >;
+   friend class Singleton<TestInjectSignal>;
 
    TestInjectSignal();
    ~TestInjectSignal() = default;
@@ -77,7 +77,7 @@ protected:
 
 class TestNull : public TestState
 {
-   friend class Singleton< TestNull >;
+   friend class Singleton<TestNull>;
 
    TestNull();
    ~TestNull() = default;
@@ -85,7 +85,7 @@ class TestNull : public TestState
 
 class TestActive : public TestState
 {
-   friend class Singleton< TestActive >;
+   friend class Singleton<TestActive>;
 
    TestActive();
    ~TestActive() = default;
@@ -139,7 +139,7 @@ protected:
 
 class TestAnalyzeUserMessage : public TestEventHandler
 {
-   friend class Singleton< TestAnalyzeUserMessage >;
+   friend class Singleton<TestAnalyzeUserMessage>;
 
    TestAnalyzeUserMessage() = default;
    ~TestAnalyzeUserMessage() = default;
@@ -149,7 +149,7 @@ class TestAnalyzeUserMessage : public TestEventHandler
 
 class TestAnalyzeNetworkMessage : public TestEventHandler
 {
-   friend class Singleton< TestAnalyzeNetworkMessage >;
+   friend class Singleton<TestAnalyzeNetworkMessage>;
 
    TestAnalyzeNetworkMessage() = default;
    ~TestAnalyzeNetworkMessage() = default;
@@ -159,7 +159,7 @@ class TestAnalyzeNetworkMessage : public TestEventHandler
 
 class TestNuInject : public TestEventHandler
 {
-   friend class Singleton< TestNuInject >;
+   friend class Singleton<TestNuInject>;
 
    TestNuInject() = default;
    ~TestNuInject() = default;
@@ -169,7 +169,7 @@ class TestNuInject : public TestEventHandler
 
 class TestNuVerify : public TestEventHandler
 {
-   friend class Singleton< TestNuVerify >;
+   friend class Singleton<TestNuVerify>;
 
    TestNuVerify() = default;
    ~TestNuVerify() = default;
@@ -179,7 +179,7 @@ class TestNuVerify : public TestEventHandler
 
 class TestAcInject : public TestEventHandler
 {
-   friend class Singleton< TestAcInject >;
+   friend class Singleton<TestAcInject>;
 
    TestAcInject() = default;
    ~TestAcInject() = default;
@@ -189,7 +189,7 @@ class TestAcInject : public TestEventHandler
 
 class TestAcVerify : public TestEventHandler
 {
-   friend class Singleton< TestAcVerify >;
+   friend class Singleton<TestAcVerify>;
 
    TestAcVerify() = default;
    ~TestAcVerify() = default;
@@ -364,7 +364,7 @@ TestProtocol::TestProtocol() : TlvProtocol(TestProtocolId, TimerProtocolId)
 
    //  Create the test signals.
    //
-   Singleton< TestInjectSignal >::Instance();
+   Singleton<TestInjectSignal>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -440,7 +440,7 @@ Message* TestMessage::GetAppMsg()
 
 //------------------------------------------------------------------------------
 
-void TestMessage::GetSubtended(std::vector< Base* >& objects) const
+void TestMessage::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("TestMessage.GetSubtended");
 
@@ -477,7 +477,7 @@ void TestMessage::UpdateTestPsm() const
 {
    Debug::ft("TestMessage.UpdateTestPsm");
 
-   auto tpsm = static_cast< TestPsm* >(Psm());
+   auto tpsm = static_cast<TestPsm*>(Psm());
 
    tpsm->SetCliId(*cli_, tid_);
 }
@@ -492,7 +492,7 @@ TestPsm::TestPsm() : ProtocolSM(TestFactoryId),
 
    SetState(Active);
 
-   auto tssm = static_cast< TestSsm* >(RootSsm());
+   auto tssm = static_cast<TestSsm*>(RootSsm());
    tssm->SetTestPsm(this);
 }
 
@@ -540,7 +540,7 @@ TestPsm* TestPsm::Find(const MsgPort& port)
 
    for(auto p = ctx->FirstPsm(); p != nullptr; ctx->NextPsm(p))
    {
-      if(p->GetFactory() == TestFactoryId) return static_cast< TestPsm* >(p);
+      if(p->GetFactory() == TestFactoryId) return static_cast<TestPsm*>(p);
    }
 
    return nullptr;
@@ -656,20 +656,20 @@ TestService::TestService() : Service(TestServiceId)
 {
    Debug::ft("TestService.ctor");
 
-   Singleton< TestNull >::Instance();
-   Singleton< TestActive >::Instance();
+   Singleton<TestNull>::Instance();
+   Singleton<TestActive>::Instance();
 
-   BindHandler(*Singleton< TestAnalyzeUserMessage >::Instance(),
+   BindHandler(*Singleton<TestAnalyzeUserMessage>::Instance(),
       TestEventHandler::AnalyzeUserMessage);
-   BindHandler(*Singleton< TestAnalyzeNetworkMessage >::Instance(),
+   BindHandler(*Singleton<TestAnalyzeNetworkMessage>::Instance(),
       TestEventHandler::AnalyzeNetworkMessage);
-   BindHandler(*Singleton< TestNuInject >::Instance(),
+   BindHandler(*Singleton<TestNuInject>::Instance(),
       TestEventHandler::NuInject);
-   BindHandler(*Singleton< TestNuVerify >::Instance(),
+   BindHandler(*Singleton<TestNuVerify>::Instance(),
       TestEventHandler::NuVerify);
-   BindHandler(*Singleton< TestAcInject >::Instance(),
+   BindHandler(*Singleton<TestAcInject>::Instance(),
       TestEventHandler::AcInject);
-   BindHandler(*Singleton< TestAcVerify >::Instance(),
+   BindHandler(*Singleton<TestAcVerify>::Instance(),
       TestEventHandler::AcVerify);
 
    BindEventName(TestInjectEventStr, TestEvent::Inject);
@@ -782,7 +782,7 @@ TestSsm::TestSsm(ProtocolSM& psm) : RootServiceSM(TestServiceId),
    Debug::ft("TestSsm.ctor");
 
    if(psm.GetFactory() == TestFactoryId)
-      SetTestPsm(static_cast< TestPsm* >(&psm));
+      SetTestPsm(static_cast<TestPsm*>(&psm));
    else
       SetAppPsm(&psm);
 }
@@ -887,8 +887,8 @@ EventHandler::Rc TestAnalyzeUserMessage::ProcessEvent
 {
    Debug::ft("TestAnalyzeUserMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto tmsg = static_cast< TestMessage* >(ame.Msg());
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto tmsg = static_cast<TestMessage*>(ame.Msg());
    auto sid = tmsg->GetSignal();
 
    if(sid == TestSignal::Inject)
@@ -921,7 +921,7 @@ EventHandler::Rc TestNuInject::ProcessEvent
 
    //  Update the test PSM with the CLI thread and test session identifier.
    //
-   auto tmsg = static_cast< TestMessage* >(Context::ContextMsg());
+   auto tmsg = static_cast<TestMessage*>(Context::ContextMsg());
 
    tmsg->UpdateTestPsm();
 
@@ -929,8 +929,8 @@ EventHandler::Rc TestNuInject::ProcessEvent
    //
    auto amsg = tmsg->GetAppMsg();
    auto afid = amsg->Header()->txAddr.fid;
-   auto afac = Singleton< FactoryRegistry >::Instance()->GetFactory(afid);
-   auto apsm = static_cast< SsmFactory* >(afac)->AllocOgPsm(*amsg);
+   auto afac = Singleton<FactoryRegistry>::Instance()->GetFactory(afid);
+   auto apsm = static_cast<SsmFactory*>(afac)->AllocOgPsm(*amsg);
 
    if(apsm == nullptr)
    {
@@ -941,7 +941,7 @@ EventHandler::Rc TestNuInject::ProcessEvent
    //  Save the application PSM and queue the application message on its PSM.
    //  The message was built outside of a PSM, so set its receiver and sender.
    //
-   auto& tssm = static_cast< TestSsm& >(ssm);
+   auto& tssm = static_cast<TestSsm&>(ssm);
    tssm.SetAppPsm(apsm);
    apsm->EnqOgMsg(*amsg);
    tssm.SetNextState(TestState::Active);
@@ -957,7 +957,7 @@ EventHandler::Rc TestNuVerify::ProcessEvent
 
    //  Create the UPSM and enter the Active state.
    //
-   auto& tssm = static_cast< TestSsm& >(ssm);
+   auto& tssm = static_cast<TestSsm&>(ssm);
    new TestPsm;
    tssm.SetNextState(TestState::Active);
    return Suspend;
@@ -972,8 +972,8 @@ EventHandler::Rc TestAcInject::ProcessEvent
 
    //  Queue the application message on its PSM.
    //
-   auto tmsg = static_cast< TestMessage* >(Context::ContextMsg());
-   auto& tssm = static_cast< TestSsm& >(ssm);
+   auto tmsg = static_cast<TestMessage*>(Context::ContextMsg());
+   auto& tssm = static_cast<TestSsm&>(ssm);
    auto amsg = tmsg->GetAppMsg();
    auto apsm = tssm.GetAppPsm();
 

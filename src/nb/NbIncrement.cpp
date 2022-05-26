@@ -183,14 +183,14 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
    {
    case AlarmsListIndex:
       if(!cli.EndOfInput()) return -1;
-      Singleton< AlarmRegistry >::Instance()->Output(*cli.obuf, 2, false);
+      Singleton<AlarmRegistry>::Instance()->Output(*cli.obuf, 2, false);
       break;
 
    case AlarmsExplainIndex:
       if(!GetString(name, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
 
-      alarm = Singleton< AlarmRegistry >::Instance()->Find(name);
+      alarm = Singleton<AlarmRegistry>::Instance()->Find(name);
 
       if(alarm == nullptr)
       {
@@ -215,7 +215,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
       if(!GetString(name, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
 
-      alarm = Singleton< AlarmRegistry >::Instance()->Find(name);
+      alarm = Singleton<AlarmRegistry>::Instance()->Find(name);
 
       if(alarm == nullptr)
       {
@@ -300,7 +300,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetTextIndex(index, cli)) return -1;
 
-   auto thr = Singleton< ObjectPoolAudit >::Instance();
+   auto thr = Singleton<ObjectPoolAudit>::Instance();
 
    switch(index)
    {
@@ -358,7 +358,7 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
    if(GetCBV(*this, cli, c, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton< MsgBufferPool >::Instance();
+   auto pool = Singleton<MsgBufferPool>::Instance();
    auto num = pool->InUseCount();
    auto opts = (v ? VerboseOpt : NoFlags);
 
@@ -466,7 +466,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
 
    id_t index;
    string key, expl, value;
-   auto reg = Singleton< CfgParmRegistry >::Instance();
+   auto reg = Singleton<CfgParmRegistry>::Instance();
    CfgParm* parm;
    RestartLevel level;
 
@@ -571,18 +571,18 @@ word ClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft("ClearCommand.ProcessSubcommand");
 
    TraceRc rc;
-   auto nbt = Singleton< NbTracer >::Instance();
+   auto nbt = Singleton<NbTracer>::Instance();
    word id = 0;
 
    switch(index)
    {
    case BufferIndex:
       if(!cli.EndOfInput()) return -1;
-      rc = Singleton< TraceBuffer >::Instance()->Clear();
+      rc = Singleton<TraceBuffer>::Instance()->Clear();
       break;
    case ToolsIndex:
       if(!cli.EndOfInput()) return -1;
-      rc = Singleton< TraceBuffer >::Instance()->ClearTools();
+      rc = Singleton<TraceBuffer>::Instance()->ClearTools();
       break;
    case SelectionsIndex:
       if(!cli.EndOfInput()) return -1;
@@ -690,7 +690,7 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
    word id;
    bool all, v = false;
    Daemon* daemon = nullptr;
-   auto reg = Singleton< DaemonRegistry >::Instance();
+   auto reg = Singleton<DaemonRegistry>::Instance();
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -768,7 +768,7 @@ word DeferredCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   Singleton< DeferredRegistry >::Instance()->Output(*cli.obuf, 2, v);
+   Singleton<DeferredRegistry>::Instance()->Output(*cli.obuf, 2, v);
    return 0;
 }
 
@@ -845,7 +845,7 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
-   static_cast< const Base* >(p)->Output(*cli.obuf, 2, v);
+   static_cast<const Base*>(p)->Output(*cli.obuf, 2, v);
    return 0;
 }
 
@@ -888,7 +888,7 @@ word DumpCommand::ProcessCommand(CliThread& cli) const
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
-   strBytes(*cli.obuf, spaces(2), static_cast< const byte_t* >(p), n);
+   strBytes(*cli.obuf, spaces(2), static_cast<const byte_t*>(p), n);
    return 0;
 }
 
@@ -964,7 +964,7 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft("ExcludeCommand.ProcessSubcommand");
 
    TraceRc rc;
-   auto nbt = Singleton< NbTracer >::Instance();
+   auto nbt = Singleton<NbTracer>::Instance();
    word id;
 
    switch(index)
@@ -1158,7 +1158,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       if(!GetCharParm(scale, cli)) return -1;
       if(cli.EndOfInput())
       {
-         auto config = Singleton< HeapCfg >::Instance();
+         auto config = Singleton<HeapCfg>::Instance();
          auto type = MemoryType(memtype);
 
          switch(scale)
@@ -1369,7 +1369,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       return comm->ExplainCommand(*cli.obuf, true);  // [4/5]
    }
 
-   incr = Singleton< CliRegistry >::Instance()->FindIncrement(s1);
+   incr = Singleton<CliRegistry>::Instance()->FindIncrement(s1);
 
    if(incr == nullptr)
    {
@@ -1574,7 +1574,7 @@ word IncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft("IncludeCommand.ProcessSubcommand");
 
    TraceRc rc;
-   auto nbt = Singleton< NbTracer >::Instance();
+   auto nbt = Singleton<NbTracer>::Instance();
    word id;
    id_t setHowIndex;
    bool flag;
@@ -1585,7 +1585,7 @@ word IncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       if(!GetTextIndex(setHowIndex, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
       flag = (setHowIndex == SetHowParm::On);
-      rc = Singleton< TraceBuffer >::Instance()->SelectAll(flag);
+      rc = Singleton<TraceBuffer>::Instance()->SelectAll(flag);
       break;
    case IncludeFactionIndex:
       if(!GetIntParm(id, cli)) return -1;
@@ -1626,7 +1626,7 @@ word IncrsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("IncrsCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   Singleton< CliRegistry >::Instance()->ListIncrements(*cli.obuf);
+   Singleton<CliRegistry>::Instance()->ListIncrements(*cli.obuf);
    return 0;
 }
 
@@ -1786,7 +1786,7 @@ static bool FindGroupAndLog(const string& name, word id,
 {
    Debug::ft("NodeBase.FindGroupAndLog");
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
+   auto reg = Singleton<LogGroupRegistry>::Instance();
    group = reg->FindGroup(name);
 
    if(group == nullptr)
@@ -1832,7 +1832,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Log* log;
    LogGroup* group;
    LogBuffer* buff;
-   auto reg = Singleton< LogBufferRegistry >::Instance();
+   auto reg = Singleton<LogBufferRegistry>::Instance();
 
    switch(index)
    {
@@ -1842,11 +1842,11 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
       if(name.empty())
       {
-         Singleton< LogGroupRegistry >::Instance()->Output(*cli.obuf, 2, true);
+         Singleton<LogGroupRegistry>::Instance()->Output(*cli.obuf, 2, true);
       }
       else
       {
-         group = Singleton< LogGroupRegistry >::Instance()->FindGroup(name);
+         group = Singleton<LogGroupRegistry>::Instance()->FindGroup(name);
          if(group == nullptr) return cli.Report(-1, NoLogGroupExpl);
          group->Output(*cli.obuf, 2, true);
       }
@@ -1855,7 +1855,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    case GroupsIndex:
       if(!cli.EndOfInput()) return -1;
-      Singleton< LogGroupRegistry >::Instance()->Output(*cli.obuf, 2, false);
+      Singleton<LogGroupRegistry>::Instance()->Output(*cli.obuf, 2, false);
       break;
 
    case ExplainIndex:
@@ -1950,7 +1950,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       {
          FunctionGuard guard(Guard_ImmUnprotect);
 
-         if(!Singleton< LogBufferRegistry >::Instance()->Free(id))
+         if(!Singleton<LogBufferRegistry>::Instance()->Free(id))
          {
             return cli.Report(-1, "That buffer is either active or invalid.");
          }
@@ -2007,7 +2007,7 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< ModuleRegistry >::Extant();
+   auto reg = Singleton<ModuleRegistry>::Extant();
 
    if(all)
    {
@@ -2061,7 +2061,7 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< MutexRegistry >::Instance();
+   auto reg = Singleton<MutexRegistry>::Instance();
 
    if(all)
    {
@@ -2115,7 +2115,7 @@ word PoolsCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< ObjectPoolRegistry >::Instance();
+   auto reg = Singleton<ObjectPoolRegistry>::Instance();
 
    if(all)
    {
@@ -2169,7 +2169,7 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
 
    if(all)
    {
@@ -2231,13 +2231,13 @@ word QueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    switch(index)
    {
    case BufferIndex:
-      Singleton< TraceBuffer >::Instance()->Query(*cli.obuf);
+      Singleton<TraceBuffer>::Instance()->Query(*cli.obuf);
       break;
    case ToolsIndex:
-      Singleton< TraceBuffer >::Instance()->QueryTools(*cli.obuf);
+      Singleton<TraceBuffer>::Instance()->QueryTools(*cli.obuf);
       break;
    case SelectionsIndex:
-      Singleton< NbTracer >::Instance()->QuerySelections(*cli.obuf);
+      Singleton<NbTracer>::Instance()->QuerySelections(*cli.obuf);
       break;
    default:
       return CliCommand::ProcessSubcommand(cli, index);
@@ -2528,7 +2528,7 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
-   rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, opts);
+   rc = Singleton<TraceBuffer>::Instance()->DisplayTrace(stream, opts);
 
    if(rc == TraceOk)
    {
@@ -2665,7 +2665,7 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       if(!GetIntParm(tid, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
       {
-         auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
+         auto thr = Singleton<ThreadRegistry>::Instance()->GetThread(tid);
          if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
 
          auto daemon = thr->GetDaemon();
@@ -2895,8 +2895,8 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    string toolList;
    string expl;
    bool flag;
-   auto buff = Singleton< TraceBuffer >::Instance();
-   auto reg = Singleton< ToolRegistry >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
+   auto reg = Singleton<ToolRegistry>::Instance();
 
    switch(index)
    {
@@ -2995,7 +2995,7 @@ word StartCommand::ProcessCommand(CliThread& cli) const
 
    if(!cli.EndOfInput()) return -1;
 
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(EMPTY_STR);
+   auto rc = Singleton<TraceBuffer>::Instance()->StartTracing(EMPTY_STR);
    return ExplainTraceRc(cli, rc);
 }
 
@@ -3083,7 +3083,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(StatisticsCommand_ProcessCommand);
 
    auto rc = 0;
-   auto reg = Singleton< StatisticsRegistry >::Instance();
+   auto reg = Singleton<StatisticsRegistry>::Instance();
    id_t index;
    word gid, mid = 0;
    bool all, first, v = false;
@@ -3228,7 +3228,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    *cli.obuf << "OBJECT POOLS" << CRLF;
    *cli.obuf << PoolsHeader << CRLF;
 
-   auto& objpools = Singleton< ObjectPoolRegistry >::Instance()->Pools();
+   auto& objpools = Singleton<ObjectPoolRegistry>::Instance()->Pools();
 
    for(auto p = objpools.First(); p != nullptr; objpools.Next(p))
    {
@@ -3257,7 +3257,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
    auto prefix = spaces(2);
    auto active = false;
-   auto& alarms = Singleton< AlarmRegistry >::Instance()->Alarms();
+   auto& alarms = Singleton<AlarmRegistry>::Instance()->Alarms();
 
    for(auto a = alarms.First(); a != nullptr; alarms.Next(a))
    {
@@ -3294,7 +3294,7 @@ word StopCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("StopCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
-   Singleton< TraceBuffer >::Instance()->StopTracing();
+   Singleton<TraceBuffer>::Instance()->StopTracing();
    return ExplainTraceRc(cli, TraceOk);
 }
 
@@ -3394,8 +3394,8 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
    id_t index;
    string name, value, key;
    bool all, del;
-   auto preg = Singleton< CfgParmRegistry >::Instance();
-   auto sreg = Singleton< SymbolRegistry >::Instance();
+   auto preg = Singleton<CfgParmRegistry>::Instance();
+   auto sreg = Singleton<SymbolRegistry>::Instance();
    auto& syms = sreg->Symbols();
    Symbol* sym;
    size_t count = 0;
@@ -3519,7 +3519,7 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
    if(!cli.EndOfInput()) return -1;
 
    auto size = ThreadRegistry::Size();
-   auto reg = Singleton< ThreadRegistry >::Instance();
+   auto reg = Singleton<ThreadRegistry>::Instance();
 
    if(c)
    {
@@ -3565,7 +3565,7 @@ word ToolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ToolsCommand.ProcessCommand");
 
-   auto& tools = Singleton< ToolRegistry >::Instance()->Tools();
+   auto& tools = Singleton<ToolRegistry>::Instance()->Tools();
 
    //  Display the available tools.  If a tool's CLI character is not
    //  printable, it is not supported through the CLI.  If a tool is
@@ -3667,7 +3667,7 @@ void NbIncrement::Startup(RestartLevel level)
 
    //  Define symbols related to memory types.
    //
-   auto reg = Singleton< SymbolRegistry >::Instance();
+   auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("mem.temp", MemTemporary);
    reg->BindSymbol("mem.dyn", MemDynamic);
    reg->BindSymbol("mem.pers", MemPersistent);

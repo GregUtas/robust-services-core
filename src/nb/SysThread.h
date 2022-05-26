@@ -52,7 +52,7 @@ namespace NodeBase
 //
 class SysThread : public Permanent
 {
-   friend std::unique_ptr< SysThread >::deleter_type;
+   friend std::unique_ptr<SysThread>::deleter_type;
    friend class Debug;
    friend class Thread;
    friend class ThreadRegistry;
@@ -169,7 +169,7 @@ private:
       StatusFlag_N      // number of flags
    };
 
-   typedef std::bitset< StatusFlag_N > StatusFlags;
+   typedef std::bitset<StatusFlag_N> StatusFlags;
 
    //  Overridden to display member variables.
    //

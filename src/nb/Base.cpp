@@ -37,7 +37,7 @@ void Base::ClaimBlocks()
 {
    Debug::ft("Base.ClaimBlocks");
 
-   std::vector< Base* > objects;
+   std::vector<Base*> objects;
 
    //  Claim this object and all of the objects that it owns.
    //
@@ -60,11 +60,11 @@ void Base::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void Base::GetSubtended(std::vector< Base* >& objects) const
+void Base::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("Base.GetSubtended");
 
-   objects.push_back(const_cast< Base* >(this));
+   objects.push_back(const_cast<Base*>(this));
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void Base::LogSubtended(ostream& stream,
 {
    Debug::ft("Base.LogSubtended");
 
-   std::vector< Base* > objects;
+   std::vector<Base*> objects;
 
    GetSubtended(objects);
 
@@ -92,7 +92,7 @@ void Base::Nullify(size_t n)
    //  Set this object's vptr to a value that will cause a trap if a virtual
    //  function on the object is invoked.
    //
-   auto obj = reinterpret_cast< ObjectStruct* >(this);
+   auto obj = reinterpret_cast<ObjectStruct*>(this);
    obj->vptr = BAD_POINTER;
 
    if(n > 0)
@@ -155,7 +155,7 @@ Base::vptr_t Base::Vptr() const
 {
    //  Return this object's vptr.
    //
-   auto obj = reinterpret_cast< const ObjectStruct* >(this);
+   auto obj = reinterpret_cast<const ObjectStruct*>(this);
    return obj->vptr;
 }
 }

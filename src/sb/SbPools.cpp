@@ -102,7 +102,7 @@ void ContextPool::ClaimBlocks()
 {
    Debug::ft("ContextPool.ClaimBlocks");
 
-   Singleton< InvokerPoolRegistry >::Instance()->ClaimBlocks();
+   Singleton<InvokerPoolRegistry>::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ MsgPort* MsgPortPool::FindPeerPort(const GlobalAddress& remAddr) const
    //
    for(auto obj = FirstUsed(bid); obj != nullptr; obj = NextUsed(bid))
    {
-      auto port = static_cast< MsgPort* >(obj);
+      auto port = static_cast<MsgPort*>(obj);
 
       if(port->remAddr_ == remAddr)
       {
@@ -258,7 +258,7 @@ void ProtocolSMPool::ClaimBlocks()
    //
    size_t count = 0;
 
-   auto psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
+   auto psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
 
    while(psm != nullptr)
    {
@@ -275,7 +275,7 @@ void ProtocolSMPool::ClaimBlocks()
          }
       }
 
-      psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
+      psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
    }
 
    PsmToAudit_ = NIL_ID;
@@ -351,7 +351,7 @@ void TimerPool::ClaimBlocks()
 {
    Debug::ft("TimerPool.ClaimBlocks");
 
-   Singleton< TimerRegistry >::Instance()->ClaimBlocks();
+   Singleton<TimerRegistry>::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------
@@ -431,7 +431,7 @@ void BtIpBufferPool::ClaimBlocks()
 {
    Debug::ft("BtIpBufferPool.ClaimBlocks");
 
-   Singleton< TraceBuffer >::Instance()->ClaimBlocks();
+   Singleton<TraceBuffer>::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------

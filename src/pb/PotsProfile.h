@@ -46,7 +46,7 @@ namespace PotsBase
 //
 class PotsProfile : public Address
 {
-   friend class Registry< PotsProfile >;
+   friend class Registry<PotsProfile>;
 public:
    //  Profile states.
    //
@@ -180,16 +180,16 @@ private:
 
    //  The circuit associated with the profile.
    //
-   std::unique_ptr< PotsCircuit > circuit_;
+   std::unique_ptr<PotsCircuit> circuit_;
 
    //  The features assigned to the profile.
    //
-   Q1Way< PotsFeatureProfile > featureq_;
+   Q1Way<PotsFeatureProfile> featureq_;
 
    //  Data that changes too frequently to unprotect and reprotect memory
    //  when it needs to be modified.
    //
-   std::unique_ptr< PotsProfileDynamic > dyn_;
+   std::unique_ptr<PotsProfileDynamic> dyn_;
 };
 }
 #endif

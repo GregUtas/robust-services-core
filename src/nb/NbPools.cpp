@@ -58,9 +58,9 @@ void MsgBufferPool::ClaimBlocks()
 {
    Debug::ft("MsgBufferPool.ClaimBlocks");
 
-   Singleton< ThreadRegistry >::Instance()->ClaimBlocks();
-   Singleton< DeferredRegistry >::Instance()->ClaimBlocks();
-   Singleton< TraceBuffer >::Instance()->ClaimBlocks();
+   Singleton<ThreadRegistry>::Instance()->ClaimBlocks();
+   Singleton<DeferredRegistry>::Instance()->ClaimBlocks();
+   Singleton<TraceBuffer>::Instance()->ClaimBlocks();
 
    //  Although subclasses of Class don't necessarily own MsgBuffers, they
    //  can own pooled objects for the purpose of supporting object templates
@@ -68,7 +68,7 @@ void MsgBufferPool::ClaimBlocks()
    //  classes to have those blocks marked in use, so it might as well be
    //  this pool.
    //
-   Singleton< ClassRegistry >::Instance()->ClaimBlocks();
+   Singleton<ClassRegistry>::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------

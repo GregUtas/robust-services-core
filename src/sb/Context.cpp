@@ -172,7 +172,7 @@ Context::Context(Faction faction) :
    priMsgq_.Init(Pooled::LinkDiff());
    stdMsgq_.Init(Pooled::LinkDiff());
 
-   pool_ = Singleton< InvokerPoolRegistry >::Instance()->Pool(faction_);
+   pool_ = Singleton<InvokerPoolRegistry>::Instance()->Pool(faction_);
 
    if(pool_ == nullptr)
    {
@@ -181,7 +181,7 @@ Context::Context(Faction faction) :
 
    if(Debug::TraceOn())
    {
-      traceOn_ = Singleton< TraceBuffer >::Instance()->FilterIsOn(TraceAll);
+      traceOn_ = Singleton<TraceBuffer>::Instance()->FilterIsOn(TraceAll);
    }
 }
 
@@ -216,13 +216,13 @@ void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
 {
    Debug::ft("Context.CaptureTask");
 
-   auto sbt = Singleton< SbTracer >::Instance();
+   auto sbt = Singleton<SbTracer>::Instance();
 
    if(!TraceOn()) SetTrace(sbt->MsgStatus(msg, MsgIncoming) == TraceIncluded);
 
    if(TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
       auto warp = SteadyTime::Now();
 
       if(buff->ToolIsOn(TransTracer))
@@ -381,7 +381,7 @@ void Context::EnqPsm(ProtocolSM& psm)
 
 fn_name Context_Enqueue = "Context.Enqueue";
 
-void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
+void Context::Enqueue(Q2Way<Context>& whichq, MsgPriority prio, bool henq)
 {
    Debug::ft(Context_Enqueue);
 
@@ -522,7 +522,7 @@ void Context::Exqueue()
 
 //------------------------------------------------------------------------------
 
-void Context::GetSubtended(std::vector< Base* >& objects) const
+void Context::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("Context.GetSubtended");
 
@@ -573,7 +573,7 @@ void Context::Kill(const string& errstr, debug64_t offset)
 ptrdiff_t Context::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Context* >(&local);
+   auto fake = reinterpret_cast<const Context*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -596,7 +596,7 @@ void* Context::operator new(size_t size)
 {
    Debug::ft("Context.operator new");
 
-   return Singleton< ContextPool >::Instance()->DeqBlock(size);
+   return Singleton<ContextPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -617,7 +617,7 @@ void Context::ProcessIcMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-bool Context::ProcessMsg(Q1Way< Message >& msgq, const InvokerThread* inv)
+bool Context::ProcessMsg(Q1Way<Message>& msgq, const InvokerThread* inv)
 {
    Debug::ft("Context.ProcessMsg");
 
@@ -753,7 +753,7 @@ void Context::ProcessWork(InvokerThread* inv)
                SetState(Paused);
                ThisThread::Pause();
 
-               inv = static_cast< InvokerThread* >(Thread::RunningThread());
+               inv = static_cast<InvokerThread*>(Thread::RunningThread());
                if(inv->GetContext() != this) return;
                SetState(Running);
             }
@@ -858,12 +858,11 @@ bool Context::StopTimer(const Base& owner, TimerId tid)
    {
       if(m->GetSignal() == Signal::Timeout)
       {
-         auto pptr = static_cast< TlvMessage* >
-            (m)->FindParm(Parameter::Timeout);
+         auto pptr = static_cast<TlvMessage*>(m)->FindParm(Parameter::Timeout);
 
          if(pptr != nullptr)
          {
-            auto toi = reinterpret_cast< TimeoutInfo* >(pptr->bytes);
+            auto toi = reinterpret_cast<TimeoutInfo*>(pptr->bytes);
 
             if((toi->tid == tid) && (toi->owner == &owner))
             {

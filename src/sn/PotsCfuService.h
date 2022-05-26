@@ -46,7 +46,7 @@ private:
 
 class PotsCfuActivate : public Service
 {
-   friend class Singleton< PotsCfuActivate >;
+   friend class Singleton<PotsCfuActivate>;
 
    PotsCfuActivate();
    ~PotsCfuActivate();
@@ -57,7 +57,7 @@ class PotsCfuActivate : public Service
 
 class PotsCfuDeactivate : public Service
 {
-   friend class Singleton< PotsCfuDeactivate >;
+   friend class Singleton<PotsCfuDeactivate>;
 
    PotsCfuDeactivate();
    ~PotsCfuDeactivate();
@@ -68,7 +68,7 @@ class PotsCfuDeactivate : public Service
 
 class PotsCfuService : public Service
 {
-   friend class Singleton< PotsCfuService >;
+   friend class Singleton<PotsCfuService>;
 
    PotsCfuService();
    ~PotsCfuService();

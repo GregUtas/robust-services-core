@@ -568,15 +568,15 @@ private:
 
    //  Any conditional compilation (can be stacked).
    //
-   std::vector< OptionalCode* > opts_;
+   std::vector<OptionalCode*> opts_;
 
    //  The current set of local variables.
    //
-   std::unordered_multimap< std::string, CxxScoped* > locals_;
+   std::unordered_multimap<std::string, CxxScoped*> locals_;
 
    //  The nested scopes in which compilation is occurring.
    //
-   std::vector< ActiveScope > scopes_;
+   std::vector<ActiveScope> scopes_;
 
    //  The stack of arguments.
    //
@@ -584,7 +584,7 @@ private:
 
    //  The stack of operators.
    //
-   std::vector< const Operation* > ops_;
+   std::vector<const Operation*> ops_;
 
    //  The current position in the source code.
    //
@@ -622,7 +622,7 @@ private:
 
    //  The items that need to be resolved for the function.
    //
-   std::vector< TypeName* > items_;
+   std::vector<TypeName*> items_;
 };
 
 //------------------------------------------------------------------------------
@@ -989,7 +989,7 @@ private:
 
    //  The parse frames in which compilation is occurring.
    //
-   static std::vector< ParseFramePtr > Frames_;
+   static std::vector<ParseFramePtr> Frames_;
 
    //  The parse frame that is currently active.
    //

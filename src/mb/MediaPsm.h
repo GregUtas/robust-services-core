@@ -143,7 +143,7 @@ public:
 
    //  Overridden to enumerate all objects that the PSM owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 protected:
    //  Creates a PSM that will send an initial message.  The arguments are
    //  the same as those for the base class.  The PSM is configured as a

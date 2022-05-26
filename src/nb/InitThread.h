@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class InitThread : public Thread
 {
-   friend class Singleton< InitThread >;
+   friend class Singleton<InitThread>;
    friend class Daemon;
    friend class RootThread;
    friend class Thread;

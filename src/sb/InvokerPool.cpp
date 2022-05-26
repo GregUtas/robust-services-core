@@ -77,13 +77,13 @@ static TransTrace* TraceRxNet(Message& msg, const Factory& fac)
 {
    Debug::ft("SessionBase.TraceRxNet");
 
-   auto sbt = Singleton< SbTracer >::Instance();
+   auto sbt = Singleton<SbTracer>::Instance();
 
    TransTrace* trans = nullptr;
 
    if(sbt->MsgStatus(msg, MsgIncoming) == TraceIncluded)
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
       auto warp = SteadyTime::Now();
 
       if(buff->ToolIsOn(TransTracer))
@@ -170,7 +170,7 @@ public:
 
    //  Queue of contexts that have messages waiting to be processed.
    //
-   Q2Way< Context > contextq_;
+   Q2Way<Context> contextq_;
 
    //  The current length of the queue.
    //
@@ -235,9 +235,9 @@ InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
    //  After a restart, invokersCfg_ may still exist, so try to look it
    //  up before creating it.
    //
-   auto reg = Singleton< CfgParmRegistry >::Instance();
+   auto reg = Singleton<CfgParmRegistry>::Instance();
 
-   invokersCfg_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
+   invokersCfg_.reset(static_cast<CfgIntParm*>(reg->FindParm(parmKey)));
 
    if(invokersCfg_ == nullptr)
    {
@@ -251,7 +251,7 @@ InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
       work_[p].reset(new InvokerWork);
    }
 
-   Singleton< InvokerPoolRegistry >::Instance()->BindPool(*this);
+   Singleton<InvokerPoolRegistry>::Instance()->BindPool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ InvokerPool::~InvokerPool()
    Debug::ftnt(InvokerPool_dtor);
 
    Debug::SwLog(InvokerPool_dtor, UnexpectedInvocation, 0);
-   Singleton< InvokerPoolRegistry >::Extant()->UnbindPool(*this);
+   Singleton<InvokerPoolRegistry>::Extant()->UnbindPool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ bool InvokerPool::BindThread(InvokerThread& thread)
 ptrdiff_t InvokerPool::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const InvokerPool* >(&local);
+   auto fake = reinterpret_cast<const InvokerPool*>(&local);
    return ptrdiff(&fake->faction_, fake);
 }
 
@@ -564,7 +564,7 @@ void InvokerPool::ProcessWork()
    //
    while(true)
    {
-      auto inv = static_cast< InvokerThread* >(Thread::RunningThread());
+      auto inv = static_cast<InvokerThread*>(Thread::RunningThread());
       auto ctx = FindWork();
 
       if(ctx != nullptr)
@@ -639,7 +639,7 @@ bool InvokerPool::ReceiveBuff(SbIpBufferPtr& buff, bool atIoLevel)
    }
 
    auto fid = header->rxAddr.fid;
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
 
    if(fac == nullptr)
    {
@@ -674,7 +674,7 @@ bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
    }
 
    auto fid = header->rxAddr.fid;
-   auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
 
    if(fac == nullptr)
    {

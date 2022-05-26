@@ -81,7 +81,7 @@ struct LibItemSort
 
 //  A type for a set of library items.
 //
-using LibItemSet = std::set< LibraryItem*, LibItemSort >;
+using LibItemSet = std::set<LibraryItem*, LibItemSort>;
 }
 
 #endif

@@ -177,7 +177,7 @@ void DeferredRegistry::Insert(Deferred* item)
    }
    else
    {
-      auto thr = Singleton< DeferredThread >::Instance();
+      auto thr = Singleton<DeferredThread>::Instance();
       auto incr = (thr->CurrTimeRunning().count() >= 500 ? 1 : 0);
       item->secs_ += incr;
    }

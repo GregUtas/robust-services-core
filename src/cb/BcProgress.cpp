@@ -66,7 +66,7 @@ void ProgressInfo::Display(ostream& stream, const string& prefix) const
 //==============================================================================
 
 ProgressParameter::ProgressParameter(ProtocolId prid, Id pid) :
-   TlvIntParameter< Progress::Ind >(prid, pid)
+   TlvIntParameter<Progress::Ind>(prid, pid)
 {
    Debug::ft("ProgressParameter.ctor");
 }
@@ -95,6 +95,6 @@ CliParm* ProgressParameter::CreateCliParm(Usage use) const
 void ProgressParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const ProgressInfo* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const ProgressInfo*>(bytes)->Display(stream, prefix);
 }
 }

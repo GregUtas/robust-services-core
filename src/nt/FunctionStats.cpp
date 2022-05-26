@@ -74,7 +74,7 @@ void FunctionStats::IncrCalls(const usecs_t& net)
 ptrdiff_t FunctionStats::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const FunctionStats* >(&local);
+   auto fake = reinterpret_cast<const FunctionStats*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 }

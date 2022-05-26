@@ -47,7 +47,7 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
    //  Find the port associated with the incoming message.  The port
    //  and the SSM's state determine which message analyzer to invoke.
    //
-   auto pid = ssm.CalcPort(static_cast< const AnalyzeMsgEvent& >(currEvent));
+   auto pid = ssm.CalcPort(static_cast<const AnalyzeMsgEvent&>(currEvent));
 
    if(pid == NIL_ID) return Pass;
 
@@ -117,7 +117,7 @@ EventHandler::Rc SbForceTransition::ProcessEvent
 
    //  Invoke the event handler specified by the event.
    //
-   auto& fte = static_cast< ForceTransitionEvent& >(currEvent);
+   auto& fte = static_cast<ForceTransitionEvent&>(currEvent);
 
    return fte.Handler()->ProcessEvent(ssm, currEvent, nextEvent);
 }
@@ -131,7 +131,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 {
    Debug::ft(SbInitiationReq_ProcessEvent);
 
-   auto& ire = static_cast< InitiationReqEvent& >(currEvent);
+   auto& ire = static_cast<InitiationReqEvent&>(currEvent);
 
    //  Determine how to treat this initiation event:
    //  (a) As an event that this modifier may screen.
@@ -170,7 +170,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 
    if(modifier == nullptr)
    {
-      auto reg = Singleton< ServiceRegistry >::Instance();
+      auto reg = Singleton<ServiceRegistry>::Instance();
       auto svc = reg->GetService(ire.GetModifier());
 
       if(svc == nullptr)

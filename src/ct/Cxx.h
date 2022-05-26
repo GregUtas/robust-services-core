@@ -117,10 +117,10 @@ namespace Cxx
       POSTFIX_DECREMENT,        // i--
       DEFINED,                  // defined(a)
       TYPE_NAME,                // typeid(a)
-      CONST_CAST,               // const_cast< t >(a)
-      DYNAMIC_CAST,             // dynamic_cast< t >(a)
-      REINTERPRET_CAST,         // reinterpret_cast< t >(a)
-      STATIC_CAST,              // static_cast< t >(a)
+      CONST_CAST,               // const_cast<t>(a)
+      DYNAMIC_CAST,             // dynamic_cast<t>(a)
+      REINTERPRET_CAST,         // reinterpret_cast<t>(a)
+      STATIC_CAST,              // static_cast<t>(a)
       SIZEOF_TYPE,              // sizeof(a)
       ALIGNOF_TYPE,             // alignof(a)
       NOEXCEPT,                 // noexcept(expr)
@@ -276,16 +276,16 @@ namespace Cxx
 
    //  Entries in the directive hash table map a string to a Cxx::Directive.
    //
-   typedef std::unordered_map< std::string, Directive > DirectiveTable;
-   typedef std::pair< std::string, Directive > DirectivePair;
-   typedef std::unique_ptr< DirectiveTable > DirectiveTablePtr;
+   typedef std::unordered_map<std::string, Directive> DirectiveTable;
+   typedef std::pair<std::string, Directive> DirectivePair;
+   typedef std::unique_ptr<DirectiveTable> DirectiveTablePtr;
    extern DirectiveTablePtr Directives;
 
    //  Entries in the keyword hash table map a string to a Cxx::Keyword.
    //
-   typedef std::unordered_map< std::string, Keyword > KeywordTable;
-   typedef std::pair< std::string, Keyword > KeywordPair;
-   typedef std::unique_ptr< KeywordTable > KeywordTablePtr;
+   typedef std::unordered_map<std::string, Keyword> KeywordTable;
+   typedef std::pair<std::string, Keyword> KeywordPair;
+   typedef std::unique_ptr<KeywordTable> KeywordTablePtr;
    extern KeywordTablePtr Keywords;
 
    //  Entries in the operator and reserved word hash tables map a string to a
@@ -293,9 +293,9 @@ namespace Cxx
    //  the Reserved table contains alphabetic strings.  There are two operator
    //  tables, one for C++ code and one for preprocessor directives.
    //
-   typedef std::unordered_map< std::string, Operator > OperatorTable;
-   typedef std::pair< std::string, Operator > OperatorPair;
-   typedef std::unique_ptr< OperatorTable > OperatorTablePtr;
+   typedef std::unordered_map<std::string, Operator> OperatorTable;
+   typedef std::pair<std::string, Operator> OperatorPair;
+   typedef std::unique_ptr<OperatorTable> OperatorTablePtr;
    extern OperatorTablePtr CxxOps;
    extern OperatorTablePtr PreOps;
    extern OperatorTablePtr Reserved;
@@ -303,9 +303,9 @@ namespace Cxx
    //  Entries in the types hash table map the string for a built-in type to a
    //  Cxx::Type.
    //
-   typedef std::unordered_map< std::string, Type > TypesTable;
-   typedef std::pair< std::string, Type > TypePair;
-   typedef std::unique_ptr< TypesTable > TypesTablePtr;
+   typedef std::unordered_map<std::string, Type> TypesTable;
+   typedef std::pair<std::string, Type> TypePair;
+   typedef std::unique_ptr<TypesTable> TypesTablePtr;
    extern TypesTablePtr Types;
 
    //  Initializes the above hash tables.
@@ -351,7 +351,7 @@ Cxx::Access FindAccessControl(const std::string& s);
 //  For noting the keyword tags that appear when declaring or defining
 //  functions or data.
 //
-typedef std::set< Cxx::Keyword > KeywordSet;
+typedef std::set<Cxx::Keyword> KeywordSet;
 
 //------------------------------------------------------------------------------
 //

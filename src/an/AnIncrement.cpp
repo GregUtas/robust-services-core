@@ -128,12 +128,12 @@ word TrafficCommand::ProcessCommand(CliThread& cli) const
    case TrafficRateIndex:
       if(!GetIntParm(rate, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
-      Singleton< PotsTrafficThread >::Instance()->SetRate(rate);
+      Singleton<PotsTrafficThread>::Instance()->SetRate(rate);
       break;
 
    case TrafficQueryIndex:
       if(!cli.EndOfInput()) return -1;
-      Singleton< PotsTrafficThread >::Instance()->Query(*cli.obuf);
+      Singleton<PotsTrafficThread>::Instance()->Query(*cli.obuf);
       break;
 
    default:

@@ -95,7 +95,7 @@ void RootThread::Destroy()
 {
    Debug::ft("RootThread.Destroy");
 
-   Singleton< RootThread >::Destroy();
+   Singleton<RootThread>::Destroy();
 }
 
 //------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ void RootThread::Enter()
          //  system.  When it's finished, it wakes us up.  If our timer expires,
          //  initialization failed.
          //
-         Singleton< InitThread >::Instance();
+         Singleton<InitThread>::Instance();
 
          //  The following suspends RootThread during breakpoint debugging,
          //  where it would otherwise appear with annoying regularity.
@@ -184,7 +184,7 @@ void RootThread::Enter()
 
             if(ThreadAdmin::ReinitOnSchedTimeout() && !InitFlags::AllowBreak())
             {
-               initThr = Singleton< InitThread >::Extant();
+               initThr = Singleton<InitThread>::Extant();
 
                if(initThr != nullptr)
                {
@@ -283,7 +283,7 @@ void RootThread::Enter()
 
          if(ThreadAdmin::ReinitOnSchedTimeout() && !InitFlags::AllowBreak())
          {
-            initThr = Singleton< InitThread >::Extant();
+            initThr = Singleton<InitThread>::Extant();
 
             if(initThr != nullptr)
             {
@@ -314,7 +314,7 @@ main_t RootThread::Main()
    //  Create the log buffer, which is used to log the progress
    //  of initialization.
    //
-   Singleton< LogBufferRegistry >::Instance();
+   Singleton<LogBufferRegistry>::Instance();
 
    //  Set up our process.
    //
@@ -322,7 +322,7 @@ main_t RootThread::Main()
 
    //  Create the root thread and wait for it to exit.
    //
-   Singleton< RootThread >::Instance();
+   Singleton<RootThread>::Instance();
    ExitGate().WaitFor(TIMEOUT_NEVER);
 
    //  If we get here, RootThread wants the system to exit and

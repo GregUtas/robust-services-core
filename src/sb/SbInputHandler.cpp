@@ -72,7 +72,7 @@ IpBuffer* SbInputHandler::AllocBuff(const byte_t* source,
       return nullptr;
    }
 
-   auto header = reinterpret_cast< const MsgHeader* >(source);
+   auto header = reinterpret_cast<const MsgHeader*>(source);
    rcvd = sizeof(MsgHeader) + header->length;
 
    auto buff = new SbIpBuffer(MsgIncoming, rcvd - sizeof(MsgHeader));
@@ -97,10 +97,10 @@ void SbInputHandler::ReceiveBuff
    //  Find the invoker pool associated with FACTION and pass it the buffer
    //  to have it added to that pool's work queue.
    //
-   auto pool = Singleton< InvokerPoolRegistry >::Instance()->Pool(faction);
+   auto pool = Singleton<InvokerPoolRegistry>::Instance()->Pool(faction);
    if(pool == nullptr) return;
 
-   SbIpBufferPtr sbbuff(static_cast< SbIpBuffer* >(buff.release()));
+   SbIpBufferPtr sbbuff(static_cast<SbIpBuffer*>(buff.release()));
    pool->ReceiveBuff(sbbuff, true);
 }
 }

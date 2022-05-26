@@ -46,7 +46,7 @@ namespace MediaBase
 //
 class Switch : public Dynamic
 {
-   friend class Singleton< Switch >;
+   friend class Singleton<Switch>;
    friend class Circuit;
 public:
    //  Allows PortId to be used within this class.
@@ -107,7 +107,7 @@ private:
 
    //  The registry of circuits, indexed by PortId.
    //
-   Registry< Circuit > circuits_;
+   Registry<Circuit> circuits_;
 };
 }
 #endif

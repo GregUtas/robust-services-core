@@ -35,7 +35,7 @@ namespace Diplomacy
 {
 class BotTracer : public Permanent
 {
-   friend class Singleton< BotTracer >;
+   friend class Singleton<BotTracer>;
 public:
    //  Deleted to prohibit copying.
    //

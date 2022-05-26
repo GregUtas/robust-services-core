@@ -51,7 +51,7 @@ Daemon::Daemon(c_string name, size_t size, bool noalarm) :
 {
    Debug::ft("Daemon.ctor");
 
-   Singleton< DaemonRegistry >::Instance()->BindDaemon(*this);
+   Singleton<DaemonRegistry>::Instance()->BindDaemon(*this);
    EnsureAlarm();
 }
 
@@ -64,7 +64,7 @@ Daemon::~Daemon()
    Debug::ftnt(Daemon_dtor);
 
    Debug::SwLog(Daemon_dtor, UnexpectedInvocation, 0);
-   Singleton< DaemonRegistry >::Extant()->UnbindDaemon(*this);
+   Singleton<DaemonRegistry>::Extant()->UnbindDaemon(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ Daemon::~Daemon()
 ptrdiff_t Daemon::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Daemon* >(&local);
+   auto fake = reinterpret_cast<const Daemon*>(&local);
    return ptrdiff(&fake->did_, fake);
 }
 
@@ -198,7 +198,7 @@ void Daemon::EnsureAlarm()
 
    //  If the thread unavailable alarm is not registered, create it.
    //
-   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto reg = Singleton<AlarmRegistry>::Instance();
    auto alarmName = "DAEMON" + std::to_string(Did());
    alarm_ = reg->Find(alarmName);
 
@@ -306,7 +306,7 @@ void Daemon::ThreadDeleted(Thread* thread)
    {
       threads_.erase(item);
       if(Restart::GetStage() != Running) return;
-      Singleton< InitThread >::Instance()->Interrupt(InitThread::RecreateMask);
+      Singleton<InitThread>::Instance()->Interrupt(InitThread::RecreateMask);
    }
 }
 }

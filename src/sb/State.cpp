@@ -59,7 +59,7 @@ State::State(ServiceId sid, Id stid) :
 
    //  Check that the state's service is registered.
    //
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
 
    if(svc == nullptr)
    {
@@ -115,7 +115,7 @@ State::~State()
 
    Debug::SwLog(State_dtor, UnexpectedInvocation, 0);
 
-   auto svc = Singleton< ServiceRegistry >::Extant()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Extant()->GetService(sid_);
    if(svc != nullptr) svc->UnbindState(*this);
 }
 
@@ -194,7 +194,7 @@ bool State::BindMsgAnalyzer(EventHandlerId ehid, ServicePortId pid)
 ptrdiff_t State::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const State* >(&local);
+   auto fake = reinterpret_cast<const State*>(&local);
    return ptrdiff(&fake->stid_, fake);
 }
 
@@ -207,7 +207,7 @@ void State::Display(ostream& stream,
 
    if(!options.test(DispVerbose)) return;
 
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid_);
 
    stream << prefix << "stid : " << stid_.to_str() << CRLF;
    stream << prefix << "sid  : " << int(sid_);

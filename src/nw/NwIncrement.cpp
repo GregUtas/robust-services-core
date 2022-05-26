@@ -84,7 +84,7 @@ word NwClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft("NwClearCommand.ProcessSubcommand");
 
    TraceRc rc;
-   auto nwt = Singleton< NwTracer >::Instance();
+   auto nwt = Singleton<NwTracer>::Instance();
    word id = 0;
    SysIpL3Addr targ;
 
@@ -140,7 +140,7 @@ word NwExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft("NwExcludeCommand.ProcessSubcommand");
 
    TraceRc rc;
-   auto nwt = Singleton< NwTracer >::Instance();
+   auto nwt = Singleton<NwTracer>::Instance();
    word id;
    SysIpL3Addr targ;
 
@@ -188,7 +188,7 @@ word NwIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft("NwIncludeCommand.ProcessSubcommand");
 
    TraceRc rc;
-   auto nwt = Singleton< NwTracer >::Instance();
+   auto nwt = Singleton<NwTracer>::Instance();
    word id;
    SysIpL3Addr targ;
 
@@ -312,7 +312,7 @@ word IpCommand::ProcessCommand(CliThread& cli) const
    string name, service;
    SysIpL3Addr host;
    IpProtocol proto;
-   std::vector< SysIpL2Addr > localAddrs;
+   std::vector<SysIpL2Addr> localAddrs;
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -336,11 +336,11 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       {
          *cli.obuf << spaces(2) << "Retesting local address..." << CRLF;
          cli.Flush();
-         Singleton< SendLocalThread >::Instance()->Retest();
+         Singleton<SendLocalThread>::Instance()->Retest();
          ThisThread::Pause(5 * ONE_SEC);
       }
       *cli.obuf << spaces(2) << "Local address: ";
-      Singleton< IpPortRegistry >::Instance()->DisplayLocalAddr(*cli.obuf);
+      Singleton<IpPortRegistry>::Instance()->DisplayLocalAddr(*cli.obuf);
       *cli.obuf << CRLF;
       break;
 
@@ -426,7 +426,7 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
 
    if(all)
    {
@@ -471,7 +471,7 @@ word IpServicesCommand::ProcessCommand(CliThread& cli) const
    word id;
    bool all, v = false;
    IpService* service = nullptr;
-   auto reg = Singleton< IpServiceRegistry >::Instance();
+   auto reg = Singleton<IpServiceRegistry>::Instance();
 
    switch(GetIntParmRc(id, cli))
    {
@@ -517,7 +517,7 @@ word NwQueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       return QueryCommand::ProcessSubcommand(cli, index);
    }
 
-   Singleton< NwTracer >::Instance()->QuerySelections(*cli.obuf);
+   Singleton<NwTracer>::Instance()->QuerySelections(*cli.obuf);
    return 0;
 }
 
@@ -541,7 +541,7 @@ word NwStatusCommand::ProcessCommand(CliThread& cli) const
 
    bool one = false;
 
-   auto& ports = Singleton< IpPortRegistry >::Instance()->Ports();
+   auto& ports = Singleton<IpPortRegistry>::Instance()->Ports();
 
    for(auto p = ports.First(); p != nullptr; ports.Next(p))
    {

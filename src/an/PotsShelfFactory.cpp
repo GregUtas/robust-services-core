@@ -121,8 +121,8 @@ bool PotsShelfFactory::InjectMsg(Message& msg) const
 {
    Debug::ft(PotsShelfFactory_InjectMsg);
 
-   auto& pmsg = static_cast< Pots_UN_Message& >(msg);
-   auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto& pmsg = static_cast<Pots_UN_Message&>(msg);
+   auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    //  Send the message from the specified POTS circuit.
    //
@@ -133,8 +133,8 @@ bool PotsShelfFactory::InjectMsg(Message& msg) const
       return false;
    }
 
-   auto tsw = Singleton< Switch >::Instance();
-   auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+   auto tsw = Singleton<Switch>::Instance();
+   auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(phi->port));
 
    if(cct == nullptr)
    {
@@ -154,8 +154,8 @@ void PotsShelfFactory::ProcessIcMsg(Message& msg) const
 
    //  Have the specified POTS circuit process the message.
    //
-   auto& pmsg = static_cast< Pots_NU_Message& >(msg);
-   auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto& pmsg = static_cast<Pots_NU_Message&>(msg);
+   auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    if(phi == nullptr)
    {
@@ -163,8 +163,8 @@ void PotsShelfFactory::ProcessIcMsg(Message& msg) const
       return;
    }
 
-   auto tsw = Singleton< Switch >::Instance();
-   auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+   auto tsw = Singleton<Switch>::Instance();
+   auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(phi->port));
 
    if(cct == nullptr)
    {

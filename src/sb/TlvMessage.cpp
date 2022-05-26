@@ -61,7 +61,7 @@ TlvMessage::TlvMessage(const TlvParm& parm, ProtocolSM* psm) :
    //
    byte_t* parms;
    Payload(parms);
-   auto encap = reinterpret_cast< const TlvMsgLayout* >(parm.bytes);
+   auto encap = reinterpret_cast<const TlvMsgLayout*>(parm.bytes);
 
    //  Unbundle the header and payload.
    //
@@ -456,7 +456,7 @@ TlvParm* TlvMessage::Wrap(const TlvMessage& msg, ParameterId pid)
    //
    auto pptr = AddParm(pid, plen);
    if(pptr == nullptr) return nullptr;
-   auto encap = reinterpret_cast< TlvMsgLayout* >(pptr->bytes);
+   auto encap = reinterpret_cast<TlvMsgLayout*>(pptr->bytes);
    encap->header = *msg.Header();
    plen -= sizeof(MsgHeader);
    Memory::Copy(encap->bytes, src, plen);

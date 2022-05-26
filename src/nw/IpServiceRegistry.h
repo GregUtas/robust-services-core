@@ -41,7 +41,7 @@ namespace NetworkBase
 //
 class IpServiceRegistry : public NodeBase::Immutable
 {
-   friend class NodeBase::Singleton< IpServiceRegistry >;
+   friend class NodeBase::Singleton<IpServiceRegistry>;
    friend class IpService;
 public:
    //  Deleted to prohibit copying.
@@ -54,11 +54,11 @@ public:
 
    //  Returns the services in the registry.
    //
-   const NodeBase::Registry< IpService >& Services() const { return services_; }
+   const NodeBase::Registry<IpService>& Services() const { return services_; }
 
    //  Returns the service(s) registered against NAME.
    //
-   std::vector< IpService* > GetServices(const std::string& name) const;
+   std::vector<IpService*> GetServices(const std::string& name) const;
 
    //  Overridden to display member variables.
    //
@@ -95,7 +95,7 @@ private:
 
    //  The global registry of IP services.
    //
-   NodeBase::Registry< IpService > services_;
+   NodeBase::Registry<IpService> services_;
 };
 }
 #endif

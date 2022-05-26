@@ -38,7 +38,7 @@ namespace MediaBase
 //
 class ToneRegistry : public Dynamic
 {
-   friend class Singleton< ToneRegistry >;
+   friend class Singleton<ToneRegistry>;
    friend class Tone;
 public:
    //  Deleted to prohibit copying.
@@ -80,7 +80,7 @@ private:
 
    //  Registry for singleton subclasses of Tone.
    //
-   Registry< Tone > tones_;
+   Registry<Tone> tones_;
 };
 }
 #endif

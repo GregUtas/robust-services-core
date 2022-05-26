@@ -39,9 +39,9 @@ OnModule::OnModule() : Module()
 
    //  Create the modules required by OperationsNode.
    //
-   Singleton< CnModule >::Instance();
-   Singleton< PbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<CnModule>::Instance();
+   Singleton<PbModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------

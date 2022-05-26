@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class ObjectPoolRegistry : public Protected
 {
-   friend class Singleton< ObjectPoolRegistry >;
+   friend class Singleton<ObjectPoolRegistry>;
    friend class ObjectPool;
    friend class ObjectPoolAudit;
 public:
@@ -58,7 +58,7 @@ public:
 
    //  Returns the registry of object pools.  Used for iteration.
    //
-   const Registry< ObjectPool >& Pools() const { return pools_; }
+   const Registry<ObjectPool>& Pools() const { return pools_; }
 
    //  Returns true if full object nullification is enabled.
    //
@@ -103,7 +103,7 @@ private:
 
    //  The global registry of object pools.
    //
-   Registry< ObjectPool > pools_;
+   Registry<ObjectPool> pools_;
 
    //  Configuration parameter for object nullification.
    //

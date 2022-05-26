@@ -59,7 +59,7 @@ namespace CallBase
 {
 class CipIamSignal : public CipSignal
 {
-   friend class Singleton< CipIamSignal >;
+   friend class Singleton<CipIamSignal>;
 
    CipIamSignal();
    ~CipIamSignal() = default;
@@ -68,7 +68,7 @@ class CipIamSignal : public CipSignal
 
 class CipCpgSignal : public CipSignal
 {
-   friend class Singleton< CipCpgSignal >;
+   friend class Singleton<CipCpgSignal>;
 
    CipCpgSignal();
    ~CipCpgSignal() = default;
@@ -77,7 +77,7 @@ class CipCpgSignal : public CipSignal
 
 class CipAnmSignal : public CipSignal
 {
-   friend class Singleton< CipAnmSignal >;
+   friend class Singleton<CipAnmSignal>;
 
    CipAnmSignal();
    ~CipAnmSignal() = default;
@@ -86,7 +86,7 @@ class CipAnmSignal : public CipSignal
 
 class CipRelSignal : public CipSignal
 {
-   friend class Singleton< CipRelSignal >;
+   friend class Singleton<CipRelSignal>;
 
    CipRelSignal();
    ~CipRelSignal() = default;
@@ -95,7 +95,7 @@ class CipRelSignal : public CipSignal
 
 class CipRouteParameter : public CipParameter
 {
-   friend class Singleton< CipRouteParameter >;
+   friend class Singleton<CipRouteParameter>;
 
    CipRouteParameter();
    ~CipRouteParameter() = default;
@@ -121,7 +121,7 @@ protected:
 
 class CipCallingParameter : public CipAddressParameter
 {
-   friend class Singleton< CipCallingParameter >;
+   friend class Singleton<CipCallingParameter>;
 
    CipCallingParameter();
    ~CipCallingParameter() = default;
@@ -130,7 +130,7 @@ class CipCallingParameter : public CipAddressParameter
 
 class CipCalledParameter : public CipAddressParameter
 {
-   friend class Singleton< CipCalledParameter >;
+   friend class Singleton<CipCalledParameter>;
 
    CipCalledParameter();
    ~CipCalledParameter() = default;
@@ -139,7 +139,7 @@ class CipCalledParameter : public CipAddressParameter
 
 class CipOriginalCallingParameter : public CipAddressParameter
 {
-   friend class Singleton< CipOriginalCallingParameter >;
+   friend class Singleton<CipOriginalCallingParameter>;
 
    CipOriginalCallingParameter();
    ~CipOriginalCallingParameter() = default;
@@ -148,7 +148,7 @@ class CipOriginalCallingParameter : public CipAddressParameter
 
 class CipOriginalCalledParameter : public CipAddressParameter
 {
-   friend class Singleton< CipOriginalCalledParameter >;
+   friend class Singleton<CipOriginalCalledParameter>;
 
    CipOriginalCalledParameter();
    ~CipOriginalCalledParameter() = default;
@@ -157,7 +157,7 @@ class CipOriginalCalledParameter : public CipAddressParameter
 
 class CipProgressParameter : public ProgressParameter
 {
-   friend class Singleton< CipProgressParameter >;
+   friend class Singleton<CipProgressParameter>;
 
    CipProgressParameter();
    ~CipProgressParameter() = default;
@@ -165,7 +165,7 @@ class CipProgressParameter : public ProgressParameter
 
 class CipCauseParameter : public CauseParameter
 {
-   friend class Singleton< CipCauseParameter >;
+   friend class Singleton<CipCauseParameter>;
 
    CipCauseParameter();
    ~CipCauseParameter() = default;
@@ -173,7 +173,7 @@ class CipCauseParameter : public CauseParameter
 
 class CipMediaParameter : public MediaParameter
 {
-   friend class Singleton< CipMediaParameter >;
+   friend class Singleton<CipMediaParameter>;
 
    CipMediaParameter();
    ~CipMediaParameter() = default;
@@ -189,7 +189,7 @@ CipUdpService::CipUdpService()
    Debug::ft("CipUdpService.ctor");
 
    enabled_.reset(new IpServiceCfg(CipUdpKey, "F", CipUdpExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void CipUdpService::Startup(RestartLevel level)
    {
       FunctionGuard guard(Guard_ImmUnprotect);
       enabled_.reset(new IpServiceCfg(CipUdpKey, "F", CipUdpExpl, this));
-      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+      Singleton<CfgParmRegistry>::Instance()->BindParm(*enabled_);
    }
 
    IpService::Startup(level);
@@ -265,7 +265,7 @@ CipTcpService::CipTcpService()
    Debug::ft("CipTcpService.ctor");
 
    enabled_.reset(new IpServiceCfg(CipTcpKey, "F", CipTcpExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -337,7 +337,7 @@ void CipTcpService::Startup(RestartLevel level)
    {
       FunctionGuard guard(Guard_ImmUnprotect);
       enabled_.reset(new IpServiceCfg(CipTcpKey, "F", CipTcpExpl, this));
-      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+      Singleton<CfgParmRegistry>::Instance()->BindParm(*enabled_);
    }
 
    IpService::Startup(level);
@@ -351,19 +351,19 @@ CipProtocol::CipProtocol() : TlvProtocol(CipProtocolId, TimerProtocolId)
 
    //  Create the CIP signals and parameters.
    //
-   Singleton< CipIamSignal >::Instance();
-   Singleton< CipCpgSignal >::Instance();
-   Singleton< CipAnmSignal >::Instance();
-   Singleton< CipRelSignal >::Instance();
+   Singleton<CipIamSignal>::Instance();
+   Singleton<CipCpgSignal>::Instance();
+   Singleton<CipAnmSignal>::Instance();
+   Singleton<CipRelSignal>::Instance();
 
-   Singleton< CipRouteParameter >::Instance();
-   Singleton< CipCallingParameter >::Instance();
-   Singleton< CipCalledParameter >::Instance();
-   Singleton< CipOriginalCallingParameter >::Instance();
-   Singleton< CipOriginalCalledParameter >::Instance();
-   Singleton< CipProgressParameter >::Instance();
-   Singleton< CipCauseParameter >::Instance();
-   Singleton< CipMediaParameter >::Instance();
+   Singleton<CipRouteParameter>::Instance();
+   Singleton<CipCallingParameter>::Instance();
+   Singleton<CipCalledParameter>::Instance();
+   Singleton<CipOriginalCallingParameter>::Instance();
+   Singleton<CipOriginalCalledParameter>::Instance();
+   Singleton<CipProgressParameter>::Instance();
+   Singleton<CipCauseParameter>::Instance();
+   Singleton<CipMediaParameter>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -448,7 +448,7 @@ CliParm* CipRouteParameter::CreateCliParm(Usage use) const
 void CipRouteParameter::DisplayMsg(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count) const
 {
-   reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
+   reinterpret_cast<const RouteResult*>(bytes)->Display(stream, prefix);
 }
 
 //------------------------------------------------------------------------------
@@ -461,7 +461,7 @@ Parameter::TestRc CipRouteParameter::InjectMsg
    id_t        idx;
    word        fid, rid;
    RouteResult route;
-   auto&       tlvmsg = static_cast< TlvMessage& >(msg);
+   auto&       tlvmsg = static_cast<TlvMessage&>(msg);
 
    //  All fields in this parameter are mandatory.
    //
@@ -489,7 +489,7 @@ Parameter::TestRc CipRouteParameter::VerifyMsg
    Debug::ft("CipRouteParameter.VerifyMsg");
 
    TestRc       rc;
-   auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
+   auto&        tlvmsg = static_cast<const TlvMessage&>(msg);
    RouteResult* route;
    id_t         idx;
    word         fid, rid;
@@ -756,7 +756,7 @@ CipMessage* BcPsm::FindRcvdMsg(CipSignal::Id sid) const
 
    for(auto m = FirstRcvdMsg(); m != nullptr; m = m->NextMsg())
    {
-      if(m->GetSignal() == sid) return static_cast< CipMessage* >(m);
+      if(m->GetSignal() == sid) return static_cast<CipMessage*>(m);
    }
 
    return nullptr;
@@ -786,7 +786,7 @@ ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& event)
    Debug::ft(BcPsm_ProcessIcMsg);
 
    auto          state = GetState();
-   auto&         tmsg = static_cast< TlvMessage& >(msg);
+   auto&         tmsg = static_cast<TlvMessage&>(msg);
    auto          sig = tmsg.GetSignal();
    TimeoutInfo*  toi = nullptr;
    ProgressInfo* cpi = nullptr;
@@ -801,7 +801,7 @@ ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& event)
       //
       //  The CIP PSM runs a timer while waiting for a response to an IAM.
       //
-      toi = tmsg.FindType< TimeoutInfo >(Parameter::Timeout);
+      toi = tmsg.FindType<TimeoutInfo>(Parameter::Timeout);
 
       if(toi->owner == this)
       {
@@ -822,7 +822,7 @@ ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& event)
       break;
 
    case CipSignal::CPG:
-      cpi = tmsg.FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = tmsg.FindType<ProgressInfo>(CipParameter::Progress);
 
       switch(cpi->progress)
       {
@@ -916,7 +916,7 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
    Debug::ft(BcPsm_ProcessOgMsg);
 
    auto          state = GetState();
-   auto&         tmsg = static_cast< TlvMessage& >(msg);
+   auto&         tmsg = static_cast<TlvMessage&>(msg);
    auto          sig = msg.GetSignal();
    ProgressInfo* cpi = nullptr;
    auto          err = true;
@@ -939,7 +939,7 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
       break;
 
    case CipSignal::CPG:
-      cpi = tmsg.FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = tmsg.FindType<ProgressInfo>(CipParameter::Progress);
 
       switch(cpi->progress)
       {
@@ -1086,10 +1086,10 @@ SysTcpSocket* CipPsm::CreateAppSocket()
 
    //  Use TCP if it is enabled and UDP is not.
    //
-   if(!Singleton< CipTcpService >::Instance()->Enabled()) return nullptr;
-   if(Singleton< CipUdpService >::Instance()->Enabled()) return nullptr;
+   if(!Singleton<CipTcpService>::Instance()->Enabled()) return nullptr;
+   if(Singleton<CipUdpService>::Instance()->Enabled()) return nullptr;
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
+   auto reg = Singleton<IpPortRegistry>::Instance();
    auto port = reg->GetPort(CipIpPort, IpTcp);
    if(port == nullptr) return nullptr;
    return port->CreateAppSocket();
@@ -1103,8 +1103,8 @@ Message::Route CipPsm::Route() const
 
    //  Use the IP stack unless neither TCP nor UDP is enabled.
    //
-   if((Singleton< CipTcpService >::Instance()->Enabled()) ||
-      (Singleton< CipUdpService >::Instance()->Enabled()))
+   if((Singleton<CipTcpService>::Instance()->Enabled()) ||
+      (Singleton<CipUdpService>::Instance()->Enabled()))
    {
       return Message::IpStack;
    }
@@ -1254,12 +1254,12 @@ RootServiceSM* CipTbcFactory::AllocRoot
 {
    Debug::ft("CipTbcFactory.AllocRoot");
 
-   auto& tmsg = static_cast< const CipMessage& >(msg);
-   auto rte = tmsg.FindType< RouteResult >(CipParameter::Route);
+   auto& tmsg = static_cast<const CipMessage&>(msg);
+   auto rte = tmsg.FindType<RouteResult>(CipParameter::Route);
    if(rte == nullptr) return nullptr;
 
-   auto reg = Singleton< FactoryRegistry >::Instance();
-   auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
+   auto reg = Singleton<FactoryRegistry>::Instance();
+   auto fac = static_cast<SsmFactory*>(reg->GetFactory(rte->selector));
    return fac->AllocRoot(msg, psm);
 }
 

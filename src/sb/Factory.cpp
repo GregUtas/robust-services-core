@@ -108,7 +108,7 @@ Factory::Factory(Id fid, ContextType type, ProtocolId prid, c_string name) :
 
    //  Add the factory to the global factory registry.
    //
-   Singleton< FactoryRegistry >::Instance()->BindFactory(*this);
+   Singleton<FactoryRegistry>::Instance()->BindFactory(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ Factory::~Factory()
    Debug::ftnt(Factory_dtor);
 
    Debug::SwLog(Factory_dtor, UnexpectedInvocation, 0);
-   Singleton< FactoryRegistry >::Extant()->UnbindFactory(*this);
+   Singleton<FactoryRegistry>::Extant()->UnbindFactory(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ Message* Factory::AllocOgMsg(SignalId sid) const
 ptrdiff_t Factory::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Factory* >(&local);
+   auto fake = reinterpret_cast<const Factory*>(&local);
    return ptrdiff(&fake->fid_, fake);
 }
 
@@ -396,7 +396,7 @@ bool Factory::ScreenFirstMsg(const Message& msg, MsgPriority& prio) const
 
 //------------------------------------------------------------------------------
 
-bool Factory::ScreenIcMsgs(Q1Way< Message >& msgq)
+bool Factory::ScreenIcMsgs(Q1Way<Message>& msgq)
 {
    Debug::ft("Factory.ScreenIcMsgs");
 

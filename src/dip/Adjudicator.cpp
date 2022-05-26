@@ -1550,7 +1550,7 @@ void MapAndUnits::generate_cd_disbands(PowerId power, WinterOrders& orders)
 {
    Debug::ft("MapAndUnits.generate_cd_disbands");
 
-   typedef std::multimap< size_t, ProvinceId > DistanceFromHomeMap;
+   typedef std::multimap<size_t, ProvinceId> DistanceFromHomeMap;
 
    DistanceFromHomeMap distances;
 

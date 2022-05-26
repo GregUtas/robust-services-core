@@ -84,13 +84,13 @@ public:
    //  and must therefore be overridden by subclasses of Pooled so that
    //  transitively owned pooled objects are also added to OBJECTS:
    //
-   //  void MyObject::GetSubtended(std::vector< Base* >& objects)
+   //  void MyObject::GetSubtended(std::vector<Base*>& objects)
    //  {
    //     MyBaseClass::GetSubtended(objects);
    //     for(each object X that I own) X.GetSubtended(objects);
    //  }
    //
-   virtual void GetSubtended(std::vector< Base* >& objects) const;
+   virtual void GetSubtended(std::vector<Base*>& objects) const;
 
    //  Logs this object and all subtended objects by invoking each of their
    //  Display functions with STREAM, PREFIX, and OPTIONS.

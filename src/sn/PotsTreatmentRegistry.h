@@ -42,7 +42,7 @@ namespace PotsBase
 //
 class PotsTreatmentRegistry : public Protected
 {
-   friend class Singleton< PotsTreatmentRegistry >;
+   friend class Singleton<PotsTreatmentRegistry>;
    friend class PotsTreatmentQueue;
 public:
    //  Deleted to prohibit copying.
@@ -92,7 +92,7 @@ private:
 
    //  The registry of treatment queues.
    //
-   Registry< PotsTreatmentQueue > treatmentqs_;
+   Registry<PotsTreatmentQueue> treatmentqs_;
 
    //  The cause-to-treatment mappings.
    //

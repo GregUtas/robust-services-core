@@ -49,7 +49,7 @@ namespace PotsBase
 class PotsFeature : public Immutable
 {
    friend class PotsFeatureRegistry;
-   friend class Registry< PotsFeature >;
+   friend class Registry<PotsFeature>;
 public:
    //  Identifier for a feature that can be assigned to a POTS subscriber.
    //

@@ -381,7 +381,7 @@ EventHandler::Rc BcSsm::HandleRemoteRelease(Event& currEvent)
 {
    Debug::ft("BcSsm.HandleRemoteRelease");
 
-   auto& rre = static_cast< BcRemoteReleaseEvent& >(currEvent);
+   auto& rre = static_cast<BcRemoteReleaseEvent&>(currEvent);
    Cause::Ind cause = rre.GetCause();
 
    return ClearCall(cause);
@@ -783,7 +783,7 @@ EventHandler::Rc BcSsm::RequestService(Event*& nextEvent)
    //
    if(analysis_.selector == Address::ScType)
    {
-      auto reg = Singleton< ServiceCodeRegistry >::Instance();
+      auto reg = Singleton<ServiceCodeRegistry>::Instance();
       auto sid = reg->GetService(analysis_.identifier);
 
       if(sid != NIL_ID)
@@ -821,8 +821,8 @@ EventHandler::Rc BcSsm::SelectRoute(Event*& nextEvent)
    //
    if(route_.selector != NIL_ID)
    {
-      auto reg = Singleton< FactoryRegistry >::Instance();
-      auto fac = static_cast< BcFactory* >(reg->GetFactory(route_.selector));
+      auto reg = Singleton<FactoryRegistry>::Instance();
+      auto fac = static_cast<BcFactory*>(reg->GetFactory(route_.selector));
 
       if(fac != nullptr)
       {

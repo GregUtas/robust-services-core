@@ -86,7 +86,7 @@ static Function* FoundFunc(Function* func, const StackArgVector& args)
       {
          if(a->item_->Type() == Cxx::Function)
          {
-            auto farg = static_cast< Function* >(a->item_);
+            auto farg = static_cast<Function*>(a->item_);
             farg->RecordAccess(a->MinControl());
          }
       }
@@ -607,7 +607,7 @@ ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
    Debug::ft("ClassData.ctor");
 
    std::swap(name_, name);
-   Singleton< CxxSymbols >::Instance()->InsertData(this);
+   Singleton<CxxSymbols>::Instance()->InsertData(this);
    OpenScope(nullptr);
 }
 
@@ -618,7 +618,7 @@ ClassData::~ClassData()
    Debug::ftnt("ClassData.dtor");
 
    GetFile()->EraseData(this);
-   Singleton< CxxSymbols >::Extant()->EraseData(this);
+   Singleton<CxxSymbols>::Extant()->EraseData(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1100,7 +1100,7 @@ CodeFile* CxxScope::FindFileForStatic() const
    if(cls == nullptr) return nullptr;
    if(cls->IsTemplate()) return nullptr;
 
-   std::set< CodeFile* > files;
+   std::set<CodeFile*> files;
    auto refs = GetNonLocalRefs();
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
@@ -1164,7 +1164,7 @@ void CxxScope::OpenScope(const QualName* name)
 
       if(!prefix.empty())
       {
-         auto syms = Singleton< CxxSymbols >::Instance();
+         auto syms = Singleton<CxxSymbols>::Instance();
          scope = syms->FindScope(scope, prefix);
 
          if((scope == nullptr) && EraseTemplateArguments(prefix))
@@ -1690,7 +1690,7 @@ bool Data::InitByExpr(CxxToken* expr)
 
       if(type == Cxx::Operation)
       {
-         auto op = static_cast< Operation* >(expr);
+         auto op = static_cast<Operation*>(expr);
 
          if(op->ArgsSize() == 1)
          {
@@ -1831,7 +1831,7 @@ void Data::SetInited()
 
    GetDecl()->inited_ = true;
 
-   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   auto item = static_cast<Data*>(FindTemplateAnalog(this));
    if(item != nullptr) item->SetInited();
 }
 
@@ -1845,7 +1845,7 @@ bool Data::SetNonConst()
    if(nonconst_) return true;
 
    nonconst_ = true;
-   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   auto item = static_cast<Data*>(FindTemplateAnalog(this));
    if(item != nullptr) item->nonconst_ = true;
 
    return !IsConst();
@@ -1886,7 +1886,7 @@ bool Data::WasRead()
 {
    if(initing_) return false;
    ++reads_;
-   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   auto item = static_cast<Data*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->reads_;
    return true;
 }
@@ -1901,7 +1901,7 @@ bool Data::WasWritten(const StackArg* arg, bool direct, bool indirect)
 
    if(initing_) return false;
    ++writes_;
-   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   auto item = static_cast<Data*>(FindTemplateAnalog(this));
    if(item != nullptr) ++item->writes_;
 
    auto ptrs = (arg->item_ == this ? arg->Ptrs(true) : spec_->Ptrs(true));
@@ -1985,7 +1985,7 @@ void FuncData::Delete()
       {
          //  Delete this item, which appears alone.
          //
-         static_cast< Block* >(GetScope())->EraseItem(this);
+         static_cast<Block*>(GetScope())->EraseItem(this);
       }
       else
       {
@@ -2001,7 +2001,7 @@ void FuncData::Delete()
 
          auto spec = next_->GetTypeSpec();
          spec->SetLoc(GetFile(), GetTypeSpec()->GetPos(), false);
-         static_cast< Block* >(GetScope())->ReplaceItem(this, next_.release());
+         static_cast<Block*>(GetScope())->ReplaceItem(this, next_.release());
       }
    }
    else
@@ -2553,7 +2553,7 @@ Function::Function(QualNamePtr& name) :
 {
    Debug::ft("Function.ctor");
 
-   Singleton< CxxSymbols >::Instance()->InsertFunc(this);
+   Singleton<CxxSymbols>::Instance()->InsertFunc(this);
    OpenScope(name_.get());
 }
 
@@ -2619,7 +2619,7 @@ Function::~Function()
    }
 
    GetFile()->EraseFunc(this);
-   Singleton< CxxSymbols >::Extant()->EraseFunc(this);
+   Singleton<CxxSymbols>::Extant()->EraseFunc(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2924,7 +2924,7 @@ bool Function::CanBeNoexcept() const
 //------------------------------------------------------------------------------
 
 Function* Function::CanInvokeWith(StackArgVector& args,
-   stringVector& argTypes, std::vector< TypeMatch >& matches) const
+   stringVector& argTypes, std::vector<TypeMatch>& matches) const
 {
    Debug::ft("Function.CanInvokeWith");
 
@@ -3030,7 +3030,7 @@ Function* Function::CanInvokeWith(StackArgVector& args,
       return FoundFunc(inst, args);
    }
 
-   return FoundFunc(const_cast< Function* >(this), args);
+   return FoundFunc(const_cast<Function*>(this), args);
 }
 
 //------------------------------------------------------------------------------
@@ -3549,7 +3549,7 @@ void Function::CheckFreeStatic() const
    if(IsTemplate()) return;
 
    if((Name() != "main") ||
-      (GetSpace() != Singleton< CxxRoot >::Instance()->GlobalNamespace()))
+      (GetSpace() != Singleton<CxxRoot>::Instance()->GlobalNamespace()))
    {
       Log(FunctionShouldBeStatic);
    }
@@ -3664,7 +3664,7 @@ void Function::CheckIfHiding() const
    {
       if(item->GetAccess() != Cxx::Private) Log(HidesInheritedName);
    }
-   else if(!static_cast< Function* >(item)->virtual_)
+   else if(!static_cast<Function*>(item)->virtual_)
    {
       if(item->GetAccess() != Cxx::Private) Log(HidesInheritedName);
    }
@@ -4217,7 +4217,7 @@ bool Function::EnterScope()
       if((decl != nullptr) && decl->IsPreviousDeclOf(this))
       {
          defn = true;
-         Singleton< CxxSymbols >::Instance()->EraseFunc(this);
+         Singleton<CxxSymbols>::Instance()->EraseFunc(this);
          decl->SetDefn(this);
       }
    }
@@ -4401,7 +4401,7 @@ Function* Function::FindRootFunc() const
 
    //  Follow the chain of overrides to the original virtual function.
    //
-   auto prev = const_cast< Function* >(this);
+   auto prev = const_cast<Function*>(this);
 
    for(auto curr = base_; curr != nullptr; curr = curr->base_)
    {
@@ -4432,7 +4432,7 @@ CxxScoped* Function::FindTemplateAnalog(const CxxToken* item) const
       //
       auto inst = GetTemplateInstance();
       if(inst == nullptr) return nullptr;
-      func = static_cast< Function* >(inst->FindTemplateAnalog(this));
+      func = static_cast<Function*>(inst->FindTemplateAnalog(this));
       if(func == nullptr) return nullptr;
    }
 
@@ -4445,7 +4445,7 @@ CxxScoped* Function::FindTemplateAnalog(const CxxToken* item) const
 
    case Cxx::Argument:
    {
-      auto i = FindArg(static_cast< const Argument* >(item), false);
+      auto i = FindArg(static_cast<const Argument*>(item), false);
       if(i == SIZE_MAX) return nullptr;
       return func->GetArgs().at(i).get();
    }
@@ -4492,7 +4492,7 @@ Function* Function::FirstInstanceInClass() const
    auto instances = cls->Instances();
    auto cti = instances->cbegin();
    if(cti == instances->cend()) return nullptr;
-   return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
+   return static_cast<Function*>((*cti)->FindInstanceAnalog(this));
 }
 
 //------------------------------------------------------------------------------
@@ -4625,7 +4625,7 @@ bool Function::GetSpan(size_t& begin, size_t& left, size_t& end) const
 CxxScope* Function::GetTemplate() const
 {
    if(tmplt_ != nullptr) return tmplt_;
-   if(IsTemplate()) return const_cast< Function* >(this);
+   if(IsTemplate()) return const_cast<Function*>(this);
    auto cls = GetClass();
    if(cls != nullptr) return cls->GetTemplate();
    return nullptr;
@@ -5198,7 +5198,7 @@ bool Function::IsTemplateArg(const Argument* arg) const
    //
    auto inst = GetTemplateInstance();
    if(inst == nullptr) return false;
-   auto that = static_cast< const Argument* >(FindTemplateAnalog(arg));
+   auto that = static_cast<const Argument*>(FindTemplateAnalog(arg));
    if(that == nullptr) return false;
    return (that->GetTypeSpec()->GetTemplateRole() == TemplateParameter);
 }
@@ -5451,7 +5451,7 @@ bool Function::NameRefersToItem(const string& name,
    //  ====  execution, but it is identical to ClassInst.NameRefersToItem.
    //
    auto names = GetNameAndArgs(name);
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
    auto item = syms->FindSymbol
       (file, scope, names.front().name, FRIEND_CLASSES, view);
    if(item == nullptr) return false;
@@ -5564,7 +5564,7 @@ void Function::Rename(const string& name)
    //  symbols match the name that is used as a key.
    //
    SymbolVector items;
-   Singleton< CxxSymbols >::Instance()->FindItems(Name(), FUNC_FORWS, items);
+   Singleton<CxxSymbols>::Instance()->FindItems(Name(), FUNC_FORWS, items);
    for(auto f = items.cbegin(); f != items.cend(); ++f)
    {
       if((*f)->Referent() == this)
@@ -5587,7 +5587,7 @@ StackArg Function::ResultType() const
    //
    if(spec_ != nullptr) return spec_->ResultType();
    if(FuncType() == FuncCtor) return StackArg(GetClass(), 0, true);
-   return StackArg(Singleton< CxxRoot >::Instance()->VoidTerm(), 0, false);
+   return StackArg(Singleton<CxxRoot>::Instance()->VoidTerm(), 0, false);
 }
 
 //------------------------------------------------------------------------------
@@ -5653,7 +5653,7 @@ void Function::SetNonPublic()
 
    if(nonpublic_) return;
    nonpublic_ = true;
-   auto func = static_cast< Function* >(FindTemplateAnalog(this));
+   auto func = static_cast<Function*>(FindTemplateAnalog(this));
    if(func != nullptr) func->nonpublic_ = true;
 }
 
@@ -5665,7 +5665,7 @@ void Function::SetNonStatic()
 
    if(nonstatic_) return;
    nonstatic_ = true;
-   auto func = static_cast< Function* >(FindTemplateAnalog(this));
+   auto func = static_cast<Function*>(FindTemplateAnalog(this));
    if(func != nullptr) func->nonstatic_ = true;
 }
 
@@ -5692,7 +5692,7 @@ void Function::SetOperator(Cxx::Operator oper)
    //  Adding the function to the symbol table was deferred until now in
    //  case an operator symbol had not yet been appended to its name.
    //
-   Singleton< CxxSymbols >::Instance()->InsertFunc(this);
+   Singleton<CxxSymbols>::Instance()->InsertFunc(this);
 }
 
 //------------------------------------------------------------------------------
@@ -5884,7 +5884,7 @@ void Function::UpdateThisArg(StackArgVector& args) const
             if(file != nullptr)
             {
                auto pos = Context::GetPos();
-               auto item = static_cast< CxxNamed* >(args.front().item_);
+               auto item = static_cast<CxxNamed*>(args.front().item_);
                file->LogPos
                   (pos, StaticFunctionViaMember, item, 0, GetClass()->Name());
             }
@@ -6073,7 +6073,7 @@ void Function::WasCalled()
 
    if(cls != nullptr)
    {
-      auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
+      auto func = static_cast<Function*>(cls->FindTemplateAnalog(this));
       if(func != nullptr) ++func->calls_;
    }
 }
@@ -6092,7 +6092,7 @@ string Function::XrefName(bool templates) const
 {
    auto name = CxxScoped::XrefName(templates);
 
-   if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), Name()))
+   if(!Singleton<CxxSymbols>::Instance()->IsUniqueName(GetScope(), Name()))
    {
       std::ostringstream stream;
       Flags options(FQ_Mask);
@@ -6131,7 +6131,7 @@ SpaceData::~SpaceData()
    Debug::ftnt("SpaceData.dtor");
 
    GetFile()->EraseData(this);
-   Singleton< CxxSymbols >::Extant()->EraseData(this);
+   Singleton<CxxSymbols>::Extant()->EraseData(this);
 }
 
 //------------------------------------------------------------------------------
@@ -6276,7 +6276,7 @@ bool SpaceData::EnterScope()
    if(defn)
       decl->SetDefn(this);
    else
-      Singleton< CxxSymbols >::Instance()->InsertData(this);
+      Singleton<CxxSymbols>::Instance()->InsertData(this);
 
    if(defn || IsAtFileScope()) GetFile()->InsertData(this);
    ExecuteInit(true);

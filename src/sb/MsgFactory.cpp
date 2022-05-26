@@ -46,7 +46,7 @@ static void CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
    Debug::ft("SessionBase.CaptureMsg");
 
    auto warp = SteadyTime::Now();
-   auto sbt = Singleton< SbTracer >::Instance();
+   auto sbt = Singleton<SbTracer>::Instance();
 
    if(!ctx.TraceOn())
    {
@@ -58,7 +58,7 @@ static void CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
    //
    if(ctx.TraceOn())
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {

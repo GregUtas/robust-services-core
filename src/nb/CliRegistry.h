@@ -41,7 +41,7 @@ namespace NodeBase
 //
 class CliRegistry : public Immutable
 {
-   friend class Singleton< CliRegistry >;
+   friend class Singleton<CliRegistry>;
    friend class CliIncrement;
 public:
    //  Deleted to prohibit copying.
@@ -87,7 +87,7 @@ private:
 
    //  The global registry of CLI increments.
    //
-   Registry< CliIncrement > increments_;
+   Registry<CliIncrement> increments_;
 };
 }
 #endif

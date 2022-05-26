@@ -114,9 +114,9 @@ InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
 {
    Debug::ft("InvokerDaemon.GetDaemon");
 
-   auto reg = Singleton< DaemonRegistry >::Instance();
+   auto reg = Singleton<DaemonRegistry>::Instance();
    auto name = MakeName(faction);
-   auto daemon = static_cast< InvokerDaemon* >(reg->FindDaemon(name.c_str()));
+   auto daemon = static_cast<InvokerDaemon*>(reg->FindDaemon(name.c_str()));
 
    if(daemon != nullptr) return daemon;
    return new InvokerDaemon(faction, size);
@@ -153,7 +153,7 @@ Thread* TimerDaemon::CreateThread()
 {
    Debug::ft("TimerDaemon.CreateThread");
 
-   return Singleton< TimerThread >::Instance();
+   return Singleton<TimerThread>::Instance();
 }
 
 //------------------------------------------------------------------------------

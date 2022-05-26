@@ -93,7 +93,7 @@ struct ThreadInfo
 //
 class ThreadRegistry : public Permanent
 {
-   friend class Singleton< ThreadRegistry >;
+   friend class Singleton<ThreadRegistry>;
    friend class Thread;
    friend class ModuleRegistry;
 public:
@@ -119,7 +119,7 @@ public:
 
    //  Returns all Threads sorted by ThreadId.
    //
-   std::vector< Thread* > GetThreads() const;
+   std::vector<Thread*> GetThreads() const;
 
    //  Returns the thread registered against TID.
    //
@@ -156,7 +156,7 @@ private:
 
    //  The type for the thread registry.
    //
-   typedef std::map< SysThreadId, ThreadInfo > ThreadMap;
+   typedef std::map<SysThreadId, ThreadInfo> ThreadMap;
 
    //  Returns the registry of threads.  Used for iteration.
    //
@@ -195,11 +195,11 @@ private:
    //  Informs all threads that a restart is occurring.  Returns the
    //  threads that will exit instead of sleeping.
    //
-   std::set< Thread* > Restarting(RestartLevel level) const;
+   std::set<Thread*> Restarting(RestartLevel level) const;
 
    //  Updates THREADS by removing threads that are no longer registered.
    //
-   void TrimThreads(std::set< Thread* >& threads) const;
+   void TrimThreads(std::set<Thread*>& threads) const;
 
    //  Sets THREAD's ThreadId when adding it to the registry.  Returns
    //  the assigned ThreadId.
@@ -212,7 +212,7 @@ private:
 
    //  An entry for a thread.
    //
-   typedef std::pair< SysThreadId, ThreadInfo > Entry;
+   typedef std::pair<SysThreadId, ThreadInfo> Entry;
 
    //  The threads.
    //

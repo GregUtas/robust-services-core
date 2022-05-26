@@ -52,7 +52,7 @@ namespace SessionTools
 //
 class TestProtocol : public TlvProtocol
 {
-   friend class Singleton< TestProtocol >;
+   friend class Singleton<TestProtocol>;
 
    //  Private because this is a singleton.
    //
@@ -205,7 +205,7 @@ public:
 
    //  Overridden to enumerate all objects that the message owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 private:
    //  The message to be injected.
    //
@@ -226,7 +226,7 @@ private:
 //
 class TestService : public Service
 {
-   friend class Singleton< TestService >;
+   friend class Singleton<TestService>;
 
    //  Private because this is a singleton.
    //
@@ -301,7 +301,7 @@ private:
 //
 class TestFactory : public SsmFactory
 {
-   friend class Singleton< TestFactory >;
+   friend class Singleton<TestFactory>;
 
    //  Private because this is a singleton.
    //
@@ -328,7 +328,7 @@ class TestFactory : public SsmFactory
 //
 class TestSession : public Dynamic
 {
-   friend std::unique_ptr< TestSession >::deleter_type;
+   friend std::unique_ptr<TestSession>::deleter_type;
    friend class StTestData;
 public:
    //  Deleted to prohibit copying.

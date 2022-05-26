@@ -77,7 +77,7 @@ static void AddForwardDependencies
 
       for(auto b = symbols.bases.cbegin(); b != symbols.bases.cend(); ++b)
       {
-         auto base = static_cast< const Class* >(*b);
+         auto base = static_cast<const Class*>(*b);
 
          for(auto c = base->BaseClass(); c != nullptr; c = c->BaseClass())
          {
@@ -233,7 +233,7 @@ static void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
 
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
-      auto base = static_cast< const Class* >(*b);
+      auto base = static_cast<const Class*>(*b);
 
       for(auto c = base; c != nullptr; c = c->BaseClass())
       {
@@ -263,7 +263,7 @@ static void RemoveAliasedClasses(CxxNamedSet& inclSet)
          {
             if((*item2)->Type() == Cxx::Typedef)
             {
-               auto type = static_cast< const Typedef* >(*item2);
+               auto type = static_cast<const Typedef*>(*item2);
                auto ref = type->Referent();
 
                if((cls == ref) || (cls == ref->GetTemplate()) ||
@@ -286,7 +286,7 @@ static void RemoveAliasedClasses(CxxNamedSet& inclSet)
    {
       if((*item1)->Type() == Cxx::Typedef)
       {
-         auto type = static_cast< const Typedef* >(*item1);
+         auto type = static_cast<const Typedef*>(*item1);
          auto ref = type->Referent();
 
          for(auto item2 = std::next(item1); item2 != inclSet.end(); NO_OP)
@@ -409,7 +409,7 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
 
    isHeader_ = (name.find(".c") == string::npos);
    isSubsFile_ = (dir != nullptr) && dir->IsSubsDir();
-   Singleton< Library >::Instance()->AddFile(*this);
+   Singleton<Library>::Instance()->AddFile(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -543,7 +543,7 @@ void CodeFile::Check(bool force)
    //  If warnings were previously logged against this file, preserve those
    //  detected during compilation, because the file won't be recompiled.
    //
-   std::vector< CodeWarning > saved;
+   std::vector<CodeWarning> saved;
 
    for(size_t i = 0; i < warnings_.size(); ++i)
    {
@@ -585,7 +585,7 @@ void CodeFile::CheckDebugFt(bool recheck)
    Debug::ft("CodeFile.CheckDebugFt");
 
    const auto& lines = editor_.GetLinesInfo();
-   auto coverdb = Singleton< CodeCoverage >::Instance();
+   auto coverdb = Singleton<CodeCoverage>::Instance();
    size_t begin, left, end;
    string fname;
    Data* data;
@@ -693,7 +693,7 @@ void CodeFile::CheckFunctionOrder() const
    auto curr = (*f)->GetArea();
    auto orphans = FuncsInArea(defns, curr);
    CodeTools::EraseItem(orphans, *f);
-   std::set< CxxArea* > areas;
+   std::set<CxxArea*> areas;
    areas.insert(curr);
 
    for(++f; f != defns.cend(); NO_OP)
@@ -1019,7 +1019,7 @@ void CodeFile::Display(ostream& stream,
 
    for(auto i = inclSet_.cbegin(); i != inclSet_.cend(); ++i)
    {
-      auto f = static_cast< const CodeFile* >(*i);
+      auto f = static_cast<const CodeFile*>(*i);
       stream << lead << f->Name() << CRLF;
    }
 
@@ -1027,7 +1027,7 @@ void CodeFile::Display(ostream& stream,
 
    for(auto u = userSet_.cbegin(); u != userSet_.cend(); ++u)
    {
-      auto f = static_cast< const CodeFile* >(*u);
+      auto f = static_cast<const CodeFile*>(*u);
       stream << lead << f->Name() << CRLF;
    }
 
@@ -1374,7 +1374,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
 
       QualNamePtr qualName;
       name = ref->ScopedName(false);
-      auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+      auto scope = Singleton<CxxRoot>::Instance()->GlobalNamespace();
       ParserPtr parser(new Parser(scope));
       parser->ParseQualName(name, qualName);
       parser.reset();
@@ -1419,7 +1419,7 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
    for(auto f = search.cbegin(); f != search.cend(); ++f)
    {
-      auto file = static_cast< const CodeFile* >(*f);
+      auto file = static_cast<const CodeFile*>(*f);
       u = file->GetUsingFor(fqName, prefix, item, scope);
       if(u != nullptr) return u;
    }
@@ -1621,7 +1621,7 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
    {
       for(auto d = declSet_.cbegin(); d != declSet_.cend(); ++d)
       {
-         auto file = static_cast< const CodeFile* >(*d);
+         auto file = static_cast<const CodeFile*>(*d);
          auto classes = file->Classes();
 
          for(auto c = classes->cbegin(); c != classes->cend(); ++c)
@@ -1945,7 +1945,7 @@ bool CodeFile::IsExcludedTarget() const
    Debug::ft("CodeFile.IsExcludedTarget");
 
    auto& fn = Name();
-   auto syms = Singleton< CxxSymbols >::Instance();
+   auto syms = Singleton<CxxSymbols>::Instance();
 
    if(fn.find(".win.cpp") != string::npos)
    {
@@ -2040,7 +2040,7 @@ void CodeFile::LogAddIncludes(ostream* stream, const LibItemSet& files)
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
       string fn;
-      auto file = static_cast< const CodeFile* >(*f);
+      auto file = static_cast<const CodeFile*>(*f);
       auto x = file->IsSubsFile();
       fn.push_back(x ? '<' : QUOTE);
       fn += file->Name();
@@ -2204,7 +2204,7 @@ void CodeFile::LogRemoveIncludes(ostream* stream, const LibItemSet& files) const
    //
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      const auto& name = static_cast< const CodeFile* >(*f)->Name();
+      const auto& name = static_cast<const CodeFile*>(*f)->Name();
 
       for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
       {
@@ -2283,7 +2283,7 @@ string CodeFile::Path(bool full) const
 
    if(!full)
    {
-      string path(Singleton< Library >::Instance()->SourcePath());
+      string path(Singleton<Library>::Instance()->SourcePath());
       path.push_back(PATH_SEPARATOR);
 
       if(name.find(path, 0) == 0)
@@ -2386,7 +2386,7 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
          {
             for(auto a = affecterSet.cbegin(); a != affecterSet.cend(); ++a)
             {
-               auto incl = static_cast< const CodeFile* >(*a);
+               auto incl = static_cast<const CodeFile*>(*a);
 
                if(incl != this)
                {
@@ -2494,7 +2494,7 @@ void CodeFile::RemoveHeaders(LibItemSet& inclSet) const
    {
       for(auto d = declSet_.cbegin(); d != declSet_.cend(); ++d)
       {
-         auto file = static_cast< const CodeFile* >(*d);
+         auto file = static_cast<const CodeFile*>(*d);
          SetDifference(inclSet, file->TrimList());
       }
 
@@ -2523,7 +2523,7 @@ void CodeFile::RemoveInvalidIncludes(LibItemSet& addSet)
 
    for(auto f = addSet.cbegin(); f != addSet.cend(); NO_OP)
    {
-      auto file = static_cast< CodeFile* >(*f);
+      auto file = static_cast<CodeFile*>(*f);
 
       if(file != nullptr)
       {
@@ -2554,7 +2554,7 @@ void CodeFile::SaveBaseSet(const CxxNamedSet& bases)
 
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
-      auto base = static_cast< const Class* >(*b);
+      auto base = static_cast<const Class*>(*b);
       baseSet_.insert(base->GetDeclFile());
    }
 }
@@ -2573,7 +2573,7 @@ void CodeFile::Scan()
    //  Preprocess #include directives.
    //
    auto lines = editor_.LineCount();
-   auto lib = Singleton< Library >::Instance();
+   auto lib = Singleton<Library>::Instance();
    string file;
    bool angle;
 

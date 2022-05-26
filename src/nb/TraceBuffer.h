@@ -63,7 +63,7 @@ namespace NodeBase
 //
 class TraceBuffer : public Permanent
 {
-   friend class Singleton< TraceBuffer >;
+   friend class Singleton<TraceBuffer>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -188,7 +188,7 @@ public:
 
    //  A table for counting the number of times each function was invoked.
    //
-   typedef std::map< fn_name_arg, size_t > InvocationsTable;
+   typedef std::map<fn_name_arg, size_t> InvocationsTable;
 
    //  Increments the number of times that FUNC was invoked.
    //
@@ -257,7 +257,7 @@ private:
 
    //  A tuple containing a function's name and how many times it was invoked.
    //
-   typedef std::pair< fn_name_arg, size_t > FunctionCount;
+   typedef std::pair<fn_name_arg, size_t> FunctionCount;
 
    //  Allocates space for recording 2^N trace records.  Returns false if
    //  allocation fails.
@@ -324,7 +324,7 @@ private:
 
    //  The table for recording the number of times that a function was invoked.
    //
-   std::unique_ptr< InvocationsTable > invocations_;
+   std::unique_ptr<InvocationsTable> invocations_;
 
    //  Set when FunctionTrace.Process is invoked to reorder constructors.
    //

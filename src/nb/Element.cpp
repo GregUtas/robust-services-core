@@ -49,7 +49,7 @@ Element::Element()
 
    //  Create our configuration parameters.
    //
-   auto reg = Singleton< CfgParmRegistry >::Instance();
+   auto reg = Singleton<CfgParmRegistry>::Instance();
 
    nameCfg_.reset(new CfgStrParm
       ("ElementName", DefaultElementName, "element's name"));
@@ -140,7 +140,7 @@ bool Element::IsUnnamed()
 
 string Element::Name()
 {
-   auto element = Singleton< Element >::Extant();
+   auto element = Singleton<Element>::Extant();
    if(element == nullptr) return DefaultElementName;
    return element->nameCfg_->CurrValue();
 }
@@ -201,7 +201,7 @@ bool Element::RunningInLab()
    //  This might be invoked very early during initialization, so don't
    //  create this class until it is required for another purpose.
    //
-   auto element = Singleton< Element >::Extant();
+   auto element = Singleton<Element>::Extant();
    if(element != nullptr) return element->runningInLabCfg_->CurrValue();
 
 #ifndef FIELD_LOAD

@@ -49,7 +49,7 @@ PotsFeature::PotsFeature(Id fid, bool deactivation,
    fid_.SetId(fid);
    incompatible_[fid] = true;
 
-   Singleton< PotsFeatureRegistry >::Instance()->BindFeature(*this);
+   Singleton<PotsFeatureRegistry>::Instance()->BindFeature(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ PotsFeature::~PotsFeature()
    Debug::ftnt(PotsFeature_dtor);
 
    Debug::SwLog(PotsFeature_dtor, UnexpectedInvocation, 0);
-   Singleton< PotsFeatureRegistry >::Extant()->UnbindFeature(*this);
+   Singleton<PotsFeatureRegistry>::Extant()->UnbindFeature(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ CliText* PotsFeature::Attrs() const
 ptrdiff_t PotsFeature::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const PotsFeature* >(&local);
+   auto fake = reinterpret_cast<const PotsFeature*>(&local);
    return ptrdiff(&fake->fid_, fake);
 }
 
@@ -102,7 +102,7 @@ void PotsFeature::Display(ostream& stream,
    {
       if(incompatible_[i] && (i != Fid()))
       {
-         auto ftr = Singleton< PotsFeatureRegistry >::Instance()->Feature(i);
+         auto ftr = Singleton<PotsFeatureRegistry>::Instance()->Feature(i);
          stream << ftr->AbbrName() << SPACE;
       }
    }

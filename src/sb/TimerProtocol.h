@@ -40,7 +40,7 @@ namespace SessionBase
 //
 class TimerProtocol : public TlvProtocol
 {
-   friend class NodeBase::Singleton< TimerProtocol >;
+   friend class NodeBase::Singleton<TimerProtocol>;
 
    //  Private because this is a singleton.
    //
@@ -57,7 +57,7 @@ class TimerProtocol : public TlvProtocol
 //
 class TimeoutSignal : public Signal
 {
-   friend class NodeBase::Singleton< TimeoutSignal >;
+   friend class NodeBase::Singleton<TimeoutSignal>;
 
    //  Private because this is a singleton.
    //
@@ -87,7 +87,7 @@ struct TimeoutInfo
 //
 class TimeoutParameter : public TlvParameter
 {
-   friend class NodeBase::Singleton< TimeoutParameter >;
+   friend class NodeBase::Singleton<TimeoutParameter>;
 public:
    //  Overridden to display the parameter symbolically.
    //

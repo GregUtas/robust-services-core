@@ -36,7 +36,7 @@ namespace NodeBase
 //
 class Tool : public Immutable
 {
-   friend class Registry< Tool >;
+   friend class Registry<Tool>;
 public:
    //  Deleted to prohibit copying.
    //

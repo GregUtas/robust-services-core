@@ -35,7 +35,7 @@ namespace NodeBase
 //
 class DeferredRegistry : public Dynamic
 {
-   friend class Singleton< DeferredRegistry >;
+   friend class Singleton<DeferredRegistry>;
    friend class Deferred;
    friend class DeferredThread;
 public:
@@ -102,7 +102,7 @@ private:
 
    //  The queue of work items.
    //
-   Q2Way< Deferred > itemq_;
+   Q2Way<Deferred> itemq_;
 
    //  Used while traversing the queue.
    //

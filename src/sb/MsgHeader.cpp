@@ -78,7 +78,7 @@ void MsgHeader::Display(ostream& stream, const string& prefix) const
 
    stream << CRLF << prefix;
    stream << "protocol=" << protocol;
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(protocol);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(protocol);
    stream << " (" << strClass(pro, false) << ")  signal=" << signal;
    if(pro != nullptr)
       stream << " (" << strClass(pro->GetSignal(signal), false) << ')';

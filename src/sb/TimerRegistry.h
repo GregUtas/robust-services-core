@@ -37,7 +37,7 @@ namespace SessionBase
 //
 class TimerRegistry : public NodeBase::Dynamic
 {
-   friend class NodeBase::Singleton< TimerRegistry >;
+   friend class NodeBase::Singleton<TimerRegistry>;
    friend class Timer;
 public:
    //  Deleted to prohibit copying.
@@ -85,7 +85,7 @@ private:
    //  timerq_[s] contains timers expiring in (s - nextQid_) seconds; the
    //  last queue is for timers of Timer::MaxQId seconds or more.
    //
-   NodeBase::Q2Way< Timer > timerq_[Timer::MaxQId + 1];
+   NodeBase::Q2Way<Timer> timerq_[Timer::MaxQId + 1];
 
    //  The timer queue that will be serviced next.
    //

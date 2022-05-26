@@ -95,7 +95,7 @@ struct CauseInfo
 //
 //  Virtual base class for supporting a CauseInfo parameter.
 //
-class CauseParameter : public TlvIntParameter< Cause::Ind >
+class CauseParameter : public TlvIntParameter<Cause::Ind>
 {
 protected:
    //  Protected because this class is virtual.

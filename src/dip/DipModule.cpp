@@ -43,8 +43,8 @@ DipModule::DipModule() : Module()
 
    //  Create the modules required by Diplomacy.
    //
-   Singleton< NwModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
+   Singleton<NwModule>::Instance();
+   Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -60,9 +60,9 @@ void DipModule::Startup(RestartLevel level)
 {
    Debug::ft("DipModule.Startup");
 
-   Singleton< DipIpBufferPool >::Instance()->Startup(level);
-   Singleton< BotTcpService >::Instance()->Startup(level);
-   Singleton< BotTracer >::Instance();
-   Singleton< BotThread >::Instance()->Startup(level);
+   Singleton<DipIpBufferPool>::Instance()->Startup(level);
+   Singleton<BotTcpService>::Instance()->Startup(level);
+   Singleton<BotTracer>::Instance();
+   Singleton<BotThread>::Instance()->Startup(level);
 }
 }

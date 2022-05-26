@@ -50,7 +50,7 @@ PotsTreatmentQueue::PotsTreatmentQueue(QId qid)
    qid_.SetId(qid);
    treatmentq_.Init(PotsTreatment::LinkDiff());
 
-   Singleton< PotsTreatmentRegistry >::Instance()->BindTreatmentQ(*this);
+   Singleton<PotsTreatmentRegistry>::Instance()->BindTreatmentQ(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ PotsTreatmentQueue::~PotsTreatmentQueue()
 {
    Debug::ftnt("PotsTreatmentQueue.dtor");
 
-   Singleton< PotsTreatmentRegistry >::Extant()->UnbindTreatmentQ(*this);
+   Singleton<PotsTreatmentRegistry>::Extant()->UnbindTreatmentQ(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void PotsTreatmentQueue::BindTreatment(PotsTreatment& treatment)
 ptrdiff_t PotsTreatmentQueue::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const PotsTreatmentQueue* >(&local);
+   auto fake = reinterpret_cast<const PotsTreatmentQueue*>(&local);
    return ptrdiff(&fake->qid_, fake);
 }
 
@@ -130,7 +130,7 @@ PotsTreatment::PotsTreatment(PotsTreatmentQueue::QId qid) : qid_(qid)
 {
    Debug::ft(PotsTreatment_ctor);
 
-   auto reg = Singleton< PotsTreatmentRegistry >::Instance();
+   auto reg = Singleton<PotsTreatmentRegistry>::Instance();
    auto tq = reg->TreatmentQ(qid_);
 
    if(tq != nullptr)
@@ -147,7 +147,7 @@ PotsTreatment::~PotsTreatment()
 {
    Debug::ftnt(PotsTreatment_dtor);
 
-   auto reg = Singleton< PotsTreatmentRegistry >::Extant();
+   auto reg = Singleton<PotsTreatmentRegistry>::Extant();
    auto tq = reg->TreatmentQ(qid_);
 
    if(tq != nullptr)
@@ -185,7 +185,7 @@ void PotsTreatment::Display(ostream& stream,
 ptrdiff_t PotsTreatment::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const PotsTreatment* >(&local);
+   auto fake = reinterpret_cast<const PotsTreatment*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -197,7 +197,7 @@ PotsTreatment* PotsTreatment::NextTreatment() const
 {
    Debug::ft(PotsTreatment_NextTreatment);
 
-   auto reg = Singleton< PotsTreatmentRegistry >::Instance();
+   auto reg = Singleton<PotsTreatmentRegistry>::Instance();
    auto tq = reg->TreatmentQ(qid_);
 
    if(tq == nullptr)
@@ -232,7 +232,7 @@ EventHandler::Rc PotsToneTreatment::ApplyTreatment
 {
    Debug::ft("PotsToneTreatment.ApplyTreatment");
 
-   auto pssm = static_cast< PotsBcSsm* >(ate.Owner());
+   auto pssm = static_cast<PotsBcSsm*>(ate.Owner());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
 
    upsm->SetOgTone(tone_);
@@ -249,7 +249,7 @@ void PotsToneTreatment::Display(ostream& stream,
 
    if(!options.test(DispVerbose)) return;
 
-   auto reg = Singleton< ToneRegistry >::Instance();
+   auto reg = Singleton<ToneRegistry>::Instance();
 
    stream << prefix << "tone : " << int(tone_);
    stream << " [" << strClass(reg->GetTone(tone_), false) << ']' << CRLF;
@@ -271,7 +271,7 @@ EventHandler::Rc PotsLockoutTreatment::ApplyTreatment
 {
    Debug::ft("PotsLockoutTreatment.ApplyTreatment");
 
-   auto pssm = static_cast< PotsBcSsm* >(ate.Owner());
+   auto pssm = static_cast<PotsBcSsm*>(ate.Owner());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
    auto prof = pssm->Profile();
 
@@ -297,7 +297,7 @@ EventHandler::Rc PotsIdleTreatment::ApplyTreatment
 {
    Debug::ft("PotsIdleTreatment.ApplyTreatment");
 
-   auto pssm = static_cast< PotsBcSsm* >(ate.Owner());
+   auto pssm = static_cast<PotsBcSsm*>(ate.Owner());
 
    return pssm->ClearCall(ate.GetCause());
 }

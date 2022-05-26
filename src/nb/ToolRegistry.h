@@ -41,7 +41,7 @@ namespace NodeBase
 //
 class ToolRegistry : public Immutable
 {
-   friend class Singleton< ToolRegistry >;
+   friend class Singleton<ToolRegistry>;
    friend class Tool;
 public:
    //  Deleted to prohibit copying.
@@ -66,7 +66,7 @@ public:
 
    //  Returns the registry of tools.  Used for iteration.
    //
-   const Registry< Tool >& Tools() const { return tools_; }
+   const Registry<Tool>& Tools() const { return tools_; }
 
    //  Overridden to display member variables.
    //
@@ -95,7 +95,7 @@ private:
 
    //  The global registry of debug tools.
    //
-   Registry< Tool > tools_;
+   Registry<Tool> tools_;
 };
 }
 #endif

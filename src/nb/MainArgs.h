@@ -38,7 +38,7 @@ namespace NodeBase
 //
 class MainArgs : public Immutable
 {
-   friend class Singleton< MainArgs >;
+   friend class Singleton<MainArgs>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -84,7 +84,7 @@ private:
 
    //  The arguments to main().
    //
-   std::vector< ImmutableStr, ImmutableAllocator< ImmutableStr >> args_;
+   std::vector<ImmutableStr, ImmutableAllocator<ImmutableStr>> args_;
 };
 }
 #endif

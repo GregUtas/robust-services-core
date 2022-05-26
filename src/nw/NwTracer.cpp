@@ -42,7 +42,7 @@ fixed_string NetworkTraceToolExpl = "traces sockets";
 
 class NetworkTraceTool : public Tool
 {
-   friend class Singleton< NetworkTraceTool >;
+   friend class Singleton<NetworkTraceTool>;
 
    NetworkTraceTool() : Tool(NetworkTracer, 'n', true) { }
    ~NetworkTraceTool() = default;
@@ -72,7 +72,7 @@ NwTracer::NwTracer()
 {
    Debug::ft("NwTracer.ctor");
 
-   Singleton< NetworkTraceTool >::Instance();
+   Singleton<NetworkTraceTool>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ TraceStatus NwTracer::BuffStatus(const IpBuffer& ipb, MsgDirection dir) const
 
    if(!Debug::TraceOn()) return TraceExcluded;
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    TraceStatus status;
 
@@ -129,7 +129,7 @@ TraceRc NwTracer::ClearSelections(FlagId filter)
 {
    Debug::ft(NwTracer_ClearSelections);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    switch(filter)
    {
@@ -144,7 +144,7 @@ TraceRc NwTracer::ClearSelections(FlagId filter)
       break;
 
    case TraceAll:
-      Singleton< NbTracer >::Instance()->ClearSelections(TraceAll);
+      Singleton<NbTracer>::Instance()->ClearSelections(TraceAll);
       ClearSelections(TracePeer);
       ClearSelections(TracePort);
       break;
@@ -254,11 +254,11 @@ void NwTracer::QuerySelections(ostream& stream) const
 {
    Debug::ft("NwTracer.QuerySelections");
 
-   auto nbt = Singleton< NbTracer >::Instance();
+   auto nbt = Singleton<NbTracer>::Instance();
 
    nbt->QuerySelections(stream);
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    stream << PeersSelected << CRLF;
 
@@ -303,7 +303,7 @@ TraceRc NwTracer::SelectPeer(const SysIpL3Addr& peer, TraceStatus status)
 {
    Debug::ft("NwTracer.SelectPeer");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    auto i = FindPeer(peer);
 
@@ -337,7 +337,7 @@ TraceRc NwTracer::SelectPort(ipport_t port, TraceStatus status)
 {
    Debug::ft("NwTracer.SelectPort");
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
 
    auto i = FindPort(port);
 

@@ -34,7 +34,7 @@ namespace PotsBase
 {
 class PotsCcwService : public Service
 {
-   friend class Singleton< PotsCcwService >;
+   friend class Singleton<PotsCcwService>;
 
    PotsCcwService();
    ~PotsCcwService();

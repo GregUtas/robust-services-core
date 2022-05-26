@@ -51,7 +51,7 @@ bool ObjectPoolTrace::Display(ostream& stream, const string& opts)
 {
    if(!TimedRecord::Display(stream, opts)) return false;
 
-   auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid_);
+   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pool(pid_);
 
    stream << spaces(TraceDump::EvtToObj) << obj_ << TraceDump::Tab();
 

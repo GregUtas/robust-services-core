@@ -86,9 +86,9 @@ namespace NodeBase
 //  also invoke Debug::ft.  Nested calls to these functions must be blocked
 //  to prevent a stack overflow.
 //
-static std::map< SysThreadId, std::atomic_flag >& AccessFtLocks() NO_FT
+static std::map<SysThreadId, std::atomic_flag>& AccessFtLocks() NO_FT
 {
-   static std::map< SysThreadId, std::atomic_flag > FtLocks_;
+   static std::map<SysThreadId, std::atomic_flag> FtLocks_;
 
    return FtLocks_;
 }
@@ -197,7 +197,7 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
    case PauseEnter:
    {
       auto depth = SysThreadStack::FuncDepth();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
       auto rec = new ThreadTrace(func, depth - 2, rid, info);
       buff->Insert(rec);
       break;
@@ -355,7 +355,7 @@ ContextSwitch::ContextSwitch() :
 //
 class ContextSwitches : public Permanent
 {
-   friend class Singleton< ContextSwitches >;
+   friend class Singleton<ContextSwitches>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -407,7 +407,7 @@ private:
 
    //  The array of context switches (recent history).
    //
-   std::unique_ptr< ContextSwitch[] > switches_;
+   std::unique_ptr<ContextSwitch[]> switches_;
 
    //  Set if the array wrapped around (circular buffer).
    //
@@ -498,7 +498,7 @@ struct SchedSnapshot
    //  An array of characters, one per thread, indicating what each thread was
    //  doing at this time point.
    //
-   std::unique_ptr< char[] > activity;
+   std::unique_ptr<char[]> activity;
 
    //  The system time associated with this entry.
    //
@@ -515,16 +515,16 @@ struct SchedSnapshot
 
 //  Each SchedSnapshot is managed by a unique_ptr.
 //
-typedef std::unique_ptr< SchedSnapshot > SchedSnapshotPtr;
+typedef std::unique_ptr<SchedSnapshot> SchedSnapshotPtr;
 
 //  Associates a time point with what each thread was doing at that time.
 //
-typedef std::pair< SteadyTime::Point, SchedSnapshotPtr> SchedEntry;
+typedef std::pair<SteadyTime::Point, SchedSnapshotPtr> SchedEntry;
 
 //  Maps each time point associated with a context switch to what each thread
 //  was doing at that time.
 //
-typedef std::map< SteadyTime::Point, SchedSnapshotPtr> SchedEntries;
+typedef std::map<SteadyTime::Point, SchedSnapshotPtr> SchedEntries;
 
 //  The header for displaying context switches.  ThreadIds starting at 1 are
 //  output dynamically following the 0.  Each thread's activity is then shown
@@ -569,7 +569,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
    //  Find the threads that were recorded during the context switches.
    //  Thread 0 is always "found" in case an unknown thread was encountered.
    //
-   std::unique_ptr< bool[] > threadFound(new bool[Thread::MaxId + 1]);
+   std::unique_ptr<bool[]> threadFound(new bool[Thread::MaxId + 1]);
 
    threadFound[0] = true;
 
@@ -588,7 +588,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
    //  The first column (0) is for unknown threads, so start at column 1.
    //
    size_t cols = 1;
-   std::unique_ptr< size_t[] > threadColumn(new size_t[Thread::MaxId + 1]);
+   std::unique_ptr<size_t[]> threadColumn(new size_t[Thread::MaxId + 1]);
 
    for(ThreadId t = 0; t <= Thread::MaxId; ++t)
    {
@@ -1057,7 +1057,7 @@ const SysThread::Priority FactionMap[Faction_N] =
 //  The thread that is running or which has been scheduled to run.
 //  Excludes RootThread and InitThread.
 //
-static std::atomic< Thread* > ActiveThread_ = { nullptr };
+static std::atomic<Thread*> ActiveThread_ = { nullptr };
 
 //  The factions that may currently be scheduled.
 //
@@ -1136,7 +1136,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
    systhrd_.reset(new SysThread(this, prio,
       ThreadAdmin::StackUsageLimit() << BYTES_PER_WORD_LOG2));
 
-   auto reg = Singleton< ThreadRegistry >::Instance();
+   auto reg = Singleton<ThreadRegistry>::Instance();
    reg->Created(systhrd_.get(), this);
    ThreadAdmin::Incr(ThreadAdmin::Creations);
    if(daemon_ != nullptr) daemon_->ThreadCreated(this);
@@ -1148,7 +1148,7 @@ Thread::~Thread()
 {
    Debug::ftnt("Thread.dtor");
 
-   auto threads = Singleton< ThreadRegistry >::Extant();
+   auto threads = Singleton<ThreadRegistry>::Extant();
    threads->Destroying(Deleting, systhrd_.get());
 
    ThreadAdmin::Incr(ThreadAdmin::Deletions);
@@ -1236,12 +1236,12 @@ TraceStatus Thread::CalcStatus(bool dynamic) const
    if(dynamic && priv_->traceMsg_) return TraceIncluded;
    if(priv_->status_ != TraceDefault) return priv_->status_;
 
-   auto nbt = Singleton< NbTracer >::Extant();
+   auto nbt = Singleton<NbTracer>::Extant();
    if(nbt == nullptr) return TraceExcluded;
    auto status = nbt->FactionStatus(faction_);
    if(status != TraceDefault) return status;
 
-   auto buff = Singleton< TraceBuffer >::Extant();
+   auto buff = Singleton<TraceBuffer>::Extant();
    if(buff == nullptr) return TraceExcluded;
    if(buff->FilterIsOn(TraceAll)) return TraceIncluded;
    return TraceExcluded;
@@ -1261,7 +1261,7 @@ void Thread::CauseTrap()
 {
    Debug::ft("Thread.CauseTrap");
 
-   auto p = reinterpret_cast< char* >(BAD_POINTER);
+   auto p = reinterpret_cast<char*>(BAD_POINTER);
    if(*p == 0) ++p;
 }
 
@@ -1382,7 +1382,7 @@ void Thread::Display(ostream& stream,
 
 void Thread::DisplayContextSwitches(ostream& stream)
 {
-   Singleton< ContextSwitches >::Instance()->DisplaySwitches(stream);
+   Singleton<ContextSwitches>::Instance()->DisplaySwitches(stream);
 }
 
 //------------------------------------------------------------------------------
@@ -1421,7 +1421,7 @@ void Thread::DisplaySummaries(ostream& stream)
    nsecs_t idle0;        // idle time during current interval
    uint64_t nsecs0 = 0;  // time in all threads during current interval
 
-   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
+   auto threads = Singleton<ThreadRegistry>::Instance()->GetThreads();
 
    for(auto t = threads.cbegin(); t != threads.cend(); ++t)
    {
@@ -1465,7 +1465,7 @@ void Thread::DisplaySummaries(ostream& stream)
 
    stream << SchedLine << CRLF;
 
-   if(Singleton< ContextSwitches >::Instance()->LoggingOn())
+   if(Singleton<ContextSwitches>::Instance()->LoggingOn())
    {
       stream << "Context switch logging is ON." << CRLF;
    }
@@ -1612,7 +1612,7 @@ main_t Thread::EnterThread(void* arg)
 
    //  Our argument is a pointer to a Thread.
    //
-   auto self = static_cast< Thread* >(arg);
+   auto self = static_cast<Thread*>(arg);
    return self->Start();
 }
 
@@ -1631,7 +1631,7 @@ main_t Thread::Exit(signal_t sig)
    //  If the thread is holding any mutexes, release them.
    //  Then log the exit.
    //
-   Singleton< MutexRegistry >::Instance()->Abandon();
+   Singleton<MutexRegistry>::Instance()->Abandon();
 
    ostringstreamPtr log = nullptr;
 
@@ -1646,7 +1646,7 @@ main_t Thread::Exit(signal_t sig)
 
    if(log != nullptr)
    {
-      auto reg = Singleton< PosixSignalRegistry >::Instance();
+      auto reg = Singleton<PosixSignalRegistry>::Instance();
       *log << Log::Tab << "thread=" << to_str() << CRLF;
       *log << Log::Tab << "signal=" << reg->strSignal(sig);
       Log::Submit(log);
@@ -1790,7 +1790,7 @@ Thread* Thread::FindRunningThread() NO_FT
    }
    else
    {
-      auto reg = Singleton< ThreadRegistry >::Extant();
+      auto reg = Singleton<ThreadRegistry>::Extant();
       if(reg != nullptr) thr = reg->FindThread(nid);
    }
 
@@ -1911,7 +1911,7 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
    //  run too long, trap it; otherwise, assume that the purpose of the
    //  ctrl-C is to trap the CLI thread so that it will abort its work.
    //
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
 
    if(reg->Attrs(sig).test(PosixSignal::Break))
    {
@@ -1925,7 +1925,7 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
          }
       }
 
-      if(thr == nullptr) thr = Singleton< CliThread >::Extant();
+      if(thr == nullptr) thr = Singleton<CliThread>::Extant();
       if(thr == nullptr) return false;
       thr->Raise(sig);
       return true;
@@ -2089,7 +2089,7 @@ c_string Thread::Kill()
 {
    Debug::ft("Thread.Kill");
 
-   if(Singleton< RootThread >::Extant() == this) return KillRootThread;
+   if(Singleton<RootThread>::Extant() == this) return KillRootThread;
    if(deleting_) return KillDeletingThread;
 
    //  If the thread is holding or blocked on a mutex, delete it outright.
@@ -2123,11 +2123,11 @@ void Thread::LogContextSwitch() const
 
    auto now = SteadyTime::Now();
 
-   if(Singleton< ThreadRegistry >::Extant()->IsDeleted())
+   if(Singleton<ThreadRegistry>::Extant()->IsDeleted())
    {
       //  This thread has been deleted.  Create a partial entry for it.
       //
-      auto rec = Singleton< ContextSwitches >::Instance()->AddSwitch();
+      auto rec = Singleton<ContextSwitches>::Instance()->AddSwitch();
 
       if(rec != nullptr)
       {
@@ -2150,7 +2150,7 @@ void Thread::LogContextSwitch() const
          priv_->currTime_ += elapsed;
       }
 
-      auto rec = Singleton< ContextSwitches >::Instance()->AddSwitch();
+      auto rec = Singleton<ContextSwitches>::Instance()->AddSwitch();
 
       if(rec != nullptr)
       {
@@ -2170,7 +2170,7 @@ void Thread::LogContextSwitch() const
 
 TraceRc Thread::LogContextSwitches(bool on)
 {
-   return Singleton< ContextSwitches >::Instance()->LogSwitches(on);
+   return Singleton<ContextSwitches>::Instance()->LogSwitches(on);
 }
 
 //------------------------------------------------------------------------------
@@ -2186,7 +2186,7 @@ bool Thread::LogSignal(signal_t sig) const
    //
    if((sig == SIGYIELD) && (priv_->warned_)) return false;
    if(sig == SIGNIL) return false;
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
    return (!reg->Attrs(sig).test(PosixSignal::NoLog));
 }
 
@@ -2197,7 +2197,7 @@ bool Thread::LogTrap(const Exception* ex,
 {
    Debug::ft("Thread.LogTrap");
 
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton<PosixSignalRegistry>::Instance();
    if(reg->Attrs(sig).test(PosixSignal::NoError)) return false;
 
    auto log = Log::Create(ThreadLogGroup, ThreadException);
@@ -2480,7 +2480,7 @@ void Thread::Purge(bool orphaned, bool deleted)
    //  check for the existence of an orphaned native thread, which is
    //  immediately exited when found.
    //
-   auto reg = Singleton< ThreadRegistry >::Extant();
+   auto reg = Singleton<ThreadRegistry>::Extant();
 
    if(orphaned)
       reg->Destroying(Deleted, systhrd_.release());
@@ -2514,7 +2514,7 @@ void Thread::Raise(signal_t sig)
 
    //  Ensure that SIG is valid.
    //
-   auto reg = Singleton< PosixSignalRegistry >::Extant();
+   auto reg = Singleton<PosixSignalRegistry>::Extant();
    auto ps1 = reg->Find(sig);
 
    if(ps1 == nullptr)
@@ -2633,7 +2633,7 @@ void Thread::Ready()
 
    if(ActiveThread() == nullptr)
    {
-      Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
+      Singleton<InitThread>::Instance()->Interrupt(InitThread::ScheduleMask);
    }
 
    systhrd_->Wait();
@@ -2657,7 +2657,7 @@ void Thread::RegisterForSignals()
 {
    Debug::ft("Thread.RegisterForSignals");
 
-   auto& signals = Singleton< PosixSignalRegistry >::Instance()->Signals();
+   auto& signals = Singleton<PosixSignalRegistry>::Instance()->Signals();
 
    for(auto s = signals.First(); s != nullptr; signals.Next(s))
    {
@@ -2817,7 +2817,7 @@ Thread* Thread::RunningThread() NO_FT
    //
    ThreadAdmin::Incr(ThreadAdmin::Unknowns);
 
-   if(Singleton< ThreadRegistry >::Instance()->GetState() == Deleted)
+   if(Singleton<ThreadRegistry>::Instance()->GetState() == Deleted)
       throw SignalException(SIGDELETED, 0);
    else
       Debug::Assert(false);
@@ -2858,7 +2858,7 @@ void Thread::Schedule()
    //  No unpreemptable thread is running.  Wake InitThread to schedule
    //  the next thread.
    //
-   Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
+   Singleton<InitThread>::Instance()->Interrupt(InitThread::ScheduleMask);
 }
 
 //------------------------------------------------------------------------------
@@ -2867,7 +2867,7 @@ void Thread::SetInitialized()
 {
    Debug::ft("Thread.SetInitialized");
 
-   Singleton< ThreadRegistry >::Instance()->Initialized(systhrd_->Nid());
+   Singleton<ThreadRegistry>::Instance()->Initialized(systhrd_->Nid());
 }
 
 //------------------------------------------------------------------------------
@@ -2908,7 +2908,7 @@ void Thread::SetTrap(bool on)
       //
       priv_->trap_ = false;
 
-      auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+      auto& threads = Singleton<ThreadRegistry>::Instance()->Threads();
 
       for(auto t = threads.cbegin(); t != threads.cend(); ++t)
       {
@@ -2928,7 +2928,7 @@ void Thread::Shutdown(RestartLevel level)
 
    Restart::Release(stats_);
 
-   auto pool = Singleton< MsgBufferPool >::Instance();
+   auto pool = Singleton<MsgBufferPool>::Instance();
    if(!Restart::ClearsMemory(pool->BlockType())) return;
 
    //  The thread's messages will be deleted during this restart.  Clean
@@ -2972,7 +2972,7 @@ void Thread::SignalHandler(signal_t sig)
 
    if(log != nullptr)
    {
-      auto reg = Singleton< PosixSignalRegistry >::Instance();
+      auto reg = Singleton<PosixSignalRegistry>::Instance();
       *log << Log::Tab << "signal=" << reg->strSignal(sig);
       Log::Submit(log);
    }
@@ -3038,7 +3038,7 @@ main_t Thread::Start()
             //  registered as an orphan, so immediately exit it by returning
             //  SIGDELETED.
             //
-            auto reg = Singleton< ThreadRegistry >::Instance();
+            auto reg = Singleton<ThreadRegistry>::Instance();
 
             while(true)
             {
@@ -3179,7 +3179,7 @@ main_t Thread::Start()
          //
          if(faction_ < SystemFaction)
          {
-            Singleton< InitThread >::Instance()->InitiateRestart(level);
+            Singleton<InitThread>::Instance()->InitiateRestart(level);
          }
 
          continue;
@@ -3267,7 +3267,7 @@ void Thread::StartShortInterval()
 {
    Debug::ft("Thread.StartShortInterval");
 
-   auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+   auto& threads = Singleton<ThreadRegistry>::Instance()->Threads();
 
    TimeUsed_ = ZERO_SECS;
 
@@ -3301,7 +3301,7 @@ void Thread::StartShortInterval()
 
 TraceRc Thread::StartTracing(const string& opts)
 {
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(opts);
+   auto rc = Singleton<TraceBuffer>::Instance()->StartTracing(opts);
 
    if(rc == TraceOk)
    {
@@ -3337,7 +3337,7 @@ void Thread::StopTracing()
 
    if(thr->priv_->tracing_)
    {
-      Singleton< TraceBuffer >::Instance()->StopTracing();
+      Singleton<TraceBuffer>::Instance()->StopTracing();
       thr->priv_->tracing_ = false;
       thr->priv_->autostop_ = false;
    }
@@ -3400,7 +3400,7 @@ Thread* Thread::SwitchContext()
    //  Select the next thread to run.  If one is found, preempt any running
    //  thread (which cannot be locked) and signal the next one to resume.
    //
-   auto next = Singleton< ThreadRegistry >::Instance()->Select();
+   auto next = Singleton<ThreadRegistry>::Instance()->Select();
 
    if(next != nullptr)
    {
@@ -3505,7 +3505,7 @@ bool Thread::TraceRunningThread(Thread*& thr)
    //  Do not trace this thread if the trace buffer is locked or
    //  function tracing is not on.
    //
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton<TraceBuffer>::Instance();
    if(!buff->ToolIsOn(FunctionTracer)) return false;
 
    //  If the running thread is unknown, find it while taking care not
@@ -3517,7 +3517,7 @@ bool Thread::TraceRunningThread(Thread*& thr)
    //
    if(thr == nullptr)
    {
-      auto reg = Singleton< ThreadRegistry >::Extant();
+      auto reg = Singleton<ThreadRegistry>::Extant();
       if(reg == nullptr) return true;
       thr = RunningThread(std::nothrow);
       if(thr == nullptr) return true;
@@ -3533,7 +3533,7 @@ bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
    //  Do not trace this thread if the trace buffer is locked or
    //  function tracing is not on.
    //
-   auto buff = Singleton< TraceBuffer >::Extant();
+   auto buff = Singleton<TraceBuffer>::Extant();
    if(buff == nullptr) return false;
    if(!buff->ToolIsOn(FunctionTracer)) return false;
 
@@ -3590,13 +3590,13 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
       //  If the thread is holding any mutexes, release them.
       //
-      Singleton< MutexRegistry >::Instance()->Abandon();
+      Singleton<MutexRegistry>::Instance()->Abandon();
 
       //  Exit immediately if the Thread has already been deleted.
       //
       if(sig == SIGDELETED) return Return;
 
-      if(Singleton< ThreadRegistry >::Instance()->GetState() != Constructed)
+      if(Singleton<ThreadRegistry>::Instance()->GetState() != Constructed)
       {
          return Return;
       }
@@ -3653,7 +3653,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       //  In the first two cases, leave trapped_ on so that Exit will log a
       //  forced exit.
       //
-      auto sigAttrs = Singleton< PosixSignalRegistry >::Instance()->Attrs(sig);
+      auto sigAttrs = Singleton<PosixSignalRegistry>::Instance()->Attrs(sig);
 
       if(exceeded || retrapped || sigAttrs.test(PosixSignal::Final))
       {

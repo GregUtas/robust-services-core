@@ -48,7 +48,7 @@ SysMutex::SysMutex(c_string name) :
 {
    Debug::ft("SysMutex.ctor");
 
-   Singleton< MutexRegistry >::Instance()->BindMutex(*this);
+   Singleton<MutexRegistry>::Instance()->BindMutex(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ SysMutex::~SysMutex()
       Debug::SwLog(SysMutex_dtor, name_, nid_);
    }
 
-   Singleton< MutexRegistry >::Extant()->UnbindMutex(*this);
+   Singleton<MutexRegistry>::Extant()->UnbindMutex(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ Thread* SysMutex::Owner() const
 {
    if(owner_ != nullptr) return owner_;
    if(nid_ == NIL_ID) return nullptr;
-   return Singleton< ThreadRegistry >::Instance()->FindThread(nid_);
+   return Singleton<ThreadRegistry>::Instance()->FindThread(nid_);
 }
 
 //------------------------------------------------------------------------------

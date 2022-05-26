@@ -42,7 +42,7 @@ namespace NodeBase
 //
 class ThreadAdmin : public Protected
 {
-   friend class Singleton< ThreadAdmin >;
+   friend class Singleton<ThreadAdmin>;
 public:
    //  Deleted to prohibit copying.
    //
@@ -195,7 +195,7 @@ private:
 
    //  Aggregate statistics for threads.
    //
-   std::unique_ptr< ThreadsStats > stats_;
+   std::unique_ptr<ThreadsStats> stats_;
 
    //  The statistics group for threads.
    //

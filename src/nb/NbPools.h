@@ -33,7 +33,7 @@ namespace NodeBase
 //
 class MsgBufferPool : public ObjectPool
 {
-   friend class Singleton< MsgBufferPool >;
+   friend class Singleton<MsgBufferPool>;
 public:
    //  Overridden to claim blocks held by the trace buffer.
    //

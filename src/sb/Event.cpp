@@ -74,7 +74,7 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -99,7 +99,7 @@ Event::~Event()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -138,7 +138,7 @@ void Event::Capture
    (ServiceId sid, const State& state, EventHandler::Rc rc) const
 {
    auto rec = new HandlerTrace(sid, state, *this, rc);
-   Singleton< TraceBuffer >::Instance()->Insert(rec);
+   Singleton<TraceBuffer>::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ void* Event::operator new(size_t size)
 {
    Debug::ft("Event.operator new");
 
-   return Singleton< EventPool >::Instance()->DeqBlock(size);
+   return Singleton<EventPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------

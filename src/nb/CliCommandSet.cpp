@@ -70,7 +70,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
       return false;
    }
 
-   auto& commands = reinterpret_cast< Registry< CliCommand >& >(Parms());
+   auto& commands = reinterpret_cast<Registry<CliCommand>& >(Parms());
 
    for(auto c = commands.First(); c != nullptr; commands.Next(c))
    {
@@ -170,7 +170,7 @@ word CliCommandSet::ProcessCommand(CliThread& cli) const
    //  only CliCommands.  If it is found, invoke it after updating the
    //  parser so that its parameters can be read.
    //
-   auto& commands = reinterpret_cast< const Registry< CliCommand >& >(Parms());
+   auto& commands = reinterpret_cast<const Registry<CliCommand>& >(Parms());
 
    for(auto c = commands.First(); c != nullptr; c = commands.Next(*c))
    {

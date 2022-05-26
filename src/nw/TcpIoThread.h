@@ -129,8 +129,8 @@ private:
    //  first socket listens for new connections, and each of the others
    //  handles an individual connection.
    //
-   NodeBase::Array< SysTcpSocket*,
-      NodeBase::DynamicAllocator< SysTcpSocket* >> sockets_;
+   NodeBase::Array<SysTcpSocket*,
+      NodeBase::DynamicAllocator<SysTcpSocket*>> sockets_;
 
    //  Set if the underlying service accepts connections.  If not set,
    //  a listener socket is not allocated, and sockets_[0] is not used.

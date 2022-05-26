@@ -84,11 +84,11 @@ void PotsCallHandler::ReceiveBuff
 {
    Debug::ft("PotsCallHandler.ReceiveBuff");
 
-   auto sbuff = static_cast< SbIpBuffer* >(buff.get());
+   auto sbuff = static_cast<SbIpBuffer*>(buff.get());
    auto header = sbuff->Header();
-   auto pptr = reinterpret_cast< TlvParm* >(sbuff->PayloadPtr());
-   auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
-   auto cct = Singleton< Switch >::Instance()->GetCircuit(phi->port);
+   auto pptr = reinterpret_cast<TlvParm*>(sbuff->PayloadPtr());
+   auto phi = reinterpret_cast<PotsHeaderInfo*>(pptr->bytes);
+   auto cct = Singleton<Switch>::Instance()->GetCircuit(phi->port);
 
    //  Verify that the circuit exists, that it is a POTS circuit, and that
    //  it has a profile.
@@ -105,7 +105,7 @@ void PotsCallHandler::ReceiveBuff
       return;
    }
 
-   auto prof = static_cast< PotsCircuit* >(cct)->Profile();
+   auto prof = static_cast<PotsCircuit*>(cct)->Profile();
 
    if(prof == nullptr)
    {
@@ -129,7 +129,7 @@ void PotsCallHandler::ReceiveBuff
 
    if(MsgPort::Find(addr) == nullptr)
    {
-      if(Singleton< PayloadInvokerPool >::Instance()->RejectIngressWork())
+      if(Singleton<PayloadInvokerPool>::Instance()->RejectIngressWork())
       {
          //  The system is overloaded.  Discard the message unless it is an
          //  onhook, which is accepted in order to exit the Lockout state.

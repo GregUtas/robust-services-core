@@ -54,7 +54,7 @@ public:
 
    //  Overridden to enumerate all objects that the SSM owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 protected:
    //  Protected because this class is virtual.
    //

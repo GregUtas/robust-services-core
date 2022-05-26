@@ -74,7 +74,7 @@ protected:
 
 class PotsCwaNull : public PotsCwaState
 {
-   friend class Singleton< PotsCwaNull >;
+   friend class Singleton<PotsCwaNull>;
 
    PotsCwaNull();
    ~PotsCwaNull() = default;
@@ -82,7 +82,7 @@ class PotsCwaNull : public PotsCwaState
 
 class PotsCwaActive : public PotsCwaState
 {
-   friend class Singleton< PotsCwaActive >;
+   friend class Singleton<PotsCwaActive>;
 
    PotsCwaActive();
    ~PotsCwaActive() = default;
@@ -103,7 +103,7 @@ protected:
 
 class PotsCwbNull : public PotsCwbState
 {
-   friend class Singleton< PotsCwbNull >;
+   friend class Singleton<PotsCwbNull>;
 
    PotsCwbNull();
    ~PotsCwbNull() = default;
@@ -111,7 +111,7 @@ class PotsCwbNull : public PotsCwbState
 
 class PotsCwbPending : public PotsCwbState
 {
-   friend class Singleton< PotsCwbPending >;
+   friend class Singleton<PotsCwbPending>;
 
    PotsCwbPending();
    ~PotsCwbPending() = default;
@@ -119,7 +119,7 @@ class PotsCwbPending : public PotsCwbState
 
 class PotsCwbActive : public PotsCwbState
 {
-   friend class Singleton< PotsCwbActive >;
+   friend class Singleton<PotsCwbActive>;
 
    PotsCwbActive();
    ~PotsCwbActive() = default;
@@ -169,7 +169,7 @@ protected:
 
 class PotsCwtAcAnalyzeUserMessage : public PotsCwtEventHandler
 {
-   friend class Singleton< PotsCwtAcAnalyzeUserMessage >;
+   friend class Singleton<PotsCwtAcAnalyzeUserMessage>;
 
    PotsCwtAcAnalyzeUserMessage() = default;
    ~PotsCwtAcAnalyzeUserMessage() = default;
@@ -179,7 +179,7 @@ class PotsCwtAcAnalyzeUserMessage : public PotsCwtEventHandler
 
 class PotsCwtAcRelease : public PotsCwtEventHandler
 {
-   friend class Singleton< PotsCwtAcRelease >;
+   friend class Singleton<PotsCwtAcRelease>;
 
    PotsCwtAcRelease() = default;
    ~PotsCwtAcRelease() = default;
@@ -189,7 +189,7 @@ class PotsCwtAcRelease : public PotsCwtEventHandler
 
 class PotsCwtPeAnalyzeUserMessage : public PotsCwtEventHandler
 {
-   friend class Singleton< PotsCwtPeAnalyzeUserMessage >;
+   friend class Singleton<PotsCwtPeAnalyzeUserMessage>;
 
    PotsCwtPeAnalyzeUserMessage() = default;
    ~PotsCwtPeAnalyzeUserMessage() = default;
@@ -199,7 +199,7 @@ class PotsCwtPeAnalyzeUserMessage : public PotsCwtEventHandler
 
 class PotsCwtPeAck : public PotsCwtEventHandler
 {
-   friend class Singleton< PotsCwtPeAck >;
+   friend class Singleton<PotsCwtPeAck>;
 
    PotsCwtPeAck() = default;
    ~PotsCwtPeAck() = default;
@@ -209,7 +209,7 @@ class PotsCwtPeAck : public PotsCwtEventHandler
 
 class PotsCwtPeRelease : public PotsCwtEventHandler
 {
-   friend class Singleton< PotsCwtPeRelease >;
+   friend class Singleton<PotsCwtPeRelease>;
 
    PotsCwtPeRelease() = default;
    ~PotsCwtPeRelease() = default;
@@ -219,7 +219,7 @@ class PotsCwtPeRelease : public PotsCwtEventHandler
 
 class PotsCwtPrPresentCall : public PotsCwtEventHandler
 {
-   friend class Singleton< PotsCwtPrPresentCall >;
+   friend class Singleton<PotsCwtPrPresentCall>;
 
    PotsCwtPrPresentCall() = default;
    ~PotsCwtPrPresentCall() = default;
@@ -294,7 +294,7 @@ EventHandler::Rc PotsCwtInitiator::ProcessEvent
 {
    Debug::ft("PotsCwtInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(CWT))
@@ -314,9 +314,9 @@ PotsCwtService::PotsCwtService(Id sid) : Service(sid, false, true)
 {
    Debug::ft("PotsCwtService.ctor");
 
-   BindHandler(*Singleton< PotsCwtAcAnalyzeUserMessage >::Instance(),
+   BindHandler(*Singleton<PotsCwtAcAnalyzeUserMessage>::Instance(),
       PotsCwtEventHandler::AcAnalyzeUserMessage);
-   BindHandler(*Singleton< PotsCwtAcRelease >::Instance(),
+   BindHandler(*Singleton<PotsCwtAcRelease>::Instance(),
       PotsCwtEventHandler::AcRelease);
 
    BindEventName(PotsCwtReleaseEventStr, PotsCwtEvent::Release);
@@ -335,8 +335,8 @@ PotsCwaService::PotsCwaService() : PotsCwtService(PotsCwaServiceId)
 {
    Debug::ft("PotsCwaService.ctor");
 
-   Singleton< PotsCwaNull >::Instance();
-   Singleton< PotsCwaActive >::Instance();
+   Singleton<PotsCwaNull>::Instance();
+   Singleton<PotsCwaActive>::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -363,17 +363,17 @@ PotsCwbService::PotsCwbService() : PotsCwtService(PotsCwbServiceId)
 {
    Debug::ft("PotsCwbService.ctor");
 
-   Singleton< PotsCwbNull >::Instance();
-   Singleton< PotsCwbPending >::Instance();
-   Singleton< PotsCwbActive >::Instance();
+   Singleton<PotsCwbNull>::Instance();
+   Singleton<PotsCwbPending>::Instance();
+   Singleton<PotsCwbActive>::Instance();
 
-   BindHandler(*Singleton< PotsCwtPeAnalyzeUserMessage >::Instance(),
+   BindHandler(*Singleton<PotsCwtPeAnalyzeUserMessage>::Instance(),
       PotsCwtEventHandler::PeAnalyzeUserMessage);
-   BindHandler(*Singleton< PotsCwtPeAck >::Instance(),
+   BindHandler(*Singleton<PotsCwtPeAck>::Instance(),
       PotsCwtEventHandler::PeAck);
-   BindHandler(*Singleton< PotsCwtPeRelease >::Instance(),
+   BindHandler(*Singleton<PotsCwtPeRelease>::Instance(),
       PotsCwtEventHandler::PeRelease);
-   Singleton< PotsCwtPrPresentCall >::Instance();
+   Singleton<PotsCwtPrPresentCall>::Instance();
 
    BindEventName(PotsCwtAckEventStr, PotsCwtEvent::Ack);
 }
@@ -566,13 +566,13 @@ EventHandler::Rc PotsCwtSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCwtSsm.ProcessSap");
 
-   auto& sap = static_cast< AnalyzeSapEvent& >(currEvent);
+   auto& sap = static_cast<AnalyzeSapEvent&>(currEvent);
    auto tid = sap.GetTrigger();
 
    if(tid == BcTrigger::ApplyTreatmentSap)
    {
-      auto pssm = static_cast< PotsBcSsm* >(Parent());
-      auto ate = static_cast< BcApplyTreatmentEvent* >(sap.CurrEvent());
+      auto pssm = static_cast<PotsBcSsm*>(Parent());
+      auto ate = static_cast<BcApplyTreatmentEvent*>(sap.CurrEvent());
 
       pssm->ClearCall(ate->GetCause());
       return EventHandler::Suspend;
@@ -587,7 +587,7 @@ EventHandler::Rc PotsCwtSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCwtSsm.ProcessSnp");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
 
    if(pssm->HasIdled())
    {
@@ -595,7 +595,7 @@ EventHandler::Rc PotsCwtSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
    }
    else
    {
-      auto& snp = static_cast< AnalyzeSnpEvent& >(currEvent);
+      auto& snp = static_cast<AnalyzeSnpEvent&>(currEvent);
 
       if(snp.GetTrigger() == ProxyBcTrigger::UserReleasedSnp)
       {
@@ -626,7 +626,7 @@ EventHandler::Rc PotsCwaSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCwaSsm.ProcessInitAck");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
    auto stid = pssm->CurrState();
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
 
@@ -654,7 +654,7 @@ EventHandler::Rc PotsCwaSsm::ProcessInitNack
 {
    Debug::ft("PotsCwaSsm.ProcessInitNack");
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
 
    upsm->SendFacility(PotsCwmServiceId, Facility::InitiationNack);
@@ -740,9 +740,9 @@ EventHandler::Rc PotsCwbSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCwbSsm.ProcessInitAck");
 
-   auto& init = static_cast< InitiationReqEvent& >(currEvent);
+   auto& init = static_cast<InitiationReqEvent&>(currEvent);
    auto sap = init.GetSapEvent();
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
    auto stid = pssm->CurrState();
 
    if(stid != BcState::SelectingFacility)
@@ -835,7 +835,7 @@ void PotsCwbSsm::StartTimer(TimerId tid, uint32_t secs)
 {
    Debug::ft(PotsCwbSsm_StartTimer);
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
 
    if(tid_ != NIL_ID)
@@ -857,7 +857,7 @@ void PotsCwbSsm::StopTimer(TimerId tid)
 {
    Debug::ft(PotsCwbSsm_StopTimer);
 
-   auto pssm = static_cast< PotsBcSsm* >(Parent());
+   auto pssm = static_cast<PotsBcSsm*>(Parent());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
 
    if(tid_ != tid)
@@ -877,16 +877,16 @@ EventHandler::Rc PotsCwtPeAnalyzeUserMessage::ProcessEvent
 {
    Debug::ft("PotsCwtPeAnalyzeUserMessage.ProcessEvent");
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& cwtssm = static_cast< PotsCwbSsm& >(ssm);
+   auto& cwtssm = static_cast<PotsCwbSsm&>(ssm);
 
    switch(sid)
    {
    case PotsSignal::Facility:
    {
-      auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
-      auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+      auto pmsg = static_cast<Pots_UN_Message*>(ame.Msg());
+      auto pfi = pmsg->FindType<PotsFacilityInfo>(PotsParameter::Facility);
 
       if(pfi->sid == PotsCwbServiceId)
       {
@@ -908,8 +908,8 @@ EventHandler::Rc PotsCwtPeAnalyzeUserMessage::ProcessEvent
    }
 
    case Signal::Timeout:
-      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
+      auto tmsg = static_cast<TlvMessage*>(ame.Msg());
+      auto toi = tmsg->FindType<TimeoutInfo>(Parameter::Timeout);
 
       if((toi->owner == &ssm) &&
          (toi->tid == PotsCwbSsm::InitiationTimeoutId))
@@ -931,9 +931,9 @@ EventHandler::Rc PotsCwtPeAck::ProcessEvent
 {
    Debug::ft("PotsCwtPeAck.ProcessEvent");
 
-   auto& cwtssm = static_cast< PotsCwbSsm& >(ssm);
-   auto& pssm = static_cast< PotsBcSsm& >(*ssm.Parent());
-   auto handler = Singleton< PotsCwtPrPresentCall >::Instance();
+   auto& cwtssm = static_cast<PotsCwbSsm&>(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(*ssm.Parent());
+   auto handler = Singleton<PotsCwtPrPresentCall>::Instance();
 
    cwtssm.FreeContext();
    pssm.SetNextState(BcState::PresentingCall);
@@ -950,12 +950,12 @@ EventHandler::Rc PotsCwtPeRelease::ProcessEvent
 {
    Debug::ft("PotsCwtPeRelease.ProcessEvent");
 
-   auto& relevt = static_cast< PotsCwtReleaseEvent& >(currEvent);
-   auto& cwtssm = static_cast< PotsCwbSsm& >(ssm);
+   auto& relevt = static_cast<PotsCwtReleaseEvent&>(currEvent);
+   auto& cwtssm = static_cast<PotsCwbSsm&>(ssm);
 
    if(relevt.Ind() == PotsCwtFacility::InitiationTimeout)
    {
-      auto pssm = static_cast< PotsBcSsm* >(cwtssm.Parent());
+      auto pssm = static_cast<PotsBcSsm*>(cwtssm.Parent());
       auto upsm = PotsCallPsm::Cast(pssm->UPsm());
       upsm->SendFacility(PotsCwmServiceId, Facility::InitiationNack);
    }
@@ -974,15 +974,15 @@ EventHandler::Rc PotsCwtAcAnalyzeUserMessage::ProcessEvent
 {
    Debug::ft(PotsCwtAcAnalyzeUserMessage_ProcessEvent);
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& cwtssm = static_cast< PotsCwtSsm& >(ssm);
+   auto& cwtssm = static_cast<PotsCwtSsm&>(ssm);
 
    if(sid == PotsSignal::Facility)
    {
-      auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
+      auto pmsg = static_cast<Pots_UN_Message*>(ame.Msg());
 
-      auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+      auto pfi = pmsg->FindType<PotsFacilityInfo>(PotsParameter::Facility);
 
       if((pfi->sid == PotsCwaServiceId) || (pfi->sid == PotsCwbServiceId))
       {
@@ -1021,10 +1021,10 @@ EventHandler::Rc PotsCwtAcRelease::ProcessEvent
 {
    Debug::ft(PotsCwtAcRelease_ProcessEvent);
 
-   auto& cwtssm = static_cast< PotsCwtSsm& >(ssm);
-   auto& relevt = static_cast< PotsCwtReleaseEvent& >(currEvent);
+   auto& cwtssm = static_cast<PotsCwtSsm&>(ssm);
+   auto& relevt = static_cast<PotsCwtReleaseEvent&>(currEvent);
    auto ind = relevt.Ind();
-   auto pssm = static_cast< PotsBcSsm* >(cwtssm.Parent());
+   auto pssm = static_cast<PotsBcSsm*>(cwtssm.Parent());
 
    switch(ind)
    {
@@ -1069,7 +1069,7 @@ EventHandler::Rc PotsCwtPrPresentCall::ProcessEvent
 {
    Debug::ft("PotsCwtPrPresentCall.ProcessEvent");
 
-   auto& pssm = static_cast< PotsBcSsm& >(ssm);
+   auto& pssm = static_cast<PotsBcSsm&>(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
    auto npsm = pssm.NPsm();
 

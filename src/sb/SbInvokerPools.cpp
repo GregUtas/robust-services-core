@@ -56,10 +56,10 @@ PayloadInvokerPool::PayloadInvokerPool() :
 {
    Debug::ft(PayloadInvokerPool_ctor);
 
-   auto reg = Singleton< CfgParmRegistry >::Instance();
+   auto reg = Singleton<CfgParmRegistry>::Instance();
 
    noIngressQueueLength_.reset
-      (static_cast< CfgIntParm* >(reg->FindParm("NoIngressQueueLength")));
+      (static_cast<CfgIntParm*>(reg->FindParm("NoIngressQueueLength")));
 
    if(noIngressQueueLength_ == nullptr)
    {
@@ -70,7 +70,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
    }
 
    noIngressMessageCount_.reset
-      (static_cast< CfgIntParm* >(reg->FindParm("NoIngressMessageCount")));
+      (static_cast<CfgIntParm*>(reg->FindParm("NoIngressMessageCount")));
 
    if(noIngressMessageCount_ == nullptr)
    {
@@ -82,7 +82,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
 
    //  Find the overload alarm, which should already have been created.
    //
-   auto areg = Singleton< AlarmRegistry >::Instance();
+   auto areg = Singleton<AlarmRegistry>::Instance();
    overloadAlarm_ = areg->Find(OverloadAlarmName);
 
    if(overloadAlarm_ == nullptr)
@@ -154,7 +154,7 @@ bool PayloadInvokerPool::RejectIngressWork() const
 {
    Debug::ft("PayloadInvokerPool.RejectIngressWork");
 
-   auto msgAvail = Singleton< MessagePool >::Instance()->AvailCount();
+   auto msgAvail = Singleton<MessagePool>::Instance()->AvailCount();
    auto msgOvld = (msgAvail <= size_t(noIngressMessageCount_->CurrValue()));
    auto workLength = WorkQCurrLength(INGRESS);
    auto workOvld = (workLength >= size_t(noIngressQueueLength_->CurrValue()));

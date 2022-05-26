@@ -361,7 +361,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    //  If no bytes get sent, queue the buffer if the socket was blocked,
    //  else report an error.
    //
-   auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
+   auto port = Singleton<IpPortRegistry>::Instance()->GetPort(txport);
    byte_t* src = nullptr;
    auto size = buff.OutgoingBytes(src);
    auto dest = port->GetHandler()->HostToNetwork(buff, src, size);

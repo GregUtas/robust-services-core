@@ -36,7 +36,7 @@ namespace CodeTools
 {
 //  For lists of strings.
 //
-typedef std::vector< std::string > stringVector;
+typedef std::vector<std::string> stringVector;
 
 //  C++ keyword strings.
 //
@@ -351,8 +351,8 @@ enum TypeSpecUser : unsigned int
 enum TemplateRole : unsigned int
 {
    TemplateNone,       // not part of a template
-   TemplateArgument,   // e.g. int in vector< int >
-   TemplateParameter,  // e.g. T in template< typename T > class vector {...};
+   TemplateArgument,   // e.g. int in vector<int>
+   TemplateParameter,  // e.g. T in template<typename T> class vector {...};
    TemplateClass       // a DataSpec created internally for template matching;
                        // contains each of the parameters to a class template
 };
@@ -628,7 +628,7 @@ LineType CalcLineType(std::string& s, bool& cont);
 
 //  Checks a line of code (S), updating WARNINGS with formatting errors.
 //
-void CheckLine(std::string& s, std::set< Warning >& warnings);
+void CheckLine(std::string& s, std::set<Warning>& warnings);
 
 //  Returns true if a S is a bare access control.
 //

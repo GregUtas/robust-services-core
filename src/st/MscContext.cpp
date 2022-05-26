@@ -88,7 +88,7 @@ bool MscContext::IsEqualTo(const void* rcvr, uint16_t cid) const
 ptrdiff_t MscContext::LinkDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const MscContext* >(&local);
+   auto fake = reinterpret_cast<const MscContext*>(&local);
    return ptrdiff(&fake->link_, fake);
 }
 
@@ -107,12 +107,12 @@ void MscContext::Names(string& text1, string& text2) const
 
    if(type_ == MultiPort)
    {
-      auto reg = Singleton< ServiceRegistry >::Instance();
+      auto reg = Singleton<ServiceRegistry>::Instance();
       text1 = strClass(reg->GetService(cid_), false);
    }
    else
    {
-      auto reg = Singleton< FactoryRegistry >::Instance();
+      auto reg = Singleton<FactoryRegistry>::Instance();
       text1 = strClass(reg->GetFactory(FactoryId(cid_)), false);
    }
 

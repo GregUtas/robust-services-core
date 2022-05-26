@@ -35,7 +35,7 @@ namespace AccessNode
 //
 class AnModule : public Module
 {
-   friend class Singleton< AnModule >;
+   friend class Singleton<AnModule>;
 
    //  Private because this is a singleton.
    //

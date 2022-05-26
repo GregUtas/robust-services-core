@@ -74,7 +74,7 @@ ServiceSM::ServiceSM(ServiceId sid) :
 
    if(!ctx->TraceOn())
    {
-      ctx->SetTrace(Singleton< SbTracer >::Instance()->ServiceIsTraced(sid_));
+      ctx->SetTrace(Singleton<SbTracer>::Instance()->ServiceIsTraced(sid_));
    }
 
    //  Record the SSM's creation if this context is traced.
@@ -84,7 +84,7 @@ ServiceSM::ServiceSM(ServiceId sid) :
    if(ctx->TraceOn(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton<TraceBuffer>::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -111,7 +111,7 @@ ServiceSM::~ServiceSM()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = SteadyTime::Now();
-      auto buff = Singleton< TraceBuffer >::Extant();
+      auto buff = Singleton<TraceBuffer>::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -311,12 +311,12 @@ bool ServiceSM::ExqEvent(Event& evt, Event::Location loc)
 
 Service* ServiceSM::GetService() const
 {
-   return Singleton< ServiceRegistry >::Instance()->GetService(sid_);
+   return Singleton<ServiceRegistry>::Instance()->GetService(sid_);
 }
 
 //------------------------------------------------------------------------------
 
-void ServiceSM::GetSubtended(std::vector< Base* >& objects) const
+void ServiceSM::GetSubtended(std::vector<Base*>& objects) const
 {
    Debug::ft("ServiceSM.GetSubtended");
 
@@ -374,7 +374,7 @@ void* ServiceSM::operator new(size_t size)
 {
    Debug::ft("ServiceSM.operator new");
 
-   return Singleton< ServiceSMPool >::Instance()->DeqBlock(size);
+   return Singleton<ServiceSMPool>::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
@@ -444,12 +444,12 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
          phase = InitiatorSapPhase;
          sapEvent = currEvent;
          if(sapEvent->Owner() == this)
-            tid = static_cast< AnalyzeSapEvent* >(sapEvent)->GetTrigger();
+            tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
          else
             tid = NIL_ID;
          nextSap_ = NIL_ID;
-         modifierSsm = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrSsm();
-         currEvent = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrEvent();
+         modifierSsm = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrSsm();
+         currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
          nextState_ = currState_;
          ssmq_.Next(modifierSsm);
          if(modifierSsm != nullptr)
@@ -500,14 +500,14 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
          phase = LocalEventPhase;
          sapEvent = currEvent;
          if(sapEvent->Owner() == this)
-            tid = static_cast< AnalyzeSapEvent* >(sapEvent)->GetTrigger();
+            tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
          else
             tid = NIL_ID;
          if(tid == NIL_ID) break;
          nextSap_ = NIL_ID;
          trigger = GetService()->GetTrigger(tid);
-         currEvent = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrEvent();
-         modifierInit = static_cast< AnalyzeSapEvent* >
+         currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
+         modifierInit = static_cast<AnalyzeSapEvent*>
             (sapEvent)->CurrInitiator();
          modifierInit = trigger->initq_.Next(*modifierInit);
 
@@ -549,7 +549,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             if(Context::RunningContextTraced(trans))
             {
                auto warp = SteadyTime::Now();
-               auto buff = Singleton< TraceBuffer >::Instance();
+               auto buff = Singleton<TraceBuffer>::Instance();
 
                if(buff->ToolIsOn(ContextTracer))
                {
@@ -760,10 +760,10 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 
             if(nextEvent->Eid() != Event::AnalyzeSap)
                phase = ModifierSapPhase;
-            else if(static_cast< AnalyzeSapEvent* >(nextEvent)
+            else if(static_cast<AnalyzeSapEvent*>(nextEvent)
                   ->CurrInitiator() != nullptr)
                phase = InitiatorReentryPhase;
-            else if(static_cast< AnalyzeSapEvent* >(nextEvent)
+            else if(static_cast<AnalyzeSapEvent*>(nextEvent)
                   ->CurrSsm() != nullptr)
                phase = ModifierReentryPhase;
             else
@@ -861,11 +861,11 @@ EventHandler::Rc ServiceSM::ProcessInitqSap
          //  Continue traversing the InitQ if told to resume.
          //
          sapEvent.SetCurrInitiator(modifier);
-         initEvent = static_cast< InitiationReqEvent* >(nextEvent);
+         initEvent = static_cast<InitiationReqEvent*>(nextEvent);
          nextEvent = nullptr;
 
          if(sapEvent.Eid() == Event::AnalyzeSap)
-            initEvent->SetSapEvent(static_cast< AnalyzeSapEvent& >(sapEvent));
+            initEvent->SetSapEvent(static_cast<AnalyzeSapEvent&>(sapEvent));
 
          rc = ProcessInitReq(*initEvent, nextEvent, phase);
          delete initEvent;
@@ -927,7 +927,7 @@ void ServiceSM::ProcessInitqSnp
             //  Generate a log with the initiated modifier's service
             //  identifier.  Free any next event.
             //
-            auto sibling = static_cast< InitiationReqEvent* >
+            auto sibling = static_cast<InitiationReqEvent*>
                (initEvent)->GetModifier();
             Debug::SwLog(ServiceSM_ProcessInitqSnp, "invalid result", sibling);
 
@@ -968,7 +968,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
 {
    Debug::ft(ServiceSM_ProcessInitReq);
 
-   auto& initEvent = static_cast< InitiationReqEvent& >(currEvent);
+   auto& initEvent = static_cast<InitiationReqEvent&>(currEvent);
    auto rc = EventHandler::Pass;
 
    //  This function only handles initiation requests made by *Initiators*.
@@ -1005,7 +1005,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
 
    if(currEvent.Owner() != this) return rc;
 
-   auto reg = Singleton< ServiceRegistry >::Instance();
+   auto reg = Singleton<ServiceRegistry>::Instance();
    auto svc = reg->GetService(initEvent.GetModifier());
    auto modifier = svc->AllocModifier();
    if(modifier == nullptr) return EventHandler::Pass;

@@ -105,8 +105,8 @@ void NetworkIsUp()
 
    //  Create I/O threads by notifying all deferred work items.
    //
-   auto ireg = Singleton< IpPortRegistry >::Instance();
-   auto dreg = Singleton< DeferredRegistry >::Instance();
+   auto ireg = Singleton<IpPortRegistry>::Instance();
+   auto dreg = Singleton<DeferredRegistry>::Instance();
    dreg->NotifyAll(ireg, Deferred::Timeout);
 }
 
@@ -161,7 +161,7 @@ static void UpdateAlarm
       if(NetworkIsUp_) return;
    }
 
-   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto reg = Singleton<AlarmRegistry>::Instance();
    auto alarm = reg->Find(name);
 
    if(alarm != nullptr)

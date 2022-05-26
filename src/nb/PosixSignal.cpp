@@ -48,7 +48,7 @@ PosixSignal::PosixSignal(signal_t value, c_string name,
 {
    Debug::ft("PosixSignal.ctor");
 
-   Singleton< PosixSignalRegistry >::Instance()->BindSignal(*this);
+   Singleton<PosixSignalRegistry>::Instance()->BindSignal(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ PosixSignal::~PosixSignal()
    Debug::ftnt(PosixSignal_dtor);
 
    Debug::SwLog(PosixSignal_dtor, UnexpectedInvocation, 0);
-   Singleton< PosixSignalRegistry >::Extant()->UnbindSignal(*this);
+   Singleton<PosixSignalRegistry>::Extant()->UnbindSignal(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ PosixSignal::~PosixSignal()
 ptrdiff_t PosixSignal::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const PosixSignal* >(&local);
+   auto fake = reinterpret_cast<const PosixSignal*>(&local);
    return ptrdiff(&fake->sid_, fake);
 }
 

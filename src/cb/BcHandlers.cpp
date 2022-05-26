@@ -38,9 +38,9 @@ EventHandler::Rc BcNuAnalyzeRemoteMessage::ProcessEvent
 {
    Debug::ft(BcNuAnalyzeRemoteMessage_ProcessEvent);
 
-   auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
+   auto& ame = static_cast<AnalyzeMsgEvent&>(currEvent);
    auto sid = ame.Msg()->GetSignal();
-   auto& bcssm = static_cast< BcSsm& >(ssm);
+   auto& bcssm = static_cast<BcSsm&>(ssm);
 
    if(sid == CipSignal::IAM)
    {
@@ -62,17 +62,17 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
 {
    Debug::ft(BcScAnalyzeRemoteMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         bcssm = static_cast< BcSsm& >(ssm);
+   auto&         bcssm = static_cast<BcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
    switch(sid)
    {
    case CipSignal::CPG:
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       switch(cpi->progress)
       {
       case Progress::EndOfSelection:
@@ -89,7 +89,7 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
       return bcssm.RaiseRemoteAnswer(nextEvent);
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       if(cci->cause == Cause::UserBusy)
       {
          return bcssm.RaiseRemoteBusy(nextEvent);
@@ -117,10 +117,10 @@ EventHandler::Rc BcOaAnalyzeRemoteMessage::ProcessEvent
 {
    Debug::ft(BcOaAnalyzeRemoteMessage_ProcessEvent);
 
-   auto&      ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto       msg = static_cast< CipMessage* >(ame.Msg());
+   auto&      ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto       msg = static_cast<CipMessage*>(ame.Msg());
    auto       sid = msg->GetSignal();
-   auto&      bcssm = static_cast< BcSsm& >(ssm);
+   auto&      bcssm = static_cast<BcSsm&>(ssm);
    CauseInfo* cci;
 
    switch(sid)
@@ -133,7 +133,7 @@ EventHandler::Rc BcOaAnalyzeRemoteMessage::ProcessEvent
       return bcssm.RaiseRemoteAnswer(nextEvent);
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       if(cci->cause == Cause::AnswerTimeout)
       {
          return bcssm.RaiseRemoteNoAnswer(nextEvent);
@@ -158,16 +158,16 @@ EventHandler::Rc BcPcAnalyzeRemoteMessage::ProcessEvent
 {
    Debug::ft(BcPcAnalyzeRemoteMessage_ProcessEvent);
 
-   auto&      ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto       msg = static_cast< CipMessage* >(ame.Msg());
+   auto&      ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto       msg = static_cast<CipMessage*>(ame.Msg());
    auto       sid = msg->GetSignal();
-   auto&      bcssm = static_cast< BcSsm& >(ssm);
+   auto&      bcssm = static_cast<BcSsm&>(ssm);
    CauseInfo* cci;
 
    switch(sid)
    {
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return bcssm.RaiseRemoteRelease(nextEvent, cci->cause);
 
    case Signal::Timeout:
@@ -188,17 +188,17 @@ EventHandler::Rc BcAcAnalyzeRemoteMessage::ProcessEvent
 {
    Debug::ft(BcAcAnalyzeRemoteMessage_ProcessEvent);
 
-   auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
-   auto          msg = static_cast< CipMessage* >(ame.Msg());
+   auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
+   auto          msg = static_cast<CipMessage*>(ame.Msg());
    auto          sid = msg->GetSignal();
-   auto&         bcssm = static_cast< BcSsm& >(ssm);
+   auto&         bcssm = static_cast<BcSsm&>(ssm);
    ProgressInfo* cpi;
    CauseInfo*    cci;
 
    switch(sid)
    {
    case CipSignal::CPG:
-      cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
+      cpi = msg->FindType<ProgressInfo>(CipParameter::Progress);
       switch(cpi->progress)
       {
       case Progress::Suspend:
@@ -212,7 +212,7 @@ EventHandler::Rc BcAcAnalyzeRemoteMessage::ProcessEvent
       break;
 
    case CipSignal::REL:
-      cci = msg->FindType< CauseInfo >(CipParameter::Cause);
+      cci = msg->FindType<CauseInfo>(CipParameter::Cause);
       return bcssm.RaiseRemoteRelease(nextEvent, cci->cause);
 
    case Signal::Timeout:

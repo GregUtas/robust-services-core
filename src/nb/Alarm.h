@@ -131,7 +131,7 @@ private:
    //  Data that changes too frequently to unprotect and reprotect memory
    //  when it needs to be modified.
    //
-   std::unique_ptr< AlarmDynamic > dyn_;
+   std::unique_ptr<AlarmDynamic> dyn_;
 };
 }
 #endif

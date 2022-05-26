@@ -38,7 +38,7 @@ namespace MediaBase
 //
 class Tone : public Circuit
 {
-   friend class Registry< Tone >;
+   friend class Registry<Tone>;
 public:
    //  Type for identifying a tone.
    //
@@ -98,7 +98,7 @@ private:
 
 class ToneSilent : public Tone
 {
-   friend class Singleton< ToneSilent >;
+   friend class Singleton<ToneSilent>;
 
    ToneSilent();
    ~ToneSilent() = default;
@@ -107,7 +107,7 @@ class ToneSilent : public Tone
 
 class ToneDial : public Tone
 {
-   friend class Singleton< ToneDial >;
+   friend class Singleton<ToneDial>;
 
    ToneDial();
    ~ToneDial() = default;
@@ -116,7 +116,7 @@ class ToneDial : public Tone
 
 class ToneStutteredDial : public Tone
 {
-   friend class Singleton< ToneStutteredDial >;
+   friend class Singleton<ToneStutteredDial>;
 
    ToneStutteredDial();
    ~ToneStutteredDial() = default;
@@ -125,7 +125,7 @@ class ToneStutteredDial : public Tone
 
 class ToneConfirmation : public Tone
 {
-   friend class Singleton< ToneConfirmation >;
+   friend class Singleton<ToneConfirmation>;
 
    ToneConfirmation();
    ~ToneConfirmation() = default;
@@ -134,7 +134,7 @@ class ToneConfirmation : public Tone
 
 class ToneRingback : public Tone
 {
-   friend class Singleton< ToneRingback >;
+   friend class Singleton<ToneRingback>;
 
    ToneRingback();
    ~ToneRingback() = default;
@@ -143,7 +143,7 @@ class ToneRingback : public Tone
 
 class ToneBusy : public Tone
 {
-   friend class Singleton< ToneBusy >;
+   friend class Singleton<ToneBusy>;
 
    ToneBusy();
    ~ToneBusy() = default;
@@ -152,7 +152,7 @@ class ToneBusy : public Tone
 
 class ToneCallWaiting : public Tone
 {
-   friend class Singleton< ToneCallWaiting >;
+   friend class Singleton<ToneCallWaiting>;
 
    ToneCallWaiting();
    ~ToneCallWaiting() = default;
@@ -161,7 +161,7 @@ class ToneCallWaiting : public Tone
 
 class ToneReorder : public Tone
 {
-   friend class Singleton< ToneReorder >;
+   friend class Singleton<ToneReorder>;
 
    ToneReorder();
    ~ToneReorder() = default;
@@ -170,7 +170,7 @@ class ToneReorder : public Tone
 
 class ToneReceiverOffHook : public Tone
 {
-   friend class Singleton< ToneReceiverOffHook >;
+   friend class Singleton<ToneReceiverOffHook>;
 
    ToneReceiverOffHook();
    ~ToneReceiverOffHook() = default;
@@ -179,7 +179,7 @@ class ToneReceiverOffHook : public Tone
 
 class ToneHeld : public Tone
 {
-   friend class Singleton< ToneHeld >;
+   friend class Singleton<ToneHeld>;
 
    ToneHeld();
    ~ToneHeld() = default;

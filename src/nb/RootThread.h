@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class RootThread : public Thread
 {
-   friend class Singleton< RootThread >;
+   friend class Singleton<RootThread>;
    friend class InitThread;
 public:
    //  Invoked as the only line of code in main().

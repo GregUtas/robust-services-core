@@ -38,11 +38,11 @@ namespace NetworkBase
 {
 fn_name SysIpL2Addr_LocalAddrs = "SysIpL2Addr.LocalAddrs";
 
-std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
+std::vector<SysIpL2Addr> SysIpL2Addr::LocalAddrs()
 {
    Debug::ft(SysIpL2Addr_LocalAddrs);
 
-   std::vector< SysIpL2Addr > localAddrs;
+   std::vector<SysIpL2Addr> localAddrs;
    string self;
 
    if(LocalName(self))

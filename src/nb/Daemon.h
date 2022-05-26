@@ -97,7 +97,7 @@ public:
 
    //  Returns the current set of threads.
    //
-   const std::set< Thread* > Threads() const { return threads_; }
+   const std::set<Thread*> Threads() const { return threads_; }
 
    //  Returns the target number of threads.
    //
@@ -164,7 +164,7 @@ private:
 
    //  The type for iterating over our threads.
    //
-   typedef std::set< Thread* >::iterator Iterator;
+   typedef std::set<Thread*>::iterator Iterator;
 
    //  Finds the entry for THREAD.
    //
@@ -197,7 +197,7 @@ private:
 
    //  The threads.
    //
-   std::set< Thread* > threads_;
+   std::set<Thread*> threads_;
 };
 }
 #endif

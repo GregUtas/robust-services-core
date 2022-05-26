@@ -59,7 +59,7 @@ NtTestData* NtTestData::Access(CliThread& cli)
 
    auto data = cli.GetAppData(TestAppId);
    if(data == nullptr) data = new NtTestData(cli);
-   return static_cast< NtTestData* >(data);
+   return static_cast<NtTestData*>(data);
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ void NtTestData::Conclude()
    auto cli = Cli();
    *cli->obuf << spaces(2) << SuccessExpl << CRLF;
 
-   auto tdb = Singleton< TestDatabase >::Instance();
+   auto tdb = Singleton<TestDatabase>::Instance();
 
    if(failed_)
    {
@@ -162,7 +162,7 @@ void NtTestData::Query(bool verbose, string& expl) const
    stream << "Test database:" << CRLF;
 
    string info;
-   Singleton< TestDatabase >::Instance()->Query(verbose, info);
+   Singleton<TestDatabase>::Instance()->Query(verbose, info);
    stream << info;
    expl = stream.str();
 }

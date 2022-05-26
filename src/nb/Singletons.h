@@ -90,7 +90,7 @@ private:
 
    //  Information about each singleton.
    //
-   Array< SingletonTuple, PermanentAllocator< SingletonTuple >> registry_;
+   Array<SingletonTuple, PermanentAllocator<SingletonTuple>> registry_;
 };
 }
 #endif

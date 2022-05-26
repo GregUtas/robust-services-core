@@ -95,7 +95,7 @@ void ThreadStatsGroup::DisplayStats
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
-   auto reg = Singleton< ThreadRegistry >::Instance();
+   auto reg = Singleton<ThreadRegistry>::Instance();
 
    if(id == 0)
    {
@@ -357,9 +357,9 @@ Thread* ThreadRegistry::GetThread(ThreadId tid) const
 
 //------------------------------------------------------------------------------
 
-std::vector< Thread* > ThreadRegistry::GetThreads() const
+std::vector<Thread*> ThreadRegistry::GetThreads() const
 {
-   std::vector< Thread* > threads;
+   std::vector<Thread*> threads;
 
    MutexGuard guard(&ThreadsLock_);
 
@@ -419,11 +419,11 @@ void ThreadRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-std::set< Thread* > ThreadRegistry::Restarting(RestartLevel level) const
+std::set<Thread*> ThreadRegistry::Restarting(RestartLevel level) const
 {
    Debug::ft("ThreadRegistry.Restarting");
 
-   std::set< Thread* > exiting;
+   std::set<Thread*> exiting;
 
    auto threads = GetThreads();
 
@@ -557,7 +557,7 @@ void ThreadRegistry::Shutdown(RestartLevel level)
 
 size_t ThreadRegistry::Size()
 {
-   auto reg = Singleton< ThreadRegistry >::Extant();
+   auto reg = Singleton<ThreadRegistry>::Extant();
    if(reg == nullptr) return 0;
    return reg->Threads().size();
 }
@@ -583,7 +583,7 @@ void ThreadRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-void ThreadRegistry::TrimThreads(std::set< Thread* >& threads) const
+void ThreadRegistry::TrimThreads(std::set<Thread*>& threads) const
 {
    Debug::ft("ThreadRegistry.TrimThreads");
 

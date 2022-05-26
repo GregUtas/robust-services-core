@@ -77,7 +77,7 @@ bool TimedRecord::Display(ostream& stream, const string& opts)
    //
    if(!SystemTime::IsValid(time_)) return false;
 
-   auto reg = Singleton< ThreadRegistry >::Instance();
+   auto reg = Singleton<ThreadRegistry>::Instance();
    auto thr = reg->FindThread(nid_);
    if((thr != nullptr) && (thr->CalcStatus(false) != TraceIncluded))
       return false;

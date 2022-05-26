@@ -38,7 +38,7 @@ Circuit::Circuit() : rxFrom_(Switch::SilentPort)
 {
    Debug::ft("Circuit.ctor");
 
-   Singleton< Switch >::Instance()->BindCircuit(*this);
+   Singleton<Switch>::Instance()->BindCircuit(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ Circuit::~Circuit()
 {
    Debug::ftnt("Circuit.dtor");
 
-   Singleton< Switch >::Extant()->UnbindCircuit(*this);
+   Singleton<Switch>::Extant()->UnbindCircuit(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ Circuit::~Circuit()
 ptrdiff_t Circuit::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const Circuit* >(&local);
+   auto fake = reinterpret_cast<const Circuit*>(&local);
    return ptrdiff(&fake->port_, fake);
 }
 

@@ -33,7 +33,7 @@ namespace SessionBase
 //
 class SbModule : public NodeBase::Module
 {
-   friend class NodeBase::Singleton< SbModule >;
+   friend class NodeBase::Singleton<SbModule>;
 public:
    //  Overridden for patching.
    //

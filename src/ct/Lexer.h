@@ -353,7 +353,7 @@ public:
 
    //  A type for the LineInfo associated with each line of source code.
    //
-   typedef std::vector< LineInfo > LineInfoVector;
+   typedef std::vector<LineInfo> LineInfoVector;
 
    //  Returns the information associated with each line of source code.
    //

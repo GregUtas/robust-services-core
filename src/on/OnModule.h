@@ -35,7 +35,7 @@ namespace OperationsNode
 //
 class OnModule : public Module
 {
-   friend class Singleton< OnModule >;
+   friend class Singleton<OnModule>;
 
    //  Private because this is a singleton.
    //

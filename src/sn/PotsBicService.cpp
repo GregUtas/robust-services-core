@@ -42,7 +42,7 @@ namespace PotsBase
 {
 class PotsBicNull : public State
 {
-   friend class Singleton< PotsBicNull >;
+   friend class Singleton<PotsBicNull>;
 
    PotsBicNull();
    ~PotsBicNull() = default;
@@ -77,7 +77,7 @@ EventHandler::Rc PotsBicInitiator::ProcessEvent
 {
    Debug::ft("PotsBicInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(BIC))
@@ -95,7 +95,7 @@ PotsBicService::PotsBicService() : Service(PotsBicServiceId, false, true)
 {
    Debug::ft("PotsBicService.ctor");
 
-   Singleton< PotsBicNull >::Instance();
+   Singleton<PotsBicNull>::Instance();
 }
 
 //------------------------------------------------------------------------------

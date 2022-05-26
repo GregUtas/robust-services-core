@@ -105,7 +105,7 @@ private:
 
    //  Data associated with active test sessions.
    //
-   std::unique_ptr< TestSession > session_[TestSession::MaxId + 1];
+   std::unique_ptr<TestSession> session_[TestSession::MaxId + 1];
 };
 }
 #endif

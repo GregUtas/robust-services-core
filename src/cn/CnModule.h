@@ -35,7 +35,7 @@ namespace ControlNode
 //
 class CnModule : public Module
 {
-   friend class Singleton< CnModule >;
+   friend class Singleton<CnModule>;
 
    //  Private because this is a singleton.
    //

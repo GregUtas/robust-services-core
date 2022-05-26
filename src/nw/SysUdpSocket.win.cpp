@@ -106,7 +106,7 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    }
 
    auto rcvd = recvfrom(Socket(),
-      reinterpret_cast< char* >(buff), size, 0, peer, &peersize);
+      reinterpret_cast<char*>(buff), size, 0, peer, &peersize);
 
    if(rcvd == SOCKET_ERROR)
    {
@@ -195,7 +195,7 @@ word SysUdpSocket::SendTo
    }
 
    auto sent = sendto(Socket(),
-      reinterpret_cast< const char* >(data), size, 0, peer, peersize);
+      reinterpret_cast<const char*>(data), size, 0, peer, peersize);
 
    if(sent == SOCKET_ERROR)
    {

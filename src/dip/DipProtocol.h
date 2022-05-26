@@ -212,7 +212,7 @@ struct BM_Message
 //
 class BotTcpService : public TcpIpService
 {
-   friend class Singleton< BotTcpService >;
+   friend class Singleton<BotTcpService>;
 
    //  Private because this is a singleton.
    //
@@ -339,7 +339,7 @@ private:
 //
 class DipIpBufferPool : public ObjectPool
 {
-   friend class Singleton< DipIpBufferPool >;
+   friend class Singleton<DipIpBufferPool>;
 
    //  Private because this is a singleton.
    //

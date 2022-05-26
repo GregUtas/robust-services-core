@@ -50,7 +50,7 @@ namespace SessionBase
 //
 class Factory : public NodeBase::Immutable
 {
-   friend class NodeBase::Registry< Factory >;
+   friend class NodeBase::Registry<Factory>;
    friend class InvokerPool;
 public:
    //  Allows "Id" to refer to a factory identifier in this class hierarchy.
@@ -158,7 +158,7 @@ public:
    //  entire context is deleted (as the work is now a noop).  The default
    //  implementation simply returns true and may be overridden as required.
    //
-   virtual bool ScreenIcMsgs(NodeBase::Q1Way< Message >& msgq);
+   virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
 
    //  Generates statistics when a message associated with the factory is
    //  received or sent.  INCOMING is true for an incoming message, INTER
@@ -287,7 +287,7 @@ private:
 
    //  The factory's statistics.
    //
-   std::unique_ptr< FactoryStats > stats_;
+   std::unique_ptr<FactoryStats> stats_;
 };
 }
 #endif

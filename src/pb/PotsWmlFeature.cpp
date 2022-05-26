@@ -95,7 +95,7 @@ PotsFeatureProfile* PotsWmlFeature::Subscribe
 
    if(cli.Command()->GetIntParmRc(dn, cli) == CliParm::Ok)
    {
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
       auto dnwarn = (reg->Profile(dn) == nullptr);
       auto towarn = false;
 
@@ -147,7 +147,7 @@ bool PotsWmlFeatureProfile::Activate(const PotsProfile& profile, CliThread& cli)
 
    if(DnRouteFeatureProfile::Activate(profile, cli))
    {
-      auto reg = Singleton< PotsProfileRegistry >::Instance();
+      auto reg = Singleton<PotsProfileRegistry>::Instance();
       auto dnwarn = (reg->Profile(GetDN()) == nullptr);
       word timeout;
 

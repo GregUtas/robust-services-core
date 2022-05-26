@@ -319,7 +319,7 @@ protected:
 //
 class ProxyBcAnalyzeProxyMessage : public ProxyBcEventHandler
 {
-   friend class Singleton< ProxyBcAnalyzeProxyMessage >;
+   friend class Singleton<ProxyBcAnalyzeProxyMessage>;
 
    ProxyBcAnalyzeProxyMessage() = default;
    ~ProxyBcAnalyzeProxyMessage() = default;
@@ -329,7 +329,7 @@ class ProxyBcAnalyzeProxyMessage : public ProxyBcEventHandler
 
 class ProxyBcProgressHandler : public ProxyBcEventHandler
 {
-   friend class Singleton< ProxyBcProgressHandler >;
+   friend class Singleton<ProxyBcProgressHandler>;
 
    ProxyBcProgressHandler() = default;
    ~ProxyBcProgressHandler() = default;
@@ -339,7 +339,7 @@ class ProxyBcProgressHandler : public ProxyBcEventHandler
 
 class ProxyBcAnswerHandler : public ProxyBcEventHandler
 {
-   friend class Singleton< ProxyBcAnswerHandler >;
+   friend class Singleton<ProxyBcAnswerHandler>;
 
    ProxyBcAnswerHandler() = default;
    ~ProxyBcAnswerHandler() = default;
@@ -349,7 +349,7 @@ class ProxyBcAnswerHandler : public ProxyBcEventHandler
 
 class ProxyBcReleaseHandler : public ProxyBcEventHandler
 {
-   friend class Singleton< ProxyBcReleaseHandler >;
+   friend class Singleton<ProxyBcReleaseHandler>;
 
    ProxyBcReleaseHandler() = default;
    ~ProxyBcReleaseHandler() = default;
@@ -542,7 +542,7 @@ private:
 //
 class ProxyBcFactory : public CipFactory
 {
-   friend class Singleton< ProxyBcFactory >;
+   friend class Singleton<ProxyBcFactory>;
 
    //  Private because this is a singleton.
    //

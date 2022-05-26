@@ -111,7 +111,7 @@ size_t SysHeap::BlockToSize(const void* addr) const
 
    //  Why isn't the parameter to malloc_usable_size a const void*?
    //
-   return malloc_usable_size(const_cast< void* >(addr));
+   return malloc_usable_size(const_cast<void*>(addr));
 }
 
 //------------------------------------------------------------------------------

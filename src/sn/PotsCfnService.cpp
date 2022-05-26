@@ -50,9 +50,9 @@ EventHandler::Rc PotsCfnInitiator::ProcessEvent
 {
    Debug::ft("PotsCfnInitiator.ProcessEvent");
 
-   auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
+   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
-   auto cfnp = static_cast< PotsCfnFeatureProfile* >(prof->FindFeature(CFN));
+   auto cfnp = static_cast<PotsCfnFeatureProfile*>(prof->FindFeature(CFN));
 
    if((cfnp != nullptr) && cfnp->IsActive())
    {

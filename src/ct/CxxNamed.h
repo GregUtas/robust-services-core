@@ -533,7 +533,7 @@ private:
 
    //  Any template arguments if the name is that of a template.
    //
-   std::unique_ptr< TemplateArgPtrVector > args_;
+   std::unique_ptr<TemplateArgPtrVector> args_;
 
    //  The next name in a qualified name.
    //
@@ -735,7 +735,7 @@ public:
    //  Overridden to return the item itself.
    //
    QualName* GetQualName() const override
-      { return const_cast< QualName* >(this); }
+      { return const_cast<QualName*>(this); }
 
    //  Overridden to return the parser's enclosing scope when initializing data
    //  at file scope.  This prevents the RedundantScope from being logged on a
@@ -1515,7 +1515,7 @@ private:
 
    //  The type's bounded array specifications (e.g. for int[10][10]).
    //
-   std::unique_ptr< ArraySpecPtrVector > arrays_;
+   std::unique_ptr<ArraySpecPtrVector> arrays_;
 
    //  The type's tags.
    //

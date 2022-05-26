@@ -40,7 +40,7 @@ namespace SessionBase
 //
 class Initiator : public NodeBase::Immutable
 {
-   friend class NodeBase::Q1Way< Initiator >;
+   friend class NodeBase::Q1Way<Initiator>;
 public:
    //  Each initiator specifies a priority when it registers with its trigger.
    //  The trigger queues initiators in descending order of priority, meaning

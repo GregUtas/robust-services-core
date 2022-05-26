@@ -223,7 +223,7 @@ public:
 
    //  Returns the warnings associated with the file.
    //
-   const std::vector< CodeWarning >& GetWarnings() const { return warnings_; }
+   const std::vector<CodeWarning>& GetWarnings() const { return warnings_; }
 
    //  Invokes the editor to interactively fix warnings found by Check().
    //
@@ -630,7 +630,7 @@ private:
 
    //  The warnings found in the file.
    //
-   std::vector< CodeWarning > warnings_;
+   std::vector<CodeWarning> warnings_;
 
    //  For editing the file's source code.
    //

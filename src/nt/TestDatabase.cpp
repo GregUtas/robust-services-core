@@ -164,7 +164,7 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
    auto state = strGet(input);
    if(state.empty()) return GetError("State not found");
    if(!isdigit(state.front())) return GetError("State corrupted");
-   auto s = static_cast< State >(std::stoi(state));
+   auto s = static_cast<State>(std::stoi(state));
    if((s <= Invalid) || (s > Passed)) return GetError("State out of range");
    auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
@@ -286,7 +286,7 @@ word TestDatabase::Query(bool verbose, string& expl) const
 
    for(auto s = Invalid + 1; s < State_N; ++s)
    {
-      auto state = static_cast< State >(s);
+      auto state = static_cast<State>(s);
       stream << spaces(2) << state << ": " << states[s];
    }
 
@@ -385,7 +385,7 @@ void TestDatabase::Update()
    //
    auto errors = 0;
    auto indir = Element::InputPath();
-   std::set< string > files;
+   std::set<string> files;
 
    if(!SysFile::ListFiles(indir.c_str(), files))
    {

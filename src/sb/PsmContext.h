@@ -51,7 +51,7 @@ public:
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   void GetSubtended(std::vector<Base*>& objects) const override;
 
    //  Returns the next PSM in the PSM queue.
    //
@@ -120,11 +120,11 @@ private:
 
    //  The ports that are running in this context.
    //
-   NodeBase::Q1Way< MsgPort > portq_;
+   NodeBase::Q1Way<MsgPort> portq_;
 
    //  The PSMs that are running in this context.
    //
-   NodeBase::Q1Way< ProtocolSM > psmq_;
+   NodeBase::Q1Way<ProtocolSM> psmq_;
 };
 }
 #endif

@@ -1055,11 +1055,11 @@ size_t MapAndUnits::get_centre_count(const Token& power) const
 
 //------------------------------------------------------------------------------
 
-std::vector< PowerCentres > MapAndUnits::get_centres() const
+std::vector<PowerCentres> MapAndUnits::get_centres() const
 {
    Debug::ft("MapAndUnits.get_centres");
 
-   std::vector< PowerCentres > owners;
+   std::vector<PowerCentres> owners;
 
    //  Create an entry for each power, and also UNO (for unowned centres).
    //
@@ -1152,11 +1152,11 @@ const LocationSet* MapAndUnits::get_neighbours(const Location& location) const
 
 fn_name MapAndUnits_get_orders = "MapAndUnits.get_orders";
 
-std::vector< PowerOrders > MapAndUnits::get_orders(const Token& season) const
+std::vector<PowerOrders> MapAndUnits::get_orders(const Token& season) const
 {
    Debug::ft(MapAndUnits_get_orders);
 
-   std::vector< PowerOrders > powers;
+   std::vector<PowerOrders> powers;
 
    for(PowerId p = 0; p < number_of_powers; ++p)
    {
@@ -1233,11 +1233,11 @@ size_t MapAndUnits::get_unit_count(const Token& power) const
 
 //------------------------------------------------------------------------------
 
-std::vector< PowerUnits > MapAndUnits::get_units() const
+std::vector<PowerUnits> MapAndUnits::get_units() const
 {
    Debug::ft("MapAndUnits.get_units");
 
-   std::vector< PowerUnits > owners;
+   std::vector<PowerUnits> owners;
 
    //  Create an entry for each power.
    //

@@ -36,7 +36,7 @@ namespace NodeBase
 //
 class CinThread : public Thread
 {
-   friend class Singleton< CinThread >;
+   friend class Singleton<CinThread>;
 public:
    //  Reads input from the console and places it in BUFF.  Returns the number
    //  of characters read (N >= 1); note that an endline is appended to BUFF.

@@ -95,7 +95,7 @@ LibrarySet* CodeItemSet::DeclaredBy() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      std::set< CxxNamed* > decls;
+      std::set<CxxNamed*> decls;
       (*i)->GetDecls(decls);
 
       for(auto d = decls.cbegin(); d != decls.cend(); ++d)
@@ -119,7 +119,7 @@ LibrarySet* CodeItemSet::Declarers() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxNamed* >(*i);
+      auto item = static_cast<CxxNamed*>(*i);
       auto scope = item->GetScope();
 
       if(scope->Type() == Cxx::Namespace)
@@ -145,7 +145,7 @@ LibrarySet* CodeItemSet::Definitions() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxNamed* >(*i);
+      auto item = static_cast<CxxNamed*>(*i);
       auto mate = item->GetMate();
 
       if(mate != nullptr)
@@ -173,7 +173,7 @@ LibrarySet* CodeItemSet::Directories() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxNamed* >(*i);
+      auto item = static_cast<CxxNamed*>(*i);
       auto file = item->GetFile();
       if(file == nullptr) continue;
       auto dir = file->Dir();
@@ -195,7 +195,7 @@ LibrarySet* CodeItemSet::Files() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxNamed* >(*i);
+      auto item = static_cast<CxxNamed*>(*i);
       auto file = item->GetFile();
       if(file != nullptr) fileSet.insert(file);
    }
@@ -214,7 +214,7 @@ LibrarySet* CodeItemSet::ReferencedBy() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxScoped* >(*i);
+      auto item = static_cast<CxxScoped*>(*i);
       CxxUsageSets usages;
       item->GetUsages(*item->GetFile(), usages);
       result->CopyUsages(usages);
@@ -235,7 +235,7 @@ LibrarySet* CodeItemSet::Referencers() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxScoped* >(*i);
+      auto item = static_cast<CxxScoped*>(*i);
       auto xref = item->Xref();
 
       for(auto r = xref->cbegin(); r != xref->cend(); ++r)
@@ -257,7 +257,7 @@ void CodeItemSet::to_str(stringVector& strings, bool verbose) const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      auto item = static_cast< CxxNamed* >(*i);
+      auto item = static_cast<CxxNamed*>(*i);
       strings.push_back(item->to_str());
    }
 }

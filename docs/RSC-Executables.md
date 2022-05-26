@@ -5,8 +5,6 @@ as releases. If you go to the
 [tags](https://github.com/GregUtas/robust-services-core/tags) page,
 you will see all the release tags. The Assets that can be downloaded
 with a release include
-* _rscwin32d.exe_: debug build for 32-bit Windows (Windows 11)
-* _rscwin64d.exe_: debug build for 64-bit Windows (Windows 11)
 * _rscwin32r.exe_: release build for 32-bit Windows (Windows 11)
 * _rscwin64r.exe_: release build for 64-bit Windows (Windows 11)
 
@@ -27,4 +25,3 @@ configuration parameters.
 A release build disables a number of optimizations so that it can
 actually be debugged. It runs about 3&#189; times as fast as a debug
 build, but only about half as fast as a fully optimized release build.
-

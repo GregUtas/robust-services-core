@@ -1020,7 +1020,7 @@ EventHandler::Rc PotsCwmSsm::Flipflop()
       //  (it is always done in case the original call has released).
       //
       UPsm()->SetOgTone(Tone::Media);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Notified:
    case Renotified:
       //
@@ -1031,7 +1031,7 @@ EventHandler::Rc PotsCwmSsm::Flipflop()
       StopTimer(tid_);
       hldNPsm->SendSignal(PotsSignal::Offhook);
       SetSubstate(Answering);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Answered:
       //
       //  Hold the active call and connect to the held call.
@@ -1452,7 +1452,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
    case Notified:
    case Renotified:
       upsm->SetOgTone(Tone::Silence);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Notifying:
    case Renotifying:
       //
@@ -1472,7 +1472,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
 
    case Reringing:
       StopTimer(ReanswerTimeoutId);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Ringing:
       //
       //  The only remaining call has released.  Relay the Release and idle.
@@ -1563,7 +1563,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
       //  Stop CWT tone (reconnect media) and continue...
       //
       upsm->SetOgTone(Tone::Media);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Notified:
    case Renotified:
       //
@@ -1579,7 +1579,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
          upsm->SendCause(cause);
          break;
       }
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Answered:
       //
       //  The active call is still connected and CWT is over.
@@ -1670,7 +1670,7 @@ EventHandler::Rc PotsCwmSsm::Rering()
       //  media, so we must connect silence until reanswer.
       //
       StopTimer(ReconnectTimeoutId);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Answered:
       //
       //  The CWT subscriber just released the active call.  The remaining

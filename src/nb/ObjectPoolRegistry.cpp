@@ -179,7 +179,7 @@ void ObjectPoolRegistry::AuditPools() const
 
          thread->phase_ = ObjectPoolAudit::ClaimingBlocks;
          thread->pid_ = NIL_ID;
-         //  [[fallthrough]]
+         [[fallthrough]];
 
       case ObjectPoolAudit::ClaimingBlocks:
          //
@@ -204,7 +204,7 @@ void ObjectPoolRegistry::AuditPools() const
 
          thread->phase_ = ObjectPoolAudit::RecoveringBlocks;
          thread->pid_ = NIL_ID;
-         //  [[fallthrough]]
+         [[fallthrough]];
 
       case ObjectPoolAudit::RecoveringBlocks:
          //

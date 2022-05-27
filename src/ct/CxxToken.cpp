@@ -2023,7 +2023,7 @@ void Operation::Execute() const
    {
    case 2:
       if(!Context::PopArg(arg2)) return;
-      //  [[fallthrough]]
+      [[fallthrough]];
    case 1:
       if(!Context::PopArg(arg1)) return;
    }
@@ -3280,7 +3280,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
                diff = true;
                break;
             }
-            //  [[fallthrough]]
+            [[fallthrough]];
          case Cxx::ADD:
          case Cxx::ADD_ASSIGN:
          case Cxx::SUBTRACT_ASSIGN:
@@ -3311,7 +3311,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
          PushType(INT_STR);
          break;
       }
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Cxx::MULTIPLY:
    case Cxx::DIVIDE:
    case Cxx::MODULO:

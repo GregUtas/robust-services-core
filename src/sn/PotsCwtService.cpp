@@ -1045,7 +1045,7 @@ EventHandler::Rc PotsCwtAcRelease::ProcessEvent
          upsm->SendSignal(PotsSignal::Release);
          upsm->SendCause(Cause::AnswerTimeout);
       }
-      //  [[fallthrough]]
+      [[fallthrough]];
    case PotsCwtFacility::Answered:
    case PotsCwtFacility::Retrieved:
    case PotsCwtFacility::Reconnected:

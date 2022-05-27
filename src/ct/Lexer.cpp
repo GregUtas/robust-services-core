@@ -494,7 +494,7 @@ void Lexer::CalcDepths()
          //  Cancel KWD, which could be "class" in a template parameter list.
          //
          kwd = Cxx::NIL_KEYWORD;
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          //
          //  Take operators one character at a time so as not to skip over a
@@ -1074,7 +1074,7 @@ void Lexer::CheckSwitch(const Switch& code) const
             if((casePos != string::npos) && (codePos != string::npos))
             {
                auto fpos = code_.rfind(FALLTHROUGH_STR, pos);
-               if((fpos == string::npos) || (fpos < codePos))
+               if((fpos == string::npos) || (fpos < casePos))
                {
                   file_->LogPos(casePos, NoJumpOrFallthrough);
                }
@@ -1204,7 +1204,7 @@ string Lexer::CheckVerticalSpacing() const
             else
                break;
          }
-         //  [[fallthrough]]
+         [[fallthrough]];
       case CloseBrace:
       case CloseBraceSemicolon:
          if(LineTypeAttr::Attrs[prevType].isBlank)
@@ -1680,6 +1680,26 @@ bool Lexer::GetAccess(Cxx::Access& access)
    else return false;
 
    return Advance(str.size());
+}
+
+//------------------------------------------------------------------------------
+
+string Lexer::GetAttribute()
+{
+   Debug::ft("Lexer.GetAttribute");
+
+   //  An attribute is enclosed in double brackets: [[<attribute>]].
+   //
+   string attr;
+
+   if(NextStringIs("[["))
+   {
+      attr = NextIdentifier(curr_);
+      Advance(attr.size());
+      if(!NextStringIs("]]")) attr.clear();
+   }
+
+   return attr;
 }
 
 //------------------------------------------------------------------------------

@@ -321,6 +321,11 @@ public:
    //
    bool GetAccess(Cxx::Access& access);
 
+   //  Returns the string within a C++ attribute.  Returns an empty string
+   //  if no attribute was found.
+   //
+   std::string GetAttribute();
+
    //  Returns the number of C's that occur in a row.  Sets SPACE if at least
    //  one C was found but was preceded by a space.
    //

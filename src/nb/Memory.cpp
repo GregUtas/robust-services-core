@@ -305,7 +305,6 @@ fixed_string HeapHeader =
 void Memory::DisplayHeaps(ostream& stream, const string& prefix)
 {
    std::vector<const Heap*> heaps;
-   std::ostringstream expl;
 
    for(int m = MemTemporary; m < MemoryType_N; ++m)
    {

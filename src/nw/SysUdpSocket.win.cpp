@@ -129,7 +129,7 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
          {
             break;
          }
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          OutputLog(NetworkSocketError, "recvfrom", error);
       }

@@ -350,7 +350,7 @@ private:
 class NoOp : public CxxStatement
 {
 public:
-   explicit NoOp(size_t pos);
+   NoOp(size_t pos, bool fallthrough);
    ~NoOp() = default;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -359,6 +359,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    Cxx::ItemType Type() const override { return Cxx::NoOp; }
+private:
+   const bool fallthrough_;
 };
 
 //------------------------------------------------------------------------------

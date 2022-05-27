@@ -990,7 +990,7 @@ void DataSpec::FindReferent()
       view = NotAccessible;
       item = syms->FindSymbol(file, scope, qname, VALUE_REFS, view);
       if(item != nullptr) SetReferent(item, &view);
-      //  [[fallthrough]]
+      [[fallthrough]];
    case TemplateParameter:
    case TemplateClass:
       //
@@ -1147,7 +1147,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
    {
       auto tmplt = ref->GetTemplate();
       if(tmplt != nullptr) ref = tmplt;
-      //  [[fallthrough]]
+      [[fallthrough]];
    }
    default:
       //  Although a .cpp can use a type indirectly, it is unusual.  In most
@@ -3850,7 +3850,7 @@ void TypeName::SetOperator(Cxx::Operator oper)
          //
          name_.erase(name_.find('<'), 1);
       }
-      //  [[fallthrough]]
+      [[fallthrough]];
    default:
       if(oper != Cxx::NIL_OPERATOR)
       {

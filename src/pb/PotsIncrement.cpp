@@ -249,7 +249,7 @@ word DnsCommand::ProcessCommand(CliThread& cli) const
    {
    case None:
       last = first;
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Ok:
       break;
    default:
@@ -644,7 +644,7 @@ word TsPortsCommand::ProcessCommand(CliThread& cli) const
    {
    case None:
       last = first;
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Ok:
       break;
    default:

@@ -366,7 +366,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
       case Progress::EndOfSelection:
       case Progress::Alerting:
          if(pssm.ProxyCount() > 1) return Suspend;
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          Debug::SwLog(PotsProxyAcAnalyzeLocalMessage_ProcessEvent,
             "unexpected Progress::Ind", cpi->progress);
@@ -379,7 +379,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
 
    case CipSignal::ANM:
       if(pssm.ProxyCount() > 1) return pssm.RaiseLocalAnswer(nextEvent);
-      //  [[fallthrough]]
+      [[fallthrough]];
    default:
       Debug::SwLog(PotsProxyAcAnalyzeLocalMessage_ProcessEvent,
          "unexpected signal", sid);

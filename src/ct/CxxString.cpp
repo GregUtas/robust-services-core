@@ -428,7 +428,7 @@ NameVector GetNameAndArgs(const string& name)
                }
             }
          }
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          //
          //  Add C to the current name.
@@ -572,7 +572,7 @@ string Normalize(const string& name)
       case ',':
       case SPACE:
          result += next + name[i];
-         //  [[fallthrough]]
+         [[fallthrough]];
       case ':':
          next.clear();
          break;

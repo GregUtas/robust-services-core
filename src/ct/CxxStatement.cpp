@@ -1092,7 +1092,8 @@ bool Label::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
 //==============================================================================
 
-NoOp::NoOp(size_t pos) : CxxStatement(pos)
+NoOp::NoOp(size_t pos, bool fallthrough) : CxxStatement(pos),
+   fallthrough_(fallthrough)
 {
    Debug::ft("NoOp.ctor");
 }
@@ -1102,6 +1103,8 @@ NoOp::NoOp(size_t pos) : CxxStatement(pos)
 void NoOp::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
+   stream << prefix;
+   if(fallthrough_) stream << FALLTHROUGH_STR;
    stream << ';' << CRLF;
 }
 

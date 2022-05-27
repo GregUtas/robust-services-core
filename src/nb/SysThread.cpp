@@ -22,6 +22,7 @@
 #include "SysThread.h"
 #include <condition_variable>
 #include <csignal>
+#include <exception>
 #include <ostream>
 #include <string>
 #include "Debug.h"

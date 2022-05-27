@@ -268,7 +268,7 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
       over_ = func->IsOverride();
       oper_ = (func->FuncType() == FuncOperator);
       virt_ = !over_ && func->IsVirtual();
-      //  [[fallthrough]]
+      [[fallthrough]];
    }
    case Cxx::Data:
       stat_ = item->IsStatic();
@@ -1909,7 +1909,7 @@ size_t Editor::CodeBegin() const
          //  These shouldn't occur.
          //
          Debug::SwLog(Editor_CodeBegin, "unexpected line type", type);
-         //  [[fallthrough]]
+         [[fallthrough]];
       case FileComment:
       case CloseBrace:
       case CloseBraceSemicolon:
@@ -3910,13 +3910,13 @@ ItemOffsets Editor::GetOffsets(const CxxToken* item) const
       {
       case BlankLine:
          offsets.above_ = OffsetBlank;
-         //  [[fallthrough]]
+         [[fallthrough]];
       case FunctionName:
          continue;
 
       case RuleComment:
          offsets.above_ = OffsetRule;
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          return offsets;
       }
@@ -4128,7 +4128,7 @@ void Editor::InsertAboveItemDefn(const ItemDefnAttrs& attrs)
    case OffsetRule:
       InsertLine(attrs.pos_, EMPTY_STR);
       InsertLine(attrs.pos_, SingleRule());
-      //  [[fallthrough]]
+      [[fallthrough]];
    case OffsetBlank:
       InsertLine(attrs.pos_, EMPTY_STR);
    }
@@ -4175,7 +4175,7 @@ void Editor::InsertBelowItemDefn(const ItemDefnAttrs& attrs)
    case OffsetRule:
       InsertLine(attrs.pos_, EMPTY_STR);
       InsertLine(attrs.pos_, SingleRule());
-      //  [[fallthrough]]
+      [[fallthrough]];
    case OffsetBlank:
       InsertLine(attrs.pos_, EMPTY_STR);
    }

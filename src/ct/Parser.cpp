@@ -654,11 +654,14 @@ bool Parser::GetBasic(TokenPtr& statement)
    auto start = CurrPos();
 
    //  An expression statement is an assignment, function call, or null
-   //  statement.  The latter is a bare semicolon.
+   //  statement.  The latter is a bare semicolon, possibly preceded by
+   //  [[fallthrough]].
    //
+   auto attr = lexer_.GetAttribute();
+
    if(lexer_.NextCharIs(';'))
    {
-      statement.reset(new NoOp(start));
+      statement.reset(new NoOp(start, !attr.empty()));
       return true;
    }
 

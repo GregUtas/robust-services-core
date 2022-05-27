@@ -284,7 +284,7 @@ bool Block::CrlfOver(Form form) const
          return true;
       case Unbraced:
          if(braced_) return true;
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          return !statements_.front()->InLine();
       }
@@ -338,7 +338,7 @@ void Block::Display(ostream& stream,
             break;
          }
       }
-      //  [[fallthrough]]
+      [[fallthrough]];
    default:
       if(!nested_) stream << CRLF;
       stream << prefix << '{' << CRLF;

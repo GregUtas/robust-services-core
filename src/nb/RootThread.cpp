@@ -264,7 +264,7 @@ void RootThread::Enter()
          //  InitThread interrupts us to initiate a restart, we loop back to
          //  the Initializing state.
          //
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          //  A restart is necessary.  Generate a log.  If InitThread still
          //  exists, tell it to initiate a restart.  If it doesn't exist,

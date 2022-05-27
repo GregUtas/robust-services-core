@@ -411,7 +411,7 @@ void Context::Enqueue(Q2Way<Context>& whichq, MsgPriority prio, bool henq)
          return;
       else
          henq = true;
-      //  [[fallthrough]]
+      [[fallthrough]];
    case Dormant:
       if(henq)
          whichq.Henq(*this);

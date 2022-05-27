@@ -1339,7 +1339,7 @@ MsgBuffer* Thread::DeqMsg(const msecs_t& timeout)
       case DelayInterrupted:
          buff = msgq_.Deq();
          if(buff != nullptr) break;
-         //  [[fallthrough]]
+         [[fallthrough]];
       default:
          return nullptr;
       }
@@ -3680,7 +3680,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 0);
-         //  [[fallthrough]]
+         [[fallthrough]];
       case Release:
          return Release;
       case Return:
@@ -3695,7 +3695,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 1);
-         //  [[fallthrough]]
+         [[fallthrough]];
       case Release:
          return Release;
       case Return:
@@ -3712,7 +3712,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 2);
-         //  [[fallthrough]]
+         [[fallthrough]];
       case Release:
          return Release;
       case Return:
@@ -3727,7 +3727,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 2);
-         //  [[fallthrough]]
+         [[fallthrough]];
       case Release:
          return Release;
       case Return:
@@ -3742,7 +3742,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 2);
-         //  [[fallthrough]]
+         [[fallthrough]];
       case Release:
          return Release;
       case Return:

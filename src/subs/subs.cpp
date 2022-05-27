@@ -51,6 +51,7 @@
 #include "dbghelp.h"
 #include "intsafe.h"
 #include "process.h"
+#include "stdlib.h"
 #include "windows.h"
 #include "winerror.h"
 #include "winsock2.h"

@@ -54,6 +54,7 @@ set(Headers
     "socket.h"
     "sstream"
     "stack"
+    "stdlib.h"
     "string"
     "system_error"
     "typeinfo"

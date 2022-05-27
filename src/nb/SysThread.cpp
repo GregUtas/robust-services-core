@@ -21,11 +21,13 @@
 //
 #include "SysThread.h"
 #include <condition_variable>
+#include <csignal>
 #include <ostream>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbSignals.h"
+#include "SignalException.h"
 
 using std::ostream;
 using std::string;
@@ -34,6 +36,17 @@ using std::string;
 
 namespace NodeBase
 {
+//  The following is registered to intercept calls to std::terminate.
+//
+static void HandleTerminate()
+{
+   Debug::ft("NodeBase.HandleTerminate");
+
+   throw SignalException(SIGTERM, 0);
+}
+
+//------------------------------------------------------------------------------
+
 SysThread::SysThread(Thread* client, Priority prio, size_t size) :
    nid_(NIL_ID),
    nthread_(0),
@@ -106,6 +119,15 @@ bool SysThread::ReportError(fn_name function, fixed_string expl, int error)
 {
    Debug::SwLog(function, expl, error);
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+void SysThread::SetTerminateHandler()
+{
+   Debug::ft("SysThread.SetTerminateHandler");
+
+   auto prev = std::set_terminate(HandleTerminate);
 }
 
 //------------------------------------------------------------------------------

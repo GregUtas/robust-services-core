@@ -95,6 +95,11 @@ private:
    //
    static bool ReportError(fn_name function, fixed_string expl, int error);
 
+   //  Installs a handler for std::terminate.  Must be invoked by the
+   //  platform-specific ConfigureProcess.
+   //
+   static void SetTerminateHandler();
+
    //  Platform-specific.  Configures the executable before creating the
    //  first thread.
    //

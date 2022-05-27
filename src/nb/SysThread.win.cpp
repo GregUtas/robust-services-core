@@ -25,6 +25,7 @@
 #include <csignal>
 #include <cstdint>
 #include <process.h>
+#include <stdlib.h>
 #include <Windows.h>
 #include "Debug.h"
 #include "NbSignals.h"
@@ -163,8 +164,13 @@ void SysThread::ConfigureProcess()
 {
    Debug::ft("SysThread.ConfigureProcess");
 
-   //  Set our overall process priority.
+   //  Install our std::terminate handler, disable special abort handling,
+   //  and set our overall process priority.
    //
+   SetTerminateHandler();
+
+   _set_abort_behavior(0, _CALL_REPORTFAULT | _WRITE_ABORT_MSG);
+
    auto process = GetCurrentProcess();
    SetPriorityClass(process, HIGH_PRIORITY_CLASS);
 }

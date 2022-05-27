@@ -300,7 +300,7 @@ void Memory::Copy(void* dest, const void* source, size_t size)
 //------------------------------------------------------------------------------
 
 fixed_string HeapHeader =
-   "MemoryType   Max kB  Curr kB  Targ kB  Used kB  Free kB  Address";
+   "MemoryType Id   Max kB  Curr kB  Targ kB  Used kB  Free kB  Address";
 
 void Memory::DisplayHeaps(ostream& stream, const string& prefix)
 {
@@ -319,7 +319,9 @@ void Memory::DisplayHeaps(ostream& stream, const string& prefix)
    {
       auto type = (*h)->Type();
 
-      stream << prefix << setw(10) << type;
+      stream << prefix;
+      stream << setw(10) << type;
+      stream << setw(3) << int(type);
       auto size = config->GetMaxSize(type);
       stream << setw(9) << (size / kBs);
 

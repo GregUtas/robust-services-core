@@ -1031,7 +1031,7 @@ private:
 fixed_string HeapsListTextStr = "list";
 fixed_string HeapsListTextExpl = "lists all heaps";
 
-fixed_string SizeScaleStr = "k|m|g";
+fixed_string SizeScaleStr = "kmg";
 fixed_string SizeScaleExpl = "'k'=kB 'm'=MB 'g'=GB";
 
 SizeScaleParm::SizeScaleParm() :
@@ -1153,36 +1153,38 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       return 0;
 
    case HeapsSetSizeIndex:
+   {
       if(!GetIntParm(memtype, cli)) return -1;
       if(!GetIntParm(size, cli)) return -1;
       if(!GetCharParm(scale, cli)) return -1;
-      if(cli.EndOfInput())
+      if(!cli.EndOfInput()) return -1;
+
+      auto config = Singleton<HeapCfg>::Instance();
+      auto type = MemoryType(memtype);
+
+      switch(scale)
       {
-         auto config = Singleton<HeapCfg>::Instance();
-         auto type = MemoryType(memtype);
-
-         switch(scale)
+      case 'k':
+         size *= kBs;
+         break;
+      case 'm':
+         size *= MBs;
+         break;
+      case 'g':
+         if((BYTES_PER_WORD == 4) && (size > 2))
          {
-         case 'k':
-            size *= kBs;
-            break;
-         case 'm':
-            size *= MBs;
-            break;
-         case 'g':
-            if((BYTES_PER_WORD == 4) && (size > 2))
-            {
-               return cli.Report(-2, "The size can be at most 2GB.");
-            }
-            size *= GBs;
-            break;
+            return cli.Report(-2, "The size can be at most 2GB.");
          }
-
-         if(!config->SetTargSize(type, size, expl)) return cli.Report(-2, expl);
+         size *= GBs;
+         break;
       }
 
-      return cli.Report(0, SuccessExpl);
-      break;
+      if(!config->SetTargSize(type, size, expl)) return cli.Report(-2, expl);
+
+      *cli.obuf << "This change will take effect after the next ";
+      *cli.obuf << Restart::LevelToClear(type) << " restart." << CRLF;
+      return 0;
+   }
 
    case HeapsValidateIndex:
       if(!cli.EndOfInput()) return -1;

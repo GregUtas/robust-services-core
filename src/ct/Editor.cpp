@@ -2084,7 +2084,7 @@ word Editor::DeleteSpecialFunction(const CodeWarning& log)
    case CtorCouldBeDeleted:
       break;
    default:
-      return Report("Unsupported warning");
+      return Report(NotImplemented);
    }
 
    //  If the function has a definition, erase it.
@@ -2333,8 +2333,8 @@ word Editor::EraseAssignment(const CxxToken* item)
 {
    Debug::ft(Editor_EraseAssignment);
 
-   //  ITEM should be a TypeName or QualName at the beginning of an
-   //  assignment statement or a constructor's member initialization.
+   //  ITEM should be a TypeName or QualName in an assignment statement
+   //  or a constructor's member initialization.
    //
    switch(item->Type())
    {
@@ -2347,7 +2347,15 @@ word Editor::EraseAssignment(const CxxToken* item)
       return EditFailed;
    }
 
-   auto statement = item->GetFile()->PosToItem(item->GetPos());
+   //  Back up to the beginning of ITEM's statement by finding the end
+   //  of the previous statement and stepping forward.
+   //
+   auto file = item->GetFile();
+   auto& editor = file->GetEditor();
+   auto pos = item->GetPos();
+   auto end = editor.RfindFirstOf(pos, "{};,");
+   auto begin = editor.NextPos(end + 1);
+   auto statement = file->PosToItem(begin);
    if(statement == nullptr) return NotFound("Item's statement");
 
    string code;
@@ -3479,13 +3487,46 @@ word Editor::FixReferences(const CodeWarning& log)
 
    if(log.item_->Type() != Cxx::Data)
    {
-      return Report("Internal error: warning is not for dadta.");
+      return Report("Internal error: warning is not for data.");
    }
 
-   //  Fix references to the data, followed by the data itself.
+   //  Fix references to the data, followed by the data itself.  Before
+   //  erasing init-only or write-only data, confirm that doing so will
+   //  not eliminate side effects that need to be retained.
    //
-   auto data = static_cast<const Data*>(log.item_);
+   auto data = static_cast<Data*>(log.item_);
    auto refs = data->GetNonLocalRefs();
+
+   switch(log.warning_)
+   {
+   case DataInitOnly:
+   case DataWriteOnly:
+   {
+      DataVector datas;
+      GetDatas(data, datas);
+
+      *Cli_->obuf << "The data is used in the following locations." << CRLF;
+      *Cli_->obuf << "Erasing it could remove needed side effects." << CRLF;
+
+      Flags options(Code_Mask | NoAC_Mask);
+
+      for(auto d = datas.cbegin(); d != datas.cend(); ++d)
+      {
+         (*d)->Display(*Cli_->obuf, spaces(IndentSize()), options);
+      }
+
+      for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+      {
+         auto file = (*r)->GetFile();
+         auto& editor = file->GetEditor();
+         auto code = editor.GetCode((*r)->GetPos());
+         *Cli_->obuf << code;
+      }
+
+      if(!Cli_->BoolPrompt("Erase all appearances of this data?"))
+         return Report("Warning skipped.");
+   }
+   }
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {

@@ -328,7 +328,7 @@ private:
    //
    word FixData(Data* data, const CodeWarning& log);
 
-   //  Fixes DATA or ITEM, which references DATA.
+   //  Fixes DATA.
    //
    word TagAsConstData(const Data* data);
    word TagAsConstPointer(const Data* data);

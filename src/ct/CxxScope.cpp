@@ -5814,13 +5814,13 @@ string Function::TypeString(bool arg) const
    }
 
    //  If the function is not an argument, include its fully qualified
-   //  name after its return type.  (When the function is an argument,
-   //  only its signature, and not its name, is included.)
+   //  name after its return type.  When the function is an argument,
+   //  provide only its signature, without its name.
    //
    if(!arg)
-   {
       ts += SPACE + Prefix(GetScope()->TypeString(false)) + Name();
-   }
+   else
+      ts += "(*)";
 
    //  Append the function's argument types.
    //

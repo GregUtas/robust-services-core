@@ -1,14 +1,19 @@
 ﻿# Robust Services Core: Static Analysis C++11 Exclusions
 
 The _ct_ directory contains a [parser](/src/ct/Parser.h) that supports the C++
-static analysis tools. Because these tools were developed to analyze RSC,
-the parser only supports the C++ language features that RSC uses. In fact,
-RSC's source code is currently the only test suite for the `>parse` command.
+static analysis tools. Because these tools were developed to analyze RSC, the
+parser only supports some C++ features that RSC does not use.  In fact, RSC's
+source code is the only test suite for the `>parse` command.
+
+Except for C\++17's `<filesystem>` and `[[fallthrough]]`, RSC uses a subset
+of C\++11. This document therefore describes features, through C\++11,
+that the parser does not support. You can also assume that more recent C++
+features are not supported, at least if they involve new syntax.
 
 Before RSC can use anything that `>parse` does not support, the parser
 must be enhanced so that analyzing RSC's code is still possible. However,
-`>parse` should also be enhanced to support things that RSC does not use,
-so that other projects can also use the static analysis tools.
+`>parse` should also be enhanced to support things that RSC does _not_ use,
+so that the projects that use them can also use the static analysis tools.
 To this end, you are welcome to request that missing language features be
 supported, and you are even _more_ than welcome to implement them.
 
@@ -21,6 +26,7 @@ static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
 ### Recently Implemented
+- [x] `[[fallthrough]];`
 - [x] constant expressions as template arguments
 - [x] brace initialization of members in a constructor's initialization list
 - [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`,

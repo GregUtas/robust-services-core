@@ -51,13 +51,13 @@ release of the entire code base:
 * the [_.xref_](/output/rsc.xref.txt) file from `>export`
 
 Documentation for each warning that `>check` can emit can be seen
-[here](/help/cppcheck.txt).  (This file is formatted for use by the `>explain`
-command but is easily readable.)
+[here](/help/cppcheck.txt).  (This file is formatted for use by the
+`>explain` command but is easily readable.)
 
 ## Limitations
 
 The parser currently supports everything used within RSC. Because this is
-not everything in C++11, there are limitations. A detailed description of
+not everything in C++, there are limitations. A detailed description of
 exclusions is available [here](/docs/RSC-Cpp11-Exclusions.md). Some things
 are not fully supported and can result in false positives from `>check`. But
 if code uses something that is not supported at all, it will fail to compile,

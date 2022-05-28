@@ -19,7 +19,7 @@ supported, and you are even _more_ than welcome to implement them.
 
 Enhancing the parser to support a language feature is not enough. It would
 be more accurate to say that `>parse` actually _compiles_ the code; there is
-a lot that happens outside _Parser.h_. The `>parse` command
+a lot that happens outside _Parser.cpp_. The `>parse` command
 actually has an option that causes it to emit pseudo-code for a stack machine,
 which is useful for checking whether the code was properly understood. Many
 static analysis capabilities require this level of understanding, and `>parse`
@@ -167,7 +167,6 @@ that appear within it as `static`.
     is in `std::filesystem`)
 - [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and
   others)
-- [ ] brace initialization in a constructor's member initialization list
 - [ ] defining a class within a function (`Parser.ParseInBlock` and others)
 - [ ] range-based `for` loops (`Parser.GetFor`, `Parser.GetTypeSpec`, and
   `Operation.Execute`)

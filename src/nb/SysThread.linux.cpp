@@ -64,10 +64,8 @@ void SysThread::ConfigureProcess()
 {
    Debug::ft(SysThread_ConfigureProcess);
 
-   //  Install our std::terminate handler and set our overall process priority.
+   //  Set our overall process priority.
    //
-   SetTerminateHandler();
-
    auto err = setpriority(PRIO_PROCESS, 0, -1);
 
    if(err != 0)

@@ -164,11 +164,8 @@ void SysThread::ConfigureProcess()
 {
    Debug::ft("SysThread.ConfigureProcess");
 
-   //  Install our std::terminate handler, disable special abort handling,
-   //  and set our overall process priority.
+   //  Disable special abort handling and set our overall process priority.
    //
-   SetTerminateHandler();
-
    _set_abort_behavior(0, _CALL_REPORTFAULT | _WRITE_ABORT_MSG);
 
    auto process = GetCurrentProcess();

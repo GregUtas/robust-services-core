@@ -111,15 +111,15 @@ void Heap::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "attrs       : " << attrs_ << CRLF;
-   stream << prefix << "allocs      : " << allocs_ << CRLF;
-   stream << prefix << "fails       : " << fails_ << CRLF;
-   stream << prefix << "frees       : " << frees_ << CRLF;
-   stream << prefix << "changes     : " << changes_ << CRLF;
-   stream << prefix << "currAlloc : " << currInUse_ << CRLF;
-   stream << prefix << "maxAlloc  : " << maxInUse_ << CRLF;
-   stream << prefix << "trace       : " << trace_ << CRLF;
-   stream << prefix << "blocks      : " << blocks_.size() << CRLF;
+   stream << prefix << "attrs     : " << attrs_ << CRLF;
+   stream << prefix << "allocs    : " << allocs_ << CRLF;
+   stream << prefix << "fails     : " << fails_ << CRLF;
+   stream << prefix << "frees     : " << frees_ << CRLF;
+   stream << prefix << "changes   : " << changes_ << CRLF;
+   stream << prefix << "currInUse : " << currInUse_ << CRLF;
+   stream << prefix << "maxInUse  : " << maxInUse_ << CRLF;
+   stream << prefix << "trace     : " << trace_ << CRLF;
+   stream << prefix << "blocks    : " << blocks_.size() << CRLF;
 }
 
 //------------------------------------------------------------------------------

@@ -24,7 +24,6 @@
 
 #include "Heap.h"
 #include <cstddef>
-#include <string>
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -235,10 +234,6 @@ private:
    //  The type of memory that the heap manages.
    //
    const MemoryType type_;
-
-   //  The name for the heap's lock.
-   //
-   std::string lockName_;
 };
 }
 #endif

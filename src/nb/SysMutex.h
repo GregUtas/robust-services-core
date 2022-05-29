@@ -26,6 +26,7 @@
 #include <atomic>
 #include <cstddef>
 #include <mutex>
+#include <string>
 #include "Duration.h"
 #include "RegCell.h"
 #include "SysDecls.h"
@@ -116,7 +117,7 @@ public:
 
    //  Returns the mutex's name.
    //
-   c_string Name() const { return name_; }
+   const std::string& Name() const { return name_; }
 
    //  Returns the offset to mid_.
    //
@@ -133,7 +134,7 @@ public:
 private:
    //  The mutex's name.
    //
-   fixed_string name_;
+   std::string name_;
 
    //  The mutex's index in MutexRegistry.
    //

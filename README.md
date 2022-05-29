@@ -141,7 +141,7 @@ trace, every CLI session produces
 what was written to the console)
   * a _log_ file (system events that were written to the console asynchronously)
 
-The numeric string _yymmdd-hhmmss-mmm_ is appended to the names of these files
+The numeric string _yymmdd-hhmmss_ is appended to the names of these files
 to record the time when the system initialized (for the _console_ file and
 initial _log_ file) or the time of the preceding restart (for a subsequent
 _log_ file).

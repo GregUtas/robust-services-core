@@ -25,6 +25,7 @@
 #include <iosfwd>
 #include <memory>
 #include <sstream>
+#include <string>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Duration.h"
@@ -406,9 +407,7 @@ size_t BuddyHeap::BlockToSize(const void* addr) const
 }
 
 //------------------------------------------------------------------------------
-//
-//  Invoked when heap corruption is detected.
-//
+
 BuddyHeap::BlockState BuddyHeap::Corrupt(int reason, bool restart) const
 {
    if(restart && !Element::RunningInLab())
@@ -467,8 +466,7 @@ bool BuddyHeap::Create(size_t size)
    //
    std::ostringstream stream;
    stream << "HeapLock(" << type_ << ')';
-   lockName_ = stream.str();
-   std::unique_ptr<SysMutex> lock(new SysMutex(lockName_.c_str()));
+   std::unique_ptr<SysMutex> lock(new SysMutex(stream.str().c_str()));
 
    if(lock == nullptr)
    {
@@ -613,14 +611,13 @@ void BuddyHeap::Display(ostream& stream,
    stream << prefix << "heap     : " << heap_ << CRLF;
    stream << prefix << "size     : " << size_ << CRLF;
    stream << prefix << "type     : " << type_ << CRLF;
-   stream << prefix << "lock     : " << heap_->lock.get() << CRLF;
    stream << std::hex;
    stream << prefix << "leftAddr : " << heap_->leftAddr << CRLF;
    stream << prefix << "minAddr  : " << heap_->minAddr << CRLF;
    stream << prefix << "maxAddr  : " << heap_->maxAddr << CRLF;
    stream << std::dec;
    stream << prefix << "minLevel : " << heap_->minLevel << CRLF;
-   stream << prefix << "lock     : ";
+   stream << prefix << "lock     : " << CRLF;
    heap_->lock->Display(stream, lead, options);
 
    auto verbose = options.test(DispVerbose);

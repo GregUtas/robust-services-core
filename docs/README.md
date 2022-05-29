@@ -6,8 +6,6 @@ These documents describe RSC's primary capabilities.
 
 Document | Description
 -------- | -----------
-![pdf](images/pdf24.png) [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
-![pdf](images/pdf24.png) [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
 ![pdf](images/pdf24.png) [RSC Software Overview](/docs/RSC-Software-Overview.pdf) | roadmap for the Robust Services Core
 <img src="images/md.png" alt="markdown" height="30"> [Preface](/docs/RSC-Articles.md) | preface to the CodeProject articles
 ![CodeProject](images/cp100x30.gif) [Software Techniques for Lemmings](https://www.codeproject.com/Articles/5258540/Software-Techniques-for-Lemmings) | article on popular but dubious techniques and RSC's alternatives
@@ -26,6 +24,8 @@ Document | Description
 <img src="images/md.png" alt="markdown" height="30"> [Building Using CMake](/docs/RSC-Building-Using-CMake.md) | how to build RSC using CMake
 <img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2022
 <img src="images/txt.jpg" alt="txt" height="30"> [help.cli](/docs/help.cli.txt) | summary of all CLI commands
+![pdf](images/pdf24.png) [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
+![pdf](images/pdf24.png) [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
 ![pdf](images/pdf24.png) [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 <img src="images/md.png" alt="markdown" height="30"> [RSC Coding Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines
 

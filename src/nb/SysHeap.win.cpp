@@ -52,7 +52,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
    }
 
    //  Linux doesn't support custom heaps, so all heaps other than
-   //  the default heap now use NbHeap.  This code is therefore no
+   //  the default heap now use BuddyHeap.  This code is therefore no
    //  longer used, but it has been kept in case Linux eventually
    //  supports custom heaps.
    //
@@ -204,7 +204,7 @@ int SysHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft(SysHeap_SetPermissions);
 
-   Debug::SwLog(SysHeap_SetPermissions, "not supported: use NbHeap", 0);
+   Debug::SwLog(SysHeap_SetPermissions, "not supported: use BuddyHeap", 0);
    return ERROR_NOT_SUPPORTED;
 }
 

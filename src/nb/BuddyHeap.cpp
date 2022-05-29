@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  NbHeap.cpp
+//  BuddyHeap.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "NbHeap.h"
+#include "BuddyHeap.h"
 #include <cstdint>
 #include <ios>
 #include <iosfwd>
@@ -102,8 +102,8 @@ constexpr size_t MinBlockSizeLog2 = BYTES_PER_WORD_LOG2 + 2;
 //  The largest block that could be allocated is MinBlockSize * 1GB, because
 //  heap management information uses some space at the beginning of the heap.
 //
-constexpr NbHeap::level_t NumLevels = 32;
-constexpr NbHeap::level_t LastLevel = NumLevels - 1;
+constexpr BuddyHeap::level_t NumLevels = 32;
+constexpr BuddyHeap::level_t LastLevel = NumLevels - 1;
 
 //  Types of heap corruption that can be detected.
 //
@@ -125,7 +125,7 @@ enum HeapCorruptionReason
 //  Returns the index of the first child associated with INDEX.
 //  The second child's index follows immediately.
 //
-static NbHeap::index_t IndexToChild(NbHeap::index_t index)
+static BuddyHeap::index_t IndexToChild(BuddyHeap::index_t index)
 {
    return (index << 1) + 1;
 }
@@ -134,7 +134,7 @@ static NbHeap::index_t IndexToChild(NbHeap::index_t index)
 //
 //  Returns the index of the parent associated with INDEX.
 //
-static NbHeap::index_t IndexToParent(NbHeap::index_t index)
+static BuddyHeap::index_t IndexToParent(BuddyHeap::index_t index)
 {
    return (index - 1) >> 1;
 }
@@ -143,7 +143,7 @@ static NbHeap::index_t IndexToParent(NbHeap::index_t index)
 //
 //  Returns the index of the sibling associated with INDEX.
 //
-static NbHeap::index_t IndexToSibling(NbHeap::index_t index)
+static BuddyHeap::index_t IndexToSibling(BuddyHeap::index_t index)
 {
    return ((index & 0x01) == 0 ? index - 1 : index + 1);
 }
@@ -154,7 +154,7 @@ static NbHeap::index_t IndexToSibling(NbHeap::index_t index)
 //  size (log2) of MinBlockSizeLog2, and the size of a block doubles at each
 //  level above that.
 //
-static size_t Log2Size(NbHeap::level_t level)
+static size_t Log2Size(BuddyHeap::level_t level)
 {
    return (MinBlockSizeLog2 + LastLevel - level);
 }
@@ -163,7 +163,7 @@ static size_t Log2Size(NbHeap::level_t level)
 //
 //  Returns the size of a block at LEVEL.
 //
-static size_t LevelToSize(NbHeap::level_t level)
+static size_t LevelToSize(BuddyHeap::level_t level)
 {
    return size_t(1) << Log2Size(level);
 }
@@ -172,7 +172,7 @@ static size_t LevelToSize(NbHeap::level_t level)
 //
 //  Returns the level associated with a block of SIZE.
 //
-static NbHeap::level_t SizeToLevel(size_t size)
+static BuddyHeap::level_t SizeToLevel(size_t size)
 {
    return LastLevel - (log2(size, true) - MinBlockSizeLog2);
 }
@@ -208,11 +208,11 @@ struct HeapPriv
 
    //  The first level where blocks can be queued.
    //
-   NbHeap::level_t minLevel;
+   BuddyHeap::level_t minLevel;
 
    //  The maximum index into the STATE array.
    //
-   NbHeap::index_t maxIndex;
+   BuddyHeap::index_t maxIndex;
 
    //  The queues of free blocks.  Blocks at head_[LastLevel] have a size of
    //  MinBlockSize, and their size doubles as the index decrements.  The
@@ -221,7 +221,7 @@ struct HeapPriv
    //
    Q2Way<HeapBlock> freeq[NumLevels];
 
-   //  The state of each block (see NbHeap::BlockState).  Each state uses
+   //  The state of each block (see BuddyHeap::BlockState).  Each state uses
    //  two bits.
    //
    uint8_t* state;
@@ -240,21 +240,21 @@ struct HeapPriv
 
 //------------------------------------------------------------------------------
 
-fn_name NbHeap_ctor = "NbHeap.ctor";
+fn_name BuddyHeap_ctor = "BuddyHeap.ctor";
 
-NbHeap::NbHeap(MemoryType type) : Heap(),
+BuddyHeap::BuddyHeap(MemoryType type) : Heap(),
    heap_(nullptr),
    size_(0),
    type_(type)
 {
-   Debug::ft(NbHeap_ctor);
+   Debug::ft(BuddyHeap_ctor);
 }
 
 //------------------------------------------------------------------------------
 
-NbHeap::~NbHeap()
+BuddyHeap::~BuddyHeap()
 {
-   Debug::ftnt("NbHeap.dtor");
+   Debug::ftnt("BuddyHeap.dtor");
 
    if(heap_ == nullptr) return;
    heap_->lock->Acquire(TIMEOUT_NEVER);
@@ -269,7 +269,7 @@ NbHeap::~NbHeap()
 
 //------------------------------------------------------------------------------
 
-bool NbHeap::AddrIsValid(const void* addr, bool header) const
+bool BuddyHeap::AddrIsValid(const void* addr, bool header) const
 {
    auto iAddr = uintptr_t(addr);
 
@@ -291,9 +291,9 @@ bool NbHeap::AddrIsValid(const void* addr, bool header) const
 
 //------------------------------------------------------------------------------
 
-void* NbHeap::Alloc(size_t size)
+void* BuddyHeap::Alloc(size_t size)
 {
-   Debug::ft("NbHeap.Alloc");
+   Debug::ft("BuddyHeap.Alloc");
 
    //  Allocate a block at the level that can accommodate SIZE.
    //
@@ -311,7 +311,7 @@ void* NbHeap::Alloc(size_t size)
 
 //------------------------------------------------------------------------------
 
-HeapBlock* NbHeap::AllocBlock(level_t level, size_t size)
+HeapBlock* BuddyHeap::AllocBlock(level_t level, size_t size)
 {
    //  Allocate a block at LEVEL.  If no block is available, try the next
    //  level with larger blocks.  If a block is obtained that could be split
@@ -343,7 +343,7 @@ HeapBlock* NbHeap::AllocBlock(level_t level, size_t size)
 
 //------------------------------------------------------------------------------
 
-NbHeap::index_t NbHeap::BlockToIndex
+BuddyHeap::index_t BuddyHeap::BlockToIndex
    (const HeapBlock* block, level_t level) const
 {
    //  BLOCK's index is found by adding the index of the first block in
@@ -356,9 +356,9 @@ NbHeap::index_t NbHeap::BlockToIndex
 
 //------------------------------------------------------------------------------
 
-size_t NbHeap::BlockToSize(const void* addr) const
+size_t BuddyHeap::BlockToSize(const void* addr) const
 {
-   Debug::ft("NbHeap.BlockToSize");
+   Debug::ft("BuddyHeap.BlockToSize");
 
    //  ADDR can be used at any level where it falls on a block boundary.
    //  Find the number of "0" bits after its last "1" bit.  It must have
@@ -410,7 +410,7 @@ size_t NbHeap::BlockToSize(const void* addr) const
 //
 //  Invoked when heap corruption is detected.
 //
-NbHeap::BlockState NbHeap::Corrupt(int reason, bool restart) const
+BuddyHeap::BlockState BuddyHeap::Corrupt(int reason, bool restart) const
 {
    if(restart && !Element::RunningInLab())
    {
@@ -422,9 +422,9 @@ NbHeap::BlockState NbHeap::Corrupt(int reason, bool restart) const
 
 //------------------------------------------------------------------------------
 
-bool NbHeap::Create()
+bool BuddyHeap::Create()
 {
-   Debug::ft("NbHeap.Create");
+   Debug::ft("BuddyHeap.Create");
 
    //  If the target size cannot be allocated, revert to the previous size.
    //
@@ -443,9 +443,9 @@ bool NbHeap::Create()
 
 //------------------------------------------------------------------------------
 
-bool NbHeap::Create(size_t size)
+bool BuddyHeap::Create(size_t size)
 {
-   Debug::ft("NbHeap.Create(size)");
+   Debug::ft("BuddyHeap.Create(size)");
 
    //  Round up the size of the heap management data to the next power of 2
    //  so that it will overlay a whole number of blocks.
@@ -460,7 +460,7 @@ bool NbHeap::Create(size_t size)
    {
       std::ostringstream expl;
       expl << "forcing heap size to minimum of " << minSize;
-      Debug::SwLog(NbHeap_ctor, expl.str(), size);
+      Debug::SwLog(BuddyHeap_ctor, expl.str(), size);
       size = minSize;
    }
 
@@ -573,9 +573,9 @@ bool NbHeap::Create(size_t size)
 
 //------------------------------------------------------------------------------
 
-size_t NbHeap::CurrAvail() const
+size_t BuddyHeap::CurrAvail() const
 {
-   Debug::ft("NbHeap.CurrAvail");
+   Debug::ft("BuddyHeap.CurrAvail");
 
    size_t avail = 0;
 
@@ -592,7 +592,7 @@ size_t NbHeap::CurrAvail() const
 
 //------------------------------------------------------------------------------
 
-HeapBlock* NbHeap::Dequeue(level_t level)
+HeapBlock* BuddyHeap::Dequeue(level_t level)
 {
    auto block = heap_->freeq[level].Deq();
    if(block == nullptr) return nullptr;
@@ -604,7 +604,7 @@ HeapBlock* NbHeap::Dequeue(level_t level)
 
 //------------------------------------------------------------------------------
 
-void NbHeap::Display(ostream& stream,
+void BuddyHeap::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Heap::Display(stream, prefix, options);
@@ -698,7 +698,7 @@ void NbHeap::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void NbHeap::EnqBlock(HeapBlock* block, index_t index, level_t level)
+void BuddyHeap::EnqBlock(HeapBlock* block, index_t index, level_t level)
 {
    new (block) HeapBlock();
    heap_->freeq[level].Enq(*block);
@@ -707,7 +707,7 @@ void NbHeap::EnqBlock(HeapBlock* block, index_t index, level_t level)
 
 //------------------------------------------------------------------------------
 
-HeapBlock* NbHeap::Enqueue(HeapBlock* block, level_t level)
+HeapBlock* BuddyHeap::Enqueue(HeapBlock* block, level_t level)
 {
    auto b = BlockToIndex(block, level);
    auto s = IndexToSibling(b);
@@ -732,9 +732,9 @@ HeapBlock* NbHeap::Enqueue(HeapBlock* block, level_t level)
 
 //------------------------------------------------------------------------------
 
-void NbHeap::Free(void* addr)
+void BuddyHeap::Free(void* addr)
 {
-   Debug::ft("NbHeap.Free");
+   Debug::ft("BuddyHeap.Free");
 
    auto size = BlockToSize(addr);
    if(size == 0) return;
@@ -750,7 +750,7 @@ void NbHeap::Free(void* addr)
 
 //------------------------------------------------------------------------------
 
-void NbHeap::FreeBlock(HeapBlock* block, level_t level)
+void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
 {
    //  Return ADDR to its free queue.  If its sibling is not in use, Enqueue
    //  exqueues and returns the sibling, so merge the two blocks and free the
@@ -769,7 +769,7 @@ void NbHeap::FreeBlock(HeapBlock* block, level_t level)
 
 //------------------------------------------------------------------------------
 
-NbHeap::BlockState NbHeap::GetState(index_t index) const
+BuddyHeap::BlockState BuddyHeap::GetState(index_t index) const
 {
    //  Each byte holds four states, so right shift INDEX by 2 bits to find the
    //  first-level index.  Extract the two low-order bits as the second-level
@@ -785,7 +785,7 @@ NbHeap::BlockState NbHeap::GetState(index_t index) const
 
 //------------------------------------------------------------------------------
 
-HeapBlock* NbHeap::IndexToBlock(index_t index, level_t level) const
+HeapBlock* BuddyHeap::IndexToBlock(index_t index, level_t level) const
 {
    //  BLOCK's address is found by subtracting the index of the first
    //  block in LEVEL from INDEX and then skipping over the number of
@@ -798,21 +798,21 @@ HeapBlock* NbHeap::IndexToBlock(index_t index, level_t level) const
 
 //------------------------------------------------------------------------------
 
-size_t NbHeap::Overhead() const
+size_t BuddyHeap::Overhead() const
 {
    return (heap_->minAddr - uintptr_t(heap_));
 }
 
 //------------------------------------------------------------------------------
 
-void NbHeap::Patch(sel_t selector, void* arguments)
+void BuddyHeap::Patch(sel_t selector, void* arguments)
 {
    Object::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
 
-void NbHeap::ReleaseBlock(HeapBlock* block, level_t level)
+void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level)
 {
    //  When the heap is initialized, queueing a block means that it is split
    //  from its sibling, which also means their ancestors are split.  It is
@@ -828,7 +828,7 @@ void NbHeap::ReleaseBlock(HeapBlock* block, level_t level)
 
 //------------------------------------------------------------------------------
 
-void NbHeap::ReserveBlock(const HeapBlock* block)
+void BuddyHeap::ReserveBlock(const HeapBlock* block)
 {
    //  Mark BLOCK as allocated and proceed up the tree to mark its ancestors
    //  as split.  It is safe to stop if we reach an ancestor that is already
@@ -841,7 +841,7 @@ void NbHeap::ReserveBlock(const HeapBlock* block)
 
 //------------------------------------------------------------------------------
 
-void NbHeap::SetState(index_t index, BlockState state)
+void BuddyHeap::SetState(index_t index, BlockState state)
 {
    //  Each byte holds four states, so right shift INDEX by 2 bits to find the
    //  first-level index.  Extract the two low-order bits as the second-level
@@ -857,7 +857,7 @@ void NbHeap::SetState(index_t index, BlockState state)
 
 //------------------------------------------------------------------------------
 
-void NbHeap::SplitAncestors(index_t block)
+void BuddyHeap::SplitAncestors(index_t block)
 {
    while(block > 0)
    {
@@ -872,9 +872,9 @@ void NbHeap::SplitAncestors(index_t block)
 
 //------------------------------------------------------------------------------
 
-bool NbHeap::Validate(const void* addr) const
+bool BuddyHeap::Validate(const void* addr) const
 {
-   Debug::ft("NbHeap.Validate");
+   Debug::ft("BuddyHeap.Validate");
 
    MutexGuard guard(heap_->lock.get());
 
@@ -905,7 +905,7 @@ bool NbHeap::Validate(const void* addr) const
 
 //------------------------------------------------------------------------------
 
-NbHeap::BlockState NbHeap::ValidateBlock
+BuddyHeap::BlockState BuddyHeap::ValidateBlock
    (index_t index, level_t level, bool restart) const
 {
    //  Find the block's state.  If the block is available, it should be

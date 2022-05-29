@@ -20,7 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Memory.h"
-#include "NbHeap.h"
+#include "BuddyHeap.h"
 #include <cstring>
 #include <iomanip>
 #include <ostream>
@@ -43,7 +43,7 @@ using std::string;
 
 namespace NodeBase
 {
-class ImmutableHeap : public NbHeap
+class ImmutableHeap : public BuddyHeap
 {
    friend class Singleton<ImmutableHeap>;
 
@@ -51,7 +51,7 @@ class ImmutableHeap : public NbHeap
    ~ImmutableHeap();
 };
 
-class ProtectedHeap : public NbHeap
+class ProtectedHeap : public BuddyHeap
 {
    friend class Singleton<ProtectedHeap>;
 
@@ -59,7 +59,7 @@ class ProtectedHeap : public NbHeap
    ~ProtectedHeap();
 };
 
-class PersistentHeap : public NbHeap
+class PersistentHeap : public BuddyHeap
 {
    friend class Singleton<PersistentHeap>;
 
@@ -67,7 +67,7 @@ class PersistentHeap : public NbHeap
    ~PersistentHeap();
 };
 
-class DynamicHeap : public NbHeap
+class DynamicHeap : public BuddyHeap
 {
    friend class Singleton<DynamicHeap>;
 
@@ -75,7 +75,7 @@ class DynamicHeap : public NbHeap
    ~DynamicHeap();
 };
 
-class TemporaryHeap : public NbHeap
+class TemporaryHeap : public BuddyHeap
 {
    friend class Singleton<TemporaryHeap>;
 
@@ -85,7 +85,7 @@ class TemporaryHeap : public NbHeap
 
 //------------------------------------------------------------------------------
 
-ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable)
+ImmutableHeap::ImmutableHeap() : BuddyHeap(MemImmutable)
 {
    Debug::ft("ImmutableHeap.ctor");
 
@@ -103,7 +103,7 @@ ImmutableHeap::~ImmutableHeap()
 
 //------------------------------------------------------------------------------
 
-ProtectedHeap::ProtectedHeap() : NbHeap(MemProtected)
+ProtectedHeap::ProtectedHeap() : BuddyHeap(MemProtected)
 {
    Debug::ft("ProtectedHeap.ctor");
 
@@ -119,7 +119,7 @@ ProtectedHeap::~ProtectedHeap()
 
 //------------------------------------------------------------------------------
 
-PersistentHeap::PersistentHeap() : NbHeap(MemPersistent)
+PersistentHeap::PersistentHeap() : BuddyHeap(MemPersistent)
 {
    Debug::ft("PersistentHeap.ctor");
 
@@ -135,7 +135,7 @@ PersistentHeap::~PersistentHeap()
 
 //------------------------------------------------------------------------------
 
-DynamicHeap::DynamicHeap() : NbHeap(MemDynamic)
+DynamicHeap::DynamicHeap() : BuddyHeap(MemDynamic)
 {
    Debug::ft("DynamicHeap.ctor");
 
@@ -151,7 +151,7 @@ DynamicHeap::~DynamicHeap()
 
 //------------------------------------------------------------------------------
 
-TemporaryHeap::TemporaryHeap() : NbHeap(MemTemporary)
+TemporaryHeap::TemporaryHeap() : BuddyHeap(MemTemporary)
 {
    Debug::ft("TemporaryHeap.ctor");
 

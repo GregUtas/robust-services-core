@@ -57,7 +57,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
       return;
    }
 
-   Debug::SwLog(SysHeap_ctor1, "not supported on Linux: use NbHeap", type);
+   Debug::SwLog(SysHeap_ctor1, "not supported on Linux: use BuddyHeap", type);
    throw AllocationException(type, size);
 }
 
@@ -176,7 +176,7 @@ int SysHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft(SysHeap_SetPermissions);
 
-   Debug::SwLog(SysHeap_SetPermissions, "not supported: use NbHeap", 0);
+   Debug::SwLog(SysHeap_SetPermissions, "not supported: use BuddyHeap", 0);
    return EPERM;
 }
 

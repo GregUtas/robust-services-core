@@ -20,10 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NtIncrement.h"
+#include "BuddyHeap.h"
 #include "CliCommandSet.h"
 #include "CliText.h"
 #include "Daemon.h"
-#include "NbHeap.h"
 #include "Temporary.h"
 #include "Thread.h"
 #include <cctype>
@@ -879,9 +879,9 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
 //==============================================================================
 //
-//  Testing for NbHeap.
+//  Testing for BuddyHeap.
 //
-class TestHeap : public NbHeap
+class TestHeap : public BuddyHeap
 {
    friend class Singleton<TestHeap>;
 public:
@@ -898,7 +898,7 @@ private:
 MemoryType TestHeap::Type_ = MemTemporary;
 size_t TestHeap::Size_ = 1 * kBs;
 
-TestHeap::TestHeap() : NbHeap(Type_)
+TestHeap::TestHeap() : BuddyHeap(Type_)
 {
    Debug::ft("TestHeap.ctor");
 
@@ -989,7 +989,7 @@ public:
 };
 
 fixed_string HeapStr = "heap";
-fixed_string HeapExpl = "Tests an NbHeap function.";
+fixed_string HeapExpl = "Tests an BuddyHeap function.";
 
 HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
 {

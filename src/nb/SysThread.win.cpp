@@ -184,8 +184,8 @@ bool SysThread::Create(const Thread* client, size_t size)
    //  priority boosts, which could interfere with our priority scheme.
    //
    unsigned int id;
-   nthread_ = _beginthreadex
-      (nullptr, size, EnterThread, (void*) client, 0, &id);
+   nthread_ = _beginthreadex(nullptr, size,
+      (_beginthreadex_proc_type) EnterThread, (void*) client, 0, & id);
 
    if(nthread_ == 0)
    {

@@ -79,7 +79,7 @@ public:
    void Patch(sel_t selector, void* arguments) override;
 
    //  Returns false on Windows, where VirtualProtect can fail if
-   //  used on a heap.  Use NbHeap for a heap that requires write
+   //  used on a heap.  Use BuddyHeap for a heap that requires write
    //  protection.
    //
    int SetPermissions(MemoryProtection attrs) override;

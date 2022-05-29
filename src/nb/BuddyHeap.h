@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  NbHeap.h
+//  BuddyHeap.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef NBHEAP_H_INCLUDED
-#define NBHEAP_H_INCLUDED
+#ifndef BUDDYHEAP_H_INCLUDED
+#define BUDDYHEAP_H_INCLUDED
 
 #include "Heap.h"
 #include <cstddef>
@@ -37,13 +37,13 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  RSC's heap implementation, which uses buddy allocation.  It is used for
-//  all memory types other than MemPermanent, which uses the default heap.
+//  A heap implementation that uses buddy allocation.  It is currently used
+//  by all memory types other than MemPermanent, which uses the default heap.
 //    o Linux does not have a private heap capability, so all memory types
-//      except MemPermanent must use NbHeap.
+//      except MemPermanent must use a custom heap.
 //    o Although Windows has a private heap capability, it runs into trouble
-//      if a heap is write-protected.  MemImmutable and MemProtected must
-//      therefore use NbHeap.
+//      if the heap is write-protected.  MemImmutable and MemProtected must
+//      therefore use a custom heap.
 //  The size of each heap must be engineered so that it has enough memory to
 //  handle peak load.  However, a restart can change the size of some heaps:
 //    o MemImmutable: size is fixed at compile time
@@ -52,12 +52,12 @@ namespace NodeBase
 //    o MemDynamic: needs at least a cold restart to change size
 //    o MemTemporary: needs at least a warm restart to change size
 //
-class NbHeap : public Heap
+class BuddyHeap : public Heap
 {
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~NbHeap();
+   virtual ~BuddyHeap();
 
    //  Overridden to return the heap's address.
    //
@@ -122,7 +122,7 @@ protected:
    //  Creates a heap for memory of TYPE.  Protected because this class is
    //  virtual.
    //
-   explicit NbHeap(MemoryType type);
+   explicit BuddyHeap(MemoryType type);
 
    //  Allocates the heap's memory.  Invoked by the leaf class constructor of a
    //  heap that supports a specific MemoryType and whose size can be changed

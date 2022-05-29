@@ -31,7 +31,6 @@
 #include "Element.h"
 #include "Formatters.h"
 #include "HeapCfg.h"
-#include "MutexGuard.h"
 #include "NbTypes.h"
 #include "Q2Link.h"
 #include "Q2Way.h"

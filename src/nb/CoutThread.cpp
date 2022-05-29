@@ -28,7 +28,6 @@
 #include "Duration.h"
 #include "FileThread.h"
 #include "FunctionGuard.h"
-#include "MutexGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "StreamRequest.h"

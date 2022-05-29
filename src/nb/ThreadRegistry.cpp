@@ -28,7 +28,6 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
-#include "MutexGuard.h"
 #include "NbCliParms.h"
 #include "Restart.h"
 #include "Singleton.h"

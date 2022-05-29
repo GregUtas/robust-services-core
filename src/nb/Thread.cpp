@@ -48,7 +48,6 @@
 #include "Log.h"
 #include "Memory.h"
 #include "MsgBuffer.h"
-#include "MutexGuard.h"
 #include "MutexRegistry.h"
 #include "NbAppIds.h"
 #include "NbLogs.h"

@@ -40,6 +40,38 @@ using std::string;
 
 namespace NodeBase
 {
+MutexGuard::MutexGuard(SysMutex* mutex) : mutex_(mutex)
+{
+   if(mutex_ == nullptr) return;
+
+   Debug::ft("MutexGuard.ctor");
+
+   mutex_->Acquire(TIMEOUT_NEVER);
+}
+
+//------------------------------------------------------------------------------
+
+MutexGuard::~MutexGuard()
+{
+   Debug::ftnt("MutexGuard.dtor");
+
+   if(mutex_ != nullptr) Release();
+}
+
+//------------------------------------------------------------------------------
+
+void MutexGuard::Release()
+{
+   if(mutex_ != nullptr)
+   {
+      Debug::ftnt("MutexGuard.Release");
+      mutex_->Release();
+      mutex_ = nullptr;
+   }
+}
+
+//==============================================================================
+
 SysMutex::SysMutex(c_string name) :
    name_(name),
    nid_(NIL_ID),

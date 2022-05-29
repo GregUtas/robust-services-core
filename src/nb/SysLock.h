@@ -39,7 +39,8 @@ namespace NodeBase
 //  intended for general use: it neither invokes Debug::ft nor registers with
 //  MutexRegistry.  It is strongly recommended that SysMutex be used first,
 //  converting to this mutex only after thorough testing if the performance
-//  improvement justifies it.
+//  improvement justifies it.  In the same way that there is MutexGuard for
+//  SysMutex, there is LockGuard for SysLock (see below).
 //
 class SysLock
 {
@@ -85,6 +86,39 @@ private:
    //  The native identifier of the thread that owns the mutex.
    //
    SysThreadId owner_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Automatically releases a lock when it goes out of scope.
+//
+class LockGuard
+{
+public:
+   //  Acquires LOCK.  If LOCK is nullptr, all actions equate to a noop.
+   //
+   explicit LockGuard(SysLock* mutex);
+
+   //  Releases the lock.
+   //
+   ~LockGuard();
+
+   //  Deleted to prohibit copying.
+   //
+   LockGuard(const LockGuard& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   LockGuard& operator=(const LockGuard& that) = delete;
+
+   //  Releases the lock.  Used to release it before the guard goes
+   //  out of scope.
+   //
+   void Release();
+private:
+   //  The lock.
+   //
+   SysLock* lock_;
 };
 }
 #endif

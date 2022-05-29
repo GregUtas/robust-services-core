@@ -29,7 +29,6 @@
 #include "Duration.h"
 #include "Element.h"
 #include "FunctionGuard.h"
-#include "MutexGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysFile.h"

@@ -28,7 +28,6 @@
 #include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"
-#include "MutexGuard.h"
 #include "NbTypes.h"
 #include "Restart.h"
 #include "Singleton.h"

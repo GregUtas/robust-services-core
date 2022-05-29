@@ -155,5 +155,39 @@ private:
    //
    std::atomic_size_t locks_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Automatically releases a mutex when it goes out of scope.
+//
+class MutexGuard
+{
+public:
+   //  Acquires MUTEX using TIMEOUT_NEVER.  If MUTEX is nullptr,
+   //  all actions equate to a noop.
+   //
+   explicit MutexGuard(SysMutex* mutex);
+
+   //  Releases the mutex.
+   //
+   ~MutexGuard();
+
+   //  Deleted to prohibit copying.
+   //
+   MutexGuard(const MutexGuard& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   MutexGuard& operator=(const MutexGuard& that) = delete;
+
+   //  Releases the mutex.  Used to release it before the guard
+   //  goes out of scope.
+   //
+   void Release();
+private:
+   //  The mutex.
+   //
+   SysMutex* mutex_;
+};
 }
 #endif

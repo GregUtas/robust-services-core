@@ -35,7 +35,6 @@
 #include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
-#include "MutexGuard.h"
 #include "NbDaemons.h"
 #include "NbPools.h"
 #include "Restart.h"

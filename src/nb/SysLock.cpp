@@ -31,6 +31,38 @@ using std::string;
 
 namespace NodeBase
 {
+LockGuard::LockGuard(SysLock* lock) : lock_(lock)
+{
+   if(lock_ == nullptr) return;
+
+   Debug::ft("LockGuard.ctor");
+
+   lock_->Acquire();
+}
+
+//------------------------------------------------------------------------------
+
+LockGuard::~LockGuard()
+{
+   Debug::ftnt("LockGuard.dtor");
+
+   if(lock_ != nullptr) Release();
+}
+
+//------------------------------------------------------------------------------
+
+void LockGuard::Release()
+{
+   if(lock_ != nullptr)
+   {
+      Debug::ftnt("LockGuard.Release");
+      lock_->Release();
+      lock_ = nullptr;
+   }
+}
+
+//==============================================================================
+
 SysLock::SysLock() : owner_(NIL_ID) { }
 
 //------------------------------------------------------------------------------

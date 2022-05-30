@@ -58,10 +58,6 @@ public:
    //
    virtual ~BuddyHeap();
 
-   //  Overridden to return the heap's address.
-   //
-   void* Addr() const override { return heap_; }
-
    //  Overridden to allocate SIZE bytes.
    //
    void* Alloc(size_t size) override;
@@ -91,6 +87,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to change the heap's memory protection.
+   //
+   virtual int SetPermissions(MemoryProtection attrs);
 
    //  Overridden to return the heap's size.
    //

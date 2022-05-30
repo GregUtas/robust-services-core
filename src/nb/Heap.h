@@ -50,11 +50,6 @@ public:
    //
    Heap& operator=(const Heap& that) = delete;
 
-   //  Returns the address of the heap itself.  The default heap
-   //  (for MemPermanent) returns nullptr if its address is unknown.
-   //
-   virtual void* Addr() const = 0;
-
    //  Returns the heap's size.  An expandable heap may return 0.
    //
    virtual size_t Size() const = 0;
@@ -81,14 +76,10 @@ public:
    //
    virtual bool Validate(const void* addr) const = 0;
 
-   //  Returns true if the heap supports write-protection.
-   //
-   virtual bool CanBeProtected() const { return true; }
-
-   //  Applies ATTRS to the heap.  The heap must have a fixed size.
-   //  Returns 0 on success.  On failure, returns a system-specific
-   //  error code or initiates a restart if the operation actually
-   //  failed when it was attempted.
+   //  Applies ATTRS to the heap.  Returns 0 on success.  On failure,
+   //  returns a system-specific error code or initiates a restart if
+   //  the operation failed when it was attempted.  The default version
+   //  generates a log and returns -1;
    //
    virtual int SetPermissions(MemoryProtection attrs);
 
@@ -189,12 +180,12 @@ protected:
    //  See the comment under CurrInUse, above.
    //
    void Freeing(void* addr, size_t size);
-private:
+
    //  Invoked when the heap's memory protection has changed.
    //  Returns 0.
    //
    int SetAttrs(MemoryProtection attrs);
-
+private:
    //  The heap's current memory protection attributes.
    //
    MemoryProtection attrs_;

@@ -82,13 +82,6 @@ SysHeap::~SysHeap()
 
 //------------------------------------------------------------------------------
 
-void* SysHeap::Addr() const
-{
-   return heap_;
-}
-
-//------------------------------------------------------------------------------
-
 void* SysHeap::Alloc(size_t size)
 {
    Debug::ft("SysHeap.Alloc");
@@ -113,10 +106,6 @@ size_t SysHeap::BlockToSize(const void* addr) const
    //
    return malloc_usable_size(const_cast<void*>(addr));
 }
-
-//------------------------------------------------------------------------------
-
-bool SysHeap::CanBeProtected() const { return false; }
 
 //------------------------------------------------------------------------------
 

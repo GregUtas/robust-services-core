@@ -58,18 +58,6 @@ Heap::~Heap()
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_Addr = "Heap.Addr";
-
-void* Heap::Addr() const
-{
-   Debug::ft(Heap_Addr);
-
-   Debug::SwLog(Heap_Addr, strOver(this), 0);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Heap_Alloc = "Heap.Alloc";
 
 void* Heap::Alloc(size_t size)
@@ -270,19 +258,8 @@ int Heap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft(Heap_SetPermissions);
 
-   if(attrs_ == attrs) return 0;
-
-   if(!IsFixedSize())
-   {
-      Debug::SwLog(Heap_SetPermissions, "heap size not fixed", 0);
-      return 0x2000000;
-   }
-
-   auto err = SysMemory::Protect(Addr(), Size(), attrs);
-   if(err == 0) return SetAttrs(attrs);
-
-   Restart::Initiate(Restart::LevelToClear(Type()), HeapProtectionFailed, err);
-   return err;
+   Debug::SwLog(Heap_SetPermissions, strOver(this), 0);
+   return -1;
 }
 
 //------------------------------------------------------------------------------

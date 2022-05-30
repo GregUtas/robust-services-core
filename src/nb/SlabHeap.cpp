@@ -20,24 +20,21 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SlabHeap.h"
+#include <cstddef>
 #include <cstdint>
-#include <ios>
 #include <iosfwd>
+#include <iterator>
 #include <map>
-#include <memory>
-#include <vector>
 #include <sstream>
-#include "Algorithms.h"
+#include <string>
+#include <utility>
+#include <vector>
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
-#include "HeapCfg.h"
 #include "NbTypes.h"
-#include "Q2Link.h"
-#include "Q2Way.h"
 #include "Restart.h"
-#include "Singleton.h"
 #include "SysMemory.h"
 #include "SysMutex.h"
 
@@ -49,7 +46,7 @@ using std::string;
 namespace NodeBase
 {
 //  For tracking a memory segment allocated by the heap.
-// 
+//
 struct SlabInfo
 {
    SlabInfo(void* addr, size_t size) : addr_(addr), size_(size) { }
@@ -67,7 +64,7 @@ struct SlabInfo
 //------------------------------------------------------------------------------
 //
 //  For tracking a block within a slab.
-// 
+//
 struct BlockInfo
 {
    BlockInfo(void* addr, size_t size, bool used) :
@@ -88,7 +85,7 @@ struct BlockInfo
 //------------------------------------------------------------------------------
 //
 //  For tracking an available block.
-// 
+//
 struct AvailInfo
 {
    AvailInfo(void* addr, size_t size) : addr_(addr), size_(size) { }
@@ -137,9 +134,13 @@ public:
    //
    ~SlabPriv();
 
-   //  Returns the type of memory managed by the heap.
+   //  Deleted to prohibit copying.
    //
-   MemoryType Type() const { return type_; }
+   SlabPriv(const SlabPriv& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   SlabPriv& operator=(const SlabPriv& that) = delete;
 
    //  Allocates a block of SIZE.
    //
@@ -161,11 +162,24 @@ public:
    //  Frees the block at ADDR.  Returns false if ADDR is not an in-use
    //  block.
    //
-   bool Free(void* addr);
+   bool Free(const void* addr);
 
    //  Returns the number of bytes of heap management overhead.
    //
    size_t Overhead() const;
+
+   //  Applies ATTRS to the heap.  Returns 0 on success.  On failure,
+   //  initiates a restart and returns an error code.
+   //
+   int SetPermissions(MemoryProtection attrs);
+
+   //  Returns the number of bytes allocated for the heap.
+   //
+   size_t Size() const;
+
+   //  Returns the type of memory managed by the heap.
+   //
+   MemoryType Type() const { return type_; }
 
    //  Validates the heap.  If ADDR is not nullptr, only the block that
    //  is alleged to be at ADDR is validated.
@@ -410,7 +424,7 @@ bool SlabPriv::Extend()
 
 //------------------------------------------------------------------------------
 
-bool SlabPriv::Free(void* addr)
+bool SlabPriv::Free(const void* addr)
 {
    Debug::ft("SlabPriv.Free");
 
@@ -481,6 +495,45 @@ size_t SlabPriv::Overhead() const
    size += avail_.size() * (4 * sizeof(void*) + sizeof(BlockInfo));
    size += blocks_.size() * (4 * sizeof(void*) + sizeof(BlockInfo));
    return size;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SlabPriv_SetPermissions = "SlabPriv.SetPermissions";
+
+int SlabPriv::SetPermissions(MemoryProtection attrs)
+{
+   Debug::ft(SlabPriv_SetPermissions);
+
+   for(auto s = slabs_.cbegin(); s != slabs_.cend(); ++s)
+   {
+      auto err = SysMemory::Protect(s->addr_, s->size_, attrs);
+
+      if(err != 0)
+      {
+         Restart::Initiate
+            (Restart::LevelToClear(Type()), HeapProtectionFailed, err);
+         return err;
+      }
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+size_t SlabPriv::Size() const
+{
+   size_t total = 0;
+
+   MutexGuard guard(mutex_.get());
+
+   for(auto s = slabs_.cbegin(); s != slabs_.cend(); ++s)
+   {
+      total += s->size_;
+   }
+
+   return total;
 }
 
 //------------------------------------------------------------------------------
@@ -582,6 +635,24 @@ size_t SlabHeap::Overhead() const
 void SlabHeap::Patch(sel_t selector, void* arguments)
 {
    Object::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+int SlabHeap::SetPermissions(MemoryProtection attrs)
+{
+   Debug::ft("SlabHeap.SetPermissions");
+
+   if(GetAttrs() == attrs) return 0;
+   auto err = priv_->SetPermissions(attrs);
+   return (err == 0 ? SetAttrs(attrs) : err);
+}
+
+//------------------------------------------------------------------------------
+
+size_t SlabHeap::Size() const
+{
+   return priv_->Size();
 }
 
 //------------------------------------------------------------------------------

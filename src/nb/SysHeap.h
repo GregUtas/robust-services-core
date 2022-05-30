@@ -40,10 +40,6 @@ public:
    //
    virtual ~SysHeap();
 
-   //  Overridden to return the heap's address.
-   //
-   void* Addr() const override;
-
    //  Allocates SIZE bytes.
    //
    void* Alloc(size_t size) override;
@@ -51,10 +47,6 @@ public:
    //  Returns the size of the block at ADDR.
    //
    size_t BlockToSize(const void* addr) const override;
-
-   //  Returns true if the heap supports write-protection.
-   //
-   bool CanBeProtected() const override;
 
    //  Overridden to return the actual number of bytes available.
    //

@@ -399,7 +399,6 @@ bool Memory::Protect(MemoryType type)
 
    auto heap = AccessHeap(type);
    if(heap == nullptr) return false;
-   if(!heap->CanBeProtected()) return true;
    return (heap->SetPermissions(MemReadOnly) == 0);
 }
 
@@ -480,7 +479,6 @@ bool Memory::Unprotect(MemoryType type)
 
    auto heap = AccessHeap(type);
    if(heap == nullptr) return false;
-   if(!heap->CanBeProtected()) return true;
    return (heap->SetPermissions(MemReadWrite) == 0);
 }
 

@@ -23,9 +23,7 @@
 #define SLABHEAP_H_INCLUDED
 
 #include "Heap.h"
-#include <cstddef>
 #include <memory>
-#include <string>
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -48,10 +46,6 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~SlabHeap();
-
-   //  Overridden to return the heap's address.
-   //
-   void* Addr() const override { return nullptr; }  //* to be deleted
 
    //  Overridden to allocate SIZE bytes.
    //
@@ -82,6 +76,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to change the heap's memory protection.
+   //
+   int SetPermissions(MemoryProtection attrs) override;
 
    //  Overridden to return total number of in-use and available bytes.
    //

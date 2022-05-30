@@ -837,6 +837,21 @@ void BuddyHeap::ReserveBlock(const HeapBlock* block)
 
 //------------------------------------------------------------------------------
 
+fn_name BuddyHeap_SetPermissions = "BuddyHeap.SetPermissions";
+
+int BuddyHeap::SetPermissions(MemoryProtection attrs)
+{
+   Debug::ft(BuddyHeap_SetPermissions);
+
+   if(GetAttrs() == attrs) return 0;
+   auto err = SysMemory::Protect(heap_, size_, attrs);
+   if(err == 0) return SetAttrs(attrs);
+   Restart::Initiate(Restart::LevelToClear(Type()), HeapProtectionFailed, err);
+   return err;
+}
+
+//------------------------------------------------------------------------------
+
 void BuddyHeap::SetState(index_t index, BlockState state)
 {
    //  Each byte holds four states, so right shift INDEX by 2 bits to find the

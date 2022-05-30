@@ -26,8 +26,6 @@
 #include "AllocationException.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "Restart.h"
-#include "SysMemory.h"
 
 using std::ostream;
 using std::string;
@@ -154,13 +152,6 @@ void Heap::Freeing(void* addr, size_t size)
       blocks_.erase(entry);
    else
       blocks_.insert(TraceEntry(addr, -freed));
-}
-
-//------------------------------------------------------------------------------
-
-bool Heap::IsFixedSize() const
-{
-   return (Size() != 0);
 }
 
 //------------------------------------------------------------------------------

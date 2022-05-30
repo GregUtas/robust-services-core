@@ -167,7 +167,7 @@ private:
 
    //  Sets the block that is identified by INDEX to STATE.
    //
-   void SetState(index_t index, BlockState state);
+   void SetState(index_t index, BlockState state) const;
 
    //  Returns the state of the block that is identified by INDEX.
    //

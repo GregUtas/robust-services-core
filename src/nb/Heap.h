@@ -128,10 +128,6 @@ public:
    //
    size_t ChangeCount() const { return changes_; }
 
-   //  Returns true if the heap has a fixed size.
-   //
-   bool IsFixedSize() const;
-
    //  Enables or disables tracing of allocated blocks.
    //
    void SetTrace(bool enabled);

@@ -837,11 +837,9 @@ void BuddyHeap::ReserveBlock(const HeapBlock* block)
 
 //------------------------------------------------------------------------------
 
-fn_name BuddyHeap_SetPermissions = "BuddyHeap.SetPermissions";
-
 int BuddyHeap::SetPermissions(MemoryProtection attrs)
 {
-   Debug::ft(BuddyHeap_SetPermissions);
+   Debug::ft("BuddyHeap.SetPermissions");
 
    if(GetAttrs() == attrs) return 0;
    auto err = SysMemory::Protect(heap_, size_, attrs);
@@ -852,7 +850,7 @@ int BuddyHeap::SetPermissions(MemoryProtection attrs)
 
 //------------------------------------------------------------------------------
 
-void BuddyHeap::SetState(index_t index, BlockState state)
+void BuddyHeap::SetState(index_t index, BlockState state) const
 {
    //  Each byte holds four states, so right shift INDEX by 2 bits to find the
    //  first-level index.  Extract the two low-order bits as the second-level

@@ -57,8 +57,8 @@ struct SlabInfo
       stream << "size=" << size_;
    }
 
-   void* addr_;   // segment's address
-   size_t size_;  // segment's size
+   void* const addr_;   // segment's address
+   const size_t size_;  // segment's size
 };
 
 //------------------------------------------------------------------------------
@@ -77,9 +77,9 @@ struct BlockInfo
       stream << "used=" << used_;
    }
 
-   void* addr_;   // block's address
-   size_t size_;  // block's size
-   bool used_;    // set if block is in use
+   void* const addr_;   // block's address
+   const size_t size_;  // block's size
+   bool used_;          // set if block is in use
 };
 
 //------------------------------------------------------------------------------
@@ -96,8 +96,8 @@ struct AvailInfo
       stream << "size=" << size_;
    }
 
-   void* addr_;   // block's address
-   size_t size_;  // block's size
+   void* const addr_;   // block's address
+   const size_t size_;  // block's size
 };
 
 //==============================================================================
@@ -171,7 +171,7 @@ public:
    //  Applies ATTRS to the heap.  Returns 0 on success.  On failure,
    //  initiates a restart and returns an error code.
    //
-   int SetPermissions(MemoryProtection attrs);
+   int SetPermissions(MemoryProtection attrs) const;
 
    //  Returns the number of bytes allocated for the heap.
    //
@@ -499,11 +499,9 @@ size_t SlabPriv::Overhead() const
 
 //------------------------------------------------------------------------------
 
-fn_name SlabPriv_SetPermissions = "SlabPriv.SetPermissions";
-
-int SlabPriv::SetPermissions(MemoryProtection attrs)
+int SlabPriv::SetPermissions(MemoryProtection attrs) const
 {
-   Debug::ft(SlabPriv_SetPermissions);
+   Debug::ft("SlabPriv.SetPermissions");
 
    for(auto s = slabs_.cbegin(); s != slabs_.cend(); ++s)
    {

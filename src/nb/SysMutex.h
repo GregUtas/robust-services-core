@@ -134,7 +134,7 @@ public:
 private:
    //  The mutex's name.
    //
-   std::string name_;
+   const std::string name_;
 
    //  The mutex's index in MutexRegistry.
    //

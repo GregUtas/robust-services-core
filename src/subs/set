@@ -12,11 +12,11 @@
 
 namespace std
 {
-   template< typename T, typename C = less< T > > class set
+   template<typename T, typename C = less<T>> class set
    {
    public:
-      typedef iterator_t< T > iterator;
-      typedef iterator_t< const T > const_iterator;
+      typedef iterator_t<T> iterator;
+      typedef iterator_t<const T> const_iterator;
       set();
       set(const set& that);
       ~set();
@@ -39,7 +39,7 @@ namespace std
       iterator erase(const_iterator& where);
       iterator erase(const_iterator& first, const_iterator& last);
       size_t erase(const T& key);
-      pair< iterator, bool > insert(const T& key);
+      pair<iterator, bool> insert(const T& key);
       size_t count(const T& key) const;
       const_iterator find(const T& key) const;
       iterator find(const T& key);
@@ -49,8 +49,8 @@ namespace std
       iterator upper_bound(const T& key);
    };
 
-   template< typename T, typename C > iterator_t< T >
-      inserter(set< T, C >& items, iterator_t< T >& iter);
+   template<typename T, typename C> iterator_t<T>
+      inserter(set<T, C>& items, iterator_t<T>& iter);
 }
 
 #endif

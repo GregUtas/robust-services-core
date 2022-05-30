@@ -9,7 +9,7 @@
 
 namespace std
 {
-   template< typename T > struct iterator_t
+   template<typename T> struct iterator_t
    {
       iterator_t();
       iterator_t(const iterator_t& that);
@@ -22,9 +22,9 @@ namespace std
       T* operator->() const;
    };
 
-   template< typename T > iterator_t< T > next(const iterator_t< T > iter, size_t diff = 1);
-   template< typename T > iterator_t< T > prev(const iterator_t< T > iter, size_t diff = 1);
-   template< typename T > ptrdiff_t distance(const iterator_t< T > iter1, const iterator_t< T > iter2);
+   template<typename T> iterator_t<T> next(const iterator_t<T> iter, size_t diff = 1);
+   template<typename T> iterator_t<T> prev(const iterator_t<T> iter, size_t diff = 1);
+   template<typename T> ptrdiff_t distance(const iterator_t<T> iter1, const iterator_t<T> iter2);
 }
 
 #endif

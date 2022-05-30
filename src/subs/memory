@@ -9,9 +9,9 @@
 
 namespace std
 {
-   template< typename T > struct allocator { };
+   template<typename T> struct allocator { };
 
-   template< typename T > class unique_ptr
+   template<typename T> class unique_ptr
    {
    public:
       class deleter_type
@@ -34,7 +34,7 @@ namespace std
       void reset(T* pointer = nullptr);
    };
 
-   template< typename T > class unique_ptr< T[] >
+   template<typename T> class unique_ptr<T[]>
    {
    public:
       class deleter_type

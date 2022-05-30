@@ -11,12 +11,12 @@
 
 namespace std
 {
-   template< typename T1, typename T2 > class map
+   template<typename T1, typename T2> class map
    {
    public:
-      typedef pair< T1, T2 > value_type;
-      typedef iterator_t< value_type > iterator;
-      typedef iterator_t< const value_type > const_iterator;
+      typedef pair<T1, T2> value_type;
+      typedef iterator_t<value_type> iterator;
+      typedef iterator_t<const value_type> const_iterator;
       map();
       map(const map& that);
       ~map();
@@ -44,19 +44,21 @@ namespace std
       size_t erase(const T1& key);
       const_iterator find(const T1& key) const;
       iterator find(const T1& key);
-      pair< iterator, bool > insert(const value_type& item);
+      pair<iterator, bool> insert(const value_type& item);
+      pair<const_iterator, const_iterator> equal_range(const T1& key) const;
+      pair<iterator, iterator> equal_range(const T1& key);
       const_iterator lower_bound(const T1& key) const;
       iterator lower_bound(const T1& key);
       const_iterator upper_bound(const T1& key) const;
       iterator upper_bound(const T1& key);
    };
 
-   template< typename T1, typename T2 > class multimap
+   template<typename T1, typename T2> class multimap
    {
    public:
-      typedef pair< T1, T2 > value_type;
-      typedef iterator_t< value_type > iterator;
-      typedef iterator_t< const value_type > const_iterator;
+      typedef pair<T1, T2> value_type;
+      typedef iterator_t<value_type> iterator;
+      typedef iterator_t<const value_type> const_iterator;
       multimap();
       multimap(const multimap& that);
       ~multimap();
@@ -82,6 +84,8 @@ namespace std
       const_iterator find(const T1& key) const;
       iterator find(const T1& key);
       iterator insert(const value_type& item);
+      pair<const_iterator, const_iterator> equal_range(const T1& key) const;
+      pair<iterator, iterator> equal_range(const T1& key);
       const_iterator lower_bound(const T1& key) const;
       iterator lower_bound(const T1& key);
       const_iterator upper_bound(const T1& key) const;

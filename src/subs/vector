@@ -11,11 +11,11 @@
 
 namespace std
 {
-   template< typename T, class A = allocator<T>> class vector
+   template<typename T, class A = allocator<T>> class vector
    {
    public:
-      typedef iterator_t< T > iterator;
-      typedef iterator_t< const T > const_iterator;
+      typedef iterator_t<T> iterator;
+      typedef iterator_t<const T> const_iterator;
       vector();
       vector(size_t count, const T& value);
       vector(const vector& that);

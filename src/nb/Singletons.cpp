@@ -153,7 +153,7 @@ void Singletons::Shutdown(RestartLevel level)
       type = MemTemporary;
       break;
    case RestartCold:
-      type = MemDynamic;
+      type = MemSlab;
       break;
    case RestartReload:
       type = MemProtected;

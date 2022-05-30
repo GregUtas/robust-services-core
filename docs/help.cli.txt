@@ -195,15 +195,15 @@ heaps             : Displays all heaps.
 (                 : subcommand...
   list            : lists all heaps
   setsize         : sets the desired size
-    (1:6)         : memory type (see mem.* symbols)
+    (1:7)         : memory type (see mem.* symbols)
     (1:1023)      : size
-    [k|||m|||g]   : 'k'=kB 'm'=MB 'g'=GB
+    [k|m|g]       : 'k'=kB 'm'=MB 'g'=GB
   validate        : validates all heaps
   show            : displays a heap
-    (1:6)         : memory type (see mem.* symbols)
+    (1:7)         : memory type (see mem.* symbols)
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
   trace           : controls heap trace tool
-    (1:6)         : memory type (see mem.* symbols)
+    (1:7)         : memory type (see mem.* symbols)
   (               : tracing subcommand...
     reset         : clears the list of allocated blocks
     start         : starts tracing of allocated blocks
@@ -497,11 +497,11 @@ reg               : Tests a Registry function.
   count           : Returns the number of items in the registry.
 )
 
-heap              : Tests an NbHeap function.
+heap              : Tests a heap function.
 (
   create          : Creates the heap.
-    (t|d|p)       : heap's memory type (temporary|dynamic|protected)
-    (0:2048)      : heap's size
+    (t|d|s|p)     : memory type (temporary|dynamic|slab|protected)
+    (0:2048)      : heap's size or slab's size
   destroy         : Destroys the heap.
   alloc           : Allocates a block.
     (0:1024)      : block's size
@@ -512,6 +512,9 @@ heap              : Tests an NbHeap function.
     <hex>         : block's address
   validate        : Validates the heap (if 0) or a block.
     <hex>         : block's address
+  size            : Returns the heap's size.
+  avail           : Returns the number of bytes available.
+  overhead        : Returns the number of bytes of overhead.
 )
 
 recover           : Tests thread recovery.

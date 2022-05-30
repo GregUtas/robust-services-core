@@ -107,7 +107,10 @@ private:
 class HugeBuffer : public ByteBuffer
 {
 public:
-   static const size_t ArraySize = 8192 - ByteBufferSize;
+   //  ArraySize is chosen so that 1K HugeBuffers will just
+   //  fit into an 8MB slab allocated by DynamicSlab.
+   //
+   static const size_t ArraySize = 8184 - ByteBufferSize;
    static void* operator new(size_t size);
 private:
    NodeBase::byte_t* Bytes() override { return &bytes_[0]; }

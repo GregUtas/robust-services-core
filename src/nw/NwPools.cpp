@@ -38,7 +38,7 @@ constexpr size_t IpBufferSize = sizeof(IpBuffer);
 //------------------------------------------------------------------------------
 
 IpBufferPool::IpBufferPool() :
-   ObjectPool(IpBufferObjPoolId, MemDynamic, IpBufferSize, "IpBuffers")
+   ObjectPool(IpBufferObjPoolId, MemSlab, IpBufferSize, "IpBuffers")
 {
    Debug::ft("IpBufferPool.ctor");
 }
@@ -64,7 +64,7 @@ constexpr size_t TinyBufferSize = sizeof(TinyBuffer);
 //------------------------------------------------------------------------------
 
 TinyBufferPool::TinyBufferPool() :
-   ObjectPool(TinyBufferObjPoolId, MemDynamic, TinyBufferSize, "TinyBuffers")
+   ObjectPool(TinyBufferObjPoolId, MemSlab, TinyBufferSize, "TinyBuffers")
 {
    Debug::ft("TinyBufferPool.ctor");
 }
@@ -90,7 +90,7 @@ constexpr size_t SmallBufferSize = sizeof(SmallBuffer);
 //------------------------------------------------------------------------------
 
 SmallBufferPool::SmallBufferPool() :
-   ObjectPool(SmallBufferObjPoolId, MemDynamic, SmallBufferSize, "SmallBuffers")
+   ObjectPool(SmallBufferObjPoolId, MemSlab, SmallBufferSize, "SmallBuffers")
 {
    Debug::ft("SmallBufferPool.ctor");
 }
@@ -116,7 +116,7 @@ constexpr size_t MediumBufferSize = sizeof(MediumBuffer);
 //------------------------------------------------------------------------------
 
 MediumBufferPool::MediumBufferPool() :
-   ObjectPool(MediumBufferObjPoolId, MemDynamic,
+   ObjectPool(MediumBufferObjPoolId, MemSlab,
       MediumBufferSize, "MediumBuffers")
 {
    Debug::ft("MediumBufferPool.ctor");
@@ -143,7 +143,7 @@ constexpr size_t LargeBufferSize = sizeof(LargeBuffer);
 //------------------------------------------------------------------------------
 
 LargeBufferPool::LargeBufferPool() :
-   ObjectPool(LargeBufferObjPoolId, MemDynamic, LargeBufferSize, "LargeBuffers")
+   ObjectPool(LargeBufferObjPoolId, MemSlab, LargeBufferSize, "LargeBuffers")
 {
    Debug::ft("LargeBufferPool.ctor");
 }
@@ -169,7 +169,7 @@ constexpr size_t HugeBufferSize = sizeof(HugeBuffer);
 //------------------------------------------------------------------------------
 
 HugeBufferPool::HugeBufferPool() :
-   ObjectPool(HugeBufferObjPoolId, MemDynamic, HugeBufferSize, "HugeBuffers")
+   ObjectPool(HugeBufferObjPoolId, MemSlab, HugeBufferSize, "HugeBuffers")
 {
    Debug::ft("HugeBufferPool.ctor");
 }

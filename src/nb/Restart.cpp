@@ -45,6 +45,7 @@ bool Restart::ClearsMemory(MemoryType type)
    case MemProtected:
    case MemPersistent:
       return (Level_ >= RestartReload);
+   case MemSlab:
    case MemDynamic:
       return (Level_ >= RestartCold);
    case MemTemporary:
@@ -73,6 +74,7 @@ RestartLevel Restart::LevelToClear(MemoryType type)
    case MemTemporary:
       return RestartWarm;
    case MemDynamic:
+   case MemSlab:
       return RestartCold;
    case MemPersistent:
    case MemProtected:

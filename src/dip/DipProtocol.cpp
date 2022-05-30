@@ -479,7 +479,7 @@ constexpr size_t DipIpBufferSize = sizeof(DipIpBuffer);
 //------------------------------------------------------------------------------
 
 DipIpBufferPool::DipIpBufferPool() :
-   ObjectPool(DipIpBufferObjPoolId, MemDynamic, DipIpBufferSize, "DipIpBuffers")
+   ObjectPool(DipIpBufferObjPoolId, MemSlab, DipIpBufferSize, "DipIpBuffers")
 {
    Debug::ft("DipIpBufferPool.ctor");
 }

@@ -74,7 +74,7 @@ ostream& operator<<(ostream& stream, MemoryProtection attrs)
    if((attrs >= 0) && (attrs < MemoryProtection_N))
       stream << MemoryProtectionStrings[attrs];
    else
-      stream << MemoryProtectionStrings[MemoryType_N];
+      stream << MemoryProtectionStrings[MemoryProtection_N];
    return stream;
 }
 
@@ -85,6 +85,7 @@ fixed_string MemoryTypeStrings[MemoryType_N + 1] =
    "null",
    "temporary",
    "dynamic",
+   "slab",
    "persistent",
    "protected",
    "permanent",

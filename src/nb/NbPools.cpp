@@ -40,7 +40,7 @@ constexpr size_t MsgBufferSize = sizeof(MsgBuffer) + (16 * BYTES_PER_WORD);
 //------------------------------------------------------------------------------
 
 MsgBufferPool::MsgBufferPool() :
-   ObjectPool(MsgBufferObjPoolId, MemDynamic, MsgBufferSize, "MsgBuffers")
+   ObjectPool(MsgBufferObjPoolId, MemSlab, MsgBufferSize, "MsgBuffers")
 {
    Debug::ft("MsgBufferPool.ctor");
 }

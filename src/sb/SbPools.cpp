@@ -58,7 +58,7 @@ constexpr size_t SbIpBufferSize = sizeof(SbIpBuffer);
 //------------------------------------------------------------------------------
 
 SbIpBufferPool::SbIpBufferPool() :
-   ObjectPool(SbIpBufferObjPoolId, MemDynamic, SbIpBufferSize, "SbIpBuffers")
+   ObjectPool(SbIpBufferObjPoolId, MemSlab, SbIpBufferSize, "SbIpBuffers")
 {
    Debug::ft("SbIpBufferPool.ctor");
 }
@@ -84,7 +84,7 @@ constexpr size_t ContextSize = sizeof(SsmContext);
 //------------------------------------------------------------------------------
 
 ContextPool::ContextPool() :
-   ObjectPool(ContextObjPoolId, MemDynamic, ContextSize, "Contexts")
+   ObjectPool(ContextObjPoolId, MemSlab, ContextSize, "Contexts")
 {
    Debug::ft("ContextPool.ctor");
 }
@@ -119,7 +119,7 @@ constexpr size_t EventSize = sizeof(Event) + (20 * BYTES_PER_WORD);
 //------------------------------------------------------------------------------
 
 EventPool::EventPool() :
-   ObjectPool(EventObjPoolId, MemDynamic, EventSize, "Events")
+   ObjectPool(EventObjPoolId, MemSlab, EventSize, "Events")
 {
    Debug::ft("EventPool.ctor");
 }
@@ -145,7 +145,7 @@ constexpr size_t MessageSize = sizeof(Message) + (40 * BYTES_PER_WORD);
 //------------------------------------------------------------------------------
 
 MessagePool::MessagePool() :
-   ObjectPool(MessageObjPoolId, MemDynamic, MessageSize, "Messages")
+   ObjectPool(MessageObjPoolId, MemSlab, MessageSize, "Messages")
 {
    Debug::ft("MessagePool.ctor");
 }
@@ -171,7 +171,7 @@ constexpr size_t MsgPortSize = sizeof(MsgPort);
 //------------------------------------------------------------------------------
 
 MsgPortPool::MsgPortPool() :
-   ObjectPool(MsgPortObjPoolId, MemDynamic, MsgPortSize, "MsgPorts")
+   ObjectPool(MsgPortObjPoolId, MemSlab, MsgPortSize, "MsgPorts")
 {
    Debug::ft("MsgPortPool.ctor");
 }
@@ -230,7 +230,7 @@ static NodeBase::PooledObjectId PsmToAudit_ = NIL_ID;
 //------------------------------------------------------------------------------
 
 ProtocolSMPool::ProtocolSMPool() :
-   ObjectPool(ProtocolSMObjPoolId, MemDynamic, ProtocolSMSize, "ProtocolSMs")
+   ObjectPool(ProtocolSMObjPoolId, MemSlab, ProtocolSMSize, "ProtocolSMs")
 {
    Debug::ft("ProtocolSMPool.ctor");
 }
@@ -305,7 +305,7 @@ constexpr size_t ServiceSMSize = sizeof(RootServiceSM) + (60 * BYTES_PER_WORD);
 //------------------------------------------------------------------------------
 
 ServiceSMPool::ServiceSMPool() :
-   ObjectPool(ServiceSMObjPoolId, MemDynamic, ServiceSMSize, "ServiceSMs")
+   ObjectPool(ServiceSMObjPoolId, MemSlab, ServiceSMSize, "ServiceSMs")
 {
    Debug::ft("ServiceSMPool.ctor");
 }
@@ -331,7 +331,7 @@ constexpr size_t TimerSize = sizeof(Timer);
 //------------------------------------------------------------------------------
 
 TimerPool::TimerPool() :
-   ObjectPool(TimerObjPoolId, MemDynamic, TimerSize, "Timers")
+   ObjectPool(TimerObjPoolId, MemSlab, TimerSize, "Timers")
 {
    Debug::ft("TimerPool.ctor");
 
@@ -413,7 +413,7 @@ constexpr size_t BtIpBufferSize = sizeof(SbIpBuffer);
 //------------------------------------------------------------------------------
 
 BtIpBufferPool::BtIpBufferPool() :
-   ObjectPool(BtIpBufferObjPoolId, MemDynamic, BtIpBufferSize, "BtIpBuffers")
+   ObjectPool(BtIpBufferObjPoolId, MemSlab, BtIpBufferSize, "BtIpBuffers")
 {
    Debug::ft("BtIpBufferPool.ctor");
 }

@@ -176,6 +176,7 @@ enum MemoryType
    MemNull,        // nil value
    MemTemporary,   // does not survive restarts
    MemDynamic,     // survives warm restarts
+   MemSlab,        // survives warm restarts (used by object pools)
    MemPersistent,  // survives warm and cold restarts
    MemProtected,   // survives warm and cold restarts; write-protected
    MemPermanent,   // survives all restarts (default process heap)
@@ -210,7 +211,7 @@ enum RestartLevel
 {
    RestartNone,    // in service (not restarting)
    RestartWarm,    // deleting MemTemporary and exiting threads
-   RestartCold,    // warm + deleting MemDynamic (user sessions)
+   RestartCold,    // warm + deleting MemDynamic & MemSlab (user sessions)
    RestartReload,  // cold + deleting MemPersistent & MemProtected (config data)
    RestartReboot,  // exiting and restarting executable
    RestartExit,    // exiting without restarting

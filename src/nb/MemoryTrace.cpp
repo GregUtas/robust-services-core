@@ -40,6 +40,7 @@ fixed_string MemTypeStrings[MemoryType_N + 1] =
    ERROR_STR,
    "temp",
    "dyn ",
+   "slab",
    "prot",
    "perm",
    "imm ",

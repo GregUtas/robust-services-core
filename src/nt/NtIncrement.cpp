@@ -66,6 +66,7 @@
 #include "RegCell.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "SlabHeap.h"
 #include "SoftwareException.h"
 #include "SymbolRegistry.h"
 #include "SysFile.h"
@@ -879,46 +880,45 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
 //==============================================================================
 //
-//  Testing for BuddyHeap.
+//  Testing for BuddyHeap and SlabHeap.
 //
-class TestHeap : public BuddyHeap
-{
-   friend class Singleton<TestHeap>;
-public:
-   static void SetSize(size_t size) { Size_ = size; }
-   static void SetType(MemoryType type) { Type_ = type; }
-private:
-   TestHeap();
-   ~TestHeap() = default;
+static MemoryType Type_ = MemTemporary;
+static size_t Size_ = 1 * kBs;
 
-   static MemoryType Type_;
-   static size_t Size_;
+class TestBuddy : public BuddyHeap
+{
+   friend class Singleton<TestBuddy>;
+   TestBuddy();
+   ~TestBuddy() = default;
 };
 
-MemoryType TestHeap::Type_ = MemTemporary;
-size_t TestHeap::Size_ = 1 * kBs;
-
-TestHeap::TestHeap() : BuddyHeap(Type_)
+TestBuddy::TestBuddy() : BuddyHeap(Type_)
 {
-   Debug::ft("TestHeap.ctor");
-
+   Debug::ft("TestBuddy.ctor");
    Create(Size_);
+}
+
+class TestSlab : public SlabHeap
+{
+   friend class Singleton<TestSlab>;
+   TestSlab();
+   ~TestSlab() = default;
+};
+
+TestSlab::TestSlab() : SlabHeap(MemSlab)
+{
+   Debug::ft("TestSlab.ctor");
+   SetSlabSize(Size_);
 }
 
 //------------------------------------------------------------------------------
 
-fixed_string HeapSizeExpl = "heap's size";
+fixed_string HeapInitialSizeExpl = "heap's size or slab's size";
 
-//------------------------------------------------------------------------------
-
-fixed_string HeapTypeExpl = "heap's memory type (temporary|dynamic|protected)";
-fixed_string HeapTypeChars = "tdp";
-
-//------------------------------------------------------------------------------
+fixed_string HeapTypeExpl = "memory type (temporary|dynamic|slab|protected)";
+fixed_string HeapTypeChars = "tdsp";
 
 fixed_string HeapBlockAddrExpl = "block's address";
-
-//------------------------------------------------------------------------------
 
 fixed_string HeapBlockSizeExpl = "block's size";
 
@@ -980,6 +980,30 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
+class HeapSizeCommand : public CliCommand
+{
+public:
+   HeapSizeCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapAvailCommand : public CliCommand
+{
+public:
+   HeapAvailCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapOverheadCommand : public CliCommand
+{
+public:
+   HeapOverheadCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
 //------------------------------------------------------------------------------
 
 class HeapCommands : public CliCommandSet
@@ -989,7 +1013,7 @@ public:
 };
 
 fixed_string HeapStr = "heap";
-fixed_string HeapExpl = "Tests an BuddyHeap function.";
+fixed_string HeapExpl = "Tests a heap function.";
 
 HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
 {
@@ -1000,13 +1024,36 @@ HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
    BindCommand(*new HeapDisplayCommand);
    BindCommand(*new HeapFreeCommand);
    BindCommand(*new HeapValidateCommand);
+   BindCommand(*new HeapSizeCommand);
+   BindCommand(*new HeapAvailCommand);
+   BindCommand(*new HeapOverheadCommand);
+}
+
+//------------------------------------------------------------------------------
+
+Heap* AccessHeap()
+{
+   if(Type_ != MemSlab)
+      return Singleton<TestBuddy>::Extant();
+   else
+      return Singleton<TestSlab>::Extant();
+}
+
+//------------------------------------------------------------------------------
+
+Heap* EnsureHeap()
+{
+   if(Type_ != MemSlab)
+      return Singleton<TestBuddy>::Instance();
+   else
+      return Singleton<TestSlab>::Instance();
 }
 
 //------------------------------------------------------------------------------
 
 static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
 {
-   heap = Singleton<TestHeap>::Extant();
+   heap = AccessHeap();
 
    if(heap == nullptr)
    {
@@ -1037,7 +1084,7 @@ HeapCreateCommand::HeapCreateCommand() :
    CliCommand(HeapCreateStr, HeapCreateExpl)
 {
    BindParm(*new CliCharParm(HeapTypeExpl, HeapTypeChars));
-   BindParm(*new CliIntParm(HeapSizeExpl, 0, 2048));
+   BindParm(*new CliIntParm(HeapInitialSizeExpl, 0, 2048));
 }
 
 word HeapCreateCommand::ProcessCommand(CliThread& cli) const
@@ -1060,6 +1107,9 @@ word HeapCreateCommand::ProcessCommand(CliThread& cli) const
    case 'd':
       type = MemDynamic;
       break;
+   case 's':
+      type = MemSlab;
+      break;
    case 'p':
       type = MemProtected;
       break;
@@ -1071,9 +1121,9 @@ word HeapCreateCommand::ProcessCommand(CliThread& cli) const
    auto rc = CheckHeap(false, cli, heap);
    if(rc != 0) return rc;
 
-   TestHeap::SetType(type);
-   TestHeap::SetSize(size);
-   heap = Singleton<TestHeap>::Instance();
+   Type_ = type;
+   Size_ = size;
+   heap = EnsureHeap();
    *cli.obuf << "  Heap: " << heap << CRLF;
    return 0;
 }
@@ -1096,8 +1146,12 @@ word HeapDestroyCommand::ProcessCommand(CliThread& cli) const
    auto rc = CheckHeap(true, cli, heap);
    if(rc != 0) return rc;
 
-   Singleton<TestHeap>::Destroy();
-   heap = Singleton<TestHeap>::Extant();
+   if(Type_ != MemSlab)
+      Singleton<TestBuddy>::Destroy();
+   else
+      Singleton<TestSlab>::Destroy();
+
+   heap = AccessHeap();
    *cli.obuf << "  Heap: " << heap << CRLF;
    return 0;
 }
@@ -1234,6 +1288,65 @@ word HeapValidateCommand::ProcessCommand(CliThread& cli) const
 
    auto result = heap->Validate(addr);
    *cli.obuf << "  Result: " << result << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapSizeStr = "size";
+fixed_string HeapSizeExpl = "Returns the heap's size.";
+
+HeapSizeCommand::HeapSizeCommand() : CliCommand(HeapSizeStr, HeapSizeExpl) { }
+
+word HeapSizeCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("HeapSizeCommand.ProcessCommand");
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   *cli.obuf << "  Size: " << heap->Size() << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapAvailStr = "avail";
+fixed_string HeapAvailExpl = "Returns the number of bytes available.";
+
+HeapAvailCommand::HeapAvailCommand() :
+   CliCommand(HeapAvailStr, HeapAvailExpl) { }
+
+word HeapAvailCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("HeapAvailCommand.ProcessCommand");
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   *cli.obuf << "  Avail: " << heap->CurrAvail() << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapOverheadStr = "overhead";
+fixed_string HeapOverheadExpl = "Returns the number of bytes of overhead.";
+
+HeapOverheadCommand::HeapOverheadCommand() :
+   CliCommand(HeapOverheadStr, HeapOverheadExpl) { }
+
+word HeapOverheadCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("HeapOverheadCommand.ProcessCommand");
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   *cli.obuf << "  Overhead: " << heap->Overhead() << CRLF;
    return 0;
 }
 

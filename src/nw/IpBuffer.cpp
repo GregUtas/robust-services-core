@@ -60,7 +60,7 @@ static std::unique_ptr<ByteBuffer> AllocByteBuff(size_t bytes)
    else if(bytes <= HugeBuffer::ArraySize)
       return std::unique_ptr<ByteBuffer>(new HugeBuffer);
 
-   throw AllocationException(MemDynamic, bytes);
+   throw AllocationException(MemSlab, bytes);
 }
 
 //==============================================================================

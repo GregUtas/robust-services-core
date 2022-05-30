@@ -3672,6 +3672,7 @@ void NbIncrement::Startup(RestartLevel level)
    auto reg = Singleton<SymbolRegistry>::Instance();
    reg->BindSymbol("mem.temp", MemTemporary);
    reg->BindSymbol("mem.dyn", MemDynamic);
+   reg->BindSymbol("mem.slab", MemSlab);
    reg->BindSymbol("mem.pers", MemPersistent);
    reg->BindSymbol("mem.prot", MemProtected);
    reg->BindSymbol("mem.perm", MemPermanent);

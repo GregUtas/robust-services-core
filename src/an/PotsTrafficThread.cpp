@@ -400,7 +400,7 @@ void TrafficCall::Display(ostream& stream,
 {
    Dynamic::Display(stream, prefix, options);
 
-   stream << prefix << "callid : " << callid_;
+   stream << prefix << "callid : " << callid_ << CRLF;
    stream << prefix << "orig   : ";
    if(orig_ == nullptr)
       stream << "none";

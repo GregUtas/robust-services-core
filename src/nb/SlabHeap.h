@@ -37,8 +37,8 @@ namespace NodeBase
 {
 //  A heap that grows by adding large blocks of memory (slabs).  This heap is
 //  slower, and has more per-block overhead, than BuddyHeap.  It is therefore
-//  intended for applications that allocate large blocks of memory that they
-//  never, or rarely, free.
+//  intended for situations in which large blocks of memory are allocated and
+//  never, or rarely, freed.
 //
 class SlabHeap : public Heap
 {
@@ -46,6 +46,11 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~SlabHeap();
+
+   //  Sets the size of each slab.  Must be invoked before Alloc.  Only used
+   //  during testing; change SlabSize to set the default size.
+   //
+   void SetSlabSize(size_t size);
 
    //  Overridden to allocate SIZE bytes.
    //
@@ -98,7 +103,7 @@ protected:
    //
    explicit SlabHeap(MemoryType type);
 private:
-   //  The heap management information.
+   //  The heap management data.
    //
    std::unique_ptr<SlabPriv> priv_;
 };

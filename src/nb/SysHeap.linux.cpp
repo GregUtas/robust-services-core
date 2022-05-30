@@ -165,7 +165,14 @@ int SysHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft(SysHeap_SetPermissions);
 
-   Debug::SwLog(SysHeap_SetPermissions, "not supported: use BuddyHeap", 0);
+   static bool logged = false;
+
+   if(!logged)
+   {
+      logged = true;
+      Debug::SwLog(SysHeap_SetPermissions, "not supported: use BuddyHeap", 0);
+   }
+
    return EPERM;
 }
 

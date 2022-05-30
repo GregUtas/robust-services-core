@@ -45,36 +45,34 @@ HeapCfg::HeapCfg() :
    targSize_[MemImmutable] = SizeOfImmutableHeap;
 
    //> The minimum and maximum sizes of the protected heap:
-   //    min = 2MB  max = 512MB (32-bit CPU), 8GB (64-bit CPU)
+   //    min = 2MB, init = 8MB, max = 1GB (32-bit), 16GB (64-bit)
    //
    minSize_[MemProtected] = 2 * MBs;
-   maxSize_[MemProtected] = size_t(1) << (25 + BYTES_PER_WORD);
-   targSize_[MemProtected] = 4 * MBs;
+   maxSize_[MemProtected] = (BYTES_PER_WORD == 4 ? 1 * GBs : 16 * GBs);
+   targSize_[MemProtected] = 8 * MBs;
 
    //> The minimum and maximum sizes of the persistent heap:
-   //    min = 512kB  max = 128MB (32-bit CPU), 2GB (64-bit CPU)
+   //    min = 512kB, init = 2MB, max = 128MB (32-bit), 2GB (64-bit)
    //  Although MemPersistent is used together with MemProtected, it is
    //  typically used far less because it only stores data that changes
    //  too often to incur the overhead of write-protection.
    //
    minSize_[MemPersistent] = 512 * kBs;
-   maxSize_[MemPersistent] = size_t(1) << (23 + BYTES_PER_WORD);
+   maxSize_[MemPersistent] = (BYTES_PER_WORD == 4 ? 128 * MBs : 2 * GBs);
    targSize_[MemPersistent] = 2 * MBs;
 
    //> The minimum and maximum sizes of the dynamic heap:
-   //    min = 4MB  max = 1GB (32-bit CPU), 16GB (64-bit CPU)
-   //  MemDynamic is the most used memory type.
+   //    min = 2MB, init = 16MB, max = 1GB (32-bit), 16GB (64-bit)
    //
-   minSize_[MemDynamic] = 4 * MBs;
-   maxSize_[MemDynamic] = size_t(1) << (26 + BYTES_PER_WORD);
-   targSize_[MemDynamic] = 168 * MBs;
+   minSize_[MemDynamic] = 2 * MBs;
+   maxSize_[MemDynamic] = (BYTES_PER_WORD == 4 ? 1 * GBs : 16 * GBs);
+   targSize_[MemDynamic] = 16 * MBs;
 
-   //> The minimum and maximum sizes of the temporaru heap:
-   //    min = 512kB  max = 128MB (32-bit CPU), 2GB (64-bit CPU)
-   //  MemTemporary is often the least used memory type.
+   //> The minimum and maximum sizes of the temporary heap:
+   //    min = 512kB, init = 1MB, max = 128MB (32-bit), 2GB (64-bit)
    //
    minSize_[MemTemporary] = 512 * kBs;
-   maxSize_[MemTemporary] = size_t(1) << (23 + BYTES_PER_WORD);
+   maxSize_[MemTemporary] = (BYTES_PER_WORD == 4 ? 128 * MBs : 2 * GBs);
    targSize_[MemTemporary] = 1 * MBs;
 }
 

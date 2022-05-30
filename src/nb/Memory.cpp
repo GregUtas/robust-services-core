@@ -21,6 +21,7 @@
 //
 #include "Memory.h"
 #include "BuddyHeap.h"
+#include "SlabHeap.h"
 #include <cstring>
 #include <iomanip>
 #include <ostream>
@@ -81,6 +82,14 @@ class TemporaryHeap : public BuddyHeap
 
    TemporaryHeap();
    ~TemporaryHeap();
+};
+
+class DynamicSlab : public SlabHeap
+{
+   friend class Singleton<DynamicSlab>;
+
+   DynamicSlab();
+   ~DynamicSlab();
 };
 
 //------------------------------------------------------------------------------
@@ -166,6 +175,20 @@ TemporaryHeap::~TemporaryHeap()
 }
 
 //------------------------------------------------------------------------------
+
+DynamicSlab::DynamicSlab() : SlabHeap(MemSlab)
+{
+   Debug::ft("DynamicSlab.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+DynamicSlab::~DynamicSlab()
+{
+   Debug::ftnt("DynamicSlab.dtor");
+}
+
+//------------------------------------------------------------------------------
 //
 //  Returns the heap for TYPE.  If it doesn't exist, it is created.
 //
@@ -175,6 +198,7 @@ static Heap* EnsureHeap(MemoryType type)
    {
    case MemTemporary: return Singleton<TemporaryHeap>::Instance();
    case MemDynamic: return Singleton<DynamicHeap>::Instance();
+   case MemSlab: return Singleton<DynamicSlab>::Instance();
    case MemPersistent: return Singleton<PersistentHeap>::Instance();
    case MemProtected: return Singleton<ProtectedHeap>::Instance();
    case MemPermanent: return PermanentHeap::Instance();
@@ -188,10 +212,15 @@ static Heap* EnsureHeap(MemoryType type)
 
 Heap* Memory::AccessHeap(MemoryType type)
 {
+   //  DynamicSlab is used only by object pools, which are not created
+   //  until initialization is well underway, so this function ensures
+   //  that DynamicSlab exists.
+   //
    switch(type)
    {
    case MemTemporary: return Singleton<TemporaryHeap>::Extant();
    case MemDynamic: return Singleton<DynamicHeap>::Extant();
+   case MemSlab: return Singleton<DynamicSlab>::Instance();
    case MemPersistent: return Singleton<PersistentHeap>::Extant();
    case MemProtected: return Singleton<ProtectedHeap>::Extant();
    case MemPermanent: return PermanentHeap::Instance();
@@ -322,22 +351,25 @@ void Memory::DisplayHeaps(ostream& stream, const string& prefix)
       stream << setw(10) << type;
       stream << setw(3) << int(type);
       auto size = config->GetMaxSize(type);
-      stream << setw(9) << (size / kBs);
-
       if(size > 0)
-      {
-         stream << setw(9) << (config->GetCurrSize(type) / kBs);
-         stream << setw(9) << (config->GetTargSize(type) / kBs);
-         stream << setw(9) << ((*h)->CurrInUse() / kBs);
-         stream << setw(9) << ((*h)->CurrAvail() / kBs);
-      }
+         stream << setw(9) << size / kBs;
       else
-      {
+         stream << setw(9) << "expands";
+
+      size = config->GetCurrSize(type);
+      if(size > 0)
+         stream << setw(9) << size / kBs;
+      else
          stream << setw(9) << "n/a";
+
+      size = config->GetTargSize(type);
+      if(size > 0)
+         stream << setw(9) << size / kBs;
+      else
          stream << setw(9) << "n/a";
-         stream << setw(9) << ((*h)->CurrInUse() / kBs);
-         stream << setw(9) << "n/a";
-      }
+
+      stream << setw(9) << ((*h)->CurrInUse() / kBs);
+      stream << setw(9) << ((*h)->CurrAvail() / kBs);
 
       stream << setw(NIBBLES_PER_POINTER + 2) << *h << CRLF;
    }
@@ -448,6 +480,7 @@ void Memory::Shutdown()
 
    if(Restart::ClearsMemory(MemDynamic))
    {
+      Singleton<DynamicSlab>::Destroy();
       Singleton<DynamicHeap>::Destroy();
    }
 

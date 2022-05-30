@@ -35,7 +35,7 @@ constexpr size_t MediaEndptSize = sizeof(MediaEndpt) + (40 * BYTES_PER_WORD);
 //------------------------------------------------------------------------------
 
 MediaEndptPool::MediaEndptPool() :
-   ObjectPool(MediaEndptObjPoolId, MemDynamic, MediaEndptSize, "MediaEndpts")
+   ObjectPool(MediaEndptObjPoolId, MemSlab, MediaEndptSize, "MediaEndpts")
 {
    Debug::ft("MediaEndptPool.ctor");
 }

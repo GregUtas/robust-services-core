@@ -185,7 +185,7 @@ bool SysThread::Create(const Thread* client, size_t size)
    //
    unsigned int id;
    nthread_ = _beginthreadex(nullptr, size,
-      (_beginthreadex_proc_type) EnterThread, (void*) client, 0, & id);
+      (_beginthreadex_proc_type) EnterThread, (void*) client, 0, &id);
 
    if(nthread_ == 0)
    {

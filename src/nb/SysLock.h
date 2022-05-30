@@ -97,7 +97,7 @@ class LockGuard
 public:
    //  Acquires LOCK.  If LOCK is nullptr, all actions equate to a noop.
    //
-   explicit LockGuard(SysLock* mutex);
+   explicit LockGuard(SysLock* lock);
 
    //  Releases the lock.
    //

@@ -71,7 +71,7 @@ public:
    //
    size_t BlockToSize(const void* addr) const override;
 
-   //  Overriden to return the actual number of bytes available.
+   //  Overridden to return the actual number of bytes available.
    //
    size_t CurrAvail() const override;
 

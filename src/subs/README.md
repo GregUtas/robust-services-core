@@ -14,5 +14,4 @@ converted to C++ analogs.  In other cases, STL templates have been
 simplified.
 
 The syntax of the headers can be checked by compiling _subs.cpp_, which
-contains an `#include` for each header but is otherwise empty. The _vcxproj_
-files are also provided to support this.
+contains an `#include` for each header but is otherwise empty.

@@ -728,12 +728,20 @@ HeapBlock* BuddyHeap::Enqueue(HeapBlock* block, level_t level) const
 
 //------------------------------------------------------------------------------
 
+fn_name BuddyHeap_Free = "BuddyHeap.Free";
+
 void BuddyHeap::Free(void* addr)
 {
-   Debug::ft("BuddyHeap.Free");
+   Debug::ft(BuddyHeap_Free);
+
+   if(addr == nullptr) return;
 
    auto size = BlockToSize(addr);
-   if(size == 0) return;
+   if(size == 0)
+   {
+      Debug::SwLog(BuddyHeap_Free, "invalid address", uintptr_t(addr));
+      return;
+   }
 
    MutexGuard guard(heap_->lock.get());
 

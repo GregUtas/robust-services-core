@@ -46,9 +46,18 @@ namespace NodeBase
 {
 fixed_string UnexpectedInvocation = "unexpected invocation";
 
-//  Flags for controlling the behavior of software during testing.
+//  SwFlags_ controls the behavior of software during testing.
 //
 static Flags SwFlags_ = Flags();
+
+//  Set to ExitCode_ to suppress logs when the system is exiting.  A simple
+//  is not used in case this gets trampled.
+//
+static uint32_t ExitStatus_ = 0;
+
+//  ExitCode_ is the magic value which indicates that the system is exiting.
+//
+static const uint32_t ExitCode_ = 0xDEADC0DE;
 
 Flags Debug::FcFlags_ = Flags(InitFlags::TraceInit() ? 1 << TracingActive : 0);
 
@@ -60,6 +69,17 @@ void Debug::Assert(bool condition, debug64_t errval)
    {
       throw AssertionException(errval);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Debug::Exiting()
+{
+   //  Disable function tracing and logs while destructors are invoked
+   //  during shutdown.
+   //
+   FcFlags_.reset();
+   ExitStatus_ = ExitCode_;
 }
 
 //------------------------------------------------------------------------------
@@ -161,6 +181,8 @@ void Debug::SwLog(fn_name_arg func,
    const string& errstr, debug64_t errval, bool stack)
 {
    Debug::ftnt(Debug_SwLog);
+
+   if(ExitStatus_ == ExitCode_) return;
 
    if(!Thread::EnterSwLog()) return;
 

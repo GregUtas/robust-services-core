@@ -48,6 +48,7 @@ std::string strOver(const Base* obj, bool ns = true);
 //
 class Debug
 {
+   friend class RootThread;
    friend class Thread;
    friend class ThreadAdmin;
    friend class TraceBuffer;
@@ -124,6 +125,10 @@ private:
       TrapPending,    // set when a Raise() is pending on any thread
       StackChecking   // set when stack overflow prevention is active
    };
+
+   //  Invoked when the system is exiting.
+   //
+   static void Exiting();
 
    //  Flags associated with a function call.
    //

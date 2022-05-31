@@ -1024,7 +1024,7 @@ fixed_string UnknownExceptionStr = "unknown exception";
 fixed_string ThreadDataStr = "Thread Data:";
 fixed_string TrapDuringRecoveryStr = "TRAP DURING RECOVERY.";
 fixed_string TrapLimitReachedStr = "TRAP LIMIT EXCEEDED.";
-fixed_string ExitingStr = "========== Exiting in 10 seconds... ==========";
+fixed_string ExitingStr = "========== Exiting in 5 seconds... ==========";
 
 //------------------------------------------------------------------------------
 //
@@ -3161,7 +3161,7 @@ main_t Thread::Start()
             if((level == RestartExit) && Element::RunningInLab())
             {
                CoutThread::Spool(ExitingStr, true);
-               time = msecs_t(10 * ONE_SEC);
+               time = msecs_t(5 * ONE_SEC);
             }
 
             //  Before exiting, pause so that logs can be generated.  To

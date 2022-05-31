@@ -96,7 +96,8 @@ static bool GetExecutable(string& exe)
 //
 static bool GetParameters(string& parms)
 {
-   cout << "Enter command line parameters for rsc.exe or 'Q' to exit:\n  ";
+   cout << "Enter the command line parameters for rsc.exe or 'Q' to exit.\n";
+   cout << "Hit the 'enter' key if there are no command line parameters:\n";
    std::getline(cin, parms);
 
    if(!parms.empty())

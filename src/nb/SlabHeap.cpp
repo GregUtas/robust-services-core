@@ -44,7 +44,10 @@ using std::string;
 
 namespace NodeBase
 {
-//  For tracking a memory segment allocated by the heap.
+//  Slab: a raw memory segment allocated and managed by this heap
+//  Area: part of a slab; created to satisfy an allocation request
+//
+//  For tracking a slab.
 //
 struct SlabInfo
 {
@@ -97,8 +100,7 @@ static ostream& operator<<(ostream& stream, AreaState state)
 
 //------------------------------------------------------------------------------
 //
-//  For tracking an area within a slab.  An area is a portion of the slab
-//  that was created to satisfy an allocation request.
+//  For tracking an area within a slab.
 //
 struct AreaInfo
 {
@@ -143,7 +145,8 @@ struct AvailInfo
 //
 constexpr size_t SlabSize = 8 * MBs;
 
-//  Types of corruption that can be detected.
+//  Types of corruption that can be detected.  The number of enumerators
+//  will increase when Validate is implemented.
 //
 enum SlabCorruptionReason
 {
@@ -309,14 +312,20 @@ SlabPriv::~SlabPriv()
 
 //------------------------------------------------------------------------------
 
+fn_name SlabPriv_Alloc = "SlabPriv.Alloc";
+
 void* SlabPriv::Alloc(size_t size)
 {
-   Debug::ft("SlabPriv.Alloc");
+   Debug::ft(SlabPriv_Alloc);
 
    //  Find the smallest available area that can satisfy the request.
    //  If no area is available, allocate a slab and try again.
    //
-   if(size > size_) return nullptr;
+   if(size > size_)
+   {
+      Debug::SwLog(SlabPriv_Alloc, "size too large", size);
+      return nullptr;
+   }
 
    MutexGuard guard(mutex_.get());
 
@@ -726,12 +735,20 @@ void SlabHeap::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name SlabHeap_Free = "SlabHeap.Free";
+
 void SlabHeap::Free(void* addr)
 {
-   Debug::ft("SlabHeap.Free");
+   Debug::ft(SlabHeap_Free);
+
+   if(addr == nullptr) return;
 
    auto size = BlockToSize(addr);
-   if(size == 0) return;
+   if(size == 0)
+   {
+      Debug::SwLog(SlabHeap_Free, "invalid address", uintptr_t(addr));
+      return;
+   }
 
    if(priv_->Free(addr))
    {

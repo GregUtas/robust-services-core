@@ -73,12 +73,14 @@ struct HeapBlock
    //  Displays member variables.  This has the same signature as
    //  Base.Display so that Q2Way can invoke it.
    //
-   void Display(std::ostream& stream, const std::string& prefix) const;
+   void Display(std::ostream& stream,
+      const string& prefix, const Flags& options) const;
 };
 
 //------------------------------------------------------------------------------
 
-void HeapBlock::Display(ostream& stream, const string& prefix) const
+void HeapBlock::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
 {
    stream << prefix << "link : " << CRLF;
    link.Display(stream, prefix + spaces(2));
@@ -587,7 +589,7 @@ size_t BuddyHeap::CurrAvail() const
 
 //------------------------------------------------------------------------------
 
-HeapBlock* BuddyHeap::Dequeue(level_t level)
+HeapBlock* BuddyHeap::Dequeue(level_t level) const
 {
    auto block = heap_->freeq[level].Deq();
    if(block == nullptr) return nullptr;
@@ -692,7 +694,7 @@ void BuddyHeap::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void BuddyHeap::EnqBlock(HeapBlock* block, index_t index, level_t level)
+void BuddyHeap::EnqBlock(HeapBlock* block, index_t index, level_t level) const
 {
    new (block) HeapBlock();
    heap_->freeq[level].Enq(*block);
@@ -701,7 +703,7 @@ void BuddyHeap::EnqBlock(HeapBlock* block, index_t index, level_t level)
 
 //------------------------------------------------------------------------------
 
-HeapBlock* BuddyHeap::Enqueue(HeapBlock* block, level_t level)
+HeapBlock* BuddyHeap::Enqueue(HeapBlock* block, level_t level) const
 {
    auto b = BlockToIndex(block, level);
    auto s = IndexToSibling(b);
@@ -806,7 +808,7 @@ void BuddyHeap::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level)
+void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level) const
 {
    //  When the heap is initialized, queueing a block means that it is split
    //  from its sibling, which also means their ancestors are split.  It is
@@ -822,7 +824,7 @@ void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level)
 
 //------------------------------------------------------------------------------
 
-void BuddyHeap::ReserveBlock(const HeapBlock* block)
+void BuddyHeap::ReserveBlock(const HeapBlock* block) const
 {
    //  Mark BLOCK as allocated and proceed up the tree to mark its ancestors
    //  as split.  It is safe to stop if we reach an ancestor that is already
@@ -864,7 +866,7 @@ void BuddyHeap::SetState(index_t index, BlockState state) const
 
 //------------------------------------------------------------------------------
 
-void BuddyHeap::SplitAncestors(index_t block)
+void BuddyHeap::SplitAncestors(index_t block) const
 {
    while(block > 0)
    {

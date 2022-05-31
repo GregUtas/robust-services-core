@@ -1429,6 +1429,14 @@ Function* Class::FindFunc(const string& name,
    auto f = CxxArea::FindFunc(name, call, args, false, scope, view);
    if(MemberIsAccessibleTo(f, scope, view))
       return FuncAccessed(f, call, scope, view);
+
+   if(IsTemplate())
+   {
+      f = InstantiateFunction(name, args, view);
+      if(MemberIsAccessibleTo(f, scope, view))
+         return FuncAccessed(f, call, scope, view);
+   }
+
    if(!base) return nullptr;
 
    for(auto s = BaseClass(); s != nullptr; s = s->BaseClass())
@@ -1980,6 +1988,18 @@ Function* Class::IndexToFunc(const std::string& name, size_t idx) const
       if(f->IsInline()) continue;
       if(count++ == idx) return f;
    }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+Function* Class::InstantiateFunction
+   (const string& name, StackArgVector* args, SymbolView* view) const
+{
+   Debug::ft("Class.InstantiateFunction");
+
+   //c Support class template argument deduction.
 
    return nullptr;
 }

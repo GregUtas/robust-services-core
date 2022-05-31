@@ -148,22 +148,22 @@ private:
 
    //  Puts BLOCK on the free queue at LEVEL when initializing the heap.
    //
-   void ReleaseBlock(HeapBlock* block, level_t level);
+   void ReleaseBlock(HeapBlock* block, level_t level) const;
 
    //  Marks BLOCK as off-limits when initializing the heap.  This is done
    //  for blocks that overlay heap management data.
    //
-   void ReserveBlock(const HeapBlock* block);
+   void ReserveBlock(const HeapBlock* block) const;
 
    //  ReleaseBlock or ReserveBlock has just been invoked on the block
    //  identified by INDEX.  Update the state of its ancestors to Split.
    //
-   void SplitAncestors(index_t block);
+   void SplitAncestors(index_t block) const;
 
    //  Puts BLOCK, which is associated with INDEX, on LEVEL's free queue
    //  and initializes it.
    //
-   void EnqBlock(HeapBlock* block, index_t index, level_t level);
+   void EnqBlock(HeapBlock* block, index_t index, level_t level) const;
 
    //  Sets the block that is identified by INDEX to STATE.
    //
@@ -181,7 +181,7 @@ private:
    //  Dequeues a block at LEVEL, validates it, and marks it as allocated.
    //  Returns nullptr if no blocks are available at LEVEL.
    //
-   HeapBlock* Dequeue(level_t level);
+   HeapBlock* Dequeue(level_t level) const;
 
    //  Frees BLOCK by returning it to LEVEL.  If BLOCK's sibling is not in
    //  use, merges the two blocks and returns them to LEVEL-1.
@@ -192,7 +192,7 @@ private:
    //  if BLOCK's sibling is free, exqueues it, validates it, and returns
    //  a pointer to it.
    //
-   HeapBlock* Enqueue(HeapBlock* block, level_t level);
+   HeapBlock* Enqueue(HeapBlock* block, level_t level) const;
 
    //  Returns true if ADDR
    //  o is a legal block address regardless of its current state, or

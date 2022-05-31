@@ -696,6 +696,13 @@ private:
    //
    ClassInst* CreateInstance(const std::string& name, const TypeName* type);
 
+   //  Supports class template argument deduction.  If a class template has a
+   //  function with NAME that can be invoked with ARGS, instantiate the class
+   //  and return the function.  (Not yet implemented.)
+   //
+   Function* InstantiateFunction
+      (const std::string& name, StackArgVector* args, SymbolView* view) const;
+
    //  Class attributes and the types of items that it defines.
    //
    enum Attributes

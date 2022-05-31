@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SlabHeap.h"
-#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <iterator>
@@ -79,7 +78,7 @@ enum AreaState : uint8_t
    USED
 };
 
-ostream& operator<<(ostream& stream, AreaState state)
+static ostream& operator<<(ostream& stream, AreaState state)
 {
    switch(state)
    {
@@ -116,7 +115,7 @@ struct AreaInfo
 
    void* const addr_;   // area's address
    const size_t size_;  // area's size
-   SlabId slab_;        // slab of which area is a part
+   const SlabId slab_;  // slab of which area is a part
    AreaState state_;    // area's state
 };
 
@@ -268,8 +267,8 @@ private:
    std::multimap<size_t, AvailInfo> avail_;
 };
 
-typedef std::pair<const void*, AreaInfo> AddrPair;  //* to be deleted
-typedef std::pair<size_t, AvailInfo> SizePair;       //* to be deleted
+typedef std::pair<const void*, AreaInfo> AreaPair;
+typedef std::pair<size_t, AvailInfo> AvailPair;
 
 //------------------------------------------------------------------------------
 
@@ -354,12 +353,12 @@ void* SlabPriv::Alloc(size_t size)
    if(extra > 0)
    {
       auto succ = (void*) (uintptr_t(addr) + size);
-      avail_.insert(SizePair(extra, AvailInfo(succ, extra)));
+      avail_.insert(AvailPair(extra, AvailInfo(succ, extra)));
 
       auto slab = block->second.slab_;
       areas_.erase(block);
-      areas_.insert(AddrPair(addr, AreaInfo(addr, size, slab, USED)));
-      areas_.insert(AddrPair(succ, AreaInfo(succ, extra, slab, FREE)));
+      areas_.insert(AreaPair(addr, AreaInfo(addr, size, slab, USED)));
+      areas_.insert(AreaPair(succ, AreaInfo(succ, extra, slab, FREE)));
    }
    else
    {
@@ -498,8 +497,8 @@ bool SlabPriv::Extend()
    auto addr = SysMemory::Alloc(nullptr, size_);
    if(addr == nullptr) return false;
    slabs_.push_back(SlabInfo(addr, size_));
-   areas_.insert(AddrPair(addr, AreaInfo(addr, size_, id, FREE)));
-   avail_.insert(SizePair(size_, AvailInfo(addr, size_)));
+   areas_.insert(AreaPair(addr, AreaInfo(addr, size_, id, FREE)));
+   avail_.insert(AvailPair(size_, AvailInfo(addr, size_)));
    return true;
 }
 
@@ -568,9 +567,9 @@ bool SlabPriv::Free(const void* addr)
    if(!merged)
       curr->second.state_ = FREE;
    else
-      areas_.insert(AddrPair(avail, AreaInfo(avail, size, slab, FREE)));
+      areas_.insert(AreaPair(avail, AreaInfo(avail, size, slab, FREE)));
 
-   avail_.insert(SizePair(size, AvailInfo(avail, size)));
+   avail_.insert(AvailPair(size, AvailInfo(avail, size)));
    return true;
 }
 
@@ -767,7 +766,7 @@ int SlabHeap::SetPermissions(MemoryProtection attrs)
 
 //------------------------------------------------------------------------------
 
-void SlabHeap::SetSlabSize(size_t size)
+void SlabHeap::SetSlabSize(size_t size) const
 {
    Debug::ft("SlabHeap.SetSlabSize");
 

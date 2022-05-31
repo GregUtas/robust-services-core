@@ -24,6 +24,7 @@
 #include "CliCommandSet.h"
 #include "CliText.h"
 #include "Daemon.h"
+#include "SlabHeap.h"
 #include "Temporary.h"
 #include "Thread.h"
 #include <cctype>
@@ -66,7 +67,6 @@
 #include "RegCell.h"
 #include "Registry.h"
 #include "Singleton.h"
-#include "SlabHeap.h"
 #include "SoftwareException.h"
 #include "SymbolRegistry.h"
 #include "SysFile.h"
@@ -1031,7 +1031,7 @@ HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
 
 //------------------------------------------------------------------------------
 
-Heap* AccessHeap()
+static Heap* AccessHeap()
 {
    if(Type_ != MemSlab)
       return Singleton<TestBuddy>::Extant();
@@ -1041,7 +1041,7 @@ Heap* AccessHeap()
 
 //------------------------------------------------------------------------------
 
-Heap* EnsureHeap()
+static Heap* EnsureHeap()
 {
    if(Type_ != MemSlab)
       return Singleton<TestBuddy>::Instance();

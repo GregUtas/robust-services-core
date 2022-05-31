@@ -116,8 +116,7 @@ constexpr size_t MediumBufferSize = sizeof(MediumBuffer);
 //------------------------------------------------------------------------------
 
 MediumBufferPool::MediumBufferPool() :
-   ObjectPool(MediumBufferObjPoolId, MemSlab,
-      MediumBufferSize, "MediumBuffers")
+   ObjectPool(MediumBufferObjPoolId, MemSlab, MediumBufferSize, "MediumBuffers")
 {
    Debug::ft("MediumBufferPool.ctor");
 }

@@ -23,6 +23,7 @@
 #define SLABHEAP_H_INCLUDED
 
 #include "Heap.h"
+#include <cstddef>
 #include <memory>
 #include "SysTypes.h"
 
@@ -46,11 +47,6 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~SlabHeap();
-
-   //  Sets the size of each slab.  Must be invoked before Alloc.  Only used
-   //  during testing; change SlabSize to set the default size.
-   //
-   void SetSlabSize(size_t size);
 
    //  Overridden to allocate SIZE bytes.
    //
@@ -102,10 +98,15 @@ protected:
    //  is virtual.
    //
    explicit SlabHeap(MemoryType type);
+
+   //  Sets the size of each slab.  Must be invoked before Alloc.  Only used
+   //  during testing; change SlabSize to set the default size.
+   //
+   void SetSlabSize(size_t size) const;
 private:
    //  The heap management data.
    //
-   std::unique_ptr<SlabPriv> priv_;
+   const std::unique_ptr<SlabPriv> priv_;
 };
 }
 #endif

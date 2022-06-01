@@ -59,7 +59,7 @@ HeapCfg::HeapCfg() :
    //
    minSize_[MemPersistent] = 512 * kBs;
    maxSize_[MemPersistent] = (BYTES_PER_WORD == 4 ? 128 * MBs : 2 * GBs);
-   targSize_[MemPersistent] = 2 * MBs;
+   targSize_[MemPersistent] = 3 * MBs;
 
    //> The minimum and maximum sizes of the dynamic heap:
    //    min = 2MB, init = 16MB, max = 1GB (32-bit), 16GB (64-bit)

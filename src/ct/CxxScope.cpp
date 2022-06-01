@@ -3843,7 +3843,7 @@ void Function::CheckOverride()
    if(FuncType() == FuncDtor) return;
 
    base_->AddOverride(this);
-   if(virtual_ && (override_ || final_)) Log(RemoveVirtualTag);
+   if(virtual_) Log(RemoveVirtualTag);
    if(override_ && final_) Log(RemoveOverrideTag);
    if(!override_ && !final_) Log(OverrideTagMissing);
    virtual_ = true;

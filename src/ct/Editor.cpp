@@ -6242,8 +6242,7 @@ word Editor::TagAsOverride(const CodeWarning& log)
 
    //  Remove the function's virtual tag, if any.
    //
-   auto rc = EraseVirtualTag(log);
-   if(rc != EditSucceeded) return rc;
+   EraseVirtualTag(log);
 
    //  Insert "override" after the last non-blank character at the end
    //  of the function's signature.

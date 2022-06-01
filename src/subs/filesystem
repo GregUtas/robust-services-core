@@ -12,50 +12,50 @@ namespace std
 {
 namespace filesystem
 {
-//  Lots of things are missing here, but we currently don't use much.
-//
-class path
-{
-public:
-   path();
-   path(const path& that) = default;
-   path(const string& path);
-   ~path() = default;
-   path& operator=(const path& that) = default;
-   path filename() const;
-   std::string string() const;
-   static constexpr wchar_t preferred_separator = L'/';
-};
+   //  Lots of things are missing here, but RSC doesn't currently use much.
+   //
+   class path
+   {
+   public:
+      path();
+      path(const path& that) = default;
+      path(const string& path);
+      ~path() = default;
+      path& operator=(const path& that) = default;
+      path filename() const;
+      string string() const;
+      static constexpr wchar_t preferred_separator = L'/';
+   };
 
-bool is_directory(const path& path, error_code& ec);
+   bool is_directory(const path& path, error_code& ec);
 
-class directory_entry
-{
-public:
-   directory_entry();
-   directory_entry(const directory_entry& that) = default;
-   directory_entry(const path& path, error_code& ec);
-   ~directory_entry() = default;
-   directory_entry& operator=(const directory_entry& that) = default;
-   const std::filesystem::path& path() const;
-};
+   class directory_entry
+   {
+   public:
+      directory_entry();
+      directory_entry(const directory_entry& that) = default;
+      directory_entry(const path& path, error_code& ec);
+      ~directory_entry() = default;
+      directory_entry& operator=(const directory_entry& that) = default;
+      const filesystem::path& path() const;
+   };
 
-class directory_iterator
-{
-public:
-   directory_iterator();
-   directory_iterator(const directory_iterator& that) = default;
-   directory_iterator(const path& path, error_code& ec);
-   ~directory_iterator() = default;
-   directory_iterator& operator=(const directory_iterator& that) = default;
-   const directory_entry& operator*() const;
-   const directory_entry* operator->() const;
-   directory_iterator& operator++();
-   directory_iterator& operator++(int);
-};
+   class directory_iterator
+   {
+   public:
+      directory_iterator();
+      directory_iterator(const directory_iterator& that) = default;
+      directory_iterator(const path& path, error_code& ec);
+      ~directory_iterator() = default;
+      directory_iterator& operator=(const directory_iterator& that) = default;
+      const directory_entry& operator*() const;
+      const directory_entry* operator->() const;
+      directory_iterator& operator++();
+      directory_iterator& operator++(int);
+   };
 
-directory_iterator begin(directory_iterator d);
-directory_iterator end(directory_iterator d);
+   directory_iterator begin(directory_iterator d);
+   directory_iterator end(directory_iterator d);
 }
 }
 #endif

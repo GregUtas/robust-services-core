@@ -18,7 +18,7 @@ constexpr int PROT_EXEC = 0x4;
 constexpr int MAP_PRIVATE = 0x02;
 constexpr int MAP_ANONYMOUS = 0x20;
 
-extern void* mmap(void* addr, size_t len, int protection,int flags, int fd, off_t offset);
+extern void* mmap(void* addr, size_t len, int protection, int flags, int fd, off_t offset);
 extern int munmap(void* addr, size_t len);
 extern int mlock(const void* addr, size_t len);
 extern int munlock(const void* addr, size_t len);

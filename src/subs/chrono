@@ -12,145 +12,148 @@ namespace std
 {
 namespace chrono
 {
-template<typename Numeric, typename Ratio = ratio<1>> class duration
-{
-public:
-   duration() = default;
-   explicit duration(Numeric value);
-   duration(const duration& that);
-   Numeric count() const;
-   duration operator+() const;
-   duration operator-() const;
-   duration& operator++();
-   duration operator++(int);
-   duration& operator--();
-   duration operator--(int);
-   duration& operator+=(const duration& rhs);
-   duration& operator-=(const duration& rhs);
-   duration& operator*=(const Numeric& rhs);
-   duration& operator/=(const Numeric& rhs);
-   duration& operator%=(const Numeric& rhs);
-   duration& operator%=(const duration& rhs);
-   static constexpr duration zero();
-   static constexpr duration min();
-   static constexpr duration max();
-};
+   template<typename Numeric, typename Ratio = ratio<1>> class duration
+   {
+   public:
+      duration() = default;
+      explicit duration(Numeric value);
+      duration(const duration& that);
+      Numeric count() const;
+      duration operator+() const;
+      duration operator-() const;
+      duration& operator++();
+      duration operator++(int);
+      duration& operator--();
+      duration operator--(int);
+      duration& operator+=(const duration& rhs);
+      duration& operator-=(const duration& rhs);
+      duration& operator*=(const Numeric& rhs);
+      duration& operator/=(const Numeric& rhs);
+      duration& operator%=(const Numeric& rhs);
+      duration& operator%=(const duration& rhs);
+      static constexpr duration zero();
+      static constexpr duration min();
+      static constexpr duration max();
+   };
 
-using nanoseconds = duration<long long, nano>;
-using microseconds = duration<long long, micro>;
-using milliseconds = duration<long long, milli>;
-using seconds = duration<long long>;
+   using nanoseconds = duration<long long, nano>;
+   using microseconds = duration<long long, micro>;
+   using milliseconds = duration<long long, milli>;
+   using seconds = duration<long long>;
 
-//  The following use the numeric type double in operators */% so that any numeric
-//  type will match through conversion.  The actual <chrono> is a rat's nest of
-//  template metaprogramming, and implementing folding and other things needed to
-//  properly support it is not a priority in the least.
-//
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator+(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   //  The following use the numeric type double in operators */% so that any numeric
+   //  type will match through conversion.  The actual <chrono> is a rat's nest of
+   //  template metaprogramming, and implementing folding and other things needed to
+   //  properly support it is not a priority in the least.
+   //
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator+(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator-(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator-(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator*(const duration<Numeric, Ratio>& dur, double num);
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator*(const duration<Numeric, Ratio>& dur, double num);
 
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator*(double num, const duration<Numeric, Ratio>& dur);
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator*(double num, const duration<Numeric, Ratio>& dur);
 
-template<typename Numeric, typename Ratio> double
-   operator/(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> double
+      operator/(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator/(const duration<Numeric, Ratio>& dur, double num);
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator/(const duration<Numeric, Ratio>& dur, double num);
 
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator%(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator%(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
-   operator%(const duration<Numeric, Ratio>& dur, double num);
+   template<typename Numeric, typename Ratio> duration<Numeric, Ratio>
+      operator%(const duration<Numeric, Ratio>& dur, double num);
 
-template<typename Numeric, typename Ratio> bool
-   operator==(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> bool
+      operator==(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> bool
-   operator!=(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> bool
+      operator!=(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> bool
-   operator<(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> bool
+      operator<(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> bool
-   operator<=(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> bool
+      operator<=(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> bool
-   operator>(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> bool
+      operator>(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<typename Numeric, typename Ratio> bool
-   operator>=(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio> bool
+      operator>=(const duration<Numeric, Ratio>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<class Clock, class Duration> class time_point
-{
-public:
-   using duration = Duration;
-   time_point() = default;
-   explicit time_point(const Duration& that);
-   Duration time_since_epoch() const;
-   time_point& operator+=(const Duration& dur);
-   time_point& operator-=(const Duration& dur);
-   static constexpr time_point min();
-   static constexpr time_point max();
-};
+   template<class Clock, class Duration> class time_point
+   {
+   public:
+      using duration = Duration;
 
-template<class Clock, class Duration, typename Numeric, typename Ratio> time_point<Clock, Duration>
-   operator+(const time_point<Clock, Duration>& lhs, const duration<Numeric, Ratio>& rhs);
+      time_point() = default;
+      explicit time_point(const Duration& that);
+      Duration time_since_epoch() const;
+      time_point& operator+=(const Duration& dur);
+      time_point& operator-=(const Duration& dur);
+      static constexpr time_point min();
+      static constexpr time_point max();
+   };
 
-template<typename Numeric, typename Ratio, class Clock, class Duration> time_point<Clock, Duration>
-   operator+(const duration<Numeric, Ratio>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration, typename Numeric, typename Ratio> time_point<Clock, Duration>
+      operator+(const time_point<Clock, Duration>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<class Clock, class Duration, typename Numeric, typename Ratio> time_point<Clock, Duration>
-   operator-(const time_point<Clock, Duration>& lhs, const duration<Numeric, Ratio>& rhs);
+   template<typename Numeric, typename Ratio, class Clock, class Duration> time_point<Clock, Duration>
+      operator+(const duration<Numeric, Ratio>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration> Duration
-   operator-(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration, typename Numeric, typename Ratio> time_point<Clock, Duration>
+      operator-(const time_point<Clock, Duration>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<class Clock, class Duration> bool
-   operator==(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration> Duration
+      operator-(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration> bool
-   operator!=(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration> bool
+      operator==(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration> bool
-   operator<(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration> bool
+      operator!=(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration> bool
-   operator<=(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration> bool
+      operator<(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration> bool
-   operator>(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration> bool
+      operator<=(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration> bool
-   operator>=(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
+   template<class Clock, class Duration> bool
+      operator>(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-struct system_clock
-{
-   using rep = long long;
-   using period = ratio<1, 10000000>;
-   using duration = std::chrono::duration<rep, period>;
-   using time_point = std::chrono::time_point<system_clock, duration>;
-   static constexpr bool is_steady = false;
-   static time_point now();
-   static time_t to_time_t(const time_point& time);
-};
+   template<class Clock, class Duration> bool
+      operator>=(const time_point<Clock, Duration>& lhs, const time_point<Clock, Duration>& rhs);
 
-struct steady_clock
-{
-   using rep = long long;
-   using period = nano;
-   using duration = nanoseconds;
-   using time_point = std::chrono::time_point<steady_clock, duration>;
-   static constexpr bool is_steady = true;
-   static time_point now();
-};
+   struct system_clock
+   {
+      using rep = long long;
+      using period = ratio<1, 10000000>;
+      using duration = chrono::duration<rep, period>;
+      using time_point = chrono::time_point<system_clock, duration>;
+
+      static constexpr bool is_steady = false;
+      static time_point now();
+      static time_t to_time_t(const time_point& time);
+   };
+
+   struct steady_clock
+   {
+      using rep = long long;
+      using period = nano;
+      using duration = nanoseconds;
+      using time_point = chrono::time_point<steady_clock, duration>;
+
+      static constexpr bool is_steady = true;
+      static time_point now();
+   };
 }
 }
 #endif

@@ -36,7 +36,7 @@ constexpr int SOL_SOCKET = 1;
 constexpr int SO_SNDBUF = 7;
 constexpr int SO_RCVBUF = 8;
 constexpr int SO_KEEPALIVE = 9;
-constexpr int SO_LINGER	= 13;
+constexpr int SO_LINGER = 13;
 
 constexpr int SHUT_WR = 1;
 constexpr int SHUT_RDWR = 2;

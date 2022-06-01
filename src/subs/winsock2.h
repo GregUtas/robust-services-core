@@ -49,7 +49,7 @@ constexpr int IPPROTO_IPV6 = 41;
 constexpr int IPV6_V6ONLY = 27;
 
 struct sockaddr
-{ 
+{
    uint16_t sa_family;
    char     sa_data[14];
 };

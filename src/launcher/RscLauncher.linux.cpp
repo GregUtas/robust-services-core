@@ -24,58 +24,49 @@
 #ifdef OS_LINUX
 
 #include "RscLauncher.h"
+#include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <ostream>
+#include <sched.h>
+#include <spawn.h>
+#include <sys/wait.h>
 
 //------------------------------------------------------------------------------
 
 int LaunchRsc(const std::string& exe, const std::string& parms)
 {
-   return 0;
-/*L
-   //  Start the process EXE using the command line parameters PARMS.
-   //
-   STARTUPINFOA si;
-   PROCESS_INFORMATION pi;
+   pid_t pid;
 
-   memset(&si, 0, sizeof(si));
-   si.cb = sizeof(si);
-   memset(&pi, 0, sizeof(pi));
+   char* args[3] = { nullptr };
+   char* envp[1] = { nullptr };
 
-   auto command_line_parms = exe + ' ' + parms;
-   char args[1024];
-   strcpy_s(args, command_line_parms.c_str());
+   std::unique_ptr<char[]> buff0(new char[exe.size() + 1]);
+   strcpy(buff0.get(), exe.c_str());
+   args[0] = buff0.get();
 
-   if(!CreateProcessA(
-      nullptr,  // executable is the first substring in ARGS
-      args,     // command line parameters
-      nullptr,  // process handle not inheritable
-      nullptr,  // thread handle not inheritable
-      false,    // other handles not inheritable
-      0,        // run at normal priority in same console
-      nullptr,  // use this process's environment block
-      nullptr,  // use this process's starting directory
-      &si,      // pointer to STARTUPINFOA structure
-      &pi))     // pointer to PROCESS_INFORMATION structure
+   if(!parms.empty())
    {
-      std::cout << "CreateProcessA failed: error=" << GetLastError() << '\n';
-      return -1;
+      std::unique_ptr<char[]> buff1(new char[parms.size() + 1]);
+      strcpy(buff0.get(), parms.c_str());
+      args[1] = buff1.get();
    }
 
-   //  Set the console title so that it identifies EXE.  When EXE
-   //  exits, clean up its resources and report its exit code.
-   //
-   std::wstring title(exe.begin(), exe.end());
-   SetConsoleTitle(title.c_str());
-   WaitForSingleObject(pi.hProcess, INFINITE);
+   auto code = posix_spawnp(&pid, exe.c_str(), nullptr, nullptr, args, envp);
 
-   DWORD code;
-   GetExitCodeProcess(pi.hProcess, &code);
+   if(code == 0)
+   {
+      if(waitpid(pid, &code, 0) == -1)
+      {
+         perror("Error from waitpid");
+      }
+   }
+   else
+   {
+      std::cout << "Error launching rsc.exe:" << strerror(code) << std::endl;
+   }
 
-   CloseHandle(pi.hProcess);
-   CloseHandle(pi.hThread);
    return code;
-*/
 }
 #endif

@@ -43,7 +43,7 @@ static void Explain()
 {
    cout << "RSC LAUNCHER\n";
    cout << "o On entry, launches RSC from a specified directory after\n";
-   cout << "  prompting for its command line parameters.\n";
+   cout << "  prompting for any additional command line parameters.\n";
    cout << "o If RSC is forced to exit (>restart exit), launches it after\n";
    cout << "  reprompting for its directory and command line parameters.\n";
    cout << "o Immediately relaunches RSC if it requires a RestartReboot.\n";
@@ -96,8 +96,8 @@ static bool GetExecutable(string& exe)
 //
 static bool GetParameters(string& parms)
 {
-   cout << "Enter the command line parameters for rsc.exe or 'Q' to exit.\n";
-   cout << "Hit the 'enter' key if there are no command line parameters:\n";
+   cout << "Enter any extra command line parameters or 'Q' to exit.  Hit\n";
+   cout << "the 'enter' key if there are no more command line parameters:\n";
    std::getline(cin, parms);
 
    if(!parms.empty())

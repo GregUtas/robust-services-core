@@ -71,6 +71,9 @@
 #include "poll.h"
 #include "pthread.h"
 #include "resource.h"
+#include "spawn.h"
+#include "sched.h"
 #include "socket.h"
 #include "unistd.h"
+#include "wait.h"
 #endif

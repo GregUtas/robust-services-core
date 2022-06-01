@@ -22,18 +22,14 @@
 #ifdef OS_LINUX
 
 #include "SysHeap.h"
-#include <cstdint>
 #include <cstdlib>
 #include <errno.h>
 #include <malloc.h>
 #include <mcheck.h>
 #include <ostream>
-#include <sstream>
 #include <string>
 #include "AllocationException.h"
 #include "Debug.h"
-#include "Element.h"
-#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -73,11 +69,9 @@ SysHeap::SysHeap() : Heap(),
 
 //------------------------------------------------------------------------------
 
-fn_name SysHeap_dtor = "SysHeap.dtor";
-
 SysHeap::~SysHeap()
 {
-   Debug::ftnt(SysHeap_dtor);
+   Debug::ftnt("SysHeap.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -141,7 +135,14 @@ void SysHeap::Free(void* addr)
    //  and actual sizes.  We therefore track actual sizes.
    //
    if(addr == nullptr) return;
+
    auto size = malloc_usable_size(addr);
+   if(size == 0)
+   {
+      Debug::SwLog(SysHeap_Free, "invalid address", uintptr_t(addr));
+      return;
+   }
+
    Freeing(addr, size);
    free(addr);
 }
@@ -178,11 +179,9 @@ int SysHeap::SetPermissions(MemoryProtection attrs)
 
 //------------------------------------------------------------------------------
 
-fn_name SysHeap_Validate = "SysHeap.Validate";
-
 bool SysHeap::Validate(const void* addr) const
 {
-   Debug::ft(SysHeap_Validate);
+   Debug::ft("SysHeap.Validate");
 
    //  To validate the default help on Linux, mcheck() must have been called
    //  before malloc().  Because we allocate memory before entering main(),

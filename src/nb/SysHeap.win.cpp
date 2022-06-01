@@ -166,6 +166,12 @@ void SysHeap::Free(void* addr)
    //  size of a block, so we can only track requested sizes.
    //
    auto size = BlockToSize(addr);
+   if(size == 0)
+   {
+      Debug::SwLog(SysHeap_Free, "invalid address", uintptr_t(addr));
+      return;
+   }
+
    Freeing(addr, size);
 
    if(!HeapFree(heap_, 0, addr))

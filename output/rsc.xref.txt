@@ -19507,7 +19507,7 @@ ct\Editor.cpp
       ct\Editor.cpp
    CodeTools.Editor_Rename: 5402 [SpaceData]
       ct\Editor.cpp
-   CodeTools.Editor_UpdateDebugFt: 6382 [SpaceData]
+   CodeTools.Editor_UpdateDebugFt: 6381 [SpaceData]
       ct\Editor.cpp
    CodeTools.Editors_: 71 [SpaceData]
       ct\Editor.cpp
@@ -24669,8 +24669,8 @@ launcher\RscLauncher.cpp
       launcher\RscLauncher.cpp
    GetParameters: 97 [Function]
       launcher\RscLauncher.cpp
-   main(): 143 [Function]
-   Proceed: 116 [Function]
+   main(): 144 [Function]
+   Proceed: 117 [Function]
       launcher\RscLauncher.cpp
 launcher\RscLauncher.h
    LaunchRsc: 33 [Function]
@@ -26189,6 +26189,8 @@ nb\Base.h
    NodeBase.ObjectPool: 57 [Friend]
 nb\BuddyHeap.cpp
    NodeBase.BuddyHeap_ctor: 243 [SpaceData]
+      nb\BuddyHeap.cpp
+   NodeBase.BuddyHeap_Free: 731 [SpaceData]
       nb\BuddyHeap.cpp
    NodeBase.HeapBlock: 52 [Class]
       nb\BuddyHeap.cpp
@@ -28942,9 +28944,13 @@ nb\DaemonRegistry.h
       nb\DaemonRegistry.cpp
    NodeBase.Singleton<DaemonRegistry>: 43 [Friend]
 nb\Debug.cpp
-   NodeBase.Debug_SwLog: 158 [SpaceData]
+   NodeBase.Debug_SwLog: 181 [SpaceData]
       nb\Debug.cpp
-   NodeBase.SwFlags_: 51 [SpaceData]
+   NodeBase.ExitCode_: 61 [SpaceData]
+      nb\Debug.cpp
+   NodeBase.ExitStatus_: 57 [SpaceData]
+      nb\Debug.cpp
+   NodeBase.SwFlags_: 52 [SpaceData]
       nb\Debug.cpp
 nb\Debug.h
    DEBUG_H_INCLUDED: 23 [Define]
@@ -29323,7 +29329,7 @@ nb\Debug.h
       st\StModule.cpp
       st\StTestData.cpp
       st\TestSessions.cpp
-   NodeBase.Debug.Assert: 88 [Function]
+   NodeBase.Debug.Assert: 89 [Function]
       nb\Array.h
       nb\CfgParm.cpp
       nb\CliCharParm.cpp
@@ -29339,14 +29345,17 @@ nb\Debug.h
       sb\Factory.cpp
       sb\InvokerThread.cpp
       sb\ProtocolLayer.cpp
-   NodeBase.Debug.Debug: 57 [Function]
-   NodeBase.Debug.FcFlags_: 130 [ClassData]
+   NodeBase.Debug.Debug: 58 [Function]
+   NodeBase.Debug.Exiting: 131 [Function]
+      nb\Debug.cpp
+      nb\RootThread.cpp
+   NodeBase.Debug.FcFlags_: 135 [ClassData]
       nb\Debug.cpp
       nb\Debug.h
       nb\Thread.cpp
       nb\ThreadAdmin.cpp
       nb\TraceBuffer.cpp
-   NodeBase.Debug.ft: 76 [Function]
+   NodeBase.Debug.ft: 77 [Function]
       an\AnIncrement.cpp
       an\AnModule.cpp
       an\PotsShelfFactory.cpp
@@ -29709,7 +29718,7 @@ nb\Debug.h
       st\StModule.cpp
       st\StTestData.cpp
       st\TestSessions.cpp
-   NodeBase.Debug.ftnt: 77 [Function]
+   NodeBase.Debug.ftnt: 78 [Function]
       an\AnIncrement.cpp
       an\AnModule.cpp
       an\PotsShelfFactory.cpp
@@ -30019,37 +30028,37 @@ nb\Debug.h
       st\StModule.cpp
       st\StTestData.cpp
       st\TestSessions.cpp
-   NodeBase.Debug.GetSwFlags: 113 [Function]
+   NodeBase.Debug.GetSwFlags: 114 [Function]
       nb\Debug.cpp
       nt\NtIncrement.cpp
-   NodeBase.Debug.InvocationFlag: 121 [Enum]
-   NodeBase.Debug.InvocationFlag.StackChecking: 125 [Enumerator]
+   NodeBase.Debug.InvocationFlag: 122 [Enum]
+   NodeBase.Debug.InvocationFlag.StackChecking: 126 [Enumerator]
       nb\Thread.cpp
       nb\ThreadAdmin.cpp
-   NodeBase.Debug.InvocationFlag.TracingActive: 123 [Enumerator]
+   NodeBase.Debug.InvocationFlag.TracingActive: 124 [Enumerator]
       nb\Debug.cpp
       nb\Debug.h
       nb\Thread.cpp
       nb\TraceBuffer.cpp
-   NodeBase.Debug.InvocationFlag.TrapPending: 124 [Enumerator]
+   NodeBase.Debug.InvocationFlag.TrapPending: 125 [Enumerator]
       nb\Thread.cpp
-   NodeBase.Debug.noop: 117 [Function]
+   NodeBase.Debug.noop: 118 [Function]
       ct\CxxExecute.cpp
       nb\Debug.cpp
-   NodeBase.Debug.Progress: 92 [Function]
+   NodeBase.Debug.Progress: 93 [Function]
       ct\CodeFile.cpp
       ct\CodeFileSet.cpp
       ct\CtIncrement.cpp
       ct\CxxArea.cpp
       ct\Parser.cpp
       nb\Debug.cpp
-   NodeBase.Debug.ResetSwFlags: 109 [Function]
+   NodeBase.Debug.ResetSwFlags: 110 [Function]
       nb\Debug.cpp
       nt\NtIncrement.cpp
-   NodeBase.Debug.SetSwFlag: 105 [Function]
+   NodeBase.Debug.SetSwFlag: 106 [Function]
       nb\Debug.cpp
       nt\NtIncrement.cpp
-   NodeBase.Debug.SwFlagOn: 101 [Function]
+   NodeBase.Debug.SwFlagOn: 102 [Function]
       cb\BcHandlers.cpp
       cb\BcProtocol.cpp
       nb\Debug.cpp
@@ -30057,7 +30066,7 @@ nb\Debug.h
       nb\Thread.cpp
       nt\NtIncrement.cpp
       pb\PotsCircuit.cpp
-   NodeBase.Debug.SwLog: 83 [Function]
+   NodeBase.Debug.SwLog: 84 [Function]
       an\AnIncrement.cpp
       an\PotsShelfFactory.cpp
       an\PotsTrafficThread.cpp
@@ -30255,7 +30264,7 @@ nb\Debug.h
       st\MscBuilder.cpp
       st\StTestData.cpp
       st\TestSessions.cpp
-   NodeBase.Debug.TraceOn: 96 [Function]
+   NodeBase.Debug.TraceOn: 97 [Function]
       ct\CxxExecute.cpp
       dip\BaseBot.cpp
       dip\BotThread.cpp
@@ -30274,6 +30283,7 @@ nb\Debug.h
       sb\Message.cpp
       sb\MsgFactory.cpp
       sb\SbTracer.cpp
+   NodeBase.RootThread: 51 [Friend]
    NodeBase.strOver: 44 [Function]
       cb\BcFactory.cpp
       cb\BcSsm.cpp
@@ -30317,9 +30327,9 @@ nb\Debug.h
       sb\ServiceSM.cpp
       sb\TextTlvMessage.cpp
       sn\PotsTreatments.cpp
-   NodeBase.Thread: 51 [Friend]
-   NodeBase.ThreadAdmin: 52 [Friend]
-   NodeBase.TraceBuffer: 53 [Friend]
+   NodeBase.Thread: 52 [Friend]
+   NodeBase.ThreadAdmin: 53 [Friend]
+   NodeBase.TraceBuffer: 54 [Friend]
    NodeBase.UnexpectedInvocation: 39 [SpaceData]
       cb\ServiceCodeRegistry.cpp
       dip\BotTracer.cpp
@@ -39054,6 +39064,7 @@ nb\RootThread.h
    NodeBase.InitThread: 44 [Friend]
    NodeBase.RootThread: 41 [Class]
       nb\Debug.cpp
+      nb\Debug.h
       nb\InitThread.cpp
       nb\InitThread.h
       nb\ModuleRegistry.h
@@ -39807,113 +39818,117 @@ nb\Singletons.h
    SINGLETONS_H_INCLUDED: 23 [Define]
       nb\Singletons.h
 nb\SlabHeap.cpp
-   NodeBase.AreaInfo: 103 [Class]
+   NodeBase.AreaInfo: 105 [Class]
       nb\SlabHeap.cpp
-   NodeBase.AreaInfo.addr_: 116 [ClassData]
+   NodeBase.AreaInfo.addr_: 118 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.AreaInfo.AreaInfo: 105 [Function]
+   NodeBase.AreaInfo.AreaInfo: 107 [Function]
       nb\SlabHeap.cpp
-   NodeBase.AreaInfo.Print: 108 [Function]
+   NodeBase.AreaInfo.Print: 110 [Function]
       nb\SlabHeap.cpp
-   NodeBase.AreaInfo.size_: 117 [ClassData]
+   NodeBase.AreaInfo.size_: 119 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.AreaInfo.slab_: 118 [ClassData]
+   NodeBase.AreaInfo.slab_: 120 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.AreaInfo.state_: 119 [ClassData]
+   NodeBase.AreaInfo.state_: 121 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.AreaPair: 270 [Typedef]
+   NodeBase.AreaPair: 273 [Typedef]
       nb\SlabHeap.cpp
-   NodeBase.AreaState: 75 [Enum]
+   NodeBase.AreaState: 78 [Enum]
       nb\SlabHeap.cpp
-   NodeBase.AreaState.FREE: 77 [Enumerator]
+   NodeBase.AreaState.FREE: 80 [Enumerator]
       nb\SlabHeap.cpp
-   NodeBase.AreaState.USED: 78 [Enumerator]
+   NodeBase.AreaState.USED: 81 [Enumerator]
       nb\SlabHeap.cpp
-   NodeBase.AvailInfo: 126 [Class]
+   NodeBase.AvailInfo: 128 [Class]
       nb\SlabHeap.cpp
-   NodeBase.AvailInfo.addr_: 136 [ClassData]
+   NodeBase.AvailInfo.addr_: 138 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.AvailInfo.AvailInfo: 128 [Function]
+   NodeBase.AvailInfo.AvailInfo: 130 [Function]
       nb\SlabHeap.cpp
-   NodeBase.AvailInfo.Print: 130 [Function]
+   NodeBase.AvailInfo.Print: 132 [Function]
       nb\SlabHeap.cpp
-   NodeBase.AvailInfo.size_: 137 [ClassData]
+   NodeBase.AvailInfo.size_: 139 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.AvailPair: 271 [Typedef]
+   NodeBase.AvailPair: 274 [Typedef]
       nb\SlabHeap.cpp
-   NodeBase.MaxSlab: 69 [SpaceData]
+   NodeBase.MaxSlab: 72 [SpaceData]
       nb\SlabHeap.cpp
-   NodeBase.operator<<(ostream&,AreaState): 81 [Function]
+   NodeBase.operator<<(ostream&,AreaState): 84 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabCorruptionReason: 148 [Enum]
-   NodeBase.SlabCorruptionReason.FreeAreaNotInAreas: 151 [Enumerator]
+   NodeBase.SlabCorruptionReason: 151 [Enum]
+   NodeBase.SlabCorruptionReason.FreeAreaNotInAreas: 154 [Enumerator]
       nb\SlabHeap.cpp
-   NodeBase.SlabCorruptionReason.FreeAreaNotInAvail: 150 [Enumerator]
+   NodeBase.SlabCorruptionReason.FreeAreaNotInAvail: 153 [Enumerator]
       nb\SlabHeap.cpp
-   NodeBase.SlabId: 65 [Typedef]
+   NodeBase.SlabHeap_Free: 738 [SpaceData]
       nb\SlabHeap.cpp
-   NodeBase.SlabInfo: 49 [Class]
+   NodeBase.SlabId: 68 [Typedef]
       nb\SlabHeap.cpp
-   NodeBase.SlabInfo.addr_: 59 [ClassData]
+   NodeBase.SlabInfo: 52 [Class]
       nb\SlabHeap.cpp
-   NodeBase.SlabInfo.Print: 53 [Function]
+   NodeBase.SlabInfo.addr_: 62 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabInfo.size_: 60 [ClassData]
+   NodeBase.SlabInfo.Print: 56 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabInfo.SlabInfo: 51 [Function]
+   NodeBase.SlabInfo.size_: 63 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv: 164 [Class]
+   NodeBase.SlabInfo.SlabInfo: 54 [Function]
+      nb\SlabHeap.cpp
+   NodeBase.SlabPriv: 167 [Class]
       nb\SlabHeap.cpp
       nb\SlabHeap.h
-   NodeBase.SlabPriv.Alloc: 185 [Function]
+   NodeBase.SlabPriv.Alloc: 188 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.areas_: 263 [ClassData]
+   NodeBase.SlabPriv.areas_: 266 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.avail_: 267 [ClassData]
+   NodeBase.SlabPriv.avail_: 270 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.BlockToSize: 189 [Function]
+   NodeBase.SlabPriv.BlockToSize: 192 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Corrupt: 243 [Function]
+   NodeBase.SlabPriv.Corrupt: 246 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.CurrAvail: 193 [Function]
+   NodeBase.SlabPriv.CurrAvail: 196 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Display: 197 [Function]
+   NodeBase.SlabPriv.Display: 200 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.EraseFromFree: 238 [Function]
+   NodeBase.SlabPriv.EraseFromFree: 241 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Extend: 234 [Function]
+   NodeBase.SlabPriv.Extend: 237 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Free: 203 [Function]
+   NodeBase.SlabPriv.Free: 206 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.mutex_: 255 [ClassData]
+   NodeBase.SlabPriv.mutex_: 258 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.operator=: 181 [Function]
-   NodeBase.SlabPriv.Overhead: 207 [Function]
+   NodeBase.SlabPriv.operator=: 184 [Function]
+   NodeBase.SlabPriv.Overhead: 210 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.SetPermissions: 212 [Function]
+   NodeBase.SlabPriv.SetPermissions: 215 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.SetSlabSize: 216 [Function]
+   NodeBase.SlabPriv.SetSlabSize: 219 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Size: 220 [Function]
+   NodeBase.SlabPriv.Size: 223 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.size_: 251 [ClassData]
+   NodeBase.SlabPriv.size_: 254 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.SlabPriv(const SlabPriv&): 177 [Function]
-   NodeBase.SlabPriv.SlabPriv(MemoryType): 169 [Function]
+   NodeBase.SlabPriv.SlabPriv(const SlabPriv&): 180 [Function]
+   NodeBase.SlabPriv.SlabPriv(MemoryType): 172 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.slabs_: 259 [ClassData]
+   NodeBase.SlabPriv.slabs_: 262 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Type: 224 [Function]
+   NodeBase.SlabPriv.Type: 227 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.type_: 247 [ClassData]
+   NodeBase.SlabPriv.type_: 250 [ClassData]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.Validate: 229 [Function]
+   NodeBase.SlabPriv.Validate: 232 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv.~SlabPriv: 173 [Function]
+   NodeBase.SlabPriv.~SlabPriv: 176 [Function]
       nb\SlabHeap.cpp
-   NodeBase.SlabPriv_SetSlabSize: 618 [SpaceData]
+   NodeBase.SlabPriv_Alloc: 315 [SpaceData]
       nb\SlabHeap.cpp
-   NodeBase.SlabSize: 144 [SpaceData]
+   NodeBase.SlabPriv_SetSlabSize: 627 [SpaceData]
+      nb\SlabHeap.cpp
+   NodeBase.SlabSize: 146 [SpaceData]
       nb\SlabHeap.cpp
 nb\SlabHeap.h
    NodeBase.SlabHeap: 44 [Class]
@@ -40692,7 +40707,7 @@ nb\SysHeap.win.cpp
       nb\SysHeap.win.cpp
    NodeBase.SysHeap_Free: 156 [SpaceData]
       nb\SysHeap.win.cpp
-   NodeBase.SysHeap_SetPermissions: 190 [SpaceData]
+   NodeBase.SysHeap_SetPermissions: 196 [SpaceData]
       nb\SysHeap.win.cpp
 nb\SysLock.h
    NodeBase.LockGuard: 95 [Class]
@@ -57495,8 +57510,8 @@ sb\SbEvents.h
       sb\SbEvents.h
    SessionBase.AnalyzeSnpEvent.~AnalyzeSnpEvent: 243 [Function]
       sb\AnalyzeSnpEvent.cpp
-   SessionBase.Event: 223 [Friend]
    SessionBase.Event: 82 [Friend]
+   SessionBase.Event: 223 [Friend]
    SessionBase.ForceTransitionEvent: 301 [Class]
       sb\ForceTransitionEvent.cpp
       sb\SbHandlers.cpp
@@ -65215,68 +65230,68 @@ subs\chrono
    std.chrono.nanoseconds: 39 [Typedef]
       nb\Duration.h
    std.chrono.operator!=(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 77 [Function]
-   std.chrono.operator!=(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 120 [Function]
+   std.chrono.operator!=(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 121 [Function]
    std.chrono.operator%(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 68 [Function]
    std.chrono.operator%(const duration<Numeric, Ratio>&,double): 71 [Function]
    std.chrono.operator*(const duration<Numeric, Ratio>&,double): 56 [Function]
    std.chrono.operator*(double,const duration<Numeric, Ratio>&): 59 [Function]
    std.chrono.operator+(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 50 [Function]
-   std.chrono.operator+(const duration<Numeric, Ratio>&,const time_point<Clock, Duration>&): 108 [Function]
-   std.chrono.operator+(const time_point<Clock, Duration>&,const duration<Numeric, Ratio>&): 105 [Function]
+   std.chrono.operator+(const duration<Numeric, Ratio>&,const time_point<Clock, Duration>&): 109 [Function]
+   std.chrono.operator+(const time_point<Clock, Duration>&,const duration<Numeric, Ratio>&): 106 [Function]
    std.chrono.operator-(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 53 [Function]
-   std.chrono.operator-(const time_point<Clock, Duration>&,const duration<Numeric, Ratio>&): 111 [Function]
-   std.chrono.operator-(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 114 [Function]
+   std.chrono.operator-(const time_point<Clock, Duration>&,const duration<Numeric, Ratio>&): 112 [Function]
+   std.chrono.operator-(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 115 [Function]
    std.chrono.operator/(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 62 [Function]
    std.chrono.operator/(const duration<Numeric, Ratio>&,double): 65 [Function]
    std.chrono.operator<(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 80 [Function]
-   std.chrono.operator<(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 123 [Function]
+   std.chrono.operator<(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 124 [Function]
    std.chrono.operator<=(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 83 [Function]
-   std.chrono.operator<=(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 126 [Function]
+   std.chrono.operator<=(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 127 [Function]
    std.chrono.operator==(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 74 [Function]
-   std.chrono.operator==(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 117 [Function]
+   std.chrono.operator==(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 118 [Function]
    std.chrono.operator>(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 86 [Function]
-   std.chrono.operator>(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 129 [Function]
+   std.chrono.operator>(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 130 [Function]
    std.chrono.operator>=(const duration<Numeric, Ratio>&,const duration<Numeric, Ratio>&): 89 [Function]
-   std.chrono.operator>=(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 132 [Function]
+   std.chrono.operator>=(const time_point<Clock, Duration>&,const time_point<Clock, Duration>&): 133 [Function]
    std.chrono.seconds: 42 [Typedef]
       nb\Duration.h
-   std.chrono.steady_clock: 145 [Class]
+   std.chrono.steady_clock: 147 [Class]
       nb\SteadyTime.cpp
       nb\SteadyTime.h
-   std.chrono.steady_clock.duration: 149 [Typedef]
-   std.chrono.steady_clock.is_steady: 151 [ClassData]
-   std.chrono.steady_clock.now: 152 [Function]
+   std.chrono.steady_clock.duration: 151 [Typedef]
+   std.chrono.steady_clock.is_steady: 154 [ClassData]
+   std.chrono.steady_clock.now: 155 [Function]
       nb\SteadyTime.cpp
-   std.chrono.steady_clock.period: 148 [Typedef]
-   std.chrono.steady_clock.rep: 147 [Typedef]
-   std.chrono.steady_clock.time_point: 150 [Typedef]
+   std.chrono.steady_clock.period: 150 [Typedef]
+   std.chrono.steady_clock.rep: 149 [Typedef]
+   std.chrono.steady_clock.time_point: 152 [Typedef]
       nb\SteadyTime.h
-   std.chrono.system_clock: 134 [Class]
+   std.chrono.system_clock: 135 [Class]
       nb\SystemTime.cpp
       nb\SystemTime.h
-   std.chrono.system_clock.duration: 138 [Typedef]
-   std.chrono.system_clock.is_steady: 140 [ClassData]
-   std.chrono.system_clock.now: 141 [Function]
+   std.chrono.system_clock.duration: 139 [Typedef]
+   std.chrono.system_clock.is_steady: 142 [ClassData]
+   std.chrono.system_clock.now: 143 [Function]
       nb\SystemTime.cpp
-   std.chrono.system_clock.period: 137 [Typedef]
-   std.chrono.system_clock.rep: 136 [Typedef]
-   std.chrono.system_clock.time_point: 139 [Typedef]
+   std.chrono.system_clock.period: 138 [Typedef]
+   std.chrono.system_clock.rep: 137 [Typedef]
+   std.chrono.system_clock.time_point: 140 [Typedef]
       nb\SystemTime.h
-   std.chrono.system_clock.to_time_t: 142 [Function]
+   std.chrono.system_clock.to_time_t: 144 [Function]
       nb\SystemTime.cpp
    std.chrono.time_point: 91 [Class]
       nb\SteadyTime.h
       nb\SystemTime.h
    std.chrono.time_point.duration: 94 [Typedef]
-   std.chrono.time_point.max: 101 [Function]
-   std.chrono.time_point.min: 100 [Function]
+   std.chrono.time_point.max: 102 [Function]
+   std.chrono.time_point.min: 101 [Function]
       nb\SteadyTime.cpp
       nb\SystemTime.cpp
-   std.chrono.time_point.operator+=: 98 [Function]
-   std.chrono.time_point.operator-=: 99 [Function]
-   std.chrono.time_point.time_point(): 95 [Function]
-   std.chrono.time_point.time_point(const Duration&): 96 [Function]
-   std.chrono.time_point.time_since_epoch: 97 [Function]
+   std.chrono.time_point.operator+=: 99 [Function]
+   std.chrono.time_point.operator-=: 100 [Function]
+   std.chrono.time_point.time_point(): 96 [Function]
+   std.chrono.time_point.time_point(const Duration&): 97 [Function]
+   std.chrono.time_point.time_since_epoch: 98 [Function]
       nb\StatisticsThread.cpp
       nb\SystemTime.cpp
 subs\cmath
@@ -65883,6 +65898,7 @@ subs\cstdint
       nb\CliText.h
       nb\CliTextParm.cpp
       nb\CliTextParm.h
+      nb\Debug.cpp
       nb\Deferred.cpp
       nb\Deferred.h
       nb\Duration.h
@@ -66030,6 +66046,7 @@ subs\cstdint
       nb\StatisticsGroup.cpp
       nb\Symbol.cpp
       nb\SysDecls.h
+      nb\SysHeap.win.cpp
       nb\SysMutex.cpp
       nb\SysTypes.cpp
       nb\SysTypes.h
@@ -66068,6 +66085,7 @@ subs\cstdio
       nb\SysFile.cpp
       nt\NtIncrement.cpp
       nt\TestDatabase.cpp
+   perror: 13 [Function]
    remove: 10 [Function]
       ct\Editor.cpp
       nb\CliTextParm.cpp
@@ -66096,7 +66114,7 @@ subs\cstring
       nb\Memory.cpp
       nw\SysIpL2Addr.win.cpp
       nw\SysIpL3Addr.win.cpp
-   strchr: 16 [Function]
+   strchr: 17 [Function]
       nb\SysThreadStack.win.cpp
    strcmp: 14 [Function]
       nb\CliText.cpp
@@ -66104,8 +66122,10 @@ subs\cstring
       nb\FunctionTrace.cpp
       nt\FunctionProfiler.cpp
       nt\FunctionStats.cpp
-   strcpy_s: 15 [Function]
+   strcpy: 15 [Function]
+   strcpy_s: 16 [Function]
       launcher\RscLauncher.win.cpp
+   strerror: 20 [Function]
    strlen: 13 [Function]
       ct\CodeWarning.cpp
       ct\Cxx.cpp
@@ -66126,7 +66146,7 @@ subs\cstring
       nb\MainArgs.cpp
       nb\ModuleRegistry.cpp
       nb\Thread.cpp
-   strstr: 17 [Function]
+   strstr: 18 [Function]
       nb\FunctionTrace.cpp
       nb\SysThreadStack.win.cpp
       nb\TraceBuffer.cpp
@@ -66418,35 +66438,33 @@ subs\ios
    std.uppercase: 53 [SpaceData]
 subs\iosfwd
    IOSFWD_INCLUDED: 6 [Define]
-   std.allocator: 10 [Forward]
-   std.basic_fstream: 20 [Forward]
-   std.basic_ifstream: 18 [Forward]
-   std.basic_ios: 13 [Forward]
-   std.basic_istream: 14 [Forward]
-   std.basic_istringstream: 16 [Forward]
-   std.basic_ofstream: 19 [Forward]
-   std.basic_ostream: 15 [Forward]
-   std.basic_ostringstream: 17 [Forward]
-   std.char_traits: 11 [Forward]
-   std.fstream: 29 [Typedef]
-   std.ifstream: 27 [Typedef]
+   std.basic_fstream: 17 [Forward]
+   std.basic_ifstream: 15 [Forward]
+   std.basic_ios: 10 [Forward]
+   std.basic_istream: 11 [Forward]
+   std.basic_istringstream: 13 [Forward]
+   std.basic_ofstream: 16 [Forward]
+   std.basic_ostream: 12 [Forward]
+   std.basic_ostringstream: 14 [Forward]
+   std.fstream: 26 [Typedef]
+   std.ifstream: 24 [Typedef]
       launcher\RscLauncher.cpp
       nb\SysFile.cpp
-   std.ios: 22 [Typedef]
+   std.ios: 19 [Typedef]
       ct\CodeFile.cpp
       nb\SysFile.cpp
-   std.istream: 23 [Typedef]
+   std.istream: 20 [Typedef]
       ct\CxxRoot.cpp
       ct\CxxRoot.h
       nb\SysConsole.cpp
       nb\SysConsole.h
       nb\SysTypes.h
-   std.istringstream: 25 [Typedef]
+   std.istringstream: 22 [Typedef]
       nb\CfgIntParm.cpp
       nb\CliBuffer.cpp
-   std.ofstream: 28 [Typedef]
+   std.ofstream: 25 [Typedef]
       nb\SysFile.cpp
-   std.ostream: 24 [Typedef]
+   std.ostream: 21 [Typedef]
       an\PotsTrafficThread.cpp
       an\PotsTrafficThread.h
       cb\BcAddress.cpp
@@ -66934,7 +66952,7 @@ subs\iosfwd
       st\StTestData.h
       st\TestSessions.cpp
       st\TestSessions.h
-   std.ostringstream: 26 [Typedef]
+   std.ostringstream: 23 [Typedef]
       ct\CodeCoverage.cpp
       ct\CodeCoverage.h
       ct\CodeDirSet.cpp
@@ -67087,101 +67105,101 @@ subs\iterator
       nb\SlabHeap.cpp
 subs\list
    LIST_INCLUDED: 6 [Define]
-   std.list: 12 [Class]
+   std.list: 13 [Class]
       ct\CxxFwd.h
       ct\Library.h
       dip\BaseBot.h
       dip\DipTypes.h
       nb\CliBuffer.cpp
       nb\CliBuffer.h
-   std.list.back(): 40 [Function]
+   std.list.back(): 41 [Function]
       ct\CodeFile.cpp
-   std.list.back() const: 39 [Function]
+   std.list.back() const: 40 [Function]
       ct\CodeFile.cpp
-   std.list.begin(): 21 [Function]
+   std.list.begin(): 22 [Function]
       dip\Adjudicator.cpp
       dip\BaseBot.cpp
       dip\UnitOrder.cpp
-   std.list.begin() const: 25 [Function]
+   std.list.begin() const: 26 [Function]
       ct\Editor.cpp
       ct\Library.cpp
       dip\MapAndUnits.cpp
-   std.list.cbegin: 26 [Function]
+   std.list.cbegin: 27 [Function]
       ct\CodeFile.cpp
       ct\Editor.cpp
       ct\Library.cpp
       ct\LibraryVarSet.cpp
       nb\CliBuffer.cpp
-   std.list.cend: 27 [Function]
+   std.list.cend: 28 [Function]
       ct\CodeFile.cpp
       ct\Editor.cpp
       ct\Library.cpp
       ct\LibraryVarSet.cpp
       nb\CliBuffer.cpp
-   std.list.clear: 33 [Function]
+   std.list.clear: 34 [Function]
       dip\MapAndUnits.cpp
       dip\UnitOrder.cpp
       nb\CliBuffer.cpp
-   std.list.const_iterator: 16 [Typedef]
-   std.list.crbegin: 28 [Function]
-   std.list.crend: 29 [Function]
-   std.list.empty: 34 [Function]
+   std.list.const_iterator: 17 [Typedef]
+   std.list.crbegin: 29 [Function]
+   std.list.crend: 30 [Function]
+   std.list.empty: 35 [Function]
       ct\CodeFile.cpp
       nb\CliBuffer.cpp
-   std.list.end(): 22 [Function]
+   std.list.end(): 23 [Function]
       dip\Adjudicator.cpp
       dip\BaseBot.cpp
       dip\UnitOrder.cpp
-   std.list.end() const: 30 [Function]
+   std.list.end() const: 31 [Function]
       ct\Editor.cpp
       ct\Library.cpp
       dip\MapAndUnits.cpp
-   std.list.erase(const_iterator): 43 [Function]
+   std.list.erase(const_iterator): 44 [Function]
       ct\CodeFile.cpp
       ct\Library.cpp
       dip\BaseBot.cpp
-   std.list.erase(const_iterator,const_iterator): 44 [Function]
-   std.list.front(): 42 [Function]
+   std.list.erase(const_iterator,const_iterator): 45 [Function]
+   std.list.front(): 43 [Function]
       nb\CliBuffer.cpp
-   std.list.front() const: 41 [Function]
+   std.list.front() const: 42 [Function]
       nb\CliBuffer.cpp
-   std.list.insert(const_iterator,const T&): 46 [Function]
-   std.list.insert(const_iterator,size_t,const T&): 47 [Function]
-   std.list.insert(iterator,const T&): 45 [Function]
+   std.list.insert(const_iterator,const T&): 47 [Function]
+   std.list.insert(const_iterator,size_t,const T&): 48 [Function]
+   std.list.insert(iterator,const T&): 46 [Function]
       ct\CodeFile.cpp
       ct\Library.cpp
-   std.list.iterator: 15 [Typedef]
-   std.list.list(): 17 [Function]
-   std.list.list(const list&): 19 [Function]
-   std.list.list(size_t,const T&): 18 [Function]
-   std.list.pop_back: 50 [Function]
+   std.list.iterator: 16 [Typedef]
+   std.list.list(): 18 [Function]
+   std.list.list(const list&): 20 [Function]
+   std.list.list(size_t,const T&): 19 [Function]
+   std.list.pop_back: 51 [Function]
       ct\Library.cpp
-   std.list.pop_front: 51 [Function]
+   std.list.pop_front: 52 [Function]
       nb\CliBuffer.cpp
-   std.list.push_back: 48 [Function]
+   std.list.push_back: 49 [Function]
       ct\CodeFile.cpp
       dip\BaseBot.cpp
       dip\MapAndUnits.cpp
       dip\UnitOrder.cpp
       nb\CliBuffer.cpp
-   std.list.push_front: 49 [Function]
+   std.list.push_front: 50 [Function]
       dip\Adjudicator.cpp
       nb\CliBuffer.cpp
-   std.list.rbegin(): 23 [Function]
-   std.list.rbegin() const: 31 [Function]
-   std.list.rend(): 24 [Function]
-   std.list.rend() const: 32 [Function]
-   std.list.resize(size_t): 35 [Function]
-   std.list.resize(size_t,const T&): 36 [Function]
-   std.list.size: 37 [Function]
+   std.list.rbegin(): 24 [Function]
+   std.list.rbegin() const: 32 [Function]
+   std.list.rend(): 25 [Function]
+   std.list.rend() const: 33 [Function]
+   std.list.resize(size_t): 36 [Function]
+   std.list.resize(size_t,const T&): 37 [Function]
+   std.list.size: 38 [Function]
       ct\LibraryVarSet.cpp
       dip\BaseBot.cpp
       nb\CliBuffer.cpp
-   std.list.sort(): 52 [Function]
-   std.list.sort(bool (*sorted)(T& first, T& second)): 53 [Function]
+   std.list.sort(): 53 [Function]
+   std.list.sort(bool (*sorted)(T& first, T& second)): 54 [Function]
       ct\CodeFile.cpp
-   std.list.swap: 38 [Function]
-   std.list.~list: 20 [Function]
+   std.list.swap: 39 [Function]
+   std.list.~list: 21 [Function]
 subs\map
    MAP_INCLUDED: 6 [Define]
    std.map: 14 [Class]

@@ -1,20 +1,20 @@
 LINE COUNTS
-   81775   source code not in one of the categories below
-   42483   blank line
-   18932   blank comment
+   81812   source code not in one of the categories below
+   42501   blank line
+   18937   blank comment
    10714   comment at the top of a file (e.g. for the file's name or license info)
-    8232   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   21851   comment not in one of the categories above (e.g. //  <text>)
-   16673   bare left brace
-   15088   bare right brace
+    8233   comment followed by a repeated character to draw a rule (e.g. //---- ...)
+   21815   comment not in one of the categories above (e.g. //  <text>)
+   16683   bare left brace
+   15098   bare right brace
     1586   bare right brace with semicolon
     1788   access control
-    5186   invocation of Debug::ft
-     667   definition of an fn_name
-    6500   #include directive
+    5187   invocation of Debug::ft
+     668   definition of an fn_name
+    6502   #include directive
     1179   preprocessor directive other than #include
      960   using statement
-  233614   TOTAL
+  233663   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   138  C-style cast
@@ -67,7 +67,7 @@ WARNING COUNTS (* if supported by >fix)
   W121     2  Static member function has indirect argument for its class
   W125     1  Non-const cast is not a downcast
 * W127    16  Data could be free
-* W130     8  Redundant scope
+* W130     9  Redundant scope
   W131     2  C-style preprocessor directive
   W141     3  Function could be moved to a subclass
 ====================================================================================================================================
@@ -107,12 +107,12 @@ W004 C-style cast
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(565):       ReserveBlock((HeapBlock*) addr);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(673):                   if(block < (HeapBlock*) heap_)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(675):                   else if(block < (HeapBlock*) heap_->minAddr)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(744):    FreeBlock((HeapBlock*) addr, level);
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(792):    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(892):       auto size = BlockToSize((const HeapBlock*) addr);
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(895):       auto index = BlockToIndex((const HeapBlock*) addr, level);
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(947):       if((HeapBlock*) block->link.prev->next != block)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(949):       if((HeapBlock*) block->link.next->prev != block)
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(752):    FreeBlock((HeapBlock*) addr, level);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(800):    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(900):       auto size = BlockToSize((const HeapBlock*) addr);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(903):       auto index = BlockToIndex((const HeapBlock*) addr, level);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(955):       if((HeapBlock*) block->link.prev->next != block)
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(957):       if((HeapBlock*) block->link.next->prev != block)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Class.cpp(227):    return (Object*) addr;
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CliPtrParm.cpp(91):          p = (void*) n;
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Formatters.cpp(161):       auto base = (const Base*) obj;
@@ -162,7 +162,7 @@ W004 C-style cast
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Registry.h(579):       auto table = (T**) Memory::Alloc(size, mem_);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Singleton.h(85):       reg->BindInstance((const Base**) &Instance_, type);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Singleton.h(104):       reg->UnbindInstance((const Base**) &Instance_);
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(355):       auto succ = (void*) (uintptr_t(addr) + size);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(364):       auto succ = (void*) (uintptr_t(addr) + size);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysThread.win.cpp(188):       (_beginthreadex_proc_type) EnterThread, (void*) client, 0, &id);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysThread.win.cpp(188):       (_beginthreadex_proc_type) EnterThread, (void*) client, 0, &id);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysThread.win.cpp(196):    SetThreadPriorityBoost((HANDLE) nthread_, true);
@@ -238,7 +238,7 @@ W005 Functional cast
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Lexer.cpp(2325):          fp *= std::pow(10.0, int(num));
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Lexer.cpp(2432):          oper = Cxx::Operator(match->second);
   C:\Users\Greg\Documents\rsc\rsc\src\mb\Tones.h(73):    Id Tid() const { return Id(tid_.GetId()); }
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(779):    return BlockState(state);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(787):    return BlockState(state);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Memory.cpp(340):       heaps.push_back(AccessHeap(MemoryType(m)));
   C:\Users\Greg\Documents\rsc\rsc\src\nb\NbIncrement.cpp(594):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\NbIncrement.cpp(975):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
@@ -481,12 +481,12 @@ W007 Cast down the inheritance hierarchy
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeItemSet.cpp(238):       auto item = static_cast<CxxScoped*>(*i);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeItemSet.cpp(260):       auto item = static_cast<CxxNamed*>(*i);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(206):       auto file = static_cast<CodeFile*>(*f);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1005):       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1027):       auto data = static_cast<const Data*>(item_);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1069):       auto func = static_cast<Function*>(item_);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1149):       auto cls = static_cast<const Class*>(item_);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1173):       auto cls = static_cast<const Class*>(item_);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1204):          auto func = static_cast<const Function*>(item_);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1002):       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1024):       auto data = static_cast<const Data*>(item_);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1066):       auto func = static_cast<Function*>(item_);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1146):       auto cls = static_cast<const Class*>(item_);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1170):       auto cls = static_cast<const Class*>(item_);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1201):          auto func = static_cast<const Function*>(item_);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CtIncrement.cpp(1083):          auto dir = static_cast<CodeDir*>(*d);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CtIncrement.cpp(1106):          auto file = static_cast<CodeFile*>(*f);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CxxArea.cpp(108):       auto cls = static_cast<Class*>(call->Via()->Root());
@@ -636,9 +636,9 @@ W007 Cast down the inheritance hierarchy
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(5574):    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(5639):    auto type = static_cast<TypeName*>(log.item_);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6206):    static_cast<Function*>(log.item_)->SetExplicit(true);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6255):    static_cast<Function*>(log.item_)->SetOverride(true);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6359):    static_cast<Function*>(log.item_)->SetVirtual(true);
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6647):       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6254):    static_cast<Function*>(log.item_)->SetOverride(true);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6358):    static_cast<Function*>(log.item_)->SetVirtual(true);
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6646):       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Lexer.cpp(3214):          auto def = static_cast<Define*>(item);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Library.cpp(668):             auto f = static_cast<const Function*>(elem);
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Parser.cpp(455):    auto op = static_cast<Operation*>(token.get());
@@ -1528,9 +1528,9 @@ W026 Unused argument
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.h(434/1):    word SplitVirtualFunction(const Function* func);
   C:\Users\Greg\Documents\rsc\rsc\src\mb\MediaEndpt.h(109/1):    virtual void ProcessIcMsg(Message& msg);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(77/3):       const string& prefix, const Flags& options) const;
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(117/1):    static void noop(debug64_t info = 0);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(118/1):    static void noop(debug64_t info = 0);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Deferred.h(89/1):    virtual void EventHasOccurred(Event event) = 0;
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(229/1):    bool Validate(const void* addr) const;
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(232/1):    bool Validate(const void* addr) const;
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysLock.h(80/3):       const std::string& prefix, const Flags& options) const;
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysMemory.h(45/2):    bool Free(void* addr, size_t size);
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysThreadStack.h(38/1):    void Startup(RestartLevel level);
@@ -1643,7 +1643,7 @@ W032 Unused function
   C:\Users\Greg\Documents\rsc\rsc\src\dip\TokenMessage.h(48):    explicit TokenMessage(const Token* stream);
   C:\Users\Greg\Documents\rsc\rsc\src\dip\TokenMessage.h(141):    void set_as_ascii(const std::string& text);
   C:\Users\Greg\Documents\rsc\rsc\src\dip\WinterOrders.h(52):    size_t get_number_of_results() const;
-  C:\Users\Greg\Documents\rsc\rsc\src\launcher\RscLauncher.cpp(143): int main()
+  C:\Users\Greg\Documents\rsc\rsc\src\launcher\RscLauncher.cpp(144): int main()
   C:\Users\Greg\Documents\rsc\rsc\src\mb\MediaEndpt.h(58):    StateId GetState() const { return state_; }
   C:\Users\Greg\Documents\rsc\rsc\src\mb\MediaEndpt.h(62):    virtual void SetState(StateId stid);
   C:\Users\Greg\Documents\rsc\rsc\src\mb\MediaEndpt.h(72):    ProtocolSM* MgwPsm() const;
@@ -2909,7 +2909,7 @@ W090 Function could be const
   C:\Users\Greg\Documents\rsc\rsc\src\sb\TextTlvMessage.h(84):    virtual SbIpBufferPtr Build() = 0;
   C:\Users\Greg\Documents\rsc\rsc\src\st\TestSessions.h(265):    void UpdateTestPsm();
 W091 Function could be static
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(229):    bool Validate(const void* addr) const;
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(232):    bool Validate(const void* addr) const;
 W092 Function could be free
   C:\Users\Greg\Documents\rsc\rsc\src\an\PotsTrafficThread.h(88):    static void DisplayStateCounts // AnIncrement.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\cb\BcAddress.h(175):    static bool IsValidDigit(Digit d) // DigitString.cpp
@@ -2986,10 +2986,10 @@ W092 Function could be free
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CfgTuple.h(92):    static const std::string& ValidValueChars(); // CfgParmRegistry.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CfgTuple.h(97):    static const std::string& ValidBlankChars(); // CfgParmRegistry.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CoutThread.h(48):    static void Spool(c_string s, bool eol = false); // CoutThread.cpp
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(105):    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(109):    static void ResetSwFlags(); // NtIncrement.cpp
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(113):    static Flags GetSwFlags(); // NtIncrement.cpp
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(117):    static void noop(debug64_t info = 0); // CxxExecute.cpp
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(106):    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(110):    static void ResetSwFlags(); // NtIncrement.cpp
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(114):    static Flags GetSwFlags(); // NtIncrement.cpp
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h(118):    static void noop(debug64_t info = 0); // CxxExecute.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Element.h(50):    static bool IsUnnamed(); // ModuleRegistry.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\nb\FileThread.h(45):    static ostringstreamPtr CreateStream(); // CliThread.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\nb\FileThread.h(58):    static void Spool(const std::string& name, ostringstreamPtr& stream, // FileThread.cpp
@@ -3369,15 +3369,15 @@ W106 Function does not invoke Debug::ft
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeTypes.cpp(426): size_t LineLengthMax()
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(343): bool CodeWarning::HasCodeToDisplay() const
   C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(350): bool CodeWarning::HasInfoToDisplay() const
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(812): bool CodeWarning::IsInformational() const
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(819): bool CodeWarning::IsSortedByFile
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(838): bool CodeWarning::IsSortedByType
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(857): bool CodeWarning::IsSortedToFix
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(876): void CodeWarning::ItemDeleted(const CxxToken* item) const
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(886): size_t CodeWarning::Line() const
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(954): bool CodeWarning::Preserve() const
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(981): bool CodeWarning::Suppress() const
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1243): bool CodeWarning::WasResolved() const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(809): bool CodeWarning::IsInformational() const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(816): bool CodeWarning::IsSortedByFile
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(835): bool CodeWarning::IsSortedByType
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(854): bool CodeWarning::IsSortedToFix
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(873): void CodeWarning::ItemDeleted(const CxxToken* item) const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(883): size_t CodeWarning::Line() const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(951): bool CodeWarning::Preserve() const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(978): bool CodeWarning::Suppress() const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp(1240): bool CodeWarning::WasResolved() const
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Cxx.cpp(89): Cxx::Access FindAccessControl(const std::string& s)
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Cxx.cpp(810): static void EraseTemplateArgs
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Cxx.cpp(842): static void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
@@ -3688,15 +3688,15 @@ W106 Function does not invoke Debug::ft
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(592): HeapBlock* BuddyHeap::Dequeue(level_t level) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(697): void BuddyHeap::EnqBlock(HeapBlock* block, index_t index, level_t level) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(706): HeapBlock* BuddyHeap::Enqueue(HeapBlock* block, level_t level) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(749): void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(768): BuddyHeap::BlockState BuddyHeap::GetState(index_t index) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(784): HeapBlock* BuddyHeap::IndexToBlock(index_t index, level_t level) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(797): size_t BuddyHeap::Overhead() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(811): void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(827): void BuddyHeap::ReserveBlock(const HeapBlock* block) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(853): void BuddyHeap::SetState(index_t index, BlockState state) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(869): void BuddyHeap::SplitAncestors(index_t block) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(917): BuddyHeap::BlockState BuddyHeap::ValidateBlock
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(757): void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(776): BuddyHeap::BlockState BuddyHeap::GetState(index_t index) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(792): HeapBlock* BuddyHeap::IndexToBlock(index_t index, level_t level) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(805): size_t BuddyHeap::Overhead() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(819): void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(835): void BuddyHeap::ReserveBlock(const HeapBlock* block) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(861): void BuddyHeap::SetState(index_t index, BlockState state) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(877): void BuddyHeap::SplitAncestors(index_t block) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(925): BuddyHeap::BlockState BuddyHeap::ValidateBlock
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CfgBitParm.cpp(88): void CfgBitParm::Explain(string& expl) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CfgFlagParm.cpp(55): bool CfgFlagParm::CurrValue() const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CfgFlagParm.cpp(74): bool CfgFlagParm::NextValue() const
@@ -3707,9 +3707,9 @@ W106 Function does not invoke Debug::ft
   C:\Users\Greg\Documents\rsc\rsc\src\nb\ClassRegistry.cpp(89): Class* ClassRegistry::Lookup(ClassId cid) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CliBuffer.cpp(618): bool CliBuffer::ReadingFromFile() const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CliCookie.cpp(118): uint32_t CliCookie::Index(uint32_t depth) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(57): void Debug::Assert(bool condition, debug64_t errval)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(73): void Debug::ft(fn_name_arg func) NO_FT
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(81): void Debug::ftnt(fn_name_arg func) NO_FT
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(67): void Debug::Assert(bool condition, debug64_t errval)
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(96): void Debug::ft(fn_name_arg func) NO_FT
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(104): void Debug::ftnt(fn_name_arg func) NO_FT
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Element.cpp(199): bool Element::RunningInLab()
   C:\Users\Greg\Documents\rsc\rsc\src\nb\FunctionTrace.cpp(191): CtorChain::CtorChain(FunctionTrace* inner) :
   C:\Users\Greg\Documents\rsc\rsc\src\nb\FunctionTrace.cpp(208): bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
@@ -3786,14 +3786,14 @@ W106 Function does not invoke Debug::ft
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Restart.cpp(70): RestartLevel Restart::LevelToClear(MemoryType type)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\RootThread.cpp(61): static Gate& ExitGate()
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Singletons.cpp(126): Singletons* Singletons::Instance()
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(384): void SlabPriv::Corrupt(int reason, bool restart) const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(394): size_t SlabPriv::CurrAvail() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(578): size_t SlabPriv::Overhead() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(641): size_t SlabPriv::Size() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(707): size_t SlabHeap::CurrAvail() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(744): size_t SlabHeap::Overhead() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(778): size_t SlabHeap::Size() const
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(785): MemoryType SlabHeap::Type() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(393): void SlabPriv::Corrupt(int reason, bool restart) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(403): size_t SlabPriv::CurrAvail() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(587): size_t SlabPriv::Overhead() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(650): size_t SlabPriv::Size() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(716): size_t SlabHeap::CurrAvail() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(761): size_t SlabHeap::Overhead() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(795): size_t SlabHeap::Size() const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(802): MemoryType SlabHeap::Type() const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Statistics.cpp(117): uint64_t Statistic::Overall() const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Statistics.cpp(248): uint64_t HighWatermark::Overall() const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Statistics.cpp(320): uint64_t LowWatermark::Overall() const
@@ -3801,7 +3801,7 @@ W106 Function does not invoke Debug::ft
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysConsole.cpp(33): std::istream& SysConsole::In()
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysConsole.cpp(40): ostream& SysConsole::Out()
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysFile.cpp(68): size_t SysFile::FindExt(const string& name, const string& ext)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SysHeap.win.cpp(179): size_t SysHeap::Overhead() const { return 0; }
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SysHeap.win.cpp(185): size_t SysHeap::Overhead() const { return 0; }
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysLock.cpp(70): SysLock::~SysLock()
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysLock.cpp(80): void SysLock::Acquire()
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysLock.cpp(97): void SysLock::Release()
@@ -4116,7 +4116,7 @@ W119 Argument passed by value is modified
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(4585/1):    (size_t pos, const string& nspace, const string& forward)
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(5211/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(5404/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6637/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+  C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp(6636/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Interpreter.cpp(488/1): LibExprErr Interpreter::ApplyOperator(bool operand)
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Interpreter.cpp(599/1): LibrarySet* Interpreter::Error(LibExprErr err) const
   C:\Users\Greg\Documents\rsc\rsc\src\ct\Lexer.cpp(1285/1): size_t Lexer::CurrBegin(size_t pos) const
@@ -4153,8 +4153,8 @@ W119 Argument passed by value is modified
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Base.cpp(90/1): void Base::Nullify(size_t n)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(294/1): void* BuddyHeap::Alloc(size_t size)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(444/1): bool BuddyHeap::Create(size_t size)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(749/1): void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(869/1): void BuddyHeap::SplitAncestors(index_t block) const
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(757/1): void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp(877/1): void BuddyHeap::SplitAncestors(index_t block) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CliBuffer.cpp(214/3):    (const CliThread& cli, const string& expl, std::streamsize p)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CliText.cpp(39/2): CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
   C:\Users\Greg\Documents\rsc\rsc\src\nb\CliTextParm.cpp(142/2): void CliTextParm::Explain(ostream& stream, col_t indent) const
@@ -4165,7 +4165,7 @@ W119 Argument passed by value is modified
   C:\Users\Greg\Documents\rsc\rsc\src\nb\ObjectPool.cpp(525/1): bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\ObjectPool.cpp(539/1): Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
   C:\Users\Greg\Documents\rsc\rsc\src\nb\ObjectPool.cpp(563/1): bool ObjectPool::Corrupt(size_t n)
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(620/1): void SlabPriv::SetSlabSize(size_t size)
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp(629/1): void SlabPriv::SetSlabSize(size_t size)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SysMemory.win.cpp(72/1): void* SysMemory::Alloc(void* addr, size_t size, MemoryProtection attrs)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Thread.cpp(1090/1): static bool ClearActiveThread(Thread* active)
   C:\Users\Greg\Documents\rsc\rsc\src\nb\Thread.cpp(1884/1): bool Thread::HandleSignal(signal_t sig, uint32_t code)
@@ -4219,14 +4219,15 @@ W127 Data could be free
   C:\Users\Greg\Documents\rsc\rsc\src\pb\PotsCircuit.h(181):    static const SignalEntry NilSignalEntry; // PotsCircuit.cpp
   C:\Users\Greg\Documents\rsc\rsc\src\sb\Context.h(360):    static const MessageEntry NilMessageEntry; // Context.cpp
 W130 Redundant scope
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(91):    Debug::ft("Debug.GetSwFlags");
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(101):    Debug::ft("Debug.noop");
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(108):    Debug::ft("Debug.Progress");
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(118):    Debug::ft("Debug.ResetSwFlags");
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(127):    Debug::ftnt("Debug.SetSwFlag");
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(146):    Debug::ftnt("Debug.SwFlagOn");
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(163):    Debug::ftnt(Debug_SwLog);
-  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(167):    Debug::ftnt(Debug_SwLog);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(79):    Debug::ft("Debug.Exiting");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(114):    Debug::ft("Debug.GetSwFlags");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(124):    Debug::ft("Debug.noop");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(131):    Debug::ft("Debug.Progress");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(141):    Debug::ft("Debug.ResetSwFlags");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(150):    Debug::ftnt("Debug.SetSwFlag");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(169):    Debug::ftnt("Debug.SwFlagOn");
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(186):    Debug::ftnt(Debug_SwLog);
+  C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp(192):    Debug::ftnt(Debug_SwLog);
 W131 C-style preprocessor directive
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SystemTime.cpp(74): #ifdef OS_WIN
   C:\Users\Greg\Documents\rsc\rsc\src\nb\SystemTime.cpp(79): #ifdef OS_LINUX
@@ -4777,26 +4778,26 @@ C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.cpp
     297:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
   W007 Cast down the inheritance hierarchy
     206:       auto file = static_cast<CodeFile*>(*f);
-    1005:       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
-    1027:       auto data = static_cast<const Data*>(item_);
-    1069:       auto func = static_cast<Function*>(item_);
-    1149:       auto cls = static_cast<const Class*>(item_);
-    1173:       auto cls = static_cast<const Class*>(item_);
-    1204:          auto func = static_cast<const Function*>(item_);
+    1002:       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+    1024:       auto data = static_cast<const Data*>(item_);
+    1066:       auto func = static_cast<Function*>(item_);
+    1146:       auto cls = static_cast<const Class*>(item_);
+    1170:       auto cls = static_cast<const Class*>(item_);
+    1201:          auto func = static_cast<const Function*>(item_);
   W008 Cast removes const qualification
     95:    item_(const_cast<CxxToken*>(item)),
 * W106 Function does not invoke Debug::ft
     343: bool CodeWarning::HasCodeToDisplay() const
     350: bool CodeWarning::HasInfoToDisplay() const
-    812: bool CodeWarning::IsInformational() const
-    819: bool CodeWarning::IsSortedByFile
-    838: bool CodeWarning::IsSortedByType
-    857: bool CodeWarning::IsSortedToFix
-    876: void CodeWarning::ItemDeleted(const CxxToken* item) const
-    886: size_t CodeWarning::Line() const
-    954: bool CodeWarning::Preserve() const
-    981: bool CodeWarning::Suppress() const
-    1243: bool CodeWarning::WasResolved() const
+    809: bool CodeWarning::IsInformational() const
+    816: bool CodeWarning::IsSortedByFile
+    835: bool CodeWarning::IsSortedByType
+    854: bool CodeWarning::IsSortedToFix
+    873: void CodeWarning::ItemDeleted(const CxxToken* item) const
+    883: size_t CodeWarning::Line() const
+    951: bool CodeWarning::Preserve() const
+    978: bool CodeWarning::Suppress() const
+    1240: bool CodeWarning::WasResolved() const
 C:\Users\Greg\Documents\rsc\rsc\src\ct\CodeWarning.h
 * W020 Using statement in header
     38: using NodeBase::word;
@@ -5807,9 +5808,9 @@ C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp
     5574:    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
     5639:    auto type = static_cast<TypeName*>(log.item_);
     6206:    static_cast<Function*>(log.item_)->SetExplicit(true);
-    6255:    static_cast<Function*>(log.item_)->SetOverride(true);
-    6359:    static_cast<Function*>(log.item_)->SetVirtual(true);
-    6647:       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
+    6254:    static_cast<Function*>(log.item_)->SetOverride(true);
+    6358:    static_cast<Function*>(log.item_)->SetVirtual(true);
+    6646:       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
   W082 Adjacent arguments have the same type
     579: static void DebugFtNames(const Function* func, string& flit, string& fvar)
     949: static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
@@ -5824,7 +5825,7 @@ C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.cpp
     4585/1:    (size_t pos, const string& nspace, const string& forward)
     5211/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
     5404/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-    6637/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+    6636/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
 C:\Users\Greg\Documents\rsc\rsc\src\ct\Editor.h
 * W020 Using statement in header
     47: using namespace NodeBase;
@@ -6402,7 +6403,7 @@ C:\Users\Greg\Documents\rsc\rsc\src\dip\WinterOrders.h
     52:    size_t get_number_of_results() const;
 C:\Users\Greg\Documents\rsc\rsc\src\launcher\RscLauncher.cpp
 * W032 Unused function
-    143: int main()
+    144: int main()
 C:\Users\Greg\Documents\rsc\rsc\src\launcher\RscLauncher.win.cpp
   W056 Implicit constructor invoked: POD members not initialized
   i 38:    STARTUPINFOA si;
@@ -6645,14 +6646,14 @@ C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp
     565:       ReserveBlock((HeapBlock*) addr);
     673:                   if(block < (HeapBlock*) heap_)
     675:                   else if(block < (HeapBlock*) heap_->minAddr)
-    744:    FreeBlock((HeapBlock*) addr, level);
-    792:    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
-    892:       auto size = BlockToSize((const HeapBlock*) addr);
-    895:       auto index = BlockToIndex((const HeapBlock*) addr, level);
-    947:       if((HeapBlock*) block->link.prev->next != block)
-    949:       if((HeapBlock*) block->link.next->prev != block)
+    752:    FreeBlock((HeapBlock*) addr, level);
+    800:    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
+    900:       auto size = BlockToSize((const HeapBlock*) addr);
+    903:       auto index = BlockToIndex((const HeapBlock*) addr, level);
+    955:       if((HeapBlock*) block->link.prev->next != block)
+    957:       if((HeapBlock*) block->link.next->prev != block)
   W005 Functional cast
-    779:    return BlockState(state);
+    787:    return BlockState(state);
   W026 Unused argument
     77/3:       const string& prefix, const Flags& options) const;
 * W053 Data could be const
@@ -6674,20 +6675,20 @@ C:\Users\Greg\Documents\rsc\rsc\src\nb\BuddyHeap.cpp
     592: HeapBlock* BuddyHeap::Dequeue(level_t level) const
     697: void BuddyHeap::EnqBlock(HeapBlock* block, index_t index, level_t level) const
     706: HeapBlock* BuddyHeap::Enqueue(HeapBlock* block, level_t level) const
-    749: void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
-    768: BuddyHeap::BlockState BuddyHeap::GetState(index_t index) const
-    784: HeapBlock* BuddyHeap::IndexToBlock(index_t index, level_t level) const
-    797: size_t BuddyHeap::Overhead() const
-    811: void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level) const
-    827: void BuddyHeap::ReserveBlock(const HeapBlock* block) const
-    853: void BuddyHeap::SetState(index_t index, BlockState state) const
-    869: void BuddyHeap::SplitAncestors(index_t block) const
-    917: BuddyHeap::BlockState BuddyHeap::ValidateBlock
+    757: void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
+    776: BuddyHeap::BlockState BuddyHeap::GetState(index_t index) const
+    792: HeapBlock* BuddyHeap::IndexToBlock(index_t index, level_t level) const
+    805: size_t BuddyHeap::Overhead() const
+    819: void BuddyHeap::ReleaseBlock(HeapBlock* block, level_t level) const
+    835: void BuddyHeap::ReserveBlock(const HeapBlock* block) const
+    861: void BuddyHeap::SetState(index_t index, BlockState state) const
+    877: void BuddyHeap::SplitAncestors(index_t block) const
+    925: BuddyHeap::BlockState BuddyHeap::ValidateBlock
   W119 Argument passed by value is modified
     294/1: void* BuddyHeap::Alloc(size_t size)
     444/1: bool BuddyHeap::Create(size_t size)
-    749/1: void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
-    869/1: void BuddyHeap::SplitAncestors(index_t block) const
+    757/1: void BuddyHeap::FreeBlock(HeapBlock* block, level_t level)
+    877/1: void BuddyHeap::SplitAncestors(index_t block) const
 C:\Users\Greg\Documents\rsc\rsc\src\nb\CallbackRequest.h
   W075 Virtual function is public
     44:    virtual void Callback() { }
@@ -6986,26 +6987,27 @@ C:\Users\Greg\Documents\rsc\rsc\src\nb\Daemon.h
     148:    virtual void Recover() { }
 C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.cpp
 * W106 Function does not invoke Debug::ft
-    57: void Debug::Assert(bool condition, debug64_t errval)
-    73: void Debug::ft(fn_name_arg func) NO_FT
-    81: void Debug::ftnt(fn_name_arg func) NO_FT
+    67: void Debug::Assert(bool condition, debug64_t errval)
+    96: void Debug::ft(fn_name_arg func) NO_FT
+    104: void Debug::ftnt(fn_name_arg func) NO_FT
 * W130 Redundant scope
-    91:    Debug::ft("Debug.GetSwFlags");
-    101:    Debug::ft("Debug.noop");
-    108:    Debug::ft("Debug.Progress");
-    118:    Debug::ft("Debug.ResetSwFlags");
-    127:    Debug::ftnt("Debug.SetSwFlag");
-    146:    Debug::ftnt("Debug.SwFlagOn");
-    163:    Debug::ftnt(Debug_SwLog);
-    167:    Debug::ftnt(Debug_SwLog);
+    79:    Debug::ft("Debug.Exiting");
+    114:    Debug::ft("Debug.GetSwFlags");
+    124:    Debug::ft("Debug.noop");
+    131:    Debug::ft("Debug.Progress");
+    141:    Debug::ft("Debug.ResetSwFlags");
+    150:    Debug::ftnt("Debug.SetSwFlag");
+    169:    Debug::ftnt("Debug.SwFlagOn");
+    186:    Debug::ftnt(Debug_SwLog);
+    192:    Debug::ftnt(Debug_SwLog);
 C:\Users\Greg\Documents\rsc\rsc\src\nb\Debug.h
   W026 Unused argument
-    117/1:    static void noop(debug64_t info = 0);
+    118/1:    static void noop(debug64_t info = 0);
 * W092 Function could be free
-    105:    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
-    109:    static void ResetSwFlags(); // NtIncrement.cpp
-    113:    static Flags GetSwFlags(); // NtIncrement.cpp
-    117:    static void noop(debug64_t info = 0); // CxxExecute.cpp
+    106:    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
+    110:    static void ResetSwFlags(); // NtIncrement.cpp
+    114:    static Flags GetSwFlags(); // NtIncrement.cpp
+    118:    static void noop(debug64_t info = 0); // CxxExecute.cpp
 C:\Users\Greg\Documents\rsc\rsc\src\nb\Deferred.cpp
   W006 reinterpret_cast
     99:    auto fake = reinterpret_cast<const Deferred*>(&local);
@@ -7582,22 +7584,22 @@ C:\Users\Greg\Documents\rsc\rsc\src\nb\Singletons.cpp
     126: Singletons* Singletons::Instance()
 C:\Users\Greg\Documents\rsc\rsc\src\nb\SlabHeap.cpp
   W004 C-style cast
-    355:       auto succ = (void*) (uintptr_t(addr) + size);
+    364:       auto succ = (void*) (uintptr_t(addr) + size);
   W026 Unused argument
-    229/1:    bool Validate(const void* addr) const;
+    232/1:    bool Validate(const void* addr) const;
 * W091 Function could be static
-    229:    bool Validate(const void* addr) const;
+    232:    bool Validate(const void* addr) const;
 * W106 Function does not invoke Debug::ft
-    384: void SlabPriv::Corrupt(int reason, bool restart) const
-    394: size_t SlabPriv::CurrAvail() const
-    578: size_t SlabPriv::Overhead() const
-    641: size_t SlabPriv::Size() const
-    707: size_t SlabHeap::CurrAvail() const
-    744: size_t SlabHeap::Overhead() const
-    778: size_t SlabHeap::Size() const
-    785: MemoryType SlabHeap::Type() const
+    393: void SlabPriv::Corrupt(int reason, bool restart) const
+    403: size_t SlabPriv::CurrAvail() const
+    587: size_t SlabPriv::Overhead() const
+    650: size_t SlabPriv::Size() const
+    716: size_t SlabHeap::CurrAvail() const
+    761: size_t SlabHeap::Overhead() const
+    795: size_t SlabHeap::Size() const
+    802: MemoryType SlabHeap::Type() const
   W119 Argument passed by value is modified
-    620/1: void SlabPriv::SetSlabSize(size_t size)
+    629/1: void SlabPriv::SetSlabSize(size_t size)
 C:\Users\Greg\Documents\rsc\rsc\src\nb\SoftwareException.h
 * W043 Member could be protected
     41:    SoftwareException(debug64_t errval, debug64_t offset);
@@ -7674,7 +7676,7 @@ C:\Users\Greg\Documents\rsc\rsc\src\nb\SysHeap.h
     99:    SysHeap(MemoryType type, size_t size);
 C:\Users\Greg\Documents\rsc\rsc\src\nb\SysHeap.win.cpp
 * W106 Function does not invoke Debug::ft
-    179: size_t SysHeap::Overhead() const { return 0; }
+    185: size_t SysHeap::Overhead() const { return 0; }
 C:\Users\Greg\Documents\rsc\rsc\src\nb\SysLock.cpp
 * W106 Function does not invoke Debug::ft
     70: SysLock::~SysLock()

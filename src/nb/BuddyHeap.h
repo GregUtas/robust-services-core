@@ -90,7 +90,7 @@ public:
 
    //  Overridden to change the heap's memory protection.
    //
-   virtual int SetPermissions(MemoryProtection attrs);
+   int SetPermissions(MemoryProtection attrs) override;
 
    //  Overridden to return the heap's size.
    //

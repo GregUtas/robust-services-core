@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Debug.h"
+#include <cstdint>
 #include <ios>
 #include <new>
 #include <sstream>
@@ -75,6 +76,8 @@ void Debug::Assert(bool condition, debug64_t errval)
 
 void Debug::Exiting()
 {
+   Debug::ft("Debug.Exiting");
+
    //  Disable function tracing and logs while destructors are invoked
    //  during shutdown.
    //

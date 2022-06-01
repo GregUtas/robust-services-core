@@ -325,8 +325,8 @@ main_t RootThread::Main()
    Singleton<RootThread>::Instance();
    ExitGate().WaitFor(TIMEOUT_NEVER);
 
-   //  If we get here, RootThread wants the system to exit and possibly
-   //  get rebooted.
+   //  If we get here, RootThread wants the system to exit and
+   //  possibly get rebooted.
    //
    Debug::Exiting();
    exit(ExitCode);

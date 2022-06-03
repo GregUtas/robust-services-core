@@ -39,6 +39,7 @@
 #include "Parser.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysFile.h"
 #include "SystemTime.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -316,7 +317,7 @@ void CxxRoot::DefineSymbols(std::istream& stream)
 
    while(stream.peek() != EOF)
    {
-      std::getline(stream, input);
+      SysFile::GetLine(stream, input);
 
       if(IsValidIdentifier(input))
       {

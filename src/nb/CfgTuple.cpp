@@ -84,18 +84,6 @@ void CfgTuple::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool CfgTuple::IsValidEndChar(char c)
-{
-   //  Valid end-of-line characters in a file that contains configuration
-   //  tuples are the comment character and endlines (CR and LF).
-   //
-   static const string EndChars("/\n\r");
-
-   return (EndChars.find(c) != string::npos);
-}
-
-//------------------------------------------------------------------------------
-
 ptrdiff_t CfgTuple::LinkDiff()
 {
    uintptr_t local;

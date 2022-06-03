@@ -28,6 +28,7 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysConsole.h"
+#include "SysFile.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -106,7 +107,7 @@ void CinThread::Enter()
 
       EnterBlockingOperation(BlockedOnStream, CinThread_Enter);
       {
-         std::getline(source, buff_);
+         SysFile::GetLine(source, buff_);
       }
       ExitBlockingOperation(CinThread_Enter);
 

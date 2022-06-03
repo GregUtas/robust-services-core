@@ -233,7 +233,7 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
 
    while(stream->peek() != EOF)
    {
-      std::getline(*stream, line);
+      SysFile::GetLine(*stream, line);
 
       if(line.empty())
       {

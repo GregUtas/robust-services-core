@@ -24,7 +24,6 @@
 #include <filesystem>
 #include <fstream>
 #include <ios>
-#include <iosfwd>
 #include <new>
 #include <system_error>
 #include "Debug.h"
@@ -75,6 +74,14 @@ size_t SysFile::FindExt(const string& name, const string& ext)
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+void SysFile::GetLine(std::istream& stream, std::string& str)
+{
+   std::getline(stream, str);
+   if(!str.empty() && (str.back() == '\r')) str.pop_back();
 }
 
 //------------------------------------------------------------------------------

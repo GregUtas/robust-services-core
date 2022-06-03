@@ -362,7 +362,7 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
 
    ThisThread::EnterBlockingOperation(BlockedOnStream, CliBuffer_GetLine);
    {
-      std::getline(*source.file_, buff_);
+      SysFile::GetLine(*source.file_, buff_);
    }
    ThisThread::ExitBlockingOperation(CliBuffer_GetLine);
 

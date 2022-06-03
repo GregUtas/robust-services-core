@@ -87,7 +87,7 @@ static bool LoadNextTuple(string& key, string& value)
       //  Skip any line that is empty, that contains only blanks, or that
       //  has the comment character as its first non-blank character.
       //
-      std::getline(*Stream_, input);
+      SysFile::GetLine(*Stream_, input);
       ++CurrLine_;
 
       if(input.empty()) continue;
@@ -148,8 +148,7 @@ static bool LoadNextTuple(string& key, string& value)
 
       auto extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
       if(extra == string::npos) return true;
-      if(CfgTuple::IsValidEndChar(input[extra])) return true;
-
+      if(input[extra] == CfgTuple::CommentChar) return true;
       BadLine(ConfigExtraIgnored, input.substr(extra));
       return true;
    }

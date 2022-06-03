@@ -96,11 +96,6 @@ public:
    //
    static const std::string& ValidBlankChars();
 
-   //  Returns true if C is valid as the first non-blank character after
-   //  a key-value pair in the file that sets configuration parameters.
-   //
-   static bool IsValidEndChar(char c);
-
    //  Returns the offset to link_.
    //
    static ptrdiff_t LinkDiff();

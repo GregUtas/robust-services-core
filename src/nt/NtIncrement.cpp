@@ -289,7 +289,7 @@ word NtLogsCommand::Sort
 
    while(infile->peek() != EOF)
    {
-      std::getline(*infile, line);
+      SysFile::GetLine(*infile, line);
 
       if(line.empty())
       {

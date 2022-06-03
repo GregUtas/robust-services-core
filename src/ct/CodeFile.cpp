@@ -2460,13 +2460,13 @@ bool CodeFile::ReadCode(string& code) const
 
    while(input->peek() != EOF)
    {
-      std::getline(*input, str);
+      SysFile::GetLine(*input, str);
       code += str;
       code.push_back(CRLF);
    }
 
-   //  std::getline reads up to the next endline or EOF, so we added the
-   //  endline back in. However, this results in adding an endline at the
+   //  SysFile::GetLine reads up to the next endline or EOF, so we added an
+   //  endline back in.  However, this results in adding an endline at the
    //  end of the file, even if it didn't have one. Remove such an endline.
    //
    input->seekg(-1, std::ios::end);

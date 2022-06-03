@@ -23,6 +23,7 @@
 #define SYSFILE_H_INCLUDED
 
 #include <cstddef>
+#include <iosfwd>
 #include <set>
 #include <string>
 #include "SysTypes.h"
@@ -44,6 +45,11 @@ namespace SysFile
    //  appended to it unless TRUNC is false.
    //
    ostreamPtr CreateOstream(c_string name, bool trunc = false);
+
+   //  The same as std::getline, but removes the trailing '\r' at the end
+   //  of STR when a text file created on Windows is read on Linux.
+   //
+   void GetLine(std::istream& stream, std::string& str);
 
    //  If NAME ends with EXT, returns the position where EXT begins, else
    //  returns string::npos.

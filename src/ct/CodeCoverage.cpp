@@ -128,7 +128,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
       while(stream->peek() != EOF)
       {
-         std::getline(*stream, input);
+         SysFile::GetLine(*stream, input);
 
          str = strGet(input);
          if(str.empty() || !isdigit(str.front())) continue;
@@ -384,7 +384,7 @@ word CodeCoverage::Load(string& expl)
 
    while(stream->peek() != EOF)
    {
-      std::getline(*stream, input);
+      SysFile::GetLine(*stream, input);
 
       while(!input.empty())
       {

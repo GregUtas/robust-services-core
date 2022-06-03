@@ -197,7 +197,7 @@ void TestDatabase::Insert(const string& testname, const string& dir)
 
       while(stream->peek() != EOF)
       {
-         std::getline(*stream, input);
+         SysFile::GetLine(*stream, input);
          contents += input;
       }
 
@@ -252,7 +252,7 @@ void TestDatabase::Load()
 
    while(stream->peek() != EOF)
    {
-      std::getline(*stream, input);
+      SysFile::GetLine(*stream, input);
 
       while(!input.empty() && (state == LoadTest))
       {
@@ -414,7 +414,7 @@ void TestDatabase::Update()
 
       while(stream->peek() != EOF)
       {
-         std::getline(*stream, input);
+         SysFile::GetLine(*stream, input);
          auto str = strGet(input);
          if(str != "tests") continue;
          str = strGet(input);

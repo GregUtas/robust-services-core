@@ -121,6 +121,12 @@ namespace NodeBase
    //
    void ReplaceScopeOperators(std::string& name);
 
+   //  Skips any leading blanks in INPUT and returns the next string, which
+   //  ends at the next blank.  Updates INPUT by removing the string and the
+   //  leading blanks.
+   //
+   std::string strGet(std::string& input);
+
    //  Uses typeid to return OBJ's class name.  Removes any namespace qualifier
    //  if NS is false.  Returns "undefined" if OBJ is nullptr.
    //
@@ -139,11 +145,10 @@ namespace NodeBase
    //
    std::string strObj(const void* obj, bool ns = true);
 
-   //  Skips any leading blanks in INPUT and returns the next string, which
-   //  ends at the next blank.  Updates INPUT by removing the string and the
-   //  leading blanks.
+   //  Platform-specific function for demangling NAME.  Implemented in the
+   //  platform's SysThreadStack target.
    //
-   std::string strGet(std::string& input);
+   extern void Demangle(std::string& name);
 }
 
 #endif

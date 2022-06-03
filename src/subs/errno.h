@@ -11,6 +11,7 @@ extern int errno;
 constexpr int EPERM = 1;
 constexpr int EINTR = 4;
 constexpr int EWOULDBLOCK = 11;
+constexpr int EACCES = 13;
 constexpr int EINVAL = 22;
 constexpr int EPROTONOSUPPORT = 93;
 constexpr int ENETDOWN = 100;

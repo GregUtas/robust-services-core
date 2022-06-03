@@ -161,7 +161,7 @@ string strClass(const void* obj, bool ns)
       auto base = (const Base*) obj;
       string name(typeid(*base).name());
 
-      if(name.find("class ") == 0) name.erase(0, 6);
+      Demangle(name);
 
       if(!ns)
       {

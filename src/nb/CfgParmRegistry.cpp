@@ -148,7 +148,7 @@ static bool LoadNextTuple(string& key, string& value)
 
       auto extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
       if(extra == string::npos) return true;
-      if(input[extra] == CfgTuple::CommentChar) return true;
+      if(CfgTuple::IsValidEndChar(input[extra])) return true;
 
       BadLine(ConfigExtraIgnored, input.substr(extra));
       return true;

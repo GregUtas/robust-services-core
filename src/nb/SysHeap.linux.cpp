@@ -25,7 +25,6 @@
 #include <cstdlib>
 #include <errno.h>
 #include <malloc.h>
-#include <mcheck.h>
 #include <ostream>
 #include <string>
 #include "AllocationException.h"
@@ -183,6 +182,13 @@ bool SysHeap::Validate(const void* addr) const
 {
    Debug::ft("SysHeap.Validate");
 
+   //  UPDATE: The following discusses linking with -lmcheck.  However, this
+   //  makes it unsafe to allocate memory from multiple threads without added
+   //  synchronization.  Even if the correct synchronization--whatever it is--
+   //  was added, being able to validate the heap seems unlikely to be worth
+   //  the overhead that it would introduce.  For further information, see
+   //  https://stackoverflow.com/questions/29894916
+   //
    //  To validate the default help on Linux, mcheck() must have been called
    //  before malloc().  Because we allocate memory before entering main(),
    //  the only way to ensure this is to link using -lmcheck.  But doing so
@@ -193,7 +199,6 @@ bool SysHeap::Validate(const void* addr) const
    //  a flag to let the signal handler know that, right now, a SIGABRT would
    //  signify heap corruption.
    //
-   mcheck_check_all();
    return true;
 }
 }

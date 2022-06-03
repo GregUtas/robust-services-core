@@ -94,7 +94,6 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton<Element>::Instance()->Shutdown(level);
    Singleton<ClassRegistry>::Instance()->Shutdown(level);
    Singleton<ThreadAdmin>::Instance()->Shutdown(level);
-   Singleton<ThreadRegistry>::Instance()->Shutdown(level);
    Singleton<ObjectPoolRegistry>::Instance()->Shutdown(level);
    Singleton<DeferredRegistry>::Instance()->Shutdown(level);
    Singleton<DaemonRegistry>::Instance()->Shutdown(level);
@@ -102,6 +101,7 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton<LogGroupRegistry>::Instance()->Shutdown(level);
    Singleton<AlarmRegistry>::Instance()->Shutdown(level);
    Singleton<StatisticsRegistry>::Instance()->Shutdown(level);
+   Singleton<ThreadRegistry>::Instance()->Shutdown(level);
    Singleton<LogBufferRegistry>::Instance()->Shutdown(level);
    Singleton<PosixSignalRegistry>::Instance()->Shutdown(level);
 
@@ -123,6 +123,7 @@ void NbModule::Startup(RestartLevel level)
    //
    Singleton<PosixSignalRegistry>::Instance()->Startup(level);
    Singleton<LogBufferRegistry>::Instance()->Startup(level);
+   Singleton<ThreadRegistry>::Instance()->Startup(level);
    Singleton<StatisticsRegistry>::Instance()->Startup(level);
    Singleton<AlarmRegistry>::Instance()->Startup(level);
    Singleton<LogGroupRegistry>::Instance()->Startup(level);
@@ -131,7 +132,6 @@ void NbModule::Startup(RestartLevel level)
    Singleton<DaemonRegistry>::Instance()->Startup(level);
    Singleton<DeferredRegistry>::Instance()->Startup(level);
    Singleton<ObjectPoolRegistry>::Instance()->Startup(level);
-   Singleton<ThreadRegistry>::Instance()->Startup(level);
    Singleton<ThreadAdmin>::Instance()->Startup(level);
    Singleton<MsgBufferPool>::Instance()->Startup(level);
    Singleton<ClassRegistry>::Instance()->Startup(level);

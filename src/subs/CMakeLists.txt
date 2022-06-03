@@ -17,6 +17,7 @@ set(Headers
     "cstdlib"
     "cstring"
     "ctime"
+    "cxxabi.h"
     "dbghelp.h"
     "endian.h"
     "errno.h"

@@ -44,6 +44,15 @@ using std::string;
 
 namespace NodeBase
 {
+//  Demangling for MSVC.
+//
+void Demangle(std::string& name)
+{
+   if(name.find("class ") == 0) name.erase(0, 6);
+}
+
+//------------------------------------------------------------------------------
+//
 //  The maximum number of frames that RtlCaptureStackBackTrace can capture.
 //  On Windows XP, it's 62.  In later versions of Windows, it's UINT16_MAX.
 //

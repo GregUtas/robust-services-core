@@ -1477,7 +1477,8 @@ void Thread::DisplaySummary
 {
    stream << setw(2) << Tid();
    stream << setw(8) << AbbrName() << SPACE;
-   stream << setw(8) << std::hex << NativeThreadId() << std::dec;
+   auto nid = (NativeThreadId() & UINT32_MAX);
+   stream << setw(8) << std::hex << nid << std::dec;
 
    auto f = FactionChar(faction_);
    if(priv_->unpreempts_ == 0) f = tolower(f);
@@ -2956,7 +2957,7 @@ void Thread::SignalHandler(signal_t sig)
    //
    RegisterForSignals();
 
-   //* Support SIGWRITE on Linux.  On Windows, it is distinguished from
+   //L Support SIGWRITE on Linux.  On Windows, it is distinguished from
    //  SIGSEGV when mapping the infamous 0xc0000005 structured exception
    //  in SysThread.win.cpp.  A different solution is needed on Linux.
    //

@@ -24,6 +24,7 @@
 #include "SysThread.h"
 #include <csignal>
 #include <cstdint>
+#include <errno.h>
 #include <pthread.h>
 #include <sys/resource.h>
 #include "Debug.h"
@@ -37,10 +38,10 @@ namespace NodeBase
 //
 const int PriorityMap[SysThread::Priority_N] =
 {
-   1,  // LowPriority
-   2,  // DefaultPriority
-   3,  // SystemPriority
-   4   // WatchdogPriority
+   0,  // LowPriority
+   1,  // DefaultPriority
+   2,  // SystemPriority
+   3   // WatchdogPriority
 };
 
 //------------------------------------------------------------------------------
@@ -65,13 +66,14 @@ void SysThread::ConfigureProcess()
    Debug::ft(SysThread_ConfigureProcess);
 
    //  Set our overall process priority.
+   //L setpriority returns EACCES (permission denied) when setting the
+   //  process priority.
    //
-   auto err = setpriority(PRIO_PROCESS, 0, -1);
-
-   if(err != 0)
-   {
-      ReportError(SysThread_ConfigureProcess, "setpriority", err);
-   }
+   // auto err = setpriority(PRIO_PROCESS, 0, -1);
+   // if(err != 0)
+   // {
+   //    ReportError(SysThread_ConfigureProcess, "setpriority", err);
+   // }
 }
 
 //------------------------------------------------------------------------------
@@ -88,9 +90,14 @@ bool SysThread::Create(const Thread* client, size_t size)
    //  o They will be scheduled round-robin, using the real-time scheduler.
    //
    pthread_attr_t attrs;
-   pthread_attr_init(&attrs);
 
-   auto err = pthread_attr_setdetachstate(&attrs, PTHREAD_CREATE_DETACHED);
+   auto err = pthread_attr_init(&attrs);
+   if(err != 0)
+   {
+      return ReportError(SysThread_Create, "attr_init", err);
+   }
+
+   err = pthread_attr_setdetachstate(&attrs, PTHREAD_CREATE_DETACHED);
    if(err != 0)
    {
       return ReportError(SysThread_Create, "setdetachstate", err);
@@ -108,11 +115,14 @@ bool SysThread::Create(const Thread* client, size_t size)
       return ReportError(SysThread_Create, "setinheritsched", err);
    }
 
-   err = pthread_attr_setschedpolicy(&attrs, SCHED_RR);
-   if(err != 0)
-   {
-      return ReportError(SysThread_Create, "setschedpolicy", err);
-   }
+   //L pthread_create returns EINVAL(invalid attributes) if the scheduler
+   //  policy is set to round-robin.
+   //
+   // err = pthread_attr_setschedpolicy(&attrs, SCHED_RR);
+   // if(err != 0)
+   // {
+   //    return ReportError(SysThread_Create, "setschedpolicy", err);
+   // }
 
    pthread_t thread;
 
@@ -188,14 +198,17 @@ bool SysThread::SetPriority(Priority prio)
 
    if(priority_ == prio) return true;
 
-   auto err = pthread_setschedprio((pthread_t) nthread_, PriorityMap[prio]);
-   if(err != 0)
-   {
-      ReportError(SysThread_SetPriority, "setschedparam", err);
-      return false;
-   }
+   //L pthread_setschedprio returns EPERM (not permitted) when setting the
+   //  thread's priority.
+   //
+   // auto err = pthread_setschedprio((pthread_t) nthread_, PriorityMap[prio]);
+   // if(err != 0)
+   // {
+   //   ReportError(SysThread_SetPriority, "setschedparam", err);
+   //   return false;
+   // }
 
-   priority_ = prio;
+   // priority_ = prio;
    return true;
 }
 

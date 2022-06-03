@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <cxxabi.h>
 #include <execinfo.h>
 #include <memory>
 #include <ostream>
@@ -40,6 +41,19 @@ using std::string;
 
 namespace NodeBase
 {
+//  Demangling for gcc.
+//
+void Demangle(std::string& name)
+{
+   int status = 0;
+   auto buffer = __cxxabiv1::__cxa_demangle
+      (name.c_str(), nullptr, nullptr, &status);
+   if(status == 0) name = buffer;
+   free(buffer);
+}
+
+//------------------------------------------------------------------------------
+//
 //  The maximum number of frames that will be .
 //
 constexpr size_t MaxFrames = 2048;

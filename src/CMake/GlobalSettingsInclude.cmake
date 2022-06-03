@@ -117,6 +117,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Allow signal handler to throw a C++ exception
     add_compile_options(-fnon-call-exceptions)
 
+    # Disable all optimizations
+    add_compile_options(-O0)
+
     # Enable all compiler warnings
     add_compile_options(-Wall)
 
@@ -132,9 +135,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Enable POSIX threads
     add_compile_options(-pthread)
     add_link_options(-pthread)
-
-    # Enable heap validation
-    add_link_options(-lmcheck)
 else()
     message(FATAL_ERROR "** ${CMAKE_CXX_COMPILER_ID} compiler is not supported")
 endif()

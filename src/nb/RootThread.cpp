@@ -42,6 +42,7 @@
 #include "SysThread.h"
 #include "SysThreadStack.h"
 #include "ThreadAdmin.h"
+#include "ThreadRegistry.h"
 
 using std::ostream;
 using std::string;
@@ -319,6 +320,12 @@ main_t RootThread::Main()
    //  Set up our process.
    //
    SysThread::ConfigureProcess();
+
+   //  Create ThreadRegistry.  Thread::Start uses its GetState
+   //  function to see when a Thread has been fully constructed
+   //  and can safely proceed.
+   //
+   Singleton<ThreadRegistry>::Instance();
 
    //  Create the root thread and wait for it to exit.
    //

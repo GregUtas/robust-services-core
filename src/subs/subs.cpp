@@ -59,6 +59,7 @@
 #endif
 
 #ifdef OS_LINUX
+#include "cxxabi.h"
 #include "endian.h"
 #include "errno.h"
 #include "execinfo.h"

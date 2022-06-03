@@ -926,7 +926,7 @@ void CodeFile::CheckProlog()
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
 
-   auto prolog = Prolog();
+   auto& prolog = Prolog();
    size_t line = 3;
 
    for(size_t i = 0; i < prolog.size(); ++i)
@@ -1041,7 +1041,7 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 {
    if(dir_ == nullptr) return;
 
-   stream << Path();
+   stream << Path(false);
    if(parsed_ == Unparsed) stream << ": NOT PARSED";
    stream << CRLF;
    if(parsed_ == Unparsed) return;
@@ -2289,6 +2289,11 @@ string CodeFile::Path(bool full) const
       if(name.find(path, 0) == 0)
       {
          name.erase(0, path.size());
+      }
+
+      for(size_t i = 0; i < name.size(); ++i)
+      {
+         if(name[i] == PATH_SEPARATOR) name[i] = '/';
       }
    }
 

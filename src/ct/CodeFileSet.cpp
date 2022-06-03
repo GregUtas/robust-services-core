@@ -350,7 +350,7 @@ LibrarySet* CodeFileSet::FileName(const LibrarySet* that) const
 
    //  THAT's name encodes the desired filename (e.g. "Sys").
    //
-   auto fn = that->Name();
+   auto& fn = that->Name();
    if(fn.empty()) return result;
 
    //  Iterate over the set of code files to find those that begin with "fn".
@@ -573,7 +573,7 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 
    //  THAT's name is the string to be searched for.
    //
-   auto s = that->Name();
+   auto& s = that->Name();
    if(s.empty()) return result;
 
    //  Iterate over the set of code files to find those that contains S.
@@ -774,7 +774,7 @@ word CodeFileSet::Scan
       {
          if(!shown)
          {
-            stream << file->Path() << ':' << CRLF;
+            stream << file->Path(false) << ':' << CRLF;
             shown = true;
          }
 
@@ -810,7 +810,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
    auto heading = false;
    word room = 65;
 
-   auto fileSet = Items();
+   auto& fileSet = Items();
    size_t shown = 0;
    size_t level = order.front().level + 1;  // to cause mismatch
 

@@ -62,7 +62,8 @@ public:
    CodeFile& operator=(const CodeFile& that) = delete;
 
    //  Returns the file's path.  If FULL is not set, the path to the source
-   //  code directory is removed from the front of the path.
+   //  code directory is removed from the front of the path and the separator
+   //  character is standardized to '/'.
    //
    std::string Path(bool full = true) const;
 

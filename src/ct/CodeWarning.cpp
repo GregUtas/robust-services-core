@@ -260,11 +260,9 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       do
       {
          auto f = (*item)->File();
-         auto path = f->Path();
 
          *stream << ((*item)->IsInformational() ? 'i' : SPACE);
-         *stream << SPACE << path.erase(0, dir.size() + 1);
-         *stream << '(' << (*item)->Line() + 1;
+         *stream << SPACE << f->Path(false);
          if((*item)->offset_ > 0) *stream << '/' << (*item)->offset_;
          *stream << "): ";
 
@@ -293,8 +291,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
    while(item != last)
    {
       auto f = (*item)->File();
-      auto path = f->Path();
-      *stream << path.erase(0, dir.size() + 1) << CRLF;
+      *stream << f->Path(false) << CRLF;
 
       do
       {

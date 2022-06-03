@@ -37,6 +37,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
+#include "Library.h"
 #include "Singleton.h"
 #include "ThisThread.h"
 
@@ -239,6 +240,8 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       }
    }
 
+   auto dir = Singleton<Library>::Instance()->SourcePath();
+
    *stream << string(132, '=') << CRLF;
    *stream << "WARNINGS SORTED BY TYPE/FILE/LINE (i = informational)" << CRLF;
 
@@ -257,9 +260,10 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       do
       {
          auto f = (*item)->File();
+         auto path = f->Path();
 
          *stream << ((*item)->IsInformational() ? 'i' : SPACE);
-         *stream << SPACE << f->Path();
+         *stream << SPACE << path.erase(0, dir.size() + 1);
          *stream << '(' << (*item)->Line() + 1;
          if((*item)->offset_ > 0) *stream << '/' << (*item)->offset_;
          *stream << "): ";
@@ -289,7 +293,8 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
    while(item != last)
    {
       auto f = (*item)->File();
-      *stream << f->Path() << CRLF;
+      auto path = f->Path();
+      *stream << path.erase(0, dir.size() + 1) << CRLF;
 
       do
       {

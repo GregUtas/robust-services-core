@@ -150,8 +150,13 @@ constexpr size_t SlabSize = 8 * MBs;
 //
 enum SlabCorruptionReason
 {
-   FreeAreaNotInAvail,  // area is FREE but wasn't found in avail_
-   FreeAreaNotInAreas   // area is FREE but wasn't found in areas_
+   AreaMisaligned,        // area's addr != previous area's addr + size
+   AvailNotFoundInAreas,  // found in avail but not found in areas
+   FreeNotFoundInAvail,   // marked FREE in areas_but not found in avail
+   NotFreeFoundInAvail,   // not marked FREE in areas but found in avail
+   SlabAddrNotInAreas,    // slab's addr not found in areas
+   TooFewAreas,           // areas exhausted before all slabs accounted for
+   TooManyAreas           // slabs exhausted before all areas accounted for
 };
 
 //==============================================================================
@@ -240,10 +245,10 @@ private:
    //
    void EraseFromFree(const AreaInfo& area);
 
-   //  Invoked when corruption is detected.  REASON specifies the type
-   //  of corruption, and RESTART is set to initiate a restart.
+   //  Invoked when corruption is detected.  REASON specifies the type of
+   //  corruption, and RESTART is set to initiate a restart.  Returns false.
    //
-   void Corrupt(int reason, bool restart) const;
+   bool Corrupt(int reason, bool restart) const;
 
    //  The type of memory that the heap manages.
    //
@@ -348,7 +353,7 @@ void* SlabPriv::Alloc(size_t size)
    auto block = areas_.find(addr);
    if(block == areas_.cend())
    {
-      Corrupt(FreeAreaNotInAreas, true);
+      Corrupt(AvailNotFoundInAreas, true);
       return nullptr;
    }
 
@@ -390,12 +395,16 @@ size_t SlabPriv::BlockToSize(const void* addr) const
 
 //------------------------------------------------------------------------------
 
-void SlabPriv::Corrupt(int reason, bool restart) const
+bool SlabPriv::Corrupt(int reason, bool restart) const
 {
+   Debug::ft("SlabPriv.Corrupt");
+
    if(restart && !Element::RunningInLab())
       Restart::Initiate(Restart::LevelToClear(type_), HeapCorruption, reason);
    else
       Debug::SwLog("SlabPriv.Corrupt", "slab corruption", reason);
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -490,7 +499,7 @@ void SlabPriv::EraseFromFree(const AreaInfo& area)
       }
    }
 
-   Corrupt(FreeAreaNotInAvail, true);
+   Corrupt(FreeNotFoundInAvail, true);
 }
 
 //------------------------------------------------------------------------------
@@ -667,10 +676,105 @@ bool SlabPriv::Validate(const void* addr) const
 {
    Debug::ft("SlabPriv.Validate");
 
-   //* Iterate over areas_ to verify that all memory in slabs_ is accounted
-   //  for with no gaps or overlaps, and that an unused area also appears in
-   //  avail_.
+   MutexGuard guard(mutex_.get());
+
+   //  Iterate over areas_ to verify that all memory in slabs_ is accounted
+   //  for with no gaps or overlaps, that an entry appears in avail_ iff its
+   //  area is FREE, and that each entry in avail_ is known to areas_.
    //
+   size_t slabsFound = 0;
+   auto slabFirst = true;
+   auto slab = slabs_.cend();
+   void* areaNext = nullptr;
+
+   for(auto area = areas_.cbegin(); area != areas_.cend(); ++area)
+   {
+      if(slabFirst)
+      {
+         //  Find the slab that starts at this area's address.
+         //
+         for(auto s = slabs_.cbegin(); s != slabs_.cend(); ++s)
+         {
+            if(area->first == s->addr_)
+            {
+               slabFirst = false;
+               ++slabsFound;
+               slab = s;
+               break;
+            }
+         }
+
+         if(slabFirst)
+            return Corrupt(SlabAddrNotInAreas, true);
+      }
+      else
+      {
+         //  This is not the start of a new slab, so this area's address
+         //  should continue where the previous area left off.
+         //
+         if(area->second.addr_ != areaNext)
+            return Corrupt(AreaMisaligned, true);
+      }
+
+      //  Look for this area in avail_.  If the area is FREE, it should
+      //  be found there.  If it isn't FREE, it shouldn't be found.
+      //
+      auto avail = avail_.equal_range(area->second.size_);
+      auto found = false;
+
+      for(auto free = avail.first; free != avail.second; ++free)
+      {
+         if(free->second.addr_ == area->first)
+         {
+            found = true;
+            break;
+         }
+      }
+
+      if(found)
+      {
+         if(area->second.state_ != FREE)
+            return Corrupt(NotFreeFoundInAvail, true);
+      }
+      else
+      {
+         if(area->second.state_ == FREE)
+            return Corrupt(FreeNotFoundInAvail, true);
+      }
+
+      //  Set the expected address of the next area.  If it would be beyond
+      //  the end of the current slab, proceed to the next slab.
+      //
+      areaNext = area->second.addr_ + area->second.size_;
+
+      if(areaNext >= (slab->addr_ + slab->size_))
+      {
+         if(slabsFound >= slabs_.size())
+         {
+            //  All slabs have been handled, so there should be no more areas.
+            //
+            if(++area != areas_.cend())
+               return Corrupt(TooManyAreas, true);
+            break;
+         }
+
+         slabFirst = true;
+      }
+   }
+
+   //  If we didn't reach the end of the last slab, there were too few areas.
+   //
+   if(slabsFound < slabs_.size())
+      return Corrupt(TooFewAreas, true);
+
+   //  Verify that all entries in avail_ have addresses in areas_.
+   //
+   for(auto avail = avail_.cbegin(); avail != avail_.cend(); ++avail)
+   {
+      if(areas_.find(avail->second.addr_) == areas_.cend())
+         return Corrupt(AvailNotFoundInAreas, true);
+   }
+
    return true;
 }
 

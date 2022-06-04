@@ -1197,9 +1197,9 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
          string status;
 
          if(result > 0)
-            status = "true";
+            status = "passed";
          else if(result == 0)
-            status = "false";
+            status = "FAILED";
          else
             status = "unallocated";
 

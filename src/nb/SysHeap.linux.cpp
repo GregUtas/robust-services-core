@@ -22,6 +22,7 @@
 #ifdef OS_LINUX
 
 #include "SysHeap.h"
+#include <cstdint>
 #include <cstdlib>
 #include <errno.h>
 #include <malloc.h>

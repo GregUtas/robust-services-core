@@ -21,17 +21,15 @@
 //
 #ifdef OS_LINUX
 
+#include "Formatters.h"
 #include "SysThreadStack.h"
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <memory>
 #include <ostream>
-#include <string>
 #include "Debug.h"
-#include "Formatters.h"
 #include "Log.h"
 
 using std::ostream;

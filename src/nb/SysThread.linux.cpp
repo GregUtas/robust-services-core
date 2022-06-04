@@ -24,7 +24,6 @@
 #include "SysThread.h"
 #include <csignal>
 #include <cstdint>
-#include <errno.h>
 #include <pthread.h>
 #include <sys/resource.h>
 #include "Debug.h"

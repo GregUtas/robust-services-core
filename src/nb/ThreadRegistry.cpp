@@ -187,6 +187,21 @@ void ThreadRegistry::Created(SysThread* systhrd, Thread* thread)
          (Entry(nid, ThreadInfo(tid, Constructing, systhrd, thread)));
       return;
    }
+   else
+   {
+      if(entry->second.state_ == Deleted)
+      {
+         //  The platform reassigned NID to a new thread, so we need to
+         //  reuse this slot after assigning a ThreadId.
+         //
+         auto tid = SetThreadId(thread);
+         entry->second.tid_ = tid;
+         entry->second.state_ = Constructing;
+         entry->second.systhrd_ = systhrd;
+         entry->second.thread_ = thread;
+         return;
+      }
+   }
 
    guard.Release();
    Debug::SwLog(ThreadRegistry_Created, "thread already exists", nid);
@@ -338,11 +353,24 @@ ThreadState ThreadRegistry::GetState()
 
       if(state == Deleted)
       {
-         ThreadAdmin::Incr(ThreadAdmin::Orphans);
-         delete entry->second.systhrd_;
-         entry->second.systhrd_ = nullptr;
-         guard.Release();
-         Debug::SwLog(ThreadRegistry_GetState, "orphan exited", nid);
+         if(entry->second.systhrd_ != nullptr)
+         {
+            //  A Thread was deleted, and its native thread has now exited.
+            //
+            ThreadAdmin::Incr(ThreadAdmin::Orphans);
+            delete entry->second.systhrd_;
+            entry->second.systhrd_ = nullptr;
+            guard.Release();
+            Debug::SwLog(ThreadRegistry_GetState, "orphan exited", nid);
+         }
+         else
+         {
+            //  The platform reassigned NID to a new thread, which started
+            //  to run before the Thread constructor even managed to invoke
+            //  Created.  Wait for it!
+            //
+            return NotRegistered;
+         }
       }
 
       return state;

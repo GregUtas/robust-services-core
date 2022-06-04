@@ -2808,7 +2808,7 @@ Thread* Thread::RunningThread() NO_FT
 
    //  The thread could not be found.  This can occur for various reasons:
    //  o The system has just started to run, and not even RootThread has
-   //    been created to wrap main().
+   //    been created.
    //  o The thread is undergoing deletion and has been removed from the
    //    thread registry.  It shouldn't be calling this itself, but trace
    //    tools will, which is why they use assert=false.

@@ -308,7 +308,7 @@ main_t RootThread::Main()
    SysStackTrace::Startup(RestartReboot);
 
    //  Create the POSIX signals.  They are needed now so that
-   //  RootThread can register for signals when it is wrapped.
+   //  RootThread can register for signals when it is created.
    //
    CreatePosixSignals();
 

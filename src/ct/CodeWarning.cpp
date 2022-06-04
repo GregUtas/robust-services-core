@@ -263,6 +263,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 
          *stream << ((*item)->IsInformational() ? 'i' : SPACE);
          *stream << SPACE << f->Path(false);
+         *stream << '(' << (*item)->Line() + 1;
          if((*item)->offset_ > 0) *stream << '/' << (*item)->offset_;
          *stream << "): ";
 

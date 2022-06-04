@@ -35,9 +35,9 @@
 #include "FunctionName.h"
 #include "Singleton.h"
 #include "SysDecls.h"
+#include "SysStackTrace.h"
 #include "SystemTime.h"
 #include "SysThread.h"
-#include "SysThreadStack.h"
 #include "TraceBuffer.h"
 #include "TraceDump.h"
 #include "TraceRecord.h"
@@ -711,7 +711,7 @@ void FunctionTrace::Capture(fn_name_arg func)
 
    auto buff = Singleton<TraceBuffer>::Extant();
    if(buff == nullptr) return;
-   auto depth = SysThreadStack::FuncDepth() - 3;
+   auto depth = SysStackTrace::FuncDepth() - 3;
 
    //  If this is a destructor call that is not one level deeper than the last
    //  destructor or function, add a call to a compiler-generated "C++.delete"

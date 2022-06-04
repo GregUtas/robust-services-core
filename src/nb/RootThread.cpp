@@ -39,8 +39,8 @@
 #include "NbSignals.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysStackTrace.h"
 #include "SysThread.h"
-#include "SysThreadStack.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
 
@@ -305,7 +305,7 @@ main_t RootThread::Main()
 
    //  Load symbol information.
    //
-   SysThreadStack::Startup(RestartReboot);
+   SysStackTrace::Startup(RestartReboot);
 
    //  Create the POSIX signals.  They are needed now so that
    //  RootThread can register for signals when it is wrapped.

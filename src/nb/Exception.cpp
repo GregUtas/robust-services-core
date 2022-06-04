@@ -24,7 +24,7 @@
 #include <utility>
 #include "Debug.h"
 #include "Duration.h"
-#include "SysThreadStack.h"
+#include "SysStackTrace.h"
 #include "Thread.h"
 
 using std::ostream;
@@ -50,7 +50,7 @@ Exception::Exception(bool stack) : stack_(nullptr)
    {
       stack_.reset(new std::ostringstream);
       *stack_ << std::boolalpha << std::nouppercase;
-      SysThreadStack::Display(*stack_);
+      SysStackTrace::Display(*stack_);
    }
 }
 

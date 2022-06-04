@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysThreadStack.linux.cpp
+//  SysStackTrace.linux.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -21,8 +21,7 @@
 //
 #ifdef OS_LINUX
 
-#include "Formatters.h"
-#include "SysThreadStack.h"
+#include "SysStackTrace.h"
 #include <cstdlib>
 #include <cstring>
 #include <cxxabi.h>
@@ -30,6 +29,7 @@
 #include <memory>
 #include <ostream>
 #include "Debug.h"
+#include "Formatters.h"
 #include "Log.h"
 
 using std::ostream;
@@ -39,20 +39,7 @@ using std::string;
 
 namespace NodeBase
 {
-//  Demangling for gcc.
-//
-void Demangle(std::string& name)
-{
-   int status = 0;
-   auto buffer = __cxxabiv1::__cxa_demangle
-      (name.c_str(), nullptr, nullptr, &status);
-   if(status == 0) name = buffer;
-   free(buffer);
-}
-
-//------------------------------------------------------------------------------
-//
-//  The maximum number of frames that will be .
+//  The maximum number of frames that will be captured.
 //
 constexpr size_t MaxFrames = 2048;
 
@@ -66,7 +53,18 @@ typedef std::unique_ptr<void*[]> StackFramesPtr;
 
 //------------------------------------------------------------------------------
 
-void SysThreadStack::Display(ostream& stream) NO_FT
+void SysStackTrace::Demangle(string& name) NO_FT
+{
+   int status = 0;
+   auto buffer = __cxxabiv1::__cxa_demangle
+   (name.c_str(), nullptr, nullptr, &status);
+   if(status == 0) name = buffer;
+   free(buffer);
+}
+
+//------------------------------------------------------------------------------
+
+void SysStackTrace::Display(ostream& stream) NO_FT
 {
    StackFramesPtr frames(new StackFrames);
 
@@ -111,6 +109,7 @@ void SysThreadStack::Display(ostream& stream) NO_FT
 
          if(!name.empty())
          {
+            Demangle(name);
             ReplaceScopeOperators(name);
             stream << name;
          }
@@ -131,7 +130,7 @@ void SysThreadStack::Display(ostream& stream) NO_FT
 
 //------------------------------------------------------------------------------
 
-fn_depth SysThreadStack::FuncDepth()
+fn_depth SysStackTrace::FuncDepth()
 {
    //  Exclude this function from the depth count.  We're only interested
    //  in the current function's depth, so Frames needn't be per-thread.
@@ -144,21 +143,21 @@ fn_depth SysThreadStack::FuncDepth()
 
 //------------------------------------------------------------------------------
 
-void SysThreadStack::Shutdown(RestartLevel level)
+void SysStackTrace::Shutdown(RestartLevel level)
 {
-   Debug::ft("SysThreadStack.Shutdown");
+   Debug::ft("SysStackTrace.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-void SysThreadStack::Startup(RestartLevel level)
+void SysStackTrace::Startup(RestartLevel level)
 {
-   Debug::ft("SysThreadStack.Startup");
+   Debug::ft("SysStackTrace.Startup");
 }
 
 //------------------------------------------------------------------------------
 
-bool SysThreadStack::TrapIsOk() NO_FT
+bool SysStackTrace::TrapIsOk() NO_FT
 {
    StackFramesPtr frames(new StackFrames);
 

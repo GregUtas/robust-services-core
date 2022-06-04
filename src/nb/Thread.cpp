@@ -65,8 +65,8 @@
 #include "StatisticsRegistry.h"
 #include "SteadyTime.h"
 #include "SysMutex.h"
+#include "SysStackTrace.h"
 #include "SystemTime.h"
-#include "SysThreadStack.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
 #include "Tool.h"
@@ -195,7 +195,7 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
    case PauseExit:
    case PauseEnter:
    {
-      auto depth = SysThreadStack::FuncDepth();
+      auto depth = SysStackTrace::FuncDepth();
       auto buff = Singleton<TraceBuffer>::Instance();
       auto rec = new ThreadTrace(func, depth - 2, rid, info);
       buff->Insert(rec);
@@ -1180,7 +1180,7 @@ Thread::~Thread()
    if(log != nullptr)
    {
       *log << Log::Tab << "thread=" << to_str() << CRLF;
-      SysThreadStack::Display(*log);
+      SysStackTrace::Display(*log);
       *log << Log::Tab << ThreadDataStr << CRLF;
       Display(*log, Log::Tab + spaces(2), NoFlags);
       Log::Submit(log);
@@ -1716,7 +1716,7 @@ void Thread::ExitIfSafe(debug64_t offset) NO_FT
    auto& lock = AccessFtLock();
    if(lock.test_and_set()) return;
 
-   if(!priv_->exiting_ && (priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
+   if(!priv_->exiting_ && (priv_->traps_ == 0) && SysStackTrace::TrapIsOk())
    {
       SetTrap(false);
       lock.clear();

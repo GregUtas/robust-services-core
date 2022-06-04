@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysThreadStack.h
+//  SysStackTrace.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,10 +19,11 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef SYSTHREADSTACK_H_INCLUDED
-#define SYSTHREADSTACK_H_INCLUDED
+#ifndef SYSSTACKTRACE_H_INCLUDED
+#define SYSSTACKTRACE_H_INCLUDED
 
 #include <iosfwd>
+#include <string>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ namespace NodeBase
 {
 //  Operating system abstraction layer: thread stack disassembly.
 //
-namespace SysThreadStack
+namespace SysStackTrace
 {
    //  Loads symbol information during startup.
    //
@@ -44,6 +45,10 @@ namespace SysThreadStack
    //  Returns the depth (on the stack) of the calling function.
    //
    fn_depth FuncDepth();
+
+   //  Demangles NAME.
+   //
+   void Demangle(std::string& name);
 
    //  Writes the current thread's call stack into STREAM.
    //

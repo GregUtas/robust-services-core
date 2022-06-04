@@ -111,14 +111,30 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Enable Linux targets (*.linux.cpp files)
     add_compile_definitions(OS_LINUX)
 
-    # Allows typedefs that hide underlying types in subs/chrono to compile
-    add_compile_options(-fpermissive)
+    # Increase reliability of stack traces
+    add_compile_options(-fasynchronous-unwind-tables)
+
+    # Enable exceptions
+    add_compile_options(-fexceptions)
 
     # Allow signal handler to throw a C++ exception
     add_compile_options(-fnon-call-exceptions)
 
+    # Allow typedefs that hide underlying types in subs/chrono to compile
+    add_compile_options(-fpermissive)
+
+    # Generate debugging information
+    add_compile_options(-g)
+
     # Disable all optimizations
     add_compile_options(-O0)
+
+    # Enable POSIX threads
+    add_compile_options(-pthread)
+    add_link_options(-pthread)
+
+    # Enable function names in stack traces
+    add_compile_options(-rdynamic)
 
     # Enable all compiler warnings
     add_compile_options(-Wall)
@@ -131,10 +147,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-switch)
     add_compile_options(-Wno-trigraphs)
-
-    # Enable POSIX threads
-    add_compile_options(-pthread)
-    add_link_options(-pthread)
 else()
     message(FATAL_ERROR "** ${CMAKE_CXX_COMPILER_ID} compiler is not supported")
 endif()

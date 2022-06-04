@@ -144,11 +144,6 @@ namespace NodeBase
    //  name as returned by strClass.
    //
    std::string strObj(const void* obj, bool ns = true);
-
-   //  Platform-specific function for demangling NAME.  Implemented in the
-   //  platform's SysThreadStack target.
-   //
-   extern void Demangle(std::string& name);
 }
 
 #endif

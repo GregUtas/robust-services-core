@@ -51,7 +51,7 @@
 #include "StatisticsRegistry.h"
 #include "StatisticsThread.h"
 #include "SymbolRegistry.h"
-#include "SysThreadStack.h"
+#include "SysStackTrace.h"
 #include "ThisThread.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
@@ -106,7 +106,7 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton<PosixSignalRegistry>::Instance()->Shutdown(level);
 
    Singleton<TraceBuffer>::Instance()->Shutdown(level);
-   SysThreadStack::Shutdown(level);
+   SysStackTrace::Shutdown(level);
    Memory::Shutdown();
    Singletons::Instance()->Shutdown(level);
 }

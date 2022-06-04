@@ -26,6 +26,7 @@
 #include <sstream>
 #include <typeinfo>
 #include "Base.h"
+#include "SysStackTrace.h"
 
 using std::ostream;
 using std::setw;
@@ -161,7 +162,7 @@ string strClass(const void* obj, bool ns)
       auto base = (const Base*) obj;
       string name(typeid(*base).name());
 
-      Demangle(name);
+      SysStackTrace::Demangle(name);
 
       if(!ns)
       {

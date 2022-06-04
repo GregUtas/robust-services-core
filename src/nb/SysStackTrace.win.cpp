@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysThreadStack.win.cpp
+//  SysStackTrace.win.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -21,13 +21,12 @@
 //
 #ifdef OS_WIN
 
-#include "SysThreadStack.h"
+#include "SysStackTrace.h"
 #include <cstddef>
 #include <cstring>
 #include <memory>
 #include <new>
 #include <sstream>
-#include <string>
 #include <Windows.h>
 #include <DbgHelp.h>  // must follow Windows.h
 #include "Debug.h"
@@ -44,15 +43,6 @@ using std::string;
 
 namespace NodeBase
 {
-//  Demangling for MSVC.
-//
-void Demangle(std::string& name)
-{
-   if(name.find("class ") == 0) name.erase(0, 6);
-}
-
-//------------------------------------------------------------------------------
-//
 //  The maximum number of frames that RtlCaptureStackBackTrace can capture.
 //  On Windows XP, it's 62.  In later versions of Windows, it's UINT16_MAX.
 //
@@ -197,7 +187,14 @@ DWORD StackInfo::Startup()
 
 //==============================================================================
 
-void SysThreadStack::Display(ostream& stream) NO_FT
+void SysStackTrace::Demangle(std::string& name)
+{
+   if(name.find("class ") == 0) name.erase(0, 6);
+}
+
+//------------------------------------------------------------------------------
+
+void SysStackTrace::Display(ostream& stream) NO_FT
 {
    StackFramesPtr frames = nullptr;
 
@@ -276,7 +273,7 @@ void SysThreadStack::Display(ostream& stream) NO_FT
 
 //------------------------------------------------------------------------------
 
-fn_depth SysThreadStack::FuncDepth()
+fn_depth SysStackTrace::FuncDepth()
 {
    //  Exclude this function from the depth count.  We're only interested
    //  in the current function's depth, so Frames needn't be per-thread.
@@ -289,9 +286,9 @@ fn_depth SysThreadStack::FuncDepth()
 
 //------------------------------------------------------------------------------
 
-void SysThreadStack::Shutdown(RestartLevel level)
+void SysStackTrace::Shutdown(RestartLevel level)
 {
-   Debug::ft("SysThreadStack.Shutdown");
+   Debug::ft("SysStackTrace.Shutdown");
 
    //  When actually exiting the process, unload symbol information.
    //
@@ -303,9 +300,9 @@ void SysThreadStack::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-void SysThreadStack::Startup(RestartLevel level)
+void SysStackTrace::Startup(RestartLevel level)
 {
-   Debug::ft("SysThreadStack.Startup");
+   Debug::ft("SysStackTrace.Startup");
 
    auto errval = StackInfo::Startup();
    if(errval == 0) return;
@@ -321,7 +318,7 @@ void SysThreadStack::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-bool SysThreadStack::TrapIsOk() NO_FT
+bool SysStackTrace::TrapIsOk() NO_FT
 {
    //  Do not trap a thread that is currently executing a destructor.
    //

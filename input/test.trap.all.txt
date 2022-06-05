@@ -14,16 +14,16 @@ tests begin recover.SIGINT
 read trap.05
 tests begin recover.SIGILL
 read trap.06
-/ Windows no longer allows a release build to
-/ continue from SIGTERM, but a Debug build can.
-/
-/ tests begin recover.SIGTERM
-/ read trap.07
+tests begin recover.SIGTERM
+read trap.07
 tests begin recover.SIGBREAK
 read trap.08
+tests begin recover.SIGBUS
+read trap.28
 tests begin recover.abort
 read trap.09
-/ std::terminate raises SIGTERM (see above).
+/ A bug in Windows is currently preventing a release
+/ build from recovering from std::terminate.
 /
 / tests begin recover.terminate
 / read trap.10

@@ -537,7 +537,9 @@ FunctionTrace::FunctionTrace(fn_name_arg func, fn_depth depth) :
    TimedRecord(FunctionTracer),
    func_(func),
    depth_(depth),
-   invokerDepth_(0)
+   invokerDepth_(0),
+   gross_(0),
+   net_(0)
 {
    if(depth_ < 0) depth_ = 0;
    rid_ = NIL_ID;
@@ -549,7 +551,9 @@ FunctionTrace::FunctionTrace() :
    TimedRecord(FunctionTracer),
    func_(nullptr),
    depth_(0),
-   invokerDepth_(0)
+   invokerDepth_(0),
+   gross_(0),
+   net_(0)
 {
    rid_ = NIL_ID;
 }

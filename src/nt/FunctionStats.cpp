@@ -39,7 +39,8 @@ namespace NodeTools
 {
 FunctionStats::FunctionStats(fn_name_arg func, size_t calls) :
    func_(func),
-   calls_(calls)
+   calls_(calls),
+   time_(0)
 {
 }
 

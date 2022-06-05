@@ -40,9 +40,10 @@ using std::string;
 
 namespace NodeBase
 {
-//  The maximum number of frames that will be captured.
+//  The maximum number of frames that will be captured.  Some
+//  number between this and 700 causes a fatal crash on Linux.
 //
-constexpr size_t MaxFrames = 2048;
+constexpr size_t MaxFrames = 680;
 
 //  For holding stack frames.
 //

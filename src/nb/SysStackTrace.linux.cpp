@@ -22,6 +22,7 @@
 #ifdef OS_LINUX
 
 #include "SysStackTrace.h"
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <cxxabi.h>

@@ -4353,7 +4353,7 @@ word Editor::InsertFallthrough(const CodeWarning& log)
 {
    Debug::ft("Editor.InsertFallthrough");
 
-   //  Add a [[fallthrough]] comment at the end of this case label.
+   //  Add a [[fallthrough]]; at the end of this case label.
    //
    return Unimplemented();
 }

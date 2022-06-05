@@ -37,7 +37,6 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
-#include "Library.h"
 #include "Singleton.h"
 #include "ThisThread.h"
 
@@ -239,8 +238,6 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
       }
    }
-
-   auto dir = Singleton<Library>::Instance()->SourcePath();
 
    *stream << string(132, '=') << CRLF;
    *stream << "WARNINGS SORTED BY TYPE/FILE/LINE (i = informational)" << CRLF;

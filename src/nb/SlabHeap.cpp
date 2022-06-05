@@ -685,7 +685,7 @@ bool SlabPriv::Validate(const void* addr) const
    size_t slabsFound = 0;
    auto slabFirst = true;
    auto slab = slabs_.cend();
-   void* areaNext = nullptr;
+   uintptr_t areaNext = 0;
 
    for(auto area = areas_.cbegin(); area != areas_.cend(); ++area)
    {
@@ -712,7 +712,7 @@ bool SlabPriv::Validate(const void* addr) const
          //  This is not the start of a new slab, so this area's address
          //  should continue where the previous area left off.
          //
-         if(area->second.addr_ != areaNext)
+         if(uintptr_t(area->second.addr_) != areaNext)
             return Corrupt(AreaMisaligned, true);
       }
 
@@ -745,9 +745,9 @@ bool SlabPriv::Validate(const void* addr) const
       //  Set the expected address of the next area.  If it would be beyond
       //  the end of the current slab, proceed to the next slab.
       //
-      areaNext = area->second.addr_ + area->second.size_;
+      areaNext = uintptr_t(area->second.addr_) + area->second.size_;
 
-      if(areaNext >= (slab->addr_ + slab->size_))
+      if(areaNext >= (uintptr_t(slab->addr_) + slab->size_))
       {
          if(slabsFound >= slabs_.size())
          {

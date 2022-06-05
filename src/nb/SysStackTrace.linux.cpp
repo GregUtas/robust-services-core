@@ -51,7 +51,22 @@ typedef void* StackFrames[MaxFrames];
 
 //  For holding stack frames.
 //
-typedef std::unique_ptr<void*[]> StackFramesPtr;
+typedef std::unique_ptr<void* []> StackFramesPtr;
+
+//------------------------------------------------------------------------------
+
+static string GetFunction(const void* addr, string& func)
+{
+   auto begin = func.find('(');
+   if(begin == string::npos) return;
+   auto end = func.find_first_of("+)");
+   if(end == string::npos) return;
+   auto name = func.substr(begin + 1, end - begin - 1);
+   SysStackTrace::Demangle(name);
+   ReplaceScopeOperators(name);
+   func = func.substr(0, begin + 1) + name + func.substr(end);
+   return func;
+}
 
 //------------------------------------------------------------------------------
 
@@ -59,7 +74,7 @@ void SysStackTrace::Demangle(string& name) NO_FT
 {
    int status = 0;
    auto buffer = __cxxabiv1::__cxa_demangle
-   (name.c_str(), nullptr, nullptr, &status);
+      (name.c_str(), nullptr, nullptr, &status);
    if(status == 0) name = buffer;
    free(buffer);
 }
@@ -106,21 +121,8 @@ void SysStackTrace::Display(ostream& stream) NO_FT
       }
       else
       {
-         stream << prefix;
-         name = fnames[f];
-
-         if(!name.empty())
-         {
-            Demangle(name);
-            ReplaceScopeOperators(name);
-            stream << name;
-         }
-         else
-         {
-            stream << "unknown function";
-         }
-
-         stream << CRLF;
+         string func(fnames[f]);
+         stream << prefix << GetFunction(frames[f], func) << CRLF;
       }
    }
 

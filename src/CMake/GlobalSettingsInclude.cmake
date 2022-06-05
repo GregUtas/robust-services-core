@@ -120,6 +120,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Allow signal handler to throw a C++ exception
     add_compile_options(-fnon-call-exceptions)
 
+    # Support function names in stack traces
+    add_link_options(-fno-pie)
+
     # Allow typedefs that hide underlying types in subs/chrono to compile
     add_compile_options(-fpermissive)
 
@@ -131,7 +134,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
     # Enable POSIX threads
     add_compile_options(-pthread)
-    add_link_options(-pthread)
 
     # Enable function names in stack traces
     add_compile_options(-rdynamic)
@@ -147,6 +149,16 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-switch)
     add_compile_options(-Wno-trigraphs)
+
+    # Support function names in stack traces
+    add_link_options(-ldl)
+    add_link_options(-no-pie)
+
+    # Enable POSIX threads
+    add_link_options(-pthread)
+
+    # Enable function names in stack traces
+    add_link_options(-rdynamic)
 else()
     message(FATAL_ERROR "** ${CMAKE_CXX_COMPILER_ID} compiler is not supported")
 endif()

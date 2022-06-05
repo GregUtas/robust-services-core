@@ -215,6 +215,8 @@ static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 
    //  Return the match in the nearest scope, but preferring a resolved
    //  forward or friend declaration to one that is still unresolved.
+   //  Also prefer a non-static function over a static function for the
+   //  reason given in CxxArea::FindFunc.
    //
    size_t min = NOT_A_SUBSCOPE;
    size_t idx = SIZE_MAX;
@@ -237,6 +239,13 @@ static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
          if((idx == SIZE_MAX) || !views[idx].resolved_)
          {
             idx = i;
+         }
+         else if(list[idx]->Type() == Cxx::Function)
+         {
+            if(static_cast<const Function*>(list[idx])->IsStatic())
+            {
+               idx = i;
+            }
          }
       }
    }

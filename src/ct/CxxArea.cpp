@@ -3233,24 +3233,52 @@ Function* CxxArea::FindFunc(const string& name,
 
       if(temp == name)
       {
-         if(args == nullptr) return FoundFunc(func, view, Compatible);
-
-         std::vector<TypeMatch> matches;
-         func = func->CanInvokeWith(*args, argTypes, matches);
-
-         if(func != nullptr)
+         if(args == nullptr)
          {
             funcs.push_back(func);
-            argMatches.push_back(matches);
+         }
+         else
+         {
+            std::vector<TypeMatch> matches;
+            func = func->CanInvokeWith(*args, argTypes, matches);
+
+            if(func != nullptr)
+            {
+               funcs.push_back(func);
+               argMatches.push_back(matches);
+            }
          }
       }
    }
 
    auto count = funcs.size();
-   if(count == 1)
-      return FoundFunc(funcs.front(), view, FindMin(argMatches.front()));
+
    if(count == 0)
+   {
       return FoundFunc(nullptr, view, Incompatible);
+   }
+   else if(args == nullptr)
+   {
+      //  When we don't yet have arguments and are just matching on the
+      //  function name, prefer a non-static function over a static one.
+      //  This will cause Operation::ExecuteCall to supply a prospective
+      //  "this" argument: it will be ignored when matching with a static
+      //  function, but there is no provision for the opposite behavior.
+      //
+      for(size_t i = 0; i < count; ++i)
+      {
+         if(!funcs[i]->IsStatic())
+         {
+            return FoundFunc(funcs[i], view, Compatible);
+         }
+      }
+
+      return FoundFunc(funcs.front(), view, Compatible);
+   }
+   else if(count == 1)
+   {
+      return FoundFunc(funcs.front(), view, FindMin(argMatches.front()));
+   }
 
    //  Return the function that is the best match, as defined by the sum of
    //  how well each argument matches (its distance from being Compatible).

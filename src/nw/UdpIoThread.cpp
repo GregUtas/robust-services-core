@@ -210,9 +210,11 @@ void UdpIoThread::Unblock()
 {
    Debug::ft("UdpIoThread.Unblock");
 
-   //  Delete the thread's socket.  If it is blocked on Recvfrom, this should
-   //  unblock it.
-   //
-   ReleaseResources();
+   if(ipPort_ != nullptr)
+   {
+      auto port = ipPort_->GetPort();
+      auto socket = static_cast<SysUdpSocket*>(ipPort_->GetSocket());
+      socket->SendToSelf(port);
+   }
 }
 }

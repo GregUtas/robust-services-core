@@ -85,8 +85,8 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
    auto txport = buff.TxAddr().GetPort();
    auto port = Singleton<IpPortRegistry>::Instance()->GetPort(txport);
    auto& peer = buff.RxAddr();
-   auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
-   auto sent = SendTo(dest, size, peer);
+   auto data = port->GetHandler()->HostToNetwork(buff, src, size);
+   auto sent = SendTo(data, size, peer);
    TracePeer(NwTrace::SendTo, txport, peer, sent);
 
    if(sent <= 0)
@@ -97,5 +97,16 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 
    port->BytesSent(size);
    return SendOk;
+}
+
+//------------------------------------------------------------------------------
+
+void SysUdpSocket::SendToSelf(ipport_t port)
+{
+   Debug::ft("SysUdpSocket.SendToSelf");
+
+   auto self = SysIpL3Addr(SysIpL2Addr::LoopbackIpAddr(), port);
+   byte_t message[8] = { 'U', 'N' ,'B', 'L', 'O', 'C', 'K', '!'};
+   SendTo(message, 8, self);
 }
 }

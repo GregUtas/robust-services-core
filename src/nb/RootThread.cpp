@@ -39,6 +39,7 @@
 #include "NbSignals.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
 #include "SysStackTrace.h"
 #include "SysThread.h"
 #include "ThreadAdmin.h"
@@ -118,6 +119,7 @@ void RootThread::Enter()
    Thread* initThr;
    auto timeout = TIMEOUT_IMMED;
    auto reason = NilRestart;
+   auto lastLog = SteadyTime::TimeZero();
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
    //  preemptably so that we don't wait for other unpreemptable threads to
@@ -271,13 +273,20 @@ void RootThread::Enter()
          //  exists, tell it to initiate a restart.  If it doesn't exist,
          //  loop around and create it.
          //
-         auto log = Log::Create(NodeLogGroup, NodeSchedTimeout);
+         nsecs_t elapsed = SteadyTime::Now() - lastLog;
 
-         if(log != nullptr)
+         if((elapsed.count() / NS_TO_SECS) >= 3)
          {
-            *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
-            *log << " timeout=" << to_string(timeout);
-            Log::Submit(log);
+            auto log = Log::Create(NodeLogGroup, NodeSchedTimeout);
+
+            if(log != nullptr)
+            {
+               *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
+               *log << " timeout=" << to_string(timeout);
+               Log::Submit(log);
+            }
+
+            lastLog = SteadyTime::Now();
          }
 
          reason = NilRestart;

@@ -73,6 +73,10 @@ public:
    NodeBase::word SendTo
       (const NodeBase::byte_t* data, size_t size, const SysIpL3Addr& remAddr);
 
+   //  Sends a message to the socket to unblock an I/O thread in RecvFrom.
+   //
+   void SendToSelf(ipport_t port);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

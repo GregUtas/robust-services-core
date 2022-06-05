@@ -438,7 +438,7 @@ msecs_t ThreadAdmin::InitTimeout()
    Debug::ft("ThreadAdmin.InitTimeout");
 
    auto self = AccessAdminData();
-   auto msecs = (self != nullptr ? self->initTimeoutMsecs_->CurrValue() : 2000);
+   auto msecs = (self != nullptr ? self->initTimeoutMsecs_->CurrValue() : 5000);
    return msecs_t(msecs << WarpFactor());
 }
 

@@ -2527,7 +2527,11 @@ void Thread::Raise(signal_t sig)
    //
    if(NativeThreadId() == NIL_ID)
    {
-      Destroy();
+      if(!deleting_)
+      {
+         Destroy();
+      }
+
       return;
    }
 

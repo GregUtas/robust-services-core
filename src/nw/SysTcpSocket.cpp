@@ -364,8 +364,8 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    auto port = Singleton<IpPortRegistry>::Instance()->GetPort(txport);
    byte_t* src = nullptr;
    auto size = buff.OutgoingBytes(src);
-   auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
-   auto sent = Send(dest, size);
+   auto data = port->GetHandler()->HostToNetwork(buff, src, size);
+   auto sent = Send(data, size);
 
    if(sent == 0)
    {

@@ -58,9 +58,9 @@ typedef std::unique_ptr<void* []> StackFramesPtr;
 static string GetFunction(const void* addr, string& func)
 {
    auto begin = func.find('(');
-   if(begin == string::npos) return;
+   if(begin == string::npos) return func;
    auto end = func.find_first_of("+)");
-   if(end == string::npos) return;
+   if(end == string::npos) return func;
    auto name = func.substr(begin + 1, end - begin - 1);
    SysStackTrace::Demangle(name);
    ReplaceScopeOperators(name);

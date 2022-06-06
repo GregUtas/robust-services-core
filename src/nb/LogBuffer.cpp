@@ -24,7 +24,6 @@
 #include <memory>
 #include <ostream>
 #include "Debug.h"
-#include "Duration.h"
 #include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"

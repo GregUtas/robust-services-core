@@ -26,7 +26,6 @@
 #include <ratio>
 #include <string>
 #include "Debug.h"
-#include "Duration.h"
 #include "Formatters.h"
 #include "Statistics.h"
 #include "StatisticsGroup.h"

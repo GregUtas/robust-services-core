@@ -25,7 +25,6 @@
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "Formatters.h"
 #include "MainArgs.h"
 #include "Singleton.h"

@@ -105,8 +105,8 @@ void SysUdpSocket::SendToSelf(ipport_t port)
 {
    Debug::ft("SysUdpSocket.SendToSelf");
 
-   auto self = SysIpL3Addr(SysIpL2Addr::LoopbackIpAddr(), port);
-   byte_t message[8] = { 'U', 'N' ,'B', 'L', 'O', 'C', 'K', '!'};
+   SysIpL3Addr self(SysIpL2Addr::LoopbackIpAddr(), port);
+   byte_t message[8] = { 'U', 'N', 'B', 'L', 'O', 'C', 'K', '!' };
    SendTo(message, 8, self);
 }
 }

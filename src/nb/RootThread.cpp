@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "RootThread.h"
+#include <chrono>
 #include <cstdint>
 #include <cstdlib>
 #include <ratio>

@@ -28,7 +28,6 @@
 #include <ratio>
 #include <sstream>
 #include "Debug.h"
-#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "FunctionName.h"

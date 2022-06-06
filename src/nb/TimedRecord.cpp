@@ -22,7 +22,6 @@
 #include "TimedRecord.h"
 #include <iomanip>
 #include <ostream>
-#include "Duration.h"
 #include "NbTypes.h"
 #include "Singleton.h"
 #include "SysThread.h"

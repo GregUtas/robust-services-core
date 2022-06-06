@@ -2379,9 +2379,13 @@ void Operation::ExecuteCall() const
    if(func != nullptr)
    {
       //  Invoke the function, which pushes its return value onto the stack.
+      //  Argument matching has selected the correct function, so update
+      //  NAME's referent.
       //
       func->UpdateThisArg(args);
       auto warning = func->Invoke(&args);
+      auto name = proc.Name();
+      if(name != nullptr) name->SetReferent(func, &view);
       if(warning != Warning_N) Log(warning);
       return;
    }

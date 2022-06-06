@@ -3891,6 +3891,14 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
       if(view->using_ && (ref_ == nullptr)) using_ = true;
    }
 
+   //  Don't overwrite a function template with one of its instances.
+   //
+   if((ref_ != nullptr) && (ref_->Type() == Cxx::Function) &&
+      (item != nullptr) && item->IsInTemplateInstance())
+   {
+      return;
+   }
+
    ref_ = item;
    if(ref_ == nullptr) return;
 

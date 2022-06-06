@@ -42,6 +42,7 @@
 #include "stack"
 #include "string"
 #include "system_error"
+#include "thread"
 #include "typeinfo"
 #include "unordered_map"
 #include "utility"

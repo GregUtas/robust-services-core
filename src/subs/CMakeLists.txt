@@ -60,6 +60,7 @@ set(Headers
     "stdlib.h"
     "string"
     "system_error"
+    "thread"
     "typeinfo"
     "unordered_map"
     "unistd.h"

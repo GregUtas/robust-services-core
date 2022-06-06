@@ -1606,18 +1606,6 @@ bool Thread::EnterSwLog()
 
 //------------------------------------------------------------------------------
 
-main_t Thread::EnterThread(void* arg)
-{
-   Debug::ft("Thread.EnterThread");
-
-   //  Our argument is a pointer to a Thread.
-   //
-   auto self = static_cast<Thread*>(arg);
-   return self->Start();
-}
-
-//------------------------------------------------------------------------------
-
 main_t Thread::Exit(signal_t sig)
 {
    //  Set this immediately to prevent an exception from being thrown
@@ -3038,17 +3026,18 @@ main_t Thread::Start()
 
             //  A thread may start to run before its Thread object is fully
             //  constructed.  This causes a trap, so the thread must wait
-            //  until it is constructed.  If its constructor traps, it gets
-            //  registered as an orphan, so immediately exit it by returning
-            //  SIGDELETED.
+            //  until its leaf class has invoked SetInitialized.
             //
-            auto reg = Singleton<ThreadRegistry>::Instance();
+            auto sig = WaitUntilConstructed();
 
-            while(true)
+            switch(sig)
             {
-               auto state = reg->GetState();
-               if(state == Constructed) break;
-               if(state == Deleted) return AbnormalExit(SIGDELETED);
+            case SIGNIL:
+               break;
+            case SIGDELETED:
+               return AbnormalExit(SIGDELETED);
+            default:
+               return Exit(sig);
             }
 
             //  Indicate that we're ready to run.  This blocks until we're
@@ -3789,5 +3778,35 @@ std::atomic_uint32_t* Thread::Vector()
    Debug::ft("Thread.Vector");
 
    return &RunningThread()->priv_->vector_;
+}
+
+//------------------------------------------------------------------------------
+
+signal_t Thread::WaitUntilConstructed()
+{
+   Debug::ft("Thread.WaitUntilConstructed");
+
+   auto start = InitThread::RunningTicks();
+   auto reg = Singleton<ThreadRegistry>::Instance();
+
+   //  Threads that never finish initializing have been observed, so this
+   //  loop eventually needs to stop.  If InitThread's tick time is 10ms,
+   //  150 ticks should give the system at least 1 second to initialize
+   //  the thread.
+   //
+   while(true)
+   {
+      switch(reg->GetState())
+      {
+      case Constructed:
+         return SIGNIL;
+      case Deleted:
+         return SIGDELETED;
+      }
+
+      SysThread::Pause(msecs_t(5));
+      auto elapsed = InitThread::RunningTicks() - start;
+      if(elapsed > 150) return SIGPURGE;
+   }
 }
 }

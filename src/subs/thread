@@ -1,0 +1,19 @@
+//==============================================================================
+//
+//  thread
+//
+#ifndef THREAD_INCLUDED
+#define THREAD_INCLUDED
+
+#include "chrono"
+
+namespace std
+{
+namespace this_thread
+{
+   template< class Numeric, class Ratio > 
+      void sleep_for(const std::chrono::duration<Numeric, Ratio>& time);
+}
+}
+
+#endif

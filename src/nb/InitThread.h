@@ -23,6 +23,7 @@
 #define INITTHREAD_H_INCLUDED
 
 #include "Thread.h"
+#include <cstdint>
 #include "Duration.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
@@ -45,6 +46,17 @@ class InitThread : public Thread
    friend class RootThread;
    friend class Thread;
 public:
+   //  Returns the number of times that InitThread has been scheduled in,
+   //  which is roughly how long the system has been in service.  Under
+   //  normal operation, InitThread wakes up at least every RtcTimeout(),
+   //  which has a default value of 10ms.  However, it also wakes up when
+   //  a locked thread yields, so a value of 8ms might be more realistic.
+   //  Despite its drift, the count freezes during restarts and debugging
+   //  breakpoints, which can make it more useful than using SteadyTime
+   //  to gauge elapsed time.
+   //
+   static uint64_t RunningTicks();
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

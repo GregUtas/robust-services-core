@@ -404,10 +404,13 @@ private:
    //
    static void ImmProtect();
 
-   //  The common entry function for all threads.  ARG is a pointer to
-   //  the Thread object.
+   //  Invoked when a thread is entered.  A new thread can start to run
+   //  before its Thread object has been fully constructed, so it must
+   //  wait until its leaf class has invoked SetInitialized.  Returns
+   //  SIGNIL when the thread can proceed.  Any other signal indicates
+   //  that an error has occurred, in which case the thread exits.
    //
-   static main_t EnterThread(void* arg);
+   static signal_t WaitUntilConstructed();
 
    //  Returns a flag in the thread's interrupt vector.  See also TestFlag.
    //

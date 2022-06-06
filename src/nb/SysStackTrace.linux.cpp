@@ -55,7 +55,7 @@ typedef std::unique_ptr<void*[]> StackFramesPtr;
 
 //------------------------------------------------------------------------------
 
-static string GetFunction(const void* addr, string& func)
+static string GetFunction(string& func)
 {
    auto begin = func.find('(');
    if(begin == string::npos) return func;
@@ -122,7 +122,7 @@ void SysStackTrace::Display(ostream& stream) NO_FT
       else
       {
          string func(fnames[f]);
-         stream << prefix << GetFunction(frames[f], func) << CRLF;
+         stream << prefix << GetFunction(func) << CRLF;
       }
    }
 

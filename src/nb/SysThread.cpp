@@ -20,11 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysThread.h"
+#include <chrono>
 #include <condition_variable>
 #include <csignal>
 #include <exception>
 #include <ostream>
 #include <string>
+#include <thread>
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbSignals.h"
@@ -107,6 +109,15 @@ bool SysThread::Interrupt()
 
    alarm_.Notify();
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void SysThread::Pause(const msecs_t& msecs)
+{
+   Debug::ft("SysThread.Pause");
+
+   std::this_thread::sleep_for(msecs);
 }
 
 //------------------------------------------------------------------------------

@@ -160,6 +160,12 @@ private:
    //
    DelayRc Suspend(Gate& gate, const msecs_t& timeout);
 
+   //  Suspends the thread's execution for MSECS.  This function is only
+   //  used while a thread is waiting for an event to occur before it is
+   //  allowed to run.  Under normal operation, use Thread::Pause.
+   //
+   static void Pause(const msecs_t& msecs);
+
    //  The thread's status flags.
    //
    enum StatusFlag

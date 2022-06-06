@@ -47,6 +47,8 @@ using std::string;
 
 namespace NodeBase
 {
+static uint64_t RunningTicks_ = 0;
+
 const Flags InitThread::RestartMask = Flags(1 << Restart);
 const Flags InitThread::RecreateMask = Flags(1 << Recreate);
 const Flags InitThread::ScheduleMask = Flags(1 << Schedule);
@@ -82,6 +84,8 @@ c_string InitThread::AbbrName() const
 msecs_t InitThread::CalculateDelay() const
 {
    Debug::ft("InitThread.CalculateDelay");
+
+   ++RunningTicks_;
 
    //  Wake up at the earliest of the following:
    //  o the time before which RootThread must be interrupted to
@@ -405,5 +409,12 @@ void InitThread::RecreateThreads()
    //  again try to recreate threads when reentered.
    //
    Reset(Recreate);
+}
+
+//------------------------------------------------------------------------------
+
+uint64_t InitThread::RunningTicks()
+{
+   return RunningTicks_;
 }
 }

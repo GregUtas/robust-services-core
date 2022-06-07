@@ -90,22 +90,24 @@ _../rsc/input/element.config.txt_.
 
 ## Building an executable
 
+RSC
+* requires C\++17;
+* is a console application;
+* runs on both Windows and Linux;
+* defines an abstraction layer, in the form of generic C++ _.h_'s and
+platform-specific _.cpp_'s, that should allow it to be ported to other systems
+fairly easily.
+
 If you don't want to build RSC, debug and release
 [executables](docs/RSC-Executables.md) are provided with each release.
-
-RSC requires C\++17 and is implemented on Windows, where it runs as a console
-application. However, it defines an abstraction layer, in the form of generic
-C++ _.h_'s and platform-specific _.cpp_'s, that should allow it to be ported
-to other systems fairly easily. The targets for Linux are currently being
-developed.
 
 The directories that contain RSC's source code, and the dependencies between
 them, are listed in the comments that precede the implementation of
 [`main`](src/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
-RSC is developed using Visual Studio. The Windows build options that RSC uses
-are described [here](docs/RSC-Windows-Build-Options.md).
+RSC is developed using Visual Studio 2022. The Windows build options that RSC
+uses are described [here](docs/RSC-Windows-Build-Options.md).
 
 RSC is built using CMake, as described [here](docs/RSC-Building-Using-CMake.md).
 Because Visual Studio's _.vcxproj_ files are no longer modified as part of the
@@ -177,7 +179,7 @@ document that describes the [POTS application](docs/RSC-POTS-Application.md)
 also discusses its tests, which exercise a considerable portion of the RSC
 software. The tests described below are rather tactical by comparison.
 
-Twenty-seven scripts test the _Safety Net_ capability of the `Thread` class.
+Twenty-eight scripts test the _Safety Net_ capability of the `Thread` class.
 Most of them cause a POSIX signal to be raised. POSIX signals are handled by
 throwing a C++ exception that is caught in `Thread.Start`, after which an
 appropriate recovery action is taken. Getting the safety net to work could be

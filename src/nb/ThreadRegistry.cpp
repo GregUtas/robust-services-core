@@ -192,9 +192,20 @@ void ThreadRegistry::Created(SysThread* systhrd, Thread* thread)
       if(entry->second.state_ == Deleted)
       {
          //  The platform reassigned NID to a new thread, so we need to
-         //  reuse this slot after assigning a ThreadId.
+         //  reuse this slot after assigning a ThreadId.  SetThreadId
+         //  can erase a threads_ entry, so look for our slot again in
+         //  case it was erased and must be reinserted.
          //
          auto tid = SetThreadId(thread);
+         entry = threads_.find(nid);
+
+         if(entry == threads_.cend())
+         {
+            threads_.insert
+               (Entry(nid, ThreadInfo(tid, Constructing, systhrd, thread)));
+            return;
+         }
+
          entry->second.tid_ = tid;
          entry->second.state_ = Constructing;
          entry->second.systhrd_ = systhrd;
@@ -617,7 +628,6 @@ void ThreadRegistry::Startup(RestartLevel level)
 
    //  This starts up all threads that survived the restart.
    //
-   nextTid_ = 1;
    if(statsGroup_ == nullptr) statsGroup_.reset(new ThreadStatsGroup);
 
    auto threads = GetThreads();

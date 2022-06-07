@@ -23,6 +23,7 @@
 #include "CliCharParm.h"
 #include "CliText.h"
 #include <cctype>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <iomanip>
@@ -78,6 +79,7 @@
 #include "Statistics.h"
 #include "StatisticsGroup.h"
 #include "StatisticsRegistry.h"
+#include "SteadyTime.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
 #include "SysMutex.h"
@@ -2703,8 +2705,8 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
          auto usecs = (elapsed.count() / NS_TO_US) / ticks;
          *cli.obuf << spaces(2) << "ticks=" << ticks;
          *cli.obuf << "  tick=" << usecs << "us" << CRLF;
-         return 0;
       }
+      return 0;
 
    default:
       Debug::SwLog(SchedCommand_ProcessCommand, UnexpectedIndex, index);

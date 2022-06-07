@@ -35,7 +35,6 @@
 #include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbIpBuffer.h"
-#include "SbTypes.h"
 #include "Singleton.h"
 #include "SsmContext.h"
 #include "Statistics.h"

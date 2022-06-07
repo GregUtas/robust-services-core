@@ -108,8 +108,7 @@ SigStack2::SigStack2() : PosixSignal(SIGSTACK2, "SIGSTACK2",
    "Stack Overflow: Exit Thread", 0, PS_Final()) { }
 
 SigPurge::SigPurge() : PosixSignal(SIGPURGE, "SIGPURGE",
-   "Suicided [errval = 0] or Killed [errval > 0]", 16,
-      PS_Interrupt() | PS_Final()) { }
+   "Suicided or Killed", 16, PS_Interrupt() | PS_Final()) { }
 
 SigDeleted::SigDeleted() : PosixSignal(SIGDELETED, "SIGDELETED",
    "Thread Deleted", 0, PS_Final()) { }

@@ -50,7 +50,7 @@ public:
    //  which is roughly how long the system has been in service.  Under
    //  normal operation, InitThread wakes up at least every RtcTimeout(),
    //  which has a default value of 10ms.  However, it also wakes up when
-   //  a locked thread yields, so a value of 8ms might be more realistic.
+   //  a locked thread yields, so the observed values is closer to 4ms.
    //  Despite its drift, the count freezes during restarts and debugging
    //  breakpoints, which can make it more useful than using SteadyTime
    //  to gauge elapsed time.

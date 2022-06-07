@@ -53,6 +53,7 @@
 #include "FunctionGuard.h"
 #include "Heap.h"
 #include "HeapCfg.h"
+#include "InitThread.h"
 #include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
@@ -2590,10 +2591,14 @@ SchedKillText::SchedKillText() : CliText(SchedKillTextExpl, SchedKillTextStr)
    BindParm(*new ThreadIdMandParm);
 }
 
+fixed_string SchedTicksTextStr = "ticks";
+fixed_string SchedTicksTextExpl = "displays InitThread ticks";
+
 constexpr id_t SchedShowIndex = 1;
 constexpr id_t SchedStartIndex = 2;
 constexpr id_t SchedStopIndex = 3;
 constexpr id_t SchedKillIndex = 4;
+constexpr id_t SchedTicksIndex = 5;
 
 fixed_string SchedActionExpl = "subcommand...";
 
@@ -2605,6 +2610,8 @@ SchedAction::SchedAction() : CliTextParm(SchedActionExpl)
    BindText(*new CliText
       (SchedStopTextExpl, SchedStopTextStr), SchedStopIndex);
    BindText(*new SchedKillText, SchedKillIndex);
+   BindText(*new CliText
+      (SchedTicksTextExpl, SchedTicksTextStr), SchedTicksIndex);
 }
 
 fixed_string SchedStr = "sched";
@@ -2687,6 +2694,17 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
          if(expl != nullptr) return cli.Report(-1, expl);
       }
       break;
+
+   case SchedTicksIndex:
+      if(!cli.EndOfInput()) return -1;
+      {
+         auto ticks = InitThread::RunningTicks();
+         nsecs_t elapsed = SteadyTime::Now() - SteadyTime::TimeZero();
+         auto usecs = (elapsed.count() / NS_TO_US) / ticks;
+         *cli.obuf << spaces(2) << "ticks=" << ticks;
+         *cli.obuf << "  tick=" << usecs << "us" << CRLF;
+         return 0;
+      }
 
    default:
       Debug::SwLog(SchedCommand_ProcessCommand, UnexpectedIndex, index);

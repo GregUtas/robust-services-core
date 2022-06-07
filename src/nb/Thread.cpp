@@ -3791,7 +3791,7 @@ signal_t Thread::WaitUntilConstructed()
 
    //  Threads that never finish initializing have been observed, so this
    //  loop eventually needs to stop.  If InitThread's tick time is 10ms,
-   //  150 ticks should give the system at least 1 second to initialize
+   //  250 ticks should give the system roughly 1 second to initialize
    //  the thread.
    //
    while(true)
@@ -3806,7 +3806,7 @@ signal_t Thread::WaitUntilConstructed()
 
       SysThread::Pause(msecs_t(5));
       auto elapsed = InitThread::RunningTicks() - start;
-      if(elapsed > 150) return SIGPURGE;
+      if(elapsed > 250) return SIGPURGE;
    }
 }
 }

@@ -42,12 +42,12 @@ RSC usually defines a class in a _.h_ of the same name and implements it
 in a _.cpp_ of the same name. It should therefore be easy to find the code
 that an article discusses.
 
-## Target Platform
+## Target Platforms
 
-RSC is targeted at Windows but has an abstraction layer that should allow it
-to be ported to other platforms with modest effort. The Windows targets (in
-_*.win.cpp_ files) total less than 1600 lines of code, excluding comments
-and blanks.
+RSC can run on either Windows or Linux, which are supported by an abstraction
+layer that should allow RSC to be ported to other platforms with modest effort.
+The Windows and Linux targets (in _*.win.cpp_ and _*.linux.cpp_ files) total
+less than 1600 lines of code each, excluding comments and blanks.
 
 ## Using RSC
 

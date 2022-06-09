@@ -64,15 +64,17 @@ void SysThread::ConfigureProcess()
 {
    Debug::ft(SysThread_ConfigureProcess);
 
-   //  Set our overall process priority.
-   //L setpriority returns EACCES (permission denied) when setting the
-   //  process priority.
+   //  If changing our process' priority is not allowed, setpriority returns
+   //  EACCES.
    //
-   // auto err = setpriority(PRIO_PROCESS, 0, -1);
-   // if(err != 0)
-   // {
-   //    ReportError(SysThread_ConfigureProcess, "setpriority", err);
-   // }
+   if(SetPriorityAllowed())
+   {
+      auto err = setpriority(PRIO_PROCESS, 0, -1);
+      if(err != 0)
+      {
+         ReportError(SysThread_ConfigureProcess, "setpriority", err);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -108,20 +110,23 @@ bool SysThread::Create(const Thread* client, size_t size)
       return ReportError(SysThread_Create, "setstacksize", err);
    }
 
-   err = pthread_attr_setinheritsched(&attrs, PTHREAD_EXPLICIT_SCHED);
-   if(err != 0)
-   {
-      return ReportError(SysThread_Create, "setinheritsched", err);
-   }
-
-   //L pthread_create returns EINVAL(invalid attributes) if the scheduler
-   //  policy is set to round-robin.
+   //  If changing a thread's priority is not allowed, pthread_create
+   //  returns EINVAL if the scheduler policy is set to round-robin.
    //
-   // err = pthread_attr_setschedpolicy(&attrs, SCHED_RR);
-   // if(err != 0)
-   // {
-   //    return ReportError(SysThread_Create, "setschedpolicy", err);
-   // }
+   if(SetPriorityAllowed())
+   {
+      err = pthread_attr_setinheritsched(&attrs, PTHREAD_EXPLICIT_SCHED);
+      if(err != 0)
+      {
+         return ReportError(SysThread_Create, "setinheritsched", err);
+      }
+
+      err = pthread_attr_setschedpolicy(&attrs, SCHED_RR);
+      if(err != 0)
+      {
+         return ReportError(SysThread_Create, "setschedpolicy", err);
+      }
+   }
 
    pthread_t thread;
 
@@ -195,20 +200,29 @@ bool SysThread::SetPriority(Priority prio)
 {
    Debug::ft(SysThread_SetPriority);
 
+   //  If changing thread priority is not allowed, pthread_setschedprio
+   //  returns EPERM.
+   //
+   if(!SetPriorityAllowed()) return true;
+
    if(priority_ == prio) return true;
 
-   //L pthread_setschedprio returns EPERM (not permitted) when setting the
-   //  thread's priority.
-   //
-   // auto err = pthread_setschedprio((pthread_t) nthread_, PriorityMap[prio]);
-   // if(err != 0)
-   // {
-   //   ReportError(SysThread_SetPriority, "setschedparam", err);
-   //   return false;
-   // }
+   auto err = pthread_setschedprio((pthread_t) nthread_, PriorityMap[prio]);
+   if(err != 0)
+   {
+      ReportError(SysThread_SetPriority, "setschedparam", err);
+      return false;
+   }
 
-   // priority_ = prio;
+   priority_ = prio;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool SysThread::SetPriorityAllowed()
+{
+   return false;
 }
 
 //------------------------------------------------------------------------------

@@ -39,6 +39,8 @@
 #include "Singleton.h"
 #include "Statistics.h"
 #include "SymbolRegistry.h"
+#include "SysThread.h"
+#include "ThreadRegistry.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -587,12 +589,18 @@ int ThreadAdmin::WarpFactor()
    auto warp = 0;
 
    //  Calculate the time warp factor as follows (to be updated):
-   //  o 2x if this is a lab load.
+   //  o 2x if priority scheduling is not allowed and any thread is preemptable.
+   //    The priority of such threads is normally lowered when a locked thread
+   //    is running so that preemptable threads won't get time.  But if their
+   //    priorities can't be lowered, they will contend with the locked thread.
    //  o 4x if the function tracer is on.
    //  o 2x if other tracers are on.
-   //  o 2x if immediate tracing is on.
    //
-   if(Element::RunningInLab()) warp += 1;
+   if(!SysThread::SetPriorityAllowed())
+   {
+      auto reg = Singleton<ThreadRegistry>::Instance();
+      if(reg->PreemptableCount() > 0) warp += 1;
+   }
 
    if(Debug::TraceOn())
    {

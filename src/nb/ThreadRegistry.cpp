@@ -477,6 +477,28 @@ void ThreadRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+size_t ThreadRegistry::PreemptableCount() const
+{
+   size_t count = 0;
+
+   MutexGuard guard(&ThreadsLock_);
+
+   for(auto t = threads_.cbegin(); t != threads_.cend(); ++t)
+   {
+      auto thread = t->second.thread_;
+
+      if((thread != nullptr) && !thread->IsLocked() &&
+         (thread->GetFaction() < SystemFaction))
+      {
+         ++count;
+      }
+   }
+
+   return count;
+}
+
+//------------------------------------------------------------------------------
+
 std::set<Thread*> ThreadRegistry::Restarting(RestartLevel level) const
 {
    Debug::ft("ThreadRegistry.Restarting");

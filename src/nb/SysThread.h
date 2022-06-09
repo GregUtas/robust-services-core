@@ -81,6 +81,11 @@ public:
       WatchdogPriority,  // RootThread
       Priority_N         // number of priorities
    };
+
+   //  Platform-specific.  Returns false if scheduler priorities cannot
+   //  be changed.
+   //
+   static bool SetPriorityAllowed();
 private:
    //  Creates a native thread for CLIENT.  PRIO is the priority at which
    //  it will run, and SIZE is its stack size).

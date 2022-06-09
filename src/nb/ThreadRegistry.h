@@ -125,6 +125,11 @@ public:
    //
    Thread* GetThread(ThreadId tid) const;
 
+   //  Returns the number of threads that are running preemptably,
+   //  excluding RootThread and InitThread.
+   //
+   size_t PreemptableCount() const;
+
    //  Overridden to be forwarded to all threads in the registry.
    //
    void ClaimBlocks() override;

@@ -168,8 +168,11 @@ void SysThread::ConfigureProcess()
    //
    _set_abort_behavior(0, _CALL_REPORTFAULT | _WRITE_ABORT_MSG);
 
-   auto process = GetCurrentProcess();
-   SetPriorityClass(process, HIGH_PRIORITY_CLASS);
+   if(SetPriorityAllowed())
+   {
+      auto process = GetCurrentProcess();
+      SetPriorityClass(process, HIGH_PRIORITY_CLASS);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +196,12 @@ bool SysThread::Create(const Thread* client, size_t size)
    }
 
    nid_ = id;
-   SetThreadPriorityBoost((HANDLE) nthread_, true);
+
+   if(SetPriorityAllowed())
+   {
+      SetThreadPriorityBoost((HANDLE) nthread_, true);
+   }
+
    return true;
 }
 
@@ -237,6 +245,8 @@ bool SysThread::SetPriority(Priority prio)
 {
    Debug::ft("SysThread.SetPriority");
 
+   if(!SetPriorityAllowed()) return true;
+
    if(priority_ == prio) return true;
 
    if(!SetThreadPriority((HANDLE) nthread_, PriorityMap[prio]))
@@ -245,6 +255,13 @@ bool SysThread::SetPriority(Priority prio)
    }
 
    priority_ = prio;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool SysThread::SetPriorityAllowed()
+{
    return true;
 }
 

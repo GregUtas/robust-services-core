@@ -32,8 +32,8 @@
 #include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "FileSystem.h"
 #include "Formatters.h"
-#include "SysFile.h"
 
 using std::ostream;
 using std::string;
@@ -206,7 +206,7 @@ CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
       //  Open the file without purging it to confirm that the name (and path,
       //  if any) are valid.  If the file is empty, erase it.
       //
-      auto stream = SysFile::CreateOstream(s.c_str());
+      auto stream = FileSystem::CreateOstream(s.c_str());
 
       if(stream == nullptr)
       {

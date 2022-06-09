@@ -29,11 +29,11 @@
 #include <vector>
 #include "Debug.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
-#include "SysFile.h"
 #include "TestDatabase.h"
 
 using namespace NodeBase;
@@ -92,7 +92,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
    auto outdir = Element::OutputPath();
    std::set<string> files;
 
-   if(!SysFile::ListFiles(outdir, files))
+   if(!FileSystem::ListFiles(outdir, files))
    {
       expl << "Could not open directory " << outdir;
       return -1;
@@ -102,14 +102,14 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
    for(auto fn = files.cbegin(); fn != files.cend(); ++fn)
    {
-      auto pos = SysFile::FindExt(*fn, ".funcs.txt");
+      auto pos = FileSystem::FindExt(*fn, ".funcs.txt");
       if(pos == string::npos) continue;
 
       auto test = fn->substr(0, pos);
       if(testdb->GetState(test) == TestDatabase::Invalid) continue;
 
       auto path = outdir + PATH_SEPARATOR + *fn;
-      auto stream = SysFile::CreateIstream(path.c_str());
+      auto stream = FileSystem::CreateIstream(path.c_str());
 
       if(stream == nullptr)
       {
@@ -128,7 +128,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
       while(stream->peek() != EOF)
       {
-         SysFile::GetLine(*stream, input);
+         FileSystem::GetLine(*stream, input);
 
          str = strGet(input);
          if(str.empty() || !isdigit(str.front())) continue;
@@ -176,7 +176,7 @@ bool CodeCoverage::Commit(const Functions& funcs)
    FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
-   auto stream = SysFile::CreateOstream(path.c_str(), true);
+   auto stream = FileSystem::CreateOstream(path.c_str(), true);
    if(stream == nullptr) return false;
 
    for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
@@ -368,7 +368,7 @@ word CodeCoverage::Load(string& expl)
    FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
-   auto stream = SysFile::CreateIstream(path.c_str());
+   auto stream = FileSystem::CreateIstream(path.c_str());
    if(stream == nullptr)
    {
       expl = NoFileExpl;
@@ -384,7 +384,7 @@ word CodeCoverage::Load(string& expl)
 
    while(stream->peek() != EOF)
    {
-      SysFile::GetLine(*stream, input);
+      FileSystem::GetLine(*stream, input);
 
       while(!input.empty())
       {

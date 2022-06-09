@@ -27,10 +27,10 @@
 #include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"
+#include "Mutex.h"
 #include "NbTypes.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysMutex.h"
 #include "SystemTime.h"
 #include "SysTypes.h"
 
@@ -43,7 +43,7 @@ namespace NodeBase
 {
 //  Critical section lock for the log buffer.
 //
-static SysMutex LogBufferLock_("LogBufferLock");
+static Mutex LogBufferLock_("LogBufferLock");
 
 //------------------------------------------------------------------------------
 

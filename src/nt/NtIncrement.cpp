@@ -47,11 +47,13 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "FunctionProfiler.h"
 #include "FunctionTrace.h"
 #include "LeakyBucketCounter.h"
+#include "Mutex.h"
 #include "NbAppIds.h"
 #include "NbCliParms.h"
 #include "NbSignals.h"
@@ -69,8 +71,6 @@
 #include "Singleton.h"
 #include "SoftwareException.h"
 #include "SymbolRegistry.h"
-#include "SysFile.h"
-#include "SysMutex.h"
 #include "TestDatabase.h"
 #include "ToolTypes.h"
 
@@ -280,7 +280,7 @@ word NtLogsCommand::Sort
    string location = "on " + Element::Name();
    auto dir = Element::OutputPath();
    auto path = dir + PATH_SEPARATOR + input + ".txt";
-   auto infile = SysFile::CreateIstream(path.c_str());
+   auto infile = FileSystem::CreateIstream(path.c_str());
    if(infile == nullptr)
    {
       expl = "Could not open input file: " + path;
@@ -289,7 +289,7 @@ word NtLogsCommand::Sort
 
    while(infile->peek() != EOF)
    {
-      SysFile::GetLine(*infile, line);
+      FileSystem::GetLine(*infile, line);
 
       if(line.empty())
       {
@@ -329,7 +329,7 @@ word NtLogsCommand::Sort
 
    infile.reset();
    path = dir + PATH_SEPARATOR + output + ".txt";
-   auto outfile = SysFile::CreateOstream(path.c_str(), true);
+   auto outfile = FileSystem::CreateOstream(path.c_str(), true);
    if(outfile == nullptr)
    {
       expl = "Could not open output file: " + path;
@@ -3061,7 +3061,7 @@ private:
    signal_t signal_;
 };
 
-static SysMutex RecoveryMutex_("RecoveryTestMutex");
+static Mutex RecoveryMutex_("RecoveryTestMutex");
 
 //------------------------------------------------------------------------------
 

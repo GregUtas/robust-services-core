@@ -46,13 +46,13 @@
 #include "CxxVector.h"
 #include "Debug.h"
 #include "Duration.h"
+#include "FileSystem.h"
 #include "Formatters.h"
 #include "Library.h"
 #include "LibraryItem.h"
 #include "NbCliParms.h"
 #include "Parser.h"
 #include "Singleton.h"
-#include "SysFile.h"
 #include "ThisThread.h"
 
 using std::ostream;
@@ -6730,7 +6730,7 @@ word Editor::Write() const
    //
    auto path = file_->Path();
    auto temp = path + ".tmp";
-   auto output = SysFile::CreateOstream(temp.c_str(), true);
+   auto output = FileSystem::CreateOstream(temp.c_str(), true);
    if(output == nullptr)
    {
       stream << "Failed to open output file for " << file_->Name();

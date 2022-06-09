@@ -48,6 +48,7 @@
 #include "Log.h"
 #include "Memory.h"
 #include "MsgBuffer.h"
+#include "Mutex.h"
 #include "MutexRegistry.h"
 #include "NbAppIds.h"
 #include "NbLogs.h"
@@ -64,7 +65,6 @@
 #include "Statistics.h"
 #include "StatisticsRegistry.h"
 #include "SteadyTime.h"
-#include "SysMutex.h"
 #include "SysStackTrace.h"
 #include "SystemTime.h"
 #include "ThreadAdmin.h"
@@ -421,7 +421,7 @@ private:
 //
 //  Critical section lock for the array of context switches.
 //
-static SysMutex ContextSwitchesLock_("ContextSwitchesLock");
+static Mutex ContextSwitchesLock_("ContextSwitchesLock");
 
 //------------------------------------------------------------------------------
 
@@ -890,7 +890,7 @@ public:
 
    //  The mutex on which the thread is currently blocked.
    //
-   SysMutex* acquiring_;
+   Mutex* acquiring_;
 
    //  Determines whether the thread has failed to yield too often.
    //
@@ -1223,7 +1223,7 @@ Thread* Thread::ActiveThread() NO_FT
 
 //------------------------------------------------------------------------------
 
-SysMutex* Thread::BlockingMutex() const
+Mutex* Thread::BlockingMutex() const
 {
    return priv_->acquiring_;
 }
@@ -3753,7 +3753,7 @@ void Thread::Unblock()
 
 //------------------------------------------------------------------------------
 
-void Thread::UpdateMutex(SysMutex* mutex)
+void Thread::UpdateMutex(Mutex* mutex)
 {
    priv_->acquiring_ = mutex;
 }

@@ -37,6 +37,7 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "FileThread.h"
 #include "Formatters.h"
 #include "NbCliParms.h"
@@ -48,7 +49,6 @@
 #include "Singleton.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysFile.h"
 #include "TraceBuffer.h"
 
 using std::ostream;
@@ -220,7 +220,7 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
 
    //  Open the help file addressed by PATH.
    //
-   auto stream = SysFile::CreateIstream(path.c_str());
+   auto stream = FileSystem::CreateIstream(path.c_str());
    if(stream == nullptr) return -2;
 
    //  Find line that contains "? KEY" and display the lines that follow, up
@@ -233,7 +233,7 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
 
    while(stream->peek() != EOF)
    {
-      SysFile::GetLine(*stream, line);
+      FileSystem::GetLine(*stream, line);
 
       if(line.empty())
       {

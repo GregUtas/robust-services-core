@@ -43,13 +43,13 @@
 #include "CxxToken.h"
 #include "CxxVector.h"
 #include "Debug.h"
+#include "FileSystem.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
 #include "SetOperations.h"
 #include "Singleton.h"
-#include "SysFile.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -1754,7 +1754,7 @@ istreamPtr CodeFile::InputStream() const
    //  result of parsing an #include directive.
    //
    if(dir_ == nullptr) return nullptr;
-   return SysFile::CreateIstream(Path().c_str());
+   return FileSystem::CreateIstream(Path().c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -2465,12 +2465,12 @@ bool CodeFile::ReadCode(string& code) const
 
    while(input->peek() != EOF)
    {
-      SysFile::GetLine(*input, str);
+      FileSystem::GetLine(*input, str);
       code += str;
       code.push_back(CRLF);
    }
 
-   //  SysFile::GetLine reads up to the next endline or EOF, so we added an
+   //  FileSystem::GetLine reads up to the next endline or EOF, so we added an
    //  endline back in.  However, this results in adding an endline at the
    //  end of the file, even if it didn't have one. Remove such an endline.
    //

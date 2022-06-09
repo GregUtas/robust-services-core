@@ -29,6 +29,7 @@
 #include "CoutThread.h"
 #include "Debug.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "FileThread.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
@@ -37,7 +38,6 @@
 #include "Singleton.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysFile.h"
 #include "ThisThread.h"
 
 using std::ostream;
@@ -362,7 +362,7 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
 
    ThisThread::EnterBlockingOperation(BlockedOnStream, CliBuffer_GetLine);
    {
-      SysFile::GetLine(*source.file_, buff_);
+      FileSystem::GetLine(*source.file_, buff_);
    }
    ThisThread::ExitBlockingOperation(CliBuffer_GetLine);
 
@@ -562,7 +562,7 @@ word CliBuffer::OpenInputFile(const string& name, string& expl)
    FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
-   auto file = SysFile::CreateIstream(path.c_str());
+   auto file = FileSystem::CreateIstream(path.c_str());
 
    if(file != nullptr)
    {

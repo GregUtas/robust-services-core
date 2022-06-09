@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysFile.h
+//  FileSystem.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef SYSFILE_H_INCLUDED
-#define SYSFILE_H_INCLUDED
+#ifndef FILESYSTEM_H_INCLUDED
+#define FILESYSTEM_H_INCLUDED
 
 #include <cstddef>
 #include <iosfwd>
@@ -34,7 +34,7 @@ namespace NodeBase
 {
 //  File system functions.
 //
-namespace SysFile
+namespace FileSystem
 {
    //  Opens an existing file for input.  Returns nullptr if the file is
    //  empty or does not exist.

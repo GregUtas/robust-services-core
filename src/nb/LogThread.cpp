@@ -30,18 +30,18 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "FileThread.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
+#include "Mutex.h"
 #include "NbDaemons.h"
 #include "NbPools.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysConsole.h"
-#include "SysFile.h"
-#include "SysMutex.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -53,7 +53,7 @@ namespace NodeBase
 {
 //  To prevent interleaved output in the log file.
 //
-static SysMutex LogFileLock_("LogFileLock");
+static Mutex LogFileLock_("LogFileLock");
 
 //------------------------------------------------------------------------------
 //
@@ -221,7 +221,7 @@ void LogThread::Spool(const string& str, const Log* log)
 
          auto path = Element::OutputPath() +
             PATH_SEPARATOR + Element::ConsoleFileName();
-         auto file = SysFile::CreateOstream(path.c_str());
+         auto file = FileSystem::CreateOstream(path.c_str());
 
          if(file != nullptr)
          {
@@ -236,7 +236,7 @@ void LogThread::Spool(const string& str, const Log* log)
 
    MutexGuard guard(&LogFileLock_);
 
-   auto file = SysFile::CreateOstream(path.c_str());
+   auto file = FileSystem::CreateOstream(path.c_str());
 
    if(file != nullptr)
    {

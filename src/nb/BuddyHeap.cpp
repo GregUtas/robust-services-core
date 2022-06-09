@@ -32,13 +32,13 @@
 #include "Element.h"
 #include "Formatters.h"
 #include "HeapCfg.h"
+#include "Mutex.h"
 #include "NbTypes.h"
 #include "Q2Link.h"
 #include "Q2Way.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysMemory.h"
-#include "SysMutex.h"
 
 using std::ostream;
 using std::string;
@@ -185,7 +185,7 @@ struct HeapPriv
 {
    //  For locking the heap during operations.
    //
-   std::unique_ptr<SysMutex> lock;
+   std::unique_ptr<Mutex> lock;
 
    //  The logical start of the heap.  If the heap's size is a power of 2,
    //  this is the same as its actual start.  If not, the heap's logical
@@ -259,7 +259,7 @@ BuddyHeap::~BuddyHeap()
    if(heap_ == nullptr) return;
    heap_->lock->Acquire(TIMEOUT_NEVER);
 
-   std::unique_ptr<SysMutex> lock(heap_->lock.release());
+   std::unique_ptr<Mutex> lock(heap_->lock.release());
    SetPermissions(MemReadWrite);
    SysMemory::Free(heap_, size_);
    heap_ = nullptr;
@@ -466,7 +466,7 @@ bool BuddyHeap::Create(size_t size)
    //
    std::ostringstream stream;
    stream << "HeapLock(" << type_ << ')';
-   std::unique_ptr<SysMutex> lock(new SysMutex(stream.str().c_str()));
+   std::unique_ptr<Mutex> lock(new Mutex(stream.str().c_str()));
 
    if(lock == nullptr)
    {

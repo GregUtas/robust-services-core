@@ -21,6 +21,7 @@
 //
 #include "MutexRegistry.h"
 #include <cstddef>
+#include <cstdint>
 #include <iomanip>
 #include <ios>
 #include <new>
@@ -28,8 +29,8 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "Mutex.h"
 #include "NbLogs.h"
-#include "SysMutex.h"
 #include "SysThread.h"
 #include "SysTypes.h"
 #include "Thread.h"
@@ -52,7 +53,7 @@ MutexRegistry::MutexRegistry()
 {
    Debug::ft("MutexRegistry.ctor");
 
-   mutexes_.Init(MaxMutexes, SysMutex::CellDiff(), MemPermanent);
+   mutexes_.Init(MaxMutexes, Mutex::CellDiff(), MemPermanent);
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ void MutexRegistry::Abandon() const
 
 fn_name MutexRegistry_BindMutex = "MutexRegistry.BindMutex";
 
-bool MutexRegistry::BindMutex(SysMutex& mutex)
+bool MutexRegistry::BindMutex(Mutex& mutex)
 {
    Debug::ft(MutexRegistry_BindMutex);
 
@@ -132,7 +133,7 @@ void MutexRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-SysMutex* MutexRegistry::Find(const std::string& name) const
+Mutex* MutexRegistry::Find(const std::string& name) const
 {
    Debug::ft("MutexRegistry.Find");
 
@@ -147,9 +148,18 @@ SysMutex* MutexRegistry::Find(const std::string& name) const
 }
 
 //------------------------------------------------------------------------------
-
-fixed_string MutexHeader = "Id  Name                  Tid  NativeId";
+//
 //                         | 2..22                    . 2..<nid>
+
+//------------------------------------------------------------------------------
+
+void MutexRegistry::Patch(sel_t selector, void* arguments)
+{
+   Permanent::Patch(selector, arguments);
+}
+fixed_string MutexHeader = "Id  Name                  Tid  NativeId";
+
+//------------------------------------------------------------------------------
 
 void MutexRegistry::Summarize(ostream& stream) const
 {
@@ -172,14 +182,7 @@ void MutexRegistry::Summarize(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-void MutexRegistry::Patch(sel_t selector, void* arguments)
-{
-   Permanent::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-void MutexRegistry::UnbindMutex(SysMutex& mutex)
+void MutexRegistry::UnbindMutex(Mutex& mutex)
 {
    Debug::ftnt("MutexRegistry.UnbindMutex");
 

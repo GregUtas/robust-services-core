@@ -32,10 +32,10 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "NbCliParms.h"
-#include "SysFile.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -93,7 +93,7 @@ void TestDatabase::Commit() const
    FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "test.db.txt";
-   auto stream = SysFile::CreateOstream(path.c_str(), true);
+   auto stream = FileSystem::CreateOstream(path.c_str(), true);
 
    if(stream == nullptr)
    {
@@ -188,7 +188,7 @@ void TestDatabase::Insert(const string& testname, const string& dir)
    //  If a script named TEST exists, calculate its hash value.
    //
    auto path = dir + PATH_SEPARATOR + testname + ".txt";
-   auto stream = SysFile::CreateIstream(path.c_str());
+   auto stream = FileSystem::CreateIstream(path.c_str());
 
    if(stream != nullptr)
    {
@@ -197,7 +197,7 @@ void TestDatabase::Insert(const string& testname, const string& dir)
 
       while(stream->peek() != EOF)
       {
-         SysFile::GetLine(*stream, input);
+         FileSystem::GetLine(*stream, input);
          contents += input;
       }
 
@@ -237,7 +237,7 @@ void TestDatabase::Load()
    FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "test.db.txt";
-   auto stream = SysFile::CreateIstream(path.c_str());
+   auto stream = FileSystem::CreateIstream(path.c_str());
 
    if(stream == nullptr)
    {
@@ -252,7 +252,7 @@ void TestDatabase::Load()
 
    while(stream->peek() != EOF)
    {
-      SysFile::GetLine(*stream, input);
+      FileSystem::GetLine(*stream, input);
 
       while(!input.empty() && (state == LoadTest))
       {
@@ -387,7 +387,7 @@ void TestDatabase::Update()
    auto indir = Element::InputPath();
    std::set<string> files;
 
-   if(!SysFile::ListFiles(indir.c_str(), files))
+   if(!FileSystem::ListFiles(indir.c_str(), files))
    {
       auto expl = "Could not open directory " + indir;
       Debug::SwLog(TestDatabase_Update, expl, 0);
@@ -399,10 +399,10 @@ void TestDatabase::Update()
    //
    for(auto fn = files.cbegin(); fn != files.cend(); ++fn)
    {
-      if(SysFile::FindExt(*fn, ".txt") != string::npos) continue;
+      if(FileSystem::FindExt(*fn, ".txt") != string::npos) continue;
 
       auto path = indir + PATH_SEPARATOR + *fn;
-      auto stream = SysFile::CreateIstream(path.c_str());
+      auto stream = FileSystem::CreateIstream(path.c_str());
 
       if(stream == nullptr)
       {
@@ -414,7 +414,7 @@ void TestDatabase::Update()
 
       while(stream->peek() != EOF)
       {
-         SysFile::GetLine(*stream, input);
+         FileSystem::GetLine(*stream, input);
          auto str = strGet(input);
          if(str != "tests") continue;
          str = strGet(input);

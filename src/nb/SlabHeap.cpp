@@ -32,10 +32,10 @@
 #include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "Mutex.h"
 #include "NbTypes.h"
 #include "Restart.h"
 #include "SysMemory.h"
-#include "SysMutex.h"
 
 using std::ostream;
 using std::string;
@@ -260,7 +260,7 @@ private:
 
    //  For locking the heap during operations.
    //
-   std::unique_ptr<SysMutex> mutex_;
+   std::unique_ptr<Mutex> mutex_;
 
    //  The slabs allocated for the heap.
    //
@@ -288,7 +288,7 @@ SlabPriv::SlabPriv(MemoryType type) : type_(type), size_(SlabSize)
    //
    std::ostringstream stream;
    stream << "HeapLock(" << type_ << ')';
-   mutex_.reset(new SysMutex(stream.str().c_str()));
+   mutex_.reset(new Mutex(stream.str().c_str()));
 
    if(mutex_ == nullptr)
    {

@@ -27,12 +27,12 @@
 #include "CfgParm.h"
 #include "CfgTuple.h"
 #include "Debug.h"
+#include "FileSystem.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "MainArgs.h"
 #include "NbLogs.h"
 #include "Restart.h"
-#include "SysFile.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -87,7 +87,7 @@ static bool LoadNextTuple(string& key, string& value)
       //  Skip any line that is empty, that contains only blanks, or that
       //  has the comment character as its first non-blank character.
       //
-      SysFile::GetLine(*Stream_, input);
+      FileSystem::GetLine(*Stream_, input);
       ++CurrLine_;
 
       if(input.empty()) continue;
@@ -366,7 +366,7 @@ void CfgParmRegistry::LoadTuples()
    //  with that key already exists, update its value so that the parameter
    //  can later be set to the value specified in the configuration file.
    //
-   Stream_ = SysFile::CreateIstream(configFileName_.c_str());
+   Stream_ = FileSystem::CreateIstream(configFileName_.c_str());
 
    if(Stream_ == nullptr)
    {

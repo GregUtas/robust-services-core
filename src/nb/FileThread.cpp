@@ -28,11 +28,11 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "FunctionGuard.h"
+#include "Mutex.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysFile.h"
-#include "SysMutex.h"
 
 using std::ostream;
 using std::string;
@@ -43,11 +43,11 @@ namespace NodeBase
 {
 //  For serializing access to our message queue.
 //
-static SysMutex FileThreadMsgQLock_("FileThreadMsgQLock");
+static Mutex FileThreadMsgQLock_("FileThreadMsgQLock");
 
 //  For preventing interleaved output in the console transcript file.
 //
-static SysMutex ConsoleFileLock_("ConsoleFileLock");
+static Mutex ConsoleFileLock_("ConsoleFileLock");
 
 //------------------------------------------------------------------------------
 //
@@ -222,7 +222,7 @@ void FileThread::Enter()
       FunctionGuard guard(Guard_MakePreemptable);
 
       auto path = Element::OutputPath() + PATH_SEPARATOR + *name;
-      auto file = SysFile::CreateOstream(path.c_str(), trunc);
+      auto file = FileSystem::CreateOstream(path.c_str(), trunc);
 
       if(file != nullptr)
       {
@@ -274,7 +274,7 @@ void FileThread::Spool(const string& name,
    if(Restart::GetStage() != Running)
    {
       auto path = Element::OutputPath() + PATH_SEPARATOR + name;
-      auto file = SysFile::CreateOstream(path.c_str(), trunc);
+      auto file = FileSystem::CreateOstream(path.c_str(), trunc);
 
       if(file != nullptr)
       {
@@ -335,7 +335,7 @@ void FileThread::Truncate(const string& name)
    Debug::ft("FileThread.Truncate");
 
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
-   auto file = SysFile::CreateOstream(path.c_str(), true);
+   auto file = FileSystem::CreateOstream(path.c_str(), true);
    file.reset();
 }
 }

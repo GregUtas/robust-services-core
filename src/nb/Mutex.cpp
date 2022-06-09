@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysMutex.cpp
+//  Mutex.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "SysMutex.h"
+#include "Mutex.h"
 #include <chrono>
 #include <cstdint>
 #include <new>
@@ -39,7 +39,7 @@ using std::string;
 
 namespace NodeBase
 {
-MutexGuard::MutexGuard(SysMutex* mutex) : mutex_(mutex)
+MutexGuard::MutexGuard(Mutex* mutex) : mutex_(mutex)
 {
    if(mutex_ == nullptr) return;
 
@@ -71,28 +71,28 @@ void MutexGuard::Release()
 
 //==============================================================================
 
-SysMutex::SysMutex(c_string name) :
+Mutex::Mutex(c_string name) :
    name_(name),
    nid_(NIL_ID),
    owner_(nullptr),
    locks_(0)
 {
-   Debug::ft("SysMutex.ctor");
+   Debug::ft("Mutex.ctor");
 
    Singleton<MutexRegistry>::Instance()->BindMutex(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysMutex_dtor = "SysMutex.dtor";
+fn_name Mutex_dtor = "Mutex.dtor";
 
-SysMutex::~SysMutex()
+Mutex::~Mutex()
 {
-   Debug::ftnt(SysMutex_dtor);
+   Debug::ftnt(Mutex_dtor);
 
    if(nid_ != NIL_ID)
    {
-      Debug::SwLog(SysMutex_dtor, name_, nid_);
+      Debug::SwLog(Mutex_dtor, name_, nid_);
    }
 
    Singleton<MutexRegistry>::Extant()->UnbindMutex(*this);
@@ -100,9 +100,9 @@ SysMutex::~SysMutex()
 
 //------------------------------------------------------------------------------
 
-bool SysMutex::Acquire(const msecs_t& timeout)
+bool Mutex::Acquire(const msecs_t& timeout)
 {
-   Debug::ftnt("SysMutex.Acquire");
+   Debug::ftnt("Mutex.Acquire");
 
    auto curr = SysThread::RunningThreadId();
 
@@ -130,16 +130,16 @@ bool SysMutex::Acquire(const msecs_t& timeout)
 
 //------------------------------------------------------------------------------
 
-ptrdiff_t SysMutex::CellDiff()
+ptrdiff_t Mutex::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast<const SysMutex*>(&local);
+   auto fake = reinterpret_cast<const Mutex*>(&local);
    return ptrdiff(&fake->mid_, fake);
 }
 
 //------------------------------------------------------------------------------
 
-void SysMutex::Display(ostream& stream,
+void Mutex::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Permanent::Display(stream, prefix, options);
@@ -153,7 +153,7 @@ void SysMutex::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-Thread* SysMutex::Owner() const
+Thread* Mutex::Owner() const
 {
    if(owner_ != nullptr) return owner_;
    if(nid_ == NIL_ID) return nullptr;
@@ -162,24 +162,24 @@ Thread* SysMutex::Owner() const
 
 //------------------------------------------------------------------------------
 
-void SysMutex::Patch(sel_t selector, void* arguments)
+void Mutex::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysMutex_Release = "SysMutex.Release";
+fn_name Mutex_Release = "Mutex.Release";
 
-void SysMutex::Release(bool abandon)
+void Mutex::Release(bool abandon)
 {
-   Debug::ftnt(SysMutex_Release);
+   Debug::ftnt(Mutex_Release);
 
    auto curr = SysThread::RunningThreadId();
 
    if(nid_ != curr)
    {
-      Debug::SwLog(SysMutex_Release, name_, pack2(curr, nid_));
+      Debug::SwLog(Mutex_Release, name_, pack2(curr, nid_));
       return;
    }
 

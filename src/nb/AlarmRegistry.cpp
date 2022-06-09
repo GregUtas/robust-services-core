@@ -22,6 +22,7 @@
 #include "AlarmRegistry.h"
 #include <cstddef>
 #include <iomanip>
+#include <ios>
 #include <ostream>
 #include "Alarm.h"
 #include "Debug.h"

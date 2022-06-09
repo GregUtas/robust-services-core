@@ -22,7 +22,6 @@
 #include "NbIncrement.h"
 #include "CliCharParm.h"
 #include "CliText.h"
-#include <cctype>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
@@ -63,6 +62,7 @@
 #include "Memory.h"
 #include "Module.h"
 #include "ModuleRegistry.h"
+#include "Mutex.h"
 #include "MutexRegistry.h"
 #include "NbCliParms.h"
 #include "NbPools.h"
@@ -72,6 +72,7 @@
 #include "PosixSignal.h"
 #include "PosixSignalRegistry.h"
 #include "Q1Way.h"
+#include "Q2Way.h"
 #include "Registry.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -82,7 +83,6 @@
 #include "SteadyTime.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysMutex.h"
 #include "ThisThread.h"
 #include "ThreadRegistry.h"
 #include "Tool.h"
@@ -3282,7 +3282,7 @@ fixed_string HeapsHeader =
 fixed_string PoolsHeader =
    "Alloc     Min    Curr    Curr                        Segments\n"
    "Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Name";
-// |    5.      7.      7.      7.        10.        10.   4.   4...<name>   
+// |    5.      7.      7.      7.        10.        10.   4.   4...<name>
 
 word StatusCommand::ProcessCommand(CliThread& cli) const
 {
@@ -3310,7 +3310,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            *cli.obuf << SPACE<< setw(7) << (heap->MinAvail() / kBs);
+            *cli.obuf << SPACE << setw(7) << (heap->MinAvail() / kBs);
             *cli.obuf << SPACE << setw(6) << (heap->CurrAvail() / kBs);
          }
 
@@ -3638,9 +3638,6 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The TOOLS command.
-//
-fixed_string ToolHeaderStr = "  Tool Name          Abbr  Explanation";
 //                           0         1         2        3
 //                           012345678901234567890134567890123456789
 

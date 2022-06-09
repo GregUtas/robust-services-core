@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysLock.h
+//  Lock.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef SYSLOCK_H_INCLUDED
-#define SYSLOCK_H_INCLUDED
+#ifndef LOCK_H_INCLUDED
+#define LOCK_H_INCLUDED
 
 #include <iosfwd>
 #include <mutex>
@@ -34,32 +34,32 @@ namespace NodeBase
 {
 //  Operating system abstraction layer: lightweight mutex.
 //
-//  This mutex is similar to SysMutex but is specifically intended for any
+//  This mutex is similar to Mutex but is specifically intended for any
 //  scenario in which a mutex must frequently be acquired.  It is *not*
 //  intended for general use: it neither invokes Debug::ft nor registers with
-//  MutexRegistry.  It is strongly recommended that SysMutex be used first,
+//  MutexRegistry.  It is strongly recommended that Mutex be used first,
 //  converting to this mutex only after thorough testing if the performance
 //  improvement justifies it.  In the same way that there is MutexGuard for
-//  SysMutex, there is LockGuard for SysLock (see below).
+//  Mutex, there is LockGuard for Lock (see below).
 //
-class SysLock
+class Lock
 {
 public:
    //  Creates the mutex.
    //
-   SysLock();
+   Lock();
 
    //  Deletes the mutex.
    //
-   ~SysLock();
+   ~Lock();
 
    //  Deleted to prohibit copying.
    //
-   SysLock(const SysLock& that) = delete;
+   Lock(const Lock& that) = delete;
 
    //  Deleted to prohibit copy assignment.
    //
-   SysLock& operator=(const SysLock& that) = delete;
+   Lock& operator=(const Lock& that) = delete;
 
    //  Acquires the mutex with an infinite timeout.  Returns immediately
    //  if the thread already owns the mutex.
@@ -97,7 +97,7 @@ class LockGuard
 public:
    //  Acquires LOCK.  If LOCK is nullptr, all actions equate to a noop.
    //
-   explicit LockGuard(SysLock* lock);
+   explicit LockGuard(Lock* lock);
 
    //  Releases the lock.
    //
@@ -118,7 +118,7 @@ public:
 private:
    //  The lock.
    //
-   SysLock* lock_;
+   Lock* lock_;
 };
 }
 #endif

@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysLock.cpp
+//  Lock.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "SysLock.h"
+#include "Lock.h"
 #include <ostream>
 #include "Debug.h"
 #include "SysThread.h"
@@ -31,7 +31,7 @@ using std::string;
 
 namespace NodeBase
 {
-LockGuard::LockGuard(SysLock* lock) : lock_(lock)
+LockGuard::LockGuard(Lock* lock) : lock_(lock)
 {
    if(lock_ == nullptr) return;
 
@@ -63,21 +63,21 @@ void LockGuard::Release()
 
 //==============================================================================
 
-SysLock::SysLock() : owner_(NIL_ID) { }
+Lock::Lock() : owner_(NIL_ID) { }
 
 //------------------------------------------------------------------------------
 
-SysLock::~SysLock()
+Lock::~Lock()
 {
    if(owner_ != NIL_ID)
    {
-      Debug::SwLog("SysLock.dtor", "lock has owner", owner_);
+      Debug::SwLog("Lock.dtor", "lock has owner", owner_);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void SysLock::Acquire()
+void Lock::Acquire()
 {
    auto curr = SysThread::RunningThreadId();
    if(owner_ == curr) return;
@@ -86,7 +86,7 @@ void SysLock::Acquire()
 
 //------------------------------------------------------------------------------
 
-void SysLock::Display(ostream& stream,
+void Lock::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix << "owner : " << owner_ << CRLF;
@@ -94,7 +94,7 @@ void SysLock::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void SysLock::Release()
+void Lock::Release()
 {
    auto curr = SysThread::RunningThreadId();
    if(owner_ != curr) return;

@@ -22,9 +22,10 @@
 #include "Memory.h"
 #include "BuddyHeap.h"
 #include "SlabHeap.h"
+#include <bitset>
 #include <cstring>
 #include <iomanip>
-#include <ostream>
+#include <ios>
 #include <sstream>
 #include <vector>
 #include "AllocationException.h"
@@ -32,6 +33,7 @@
 #include "Formatters.h"
 #include "HeapCfg.h"
 #include "MemoryTrace.h"
+#include "NbTypes.h"
 #include "PermanentHeap.h"
 #include "Restart.h"
 #include "Singleton.h"

@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysMutex.h
+//  Mutex.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef SYSMUTEX_H_INCLUDED
-#define SYSMUTEX_H_INCLUDED
+#ifndef MUTEX_H_INCLUDED
+#define MUTEX_H_INCLUDED
 
 #include "Permanent.h"
 #include <atomic>
@@ -77,24 +77,24 @@ namespace NodeBase
 //     be held for a short time, to perform an indivisible operation, so it is
 //     hard to see how this could legitimately involve a blocking operation.
 //
-class SysMutex : public Permanent
+class Mutex : public Permanent
 {
 public:
    //  Creates a mutex identified by NAME.  Not subclassed.
    //
-   explicit SysMutex(c_string name);
+   explicit Mutex(c_string name);
 
    //  Deletes the mutex.
    //
-   ~SysMutex();
+   ~Mutex();
 
    //  Deleted to prohibit copying.
    //
-   SysMutex(const SysMutex& that) = delete;
+   Mutex(const Mutex& that) = delete;
 
    //  Deleted to prohibit copy assignment.
    //
-   SysMutex& operator=(const SysMutex& that) = delete;
+   Mutex& operator=(const Mutex& that) = delete;
 
    //  Acquires the mutex.  TIMEOUT specifies how long to wait.  Returns
    //  true if the mutex was acquired, and false if the timeout occurred.
@@ -171,7 +171,7 @@ public:
    //  Acquires MUTEX using TIMEOUT_NEVER.  If MUTEX is nullptr,
    //  all actions equate to a noop.
    //
-   explicit MutexGuard(SysMutex* mutex);
+   explicit MutexGuard(Mutex* mutex);
 
    //  Releases the mutex.
    //
@@ -192,7 +192,7 @@ public:
 private:
    //  The mutex.
    //
-   SysMutex* mutex_;
+   Mutex* mutex_;
 };
 }
 #endif

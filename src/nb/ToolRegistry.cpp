@@ -23,6 +23,7 @@
 #include <cctype>
 #include <cstddef>
 #include <iomanip>
+#include <ios>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"

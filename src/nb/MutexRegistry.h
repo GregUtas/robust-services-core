@@ -29,7 +29,7 @@
 
 namespace NodeBase
 {
-   class SysMutex;
+   class Mutex;
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ namespace NodeBase
 class MutexRegistry : public Permanent
 {
    friend class Singleton<MutexRegistry>;
-   friend class SysMutex;
+   friend class Mutex;
 public:
    //  Deleted to prohibit copying.
    //
@@ -53,7 +53,7 @@ public:
 
    //  Returns the mutex associated with NAME.
    //
-   SysMutex* Find(const std::string& name) const;
+   Mutex* Find(const std::string& name) const;
 
    //  Releases all mutexes owned by the running thread.
    //
@@ -61,7 +61,7 @@ public:
 
    //  Returns the registry.
    //
-   const Registry<SysMutex>& Mutexes() const { return mutexes_; }
+   const Registry<Mutex>& Mutexes() const { return mutexes_; }
 
    //  Overridden to display member variables.
    //
@@ -86,15 +86,15 @@ private:
 
    //  Adds MUTEX to the registry.
    //
-   bool BindMutex(SysMutex& mutex);
+   bool BindMutex(Mutex& mutex);
 
    //  Removes MUTEX from the registry.
    //
-   void UnbindMutex(SysMutex& mutex);
+   void UnbindMutex(Mutex& mutex);
 
    //  The registry of mutexes.
    //
-   Registry<SysMutex> mutexes_;
+   Registry<Mutex> mutexes_;
 };
 }
 #endif

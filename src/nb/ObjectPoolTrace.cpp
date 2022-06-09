@@ -25,6 +25,7 @@
 #include "Formatters.h"
 #include "ObjectPool.h"
 #include "ObjectPoolRegistry.h"
+#include "Registry.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"

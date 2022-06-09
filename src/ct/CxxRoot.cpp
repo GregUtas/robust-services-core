@@ -36,10 +36,10 @@
 #include "CxxStrLiteral.h"
 #include "CxxVector.h"
 #include "Debug.h"
+#include "FileSystem.h"
 #include "Parser.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysFile.h"
 #include "SystemTime.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -317,7 +317,7 @@ void CxxRoot::DefineSymbols(std::istream& stream)
 
    while(stream.peek() != EOF)
    {
-      SysFile::GetLine(stream, input);
+      FileSystem::GetLine(stream, input);
 
       if(IsValidIdentifier(input))
       {

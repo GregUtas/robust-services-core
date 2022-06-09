@@ -21,6 +21,7 @@
 //
 #include "DaemonRegistry.h"
 #include <iomanip>
+#include <ios>
 #include <ostream>
 #include <string>
 #include "Alarm.h"

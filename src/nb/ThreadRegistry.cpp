@@ -23,16 +23,18 @@
 #include "StatisticsGroup.h"
 #include <algorithm>
 #include <bitset>
+#include <cstdint>
 #include <iomanip>
+#include <ios>
 #include <iterator>
 #include <ostream>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Mutex.h"
 #include "NbCliParms.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysMutex.h"
 #include "SysThread.h"
 #include "ThisThread.h"
 #include "Thread.h"
@@ -125,7 +127,7 @@ void ThreadStatsGroup::DisplayStats
 //
 //  Critical section lock for the thread registry.
 //
-static SysMutex ThreadsLock_("ThreadsLock");
+static Mutex ThreadsLock_("ThreadsLock");
 
 //  The thread at which to start searching for the thread to be
 //  scheduled in.  Scheduling is currently round-robin but will
@@ -656,8 +658,7 @@ void ThreadRegistry::Summarize(ostream& stream) const
       stream << setw(2) << (*t)->Tid();
       stream << spaces(2) << setw(8) << std::left << (*t)->AbbrName();
       auto nid = ((*t)->NativeThreadId() & UINT32_MAX);
-      stream << SPACE << setw(8) << std::right
-         << std::hex << nid << std::dec;
+      stream << SPACE << setw(8) << std::right << std::hex << nid << std::dec;
       stream << spaces(2) << (*t)->GetFaction() << CRLF;
    }
 }

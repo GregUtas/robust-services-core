@@ -28,11 +28,11 @@
 #include "Duration.h"
 #include "FileThread.h"
 #include "FunctionGuard.h"
+#include "Mutex.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "StreamRequest.h"
 #include "SysConsole.h"
-#include "SysMutex.h"
 
 //------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ namespace NodeBase
 {
 //  For serializing access to our message queue.
 //
-static SysMutex CoutThreadMsgQLock_("CoutThreadMsgQLock");
+static Mutex CoutThreadMsgQLock_("CoutThreadMsgQLock");
 
 //------------------------------------------------------------------------------
 

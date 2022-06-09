@@ -22,6 +22,7 @@
 #include "PosixSignalRegistry.h"
 #include <bitset>
 #include <iomanip>
+#include <ios>
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"

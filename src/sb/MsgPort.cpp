@@ -32,6 +32,7 @@
 #include "ObjectPoolRegistry.h"
 #include "ProtocolSM.h"
 #include "PsmFactory.h"
+#include "Registry.h"
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "Singleton.h"

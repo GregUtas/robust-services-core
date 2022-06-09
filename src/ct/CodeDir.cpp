@@ -26,10 +26,10 @@
 #include "CodeFileSet.h"
 #include "CxxString.h"
 #include "Debug.h"
+#include "FileSystem.h"
 #include "Library.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
-#include "SysFile.h"
 #include "ThisThread.h"
 
 using namespace NodeBase;
@@ -93,7 +93,7 @@ word CodeDir::Extract(string& expl)
    auto lib = Singleton<Library>::Instance();
    std::set<string> files;
 
-   if(!SysFile::ListFiles(path_, files))
+   if(!FileSystem::ListFiles(path_, files))
    {
       expl = "Could not open directory " + path_;
       return -1;

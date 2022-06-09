@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysFile.cpp
+//  FileSystem.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "SysFile.h"
+#include "FileSystem.h"
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -34,9 +34,9 @@ using std::string;
 
 namespace NodeBase
 {
-istreamPtr SysFile::CreateIstream(c_string name)
+istreamPtr FileSystem::CreateIstream(c_string name)
 {
-   Debug::ft("SysFile.CreateIstream");
+   Debug::ft("FileSystem.CreateIstream");
 
    istreamPtr stream(new std::ifstream(name));
 
@@ -51,9 +51,9 @@ istreamPtr SysFile::CreateIstream(c_string name)
 
 //------------------------------------------------------------------------------
 
-ostreamPtr SysFile::CreateOstream(c_string name, bool trunc)
+ostreamPtr FileSystem::CreateOstream(c_string name, bool trunc)
 {
-   Debug::ftnt("SysFile.CreateOstream");
+   Debug::ftnt("FileSystem.CreateOstream");
 
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
    ostreamPtr stream(new (std::nothrow) std::ofstream(name, mode));
@@ -64,7 +64,7 @@ ostreamPtr SysFile::CreateOstream(c_string name, bool trunc)
 
 //------------------------------------------------------------------------------
 
-size_t SysFile::FindExt(const string& name, const string& ext)
+size_t FileSystem::FindExt(const string& name, const string& ext)
 {
    auto pos = name.rfind(ext);
 
@@ -78,7 +78,7 @@ size_t SysFile::FindExt(const string& name, const string& ext)
 
 //------------------------------------------------------------------------------
 
-void SysFile::GetLine(std::istream& stream, std::string& str)
+void FileSystem::GetLine(std::istream& stream, std::string& str)
 {
    std::getline(stream, str);
    if(!str.empty() && (str.back() == '\r')) str.pop_back();
@@ -86,9 +86,9 @@ void SysFile::GetLine(std::istream& stream, std::string& str)
 
 //------------------------------------------------------------------------------
 
-bool SysFile::ListFiles(const string& dir, std::set<string>& names)
+bool FileSystem::ListFiles(const string& dir, std::set<string>& names)
 {
-   Debug::ft("SysFile.ListFiles");
+   Debug::ft("FileSystem.ListFiles");
 
    std::filesystem::path dirpath(dir);
    std::error_code err;

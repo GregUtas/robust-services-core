@@ -42,7 +42,7 @@ namespace NodeBase
 {
    class Daemon;
    class MsgBuffer;
-   class SysMutex;
+   class Mutex;
    class ThreadPriv;
    class ThreadStats;
 }
@@ -63,7 +63,7 @@ class Thread : public Permanent
    friend class ModuleRegistry;
    friend class RootThread;
    friend class SchedCommand;
-   friend class SysMutex;
+   friend class Mutex;
    friend class ThreadRegistry;
 public:
    //  Deleted to prohibit copying.
@@ -484,11 +484,11 @@ private:
    //  Notes that the thread is trying to acquire MUTEX, which is nullptr
    //  if the mutex has been acquired.
    //
-   void UpdateMutex(SysMutex* mutex);
+   void UpdateMutex(Mutex* mutex);
 
    //  Returns the mutex that the thread is trying to acquire.
    //
-   SysMutex* BlockingMutex() const;
+   Mutex* BlockingMutex() const;
 
    //  Notes that the thread has acquired (if true) or released a mutex.
    //

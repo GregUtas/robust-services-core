@@ -75,7 +75,8 @@ Mutex::Mutex(c_string name) :
    name_(name),
    nid_(NIL_ID),
    owner_(nullptr),
-   locks_(0)
+   locks_(0),
+   conflict_(false)
 {
    Debug::ft("Mutex.ctor");
 
@@ -114,6 +115,12 @@ bool Mutex::Acquire(const msecs_t& timeout)
 
    auto thr = Thread::RunningThread(std::nothrow);
    if(thr != nullptr) thr->UpdateMutex(this);
+
+   if(nid_ != NIL_ID)
+   {
+      conflict_ = true;
+   }
+
    auto locked = mutex_.try_lock_for(timeout);
    if(thr != nullptr) thr->UpdateMutex(nullptr);
 
@@ -144,11 +151,12 @@ void Mutex::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "name  : " << name_ << CRLF;
-   stream << prefix << "mid   : " << mid_.to_str() << CRLF;
-   stream << prefix << "nid   : " << nid_ << CRLF;
-   stream << prefix << "owner : " << owner_ << CRLF;
-   stream << prefix << "locks : " << locks_ << CRLF;
+   stream << prefix << "name     : " << name_ << CRLF;
+   stream << prefix << "mid      : " << mid_.to_str() << CRLF;
+   stream << prefix << "nid      : " << nid_ << CRLF;
+   stream << prefix << "owner    : " << owner_ << CRLF;
+   stream << prefix << "locks    : " << locks_ << CRLF;
+   stream << prefix << "conflict : " << conflict_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

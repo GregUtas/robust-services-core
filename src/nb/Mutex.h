@@ -115,6 +115,10 @@ public:
    //
    Thread* Owner() const;
 
+   //  Returns true if the mutex blocked a thread.
+   //
+   bool ConflictOccurred() const { return conflict_; }
+
    //  Returns the mutex's name.
    //
    const std::string& Name() const { return name_; }
@@ -159,6 +163,10 @@ private:
    //  The number of times the mutex was acquired recursively.
    //
    std::atomic_size_t locks_;
+
+   //  Set if the mutex caused blocking.
+   //
+   bool conflict_;
 };
 
 //------------------------------------------------------------------------------

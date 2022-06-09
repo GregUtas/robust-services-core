@@ -3638,9 +3638,8 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//                           0         1         2        3
-//                           012345678901234567890134567890123456789
-
+//  The TOOLS command.
+//
 class ToolsCommand : public CliCommand
 {
 public:

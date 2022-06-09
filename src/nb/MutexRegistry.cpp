@@ -148,18 +148,16 @@ Mutex* MutexRegistry::Find(const std::string& name) const
 }
 
 //------------------------------------------------------------------------------
-//
-//                         | 2..22                    . 2..<nid>
-
-//------------------------------------------------------------------------------
 
 void MutexRegistry::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
 }
-fixed_string MutexHeader = "Id  Name                  Tid  NativeId";
 
 //------------------------------------------------------------------------------
+
+fixed_string MutexHeader = "Id  Name                  Tid  NativeId  Conflict?";
+//                         | 2..22                    . 2..       8.        10
 
 void MutexRegistry::Summarize(ostream& stream) const
 {
@@ -176,7 +174,9 @@ void MutexRegistry::Summarize(ostream& stream) const
       else
          stream << NIL_ID;
       auto nid = m->OwnerId();
-      stream << spaces(2) << std::hex << (nid & UINT32_MAX) << std::dec << CRLF;
+      stream << spaces(2) << setw(8)
+         << std::hex << (nid & UINT32_MAX) << std::dec;
+      stream << SPACE << setw(10) << m->ConflictOccurred() << CRLF;
    }
 }
 

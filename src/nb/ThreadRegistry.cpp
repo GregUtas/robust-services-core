@@ -23,6 +23,7 @@
 #include "StatisticsGroup.h"
 #include <algorithm>
 #include <bitset>
+#include <iomanip>
 #include <iterator>
 #include <ostream>
 #include <string>
@@ -38,6 +39,7 @@
 #include "ThreadAdmin.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -635,6 +637,28 @@ void ThreadRegistry::Startup(RestartLevel level)
    for(auto t = threads.begin(); t != threads.end(); ++t)
    {
       (*t)->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ThreadHeader = "Id  Name     NativeId  Faction";
+//                          | 2..8       .8       ..<faction>
+
+void ThreadRegistry::Summarize(ostream& stream) const
+{
+   auto threads = GetThreads();
+
+   stream << ThreadHeader << CRLF;
+
+   for(auto t = threads.cbegin(); t != threads.cend(); ++t)
+   {
+      stream << setw(2) << (*t)->Tid();
+      stream << spaces(2) << setw(8) << std::left << (*t)->AbbrName();
+      auto nid = ((*t)->NativeThreadId() & UINT32_MAX);
+      stream << SPACE << setw(8) << std::right
+         << std::hex << nid << std::dec;
+      stream << spaces(2) << (*t)->GetFaction() << CRLF;
    }
 }
 

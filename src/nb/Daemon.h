@@ -91,10 +91,6 @@ public:
    //
    const std::string& Name() const { return name_; }
 
-   //  Returns the daemon's location in the global DaemonRegistry.
-   //
-   id_t Did() const { return did_.GetId(); }
-
    //  Returns the current set of threads.
    //
    const std::set<Thread*> Threads() const { return threads_; }
@@ -110,6 +106,14 @@ public:
    //  Reenables the daemon and invokes CreateThreads.
    //
    void Enable();
+
+   //  Returns the daemon's alarm, if any.
+   //
+   const Alarm* GetAlarm() const { return alarm_; }
+
+   //  Returns the daemon's index in the global DaemonRegistry.
+   //
+   id_t Did() const { return did_.GetId(); }
 
    //  Returns the offset to did_.
    //

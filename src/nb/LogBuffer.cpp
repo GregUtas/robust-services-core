@@ -255,6 +255,7 @@ string LogBuffer::GetLogs(CallbackRequestPtr& callback, bool& periodic)
    {
       logs.push_back(CRLF);
       logs.append(AlarmStatusSymbol(MinorAlarm));
+      logs.push_back(SPACE);
       logs.append("WARNING: ");
       logs.append(std::to_string(discards_));
       logs.append(" log(s) discarded");

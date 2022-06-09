@@ -57,10 +57,6 @@ public:
    //
    virtual ~StatisticsGroup();
 
-   //  Returns the group's location in the global StatisticsRegistry.
-   //
-   id_t Gid() const { return gid_.GetId(); }
-
    //  Displays statistics in STREAM.  If ID is 0, all of the group's statistics
    //  are to be displayed, else only statistics associated with the identifier
    //  (e.g. an ObjectPool identifier) are to be displayed.  The default version
@@ -69,6 +65,10 @@ public:
    //
    virtual void DisplayStats
       (std::ostream& stream, id_t id, const Flags& options) const;
+
+   //  Returns the group's index in the global StatisticsRegistry.
+   //
+   id_t Gid() const { return gid_.GetId(); }
 
    //  Overridden to display member variables.
    //

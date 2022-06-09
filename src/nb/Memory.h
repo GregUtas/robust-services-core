@@ -97,10 +97,18 @@ namespace Memory
    //
    int Validate(MemoryType type, const void* addr);
 
-   //  Displays the system's heaps in STREAM, using PREFIX at the start
-   //  of each line.
+   //  Returns the number of heaps.
    //
-   void DisplayHeaps(std::ostream& stream, const std::string& prefix);
+   size_t CountHeaps();
+
+   //  Displays the system's heaps in STREAM.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options);
+
+   //  Displays a summary of each heap in STREAM.
+   //
+   void Summarize(std::ostream& stream);
 
    //  Frees the appropriate heap(s) during a restart.
    //

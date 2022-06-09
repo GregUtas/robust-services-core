@@ -55,6 +55,10 @@ public:
    //
    void NotifyAll(const Base* owner, Deferred::Event event);
 
+   //  Returns the items in the registry.
+   //
+   const Q2Way<Deferred>& Items() const { return itemq_; }
+
    //  Overridden to traverse all queues in the registry.
    //
    void ClaimBlocks() override;
@@ -71,6 +75,10 @@ public:
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
+
+   //  Overridden to display each item.
+   //
+   void Summarize(std::ostream& stream) const override;
 private:
    //  Private because this is a singleton.
    //

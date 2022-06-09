@@ -121,7 +121,7 @@ static const FactionFlags& ShutdownFactions()
 //
 //  The minimum level specified when a restart was initiated.
 //
-static RestartLevel level_ = RestartNone;
+static RestartLevel Level_ = RestartNone;
 
 //  A stream for recording the progress of system initialization.
 //
@@ -196,14 +196,7 @@ void ModuleRegistry::Display(ostream& stream,
 
 RestartLevel ModuleRegistry::GetLevel()
 {
-   return level_;
-}
-
-//------------------------------------------------------------------------------
-
-Module* ModuleRegistry::GetModule(ModuleId mid) const
-{
-   return modules_.At(mid);
+   return Level_;
 }
 
 //------------------------------------------------------------------------------
@@ -273,7 +266,7 @@ void ModuleRegistry::Restart()
 
       case Running:
          reentered = false;
-         Restart::Level_ = level_;
+         Restart::Level_ = Level_;
          if(Restart::Level_ == RestartNone) return;
          Restart::Stage_ = ShuttingDown;
          break;
@@ -295,15 +288,14 @@ void ModuleRegistry::SetLevel(RestartLevel level)
 {
    Debug::ft("ModuleRegistry.SetLevel");
 
-   level_ = level;
+   Level_ = level;
 }
 
 //------------------------------------------------------------------------------
 
 fixed_string ShutdownHeader =
    "MODULE SHUTDOWN                msecs      invoked at";
-// 0         1         2         3         4         5
-// 01234567890123456789012345678901234567890123456789012
+// |                                  36              52
 
 fixed_string ShutdownTotalStr = "total shutdown time";
 fixed_string NotifyingThreadsStr = "Notifying threads...";
@@ -431,8 +423,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 
 fixed_string StartupHeader =
    "MODULE INITIALIZATION          msecs      invoked at";
-// 0         1         2         3         4         5
-// 01234567890123456789012345678901234567890123456789012
+// |                                  36              52
 
 fixed_string StartupTotalStr = "total initialization time";
 fixed_string PreModuleStr = "pre-Module.Startup";
@@ -485,6 +476,22 @@ void ModuleRegistry::Startup(RestartLevel level)
    *Stream() << StartupTotalStr;
    *Stream() << setw(36 - width) << elapsed.count() / NS_TO_MS << CRLF;
    Log::Submit(stream_);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ModuleHeader = "Id  Module";
+//                          | 2..<object>
+
+void ModuleRegistry::Summarize(ostream& stream) const
+{
+   stream << ModuleHeader << CRLF;
+
+   for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
+   {
+      stream << setw(2) << m->Mid();
+      stream << spaces(2) << strClass(m) << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

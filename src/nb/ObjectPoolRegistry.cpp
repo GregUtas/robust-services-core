@@ -22,6 +22,7 @@
 #include "ObjectPoolRegistry.h"
 #include "StatisticsGroup.h"
 #include "Tool.h"
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -39,6 +40,7 @@
 #include "ToolTypes.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -106,7 +108,7 @@ void ObjectPoolStatsGroup::DisplayStats
    }
    else
    {
-      auto p = reg->Pool(id);
+      auto p = reg->Pools().At(id);
 
       if(p == nullptr)
       {
@@ -277,13 +279,6 @@ void ObjectPoolRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
-{
-   return pools_.At(pid);
-}
-
-//------------------------------------------------------------------------------
-
 void ObjectPoolRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft("ObjectPoolRegistry.Shutdown");
@@ -314,6 +309,26 @@ void ObjectPoolRegistry::Startup(RestartLevel level)
    for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
    {
       p->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string PoolHeader = "Id   Avail   InUse  Segments  MemoryType  Name";
+//                        | 2.      7.      7.        9.         11..<name>
+
+void ObjectPoolRegistry::Summarize(ostream& stream) const
+{
+   stream << PoolHeader << CRLF;
+
+   for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
+   {
+      stream << setw(2) << int(p->Pid());
+      stream << SPACE << setw(7) << p->AvailCount();
+      stream << SPACE << setw(7) << p->InUseCount();
+      stream << SPACE << setw(9) << p->Segments();
+      stream << SPACE << setw(11) << p->BlockType();
+      stream << spaces(2) << p->Name() << CRLF;
    }
 }
 

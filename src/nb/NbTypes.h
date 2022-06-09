@@ -126,7 +126,7 @@ enum AlarmStatus
 //
 std::ostream& operator<<(std::ostream& stream, AlarmStatus status);
 
-//  Returns a 4-character string that corresponds to STATUS.
+//  Returns a 3-character string that corresponds to STATUS.
 //
 c_string AlarmStatusSymbol(AlarmStatus status);
 

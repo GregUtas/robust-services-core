@@ -75,6 +75,11 @@ public:
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const;
 
+   //  Displays a list of items, one per line.  Primarily intended for
+   //  displaying the items in a registry.
+   //
+   virtual void Summarize(std::ostream& stream) const { }
+
    //  Invokes Display(stream, spaces(indent), opts), setting DispVerbose
    //  in OPTS if VERBOSE is set.
    //

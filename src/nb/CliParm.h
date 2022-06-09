@@ -269,7 +269,7 @@ public:
    //
    void SetId(id_t id) { pid_.SetId(id); }
 
-   //  Returns the registry index assigned to the parameter.
+   //  Returns the parameter's index in its registry.
    //
    id_t GetId() const { return pid_.GetId(); }
 

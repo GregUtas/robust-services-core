@@ -59,7 +59,7 @@ public:
    //  for hysteresis control: the alarm's level cannot be decreased until
    //  DELAY has passed.  A value of TIMEOUT_IMMED avoids hysteresis control.
    //  Instead of Log::Create, the application must invoke Alarm::Create,
-   //  which returns nullptr unless a log should be generated.
+   //  which returns nullptr unless a log should also be generated.
    //
    Alarm(c_string name, c_string expl, uint32_t delay);
 
@@ -90,6 +90,10 @@ public:
    //  Returns the alarm's status.
    //
    AlarmStatus Status() const;
+
+   //  Returns the alarm's index in the global AlarmRegistry.
+   //
+   id_t Aid() const { return aid_.GetId(); }
 
    //  Returns the offset to aid_.
    //

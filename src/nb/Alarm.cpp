@@ -164,7 +164,7 @@ ostringstreamPtr Alarm::Create(c_string groupName, LogId id, AlarmStatus status)
 void Alarm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   stream << prefix << AlarmStatusSymbol(dyn_->status_);
+   stream << prefix << AlarmStatusSymbol(dyn_->status_) << SPACE;
    stream << name_ << SPACE << '(' << expl_ << ')' << CRLF;
 }
 

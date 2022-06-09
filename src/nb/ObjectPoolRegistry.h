@@ -52,10 +52,6 @@ public:
    //
    ObjectPoolRegistry& operator=(const ObjectPoolRegistry& that) = delete;
 
-   //  Returns the pool registered against PID.
-   //
-   ObjectPool* Pool(ObjectPoolId pid) const;
-
    //  Returns the registry of object pools.  Used for iteration.
    //
    const Registry<ObjectPool>& Pools() const { return pools_; }
@@ -80,6 +76,10 @@ public:
    //  Overridden for restarts.
    //
    void Startup(RestartLevel level) override;
+
+   //  Overridden to display each pool.
+   //
+   void Summarize(std::ostream& stream) const override;
 private:
    //  Private because this is a singleton.
    //

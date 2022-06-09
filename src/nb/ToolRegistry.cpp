@@ -22,12 +22,14 @@
 #include "ToolRegistry.h"
 #include <cctype>
 #include <cstddef>
+#include <iomanip>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
 #include "Tool.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -140,6 +142,32 @@ string ToolRegistry::ListToolChars() const
 void ToolRegistry::Patch(sel_t selector, void* arguments)
 {
    Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ToolHeader = "Id  Abbr  Name            Safe?  Explanation";
+//                        | 2.    5..15             .    5..<expl>
+
+void ToolRegistry::Summarize(ostream& stream) const
+{
+   //  Display the available tools.  If a tool's CLI character is not
+   //  printable, it is not supported through the CLI.  If a tool is
+   //  not field-safe, only display it in the lab.
+   //
+   stream << ToolHeader << CRLF;
+
+   for(auto t = tools_.First(); t != nullptr; tools_.Next(t))
+   {
+      auto c = t->CliChar();
+      if(!isprint(c)) continue;
+
+      stream << setw(2) << t->Tid();
+      stream << SPACE << setw(5) << c;
+      stream << spaces(2) << std::left << setw(15) << t->Name();
+      stream << SPACE << std::right << setw(5) << t->IsSafe();
+      stream << spaces(2) << t->Expl() << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

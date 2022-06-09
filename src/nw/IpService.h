@@ -108,7 +108,7 @@ public:
    //
    IpPort* Provision(ipport_t pid);
 
-   //  Returns the service's identifier.
+   //  Returns the service's index in the global IpServiceRegistry.
    //
    id_t Sid() const { return sid_.GetId(); }
 

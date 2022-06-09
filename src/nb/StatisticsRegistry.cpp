@@ -95,8 +95,6 @@ bool StatisticsRegistry::BindStat(Statistic& stat)
 void StatisticsRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Dynamic::Display(stream, prefix, options);
-
    auto lead = prefix + spaces(2);
    stream << prefix << "groups [id_t]" << CRLF;
 

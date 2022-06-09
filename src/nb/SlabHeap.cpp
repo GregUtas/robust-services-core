@@ -287,7 +287,7 @@ SlabPriv::SlabPriv(MemoryType type) : type_(type), size_(SlabSize)
    //  Allocate the mutex.
    //
    std::ostringstream stream;
-   stream << "SlabLock(" << type_ << ')';
+   stream << "HeapLock(" << type_ << ')';
    mutex_.reset(new SysMutex(stream.str().c_str()));
 
    if(mutex_ == nullptr)

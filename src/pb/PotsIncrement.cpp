@@ -368,7 +368,8 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MepsCommand.ProcessCommand");
 
    word fid;
-   bool all, c, v;
+   bool all;
+   char disp;
 
    switch(GetIntParmRc(fid, cli))
    {
@@ -377,12 +378,12 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MediaEndptPool>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
       auto num = pool->InUseCount();
       *cli.obuf << spaces(2) << num << CRLF;
@@ -408,7 +409,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            mep->Output(*cli.obuf, 2, v);
+            mep->Output(*cli.obuf, 2, disp == 'v');
             time -= 25;
          }
 

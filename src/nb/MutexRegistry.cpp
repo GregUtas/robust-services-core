@@ -21,6 +21,7 @@
 //
 #include "MutexRegistry.h"
 #include <cstddef>
+#include <iomanip>
 #include <ios>
 #include <new>
 #include <sstream>
@@ -34,6 +35,7 @@
 #include "Thread.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -142,6 +144,30 @@ SysMutex* MutexRegistry::Find(const std::string& name) const
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string MutexHeader = "Id  Name                  Tid  NativeId";
+//                         | 2..22                    . 2..<nid>
+
+void MutexRegistry::Summarize(ostream& stream) const
+{
+   stream << MutexHeader << CRLF;
+
+   for(auto m = mutexes_.First(); m != nullptr; mutexes_.Next(m))
+   {
+      stream << setw(2) << m->Mid();
+      stream << spaces(2) << std::left << setw(22) << m->Name();
+      stream << SPACE << std::right << setw(2);
+      auto owner = m->Owner();
+      if(owner != nullptr)
+         stream << owner->Tid();
+      else
+         stream << NIL_ID;
+      auto nid = m->OwnerId();
+      stream << spaces(2) << std::hex << (nid & UINT32_MAX) << std::dec << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

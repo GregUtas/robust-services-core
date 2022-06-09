@@ -47,7 +47,7 @@ static fixed_string ReportHeader = "      Curr      Prev         All";
 //  <-------------member name---------------->
 //    <---individual statistic explanation---> nnnnnnnnn nnnnnnnnn nnnnnnnnnnn
 //         1         2         3         4         5         6         7
-//1234567890123456789012345678901234567890123456789012345678901234567890123456
+// 2 2                                      40.        9.        9.         11
 
 const size_t StatisticsGroup::ReportWidth = 76;
 

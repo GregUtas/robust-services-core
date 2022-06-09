@@ -69,6 +69,7 @@ extern fixed_string NoPosixSignalExpl;
 extern fixed_string NoStatsGroupExpl;
 extern fixed_string NoSymbolExpl;
 extern fixed_string NoThreadExpl;
+extern fixed_string NoToolExpl;
 extern fixed_string NotImplementedExpl;
 extern fixed_string NotInFieldExpl;
 extern fixed_string NullPtrInvalid;
@@ -116,12 +117,37 @@ class DispCBVParm : public CliCharParm
 public: DispCBVParm();
 };
 
-//  Obtains the value of a DispCBVParm.  COMM is the command invoking this
-//  function, and CLI is the CLI thread.  Sets V to true if a "v" was entered,
-//  and C to true if a "c" was entered.  Returns the result of GetCharParmRc.
+//  Obtains the value of a DispCBVParm (DISP).  COMM is the command invoking
+//  this function, and CLI is the CLI thread.  Returns false on invalid input.
 //
-CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v);
+bool GetDisp(const CliCommand& comm, CliThread& cli, char& disp);
 
+//------------------------------------------------------------------------------
+//
+//  Optional parameter for specifying whether to display
+//    c: the number of objects in a registry
+//    s: a one-line summary of each object in a registry
+//    b: briefly (a registry's objects)
+//    v: verbosely (a registry's objects)
+//  It is followed by an optional identifier.  If no identifier or 0 (the nil
+//  identifier) is entered, the default is 's'.  If an identifier is provided,
+//  the default is 'v' when displaying the object with that identifier.
+//
+class DispCSBVParm : public CliCharParm
+{
+public: DispCSBVParm();
+};
+
+//  Obtains the value of an optional identifier (ID) and DispCSBVParm (DISP).
+//  COMM is the command invoking this function, and CLI is the CLI thread.
+//  Sets ID to 0 if no identifier was found, in which case C defaults to 's'.
+//  If an identifier was found, C defaults to 'v' if not found.  Returns
+//  false on invalid input.
+//
+bool GetIdAndDisp(const CliCommand& comm, CliThread& cli, word& id, char& disp);
+
+//------------------------------------------------------------------------------
+//
 //  If a character in OPTS does not appear in VALID, returns false and update
 //  EXPL with an error message and list of invalid characters.  Returns true
 //  if all of the characters in OPTS appear in VALID.
@@ -206,11 +232,16 @@ public: LogIdMandParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for a mandatory MemoryType.
+//  Parameters for a MemoryType.
 //
-class MemoryTypeParm : public CliIntParm
+class MemoryTypeMandParm : public CliIntParm
 {
-public: MemoryTypeParm();
+public: MemoryTypeMandParm();
+};
+
+class MemoryTypeOptParm : public CliIntParm
+{
+public: MemoryTypeOptParm();
 };
 
 //------------------------------------------------------------------------------
@@ -248,6 +279,15 @@ public: OstreamMandParm();
 class OstreamOptParm : public CliTextParm
 {
 public: OstreamOptParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameter for an optional signal_t.
+//
+class PosixSignalParm : public CliIntParm
+{
+public: PosixSignalParm();
 };
 
 //------------------------------------------------------------------------------

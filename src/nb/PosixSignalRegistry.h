@@ -85,6 +85,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each signal.
+   //
+   void Summarize(std::ostream& stream) const override;
 private:
    //  Private because this is a singleton.
    //

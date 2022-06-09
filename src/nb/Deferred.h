@@ -88,10 +88,6 @@ private:
    //
    virtual void EventHasOccurred(Event event) = 0;
 
-   //  Returns the item's owner.
-   //
-   Base* Owner() const { return owner_; }
-
    //  Returns the offset to link_.
    //
    static ptrdiff_t LinkDiff();

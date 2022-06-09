@@ -21,6 +21,7 @@
 //
 #include "PosixSignalRegistry.h"
 #include <bitset>
+#include <iomanip>
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"
@@ -29,6 +30,7 @@
 #include "PosixSignal.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -137,6 +139,23 @@ string PosixSignalRegistry::strSignal(signal_t value) const
    stream << ')';
 
    return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string SignalHeader = " Id  Name        Explanation";
+//                          |  3..11         .<expl>
+
+void PosixSignalRegistry::Summarize(ostream& stream) const
+{
+   stream << SignalHeader << CRLF;
+
+   for(auto s = signals_.First(); s != nullptr; signals_.Next(s))
+   {
+      stream << setw(3) << s->Value();
+      stream << spaces(2) << std::left << setw(11) << s->Name();
+      stream << SPACE << std::right << s->Expl() << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

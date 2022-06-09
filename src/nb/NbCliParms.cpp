@@ -65,6 +65,7 @@ fixed_string NoPosixSignalExpl    = "There is no POSIX signal at that index.";
 fixed_string NoStatsGroupExpl     = "There is no statistics group with that identifier.";
 fixed_string NoSymbolExpl         = "There is no symbol with that name.";
 fixed_string NoThreadExpl         = "There is no thread with that identifier.";
+fixed_string NoToolExpl           = "There is no tool with that identifier.";
 fixed_string NotImplementedExpl   = "This command is not yet implemented.";
 fixed_string NotInFieldExpl       = "This command is not allowed in the field.";
 fixed_string NullPtrInvalid       = "Invalid nullptr argument.";
@@ -120,6 +121,14 @@ DispCBVParm::DispCBVParm() : CliCharParm(DispCBVExpl, DispCBVStr, true) { }
 
 //------------------------------------------------------------------------------
 
+fixed_string DispCSBVStr = "csbv";
+fixed_string DispCSBVExpl =
+   "'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')";
+
+DispCSBVParm::DispCSBVParm() : CliCharParm(DispCSBVExpl, DispCSBVStr, true) { }
+
+//------------------------------------------------------------------------------
+
 word ExplainTraceRc(const CliThread& cli, TraceRc rc)
 {
    auto result = (rc == TraceOk ? 0 : -1);
@@ -140,24 +149,54 @@ CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v)
 
 //------------------------------------------------------------------------------
 
-CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v)
+bool GetDisp(const CliCommand& comm, CliThread& cli, char& disp)
 {
-   Debug::ft("NodeBase.GetCBV");
+   Debug::ft("NodeBase.GetDisp");
 
-   char k;
-
-   c = false;
-   v = false;
-
-   auto rc = comm.GetCharParmRc(k, cli);
-
-   if(rc == CliParm::Ok)
+   switch(comm.GetCharParmRc(disp, cli))
    {
-      if(k == 'c') c = true;
-      if(k == 'v') v = true;
+   case CliParm::None:
+      disp = 'b';
+      break;
+   case CliParm::Ok:
+      break;
+   default:
+      return false;
    }
 
-   return rc;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool GetIdAndDisp(const CliCommand& comm, CliThread& cli, word& id, char& disp)
+{
+   Debug::ft("NodeBase.GetIdAndDisp");
+
+   switch(comm.GetIntParmRc(id, cli))
+   {
+   case CliParm::None:
+      id = NIL_ID;
+      break;
+   case CliParm::Ok:
+      disp = 'v';
+      break;
+   default:
+      return false;
+   }
+
+   switch(comm.GetCharParmRc(disp, cli))
+   {
+   case CliParm::None:
+      if(id == NIL_ID) disp = 's';
+      break;
+   case CliParm::Ok:
+      break;
+   default:
+      return false;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -255,10 +294,17 @@ LogIdMandParm::LogIdMandParm() :
 
 //------------------------------------------------------------------------------
 
-fixed_string MemoryTypeExpl = "memory type (see mem.* symbols)";
+fixed_string MemoryTypeMandExpl = "memory type (see mem.* symbols)";
 
-MemoryTypeParm::MemoryTypeParm() :
-   CliIntParm(MemoryTypeExpl, MemTemporary, MemImmutable) { }
+MemoryTypeMandParm::MemoryTypeMandParm() :
+   CliIntParm(MemoryTypeMandExpl, MemTemporary, MemImmutable) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string MemoryTypeOptExpl = "memory type (see mem.* symbols; default=all)";
+
+MemoryTypeOptParm::MemoryTypeOptParm() :
+   CliIntParm(MemoryTypeOptExpl, MemNull, MemImmutable, true) { }
 
 //------------------------------------------------------------------------------
 
@@ -312,6 +358,13 @@ SetHowParm::SetHowParm() : CliTextParm(SetHowExpl)
    BindText(*new CliText(OnTextExpl, OnTextStr), On);
    BindText(*new CliText(OffTextExpl, OffTextStr), Off);
 }
+
+//------------------------------------------------------------------------------
+
+fixed_string PosixSignalExpl = "signal_t (default=all)";
+
+PosixSignalParm::PosixSignalParm() :
+   CliIntParm(PosixSignalExpl, 0, 127, true) { }
 
 //------------------------------------------------------------------------------
 

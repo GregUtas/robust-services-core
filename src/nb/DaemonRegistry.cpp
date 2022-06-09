@@ -20,14 +20,17 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "DaemonRegistry.h"
+#include <iomanip>
 #include <ostream>
 #include <string>
+#include "Alarm.h"
 #include "Daemon.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Thread.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -130,6 +133,28 @@ void DaemonRegistry::Startup(RestartLevel level)
    for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
    {
       d->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string DaemonHeader = "Id  Name       Alarm      Lvl";
+//                          | 2..10        .10        .  3
+
+void DaemonRegistry::Summarize(ostream& stream) const
+{
+   stream << DaemonHeader << CRLF;
+
+   for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
+   {
+      stream << setw(2) << d->Did();
+      stream << SPACE << std::left << setw(10) << d->Name();
+      auto alarm = d->GetAlarm();
+      string name(alarm != nullptr ? alarm->Name() : "none");
+      stream << SPACE << setw(10) << name << std::right;
+      if(alarm != nullptr)
+         stream << SPACE << AlarmStatusSymbol(alarm->Status());
+      stream << CRLF;
    }
 }
 

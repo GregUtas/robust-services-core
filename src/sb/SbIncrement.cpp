@@ -255,16 +255,16 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ContextsCommand.ProcessCommand");
 
-   bool c, v;
+   char disp;
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<ContextPool>::Instance();
    auto num = pool->InUseCount();
-   auto opts = (v ? VerboseOpt : NoFlags);
+   auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
 
-   if(c)
+   if(disp == 'c')
       *cli.obuf << spaces(2) << num << CRLF;
    else if(!pool->DisplayUsed(*cli.obuf, spaces(2), opts))
       return cli.Report(-2, NoContextsExpl);
@@ -725,7 +725,8 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MessagesCommand.ProcessCommand");
 
    word pid, sid;
-   bool allProtocols, allSignals, c, v;
+   bool allProtocols, allSignals;
+   char disp;
 
    switch(GetIntParmRc(pid, cli))
    {
@@ -741,12 +742,12 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MessagePool>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
       auto num = pool->InUseCount();
       *cli.obuf << spaces(2) << num << CRLF;
@@ -775,7 +776,7 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            msg->Output(*cli.obuf, 2, v);
+            msg->Output(*cli.obuf, 2, disp == 'v');
             time -= 25;
          }
 
@@ -817,7 +818,8 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MsgPortsCommand.ProcessCommand");
 
    word fid;
-   bool all, c, v;
+   bool all;
+   char disp;
 
    switch(GetIntParmRc(fid, cli))
    {
@@ -826,12 +828,12 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MsgPortPool>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
       auto num = pool->InUseCount();
       *cli.obuf << spaces(2) << num << CRLF;
@@ -857,7 +859,7 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            port->Output(*cli.obuf, 2, v);
+            port->Output(*cli.obuf, 2, disp == 'v');
             time -= 25;
          }
 
@@ -1023,7 +1025,8 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("PsmsCommand.ProcessCommand");
 
    word fid;
-   bool all, c, v;
+   bool all;
+   char disp;
 
    switch(GetIntParmRc(fid, cli))
    {
@@ -1032,12 +1035,12 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<ProtocolSMPool>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
       auto num = pool->InUseCount();
       *cli.obuf << spaces(2) << num << CRLF;
@@ -1063,7 +1066,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            psm->Output(*cli.obuf, 2, v);
+            psm->Output(*cli.obuf, 2, disp == 'v');
             time -= 25;
          }
 
@@ -1247,7 +1250,8 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("SsmsCommand.ProcessCommand");
 
    word sid;
-   bool all, c, v;
+   bool all;
+   char disp;
 
    switch(GetIntParmRc(sid, cli))
    {
@@ -1256,12 +1260,12 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<ServiceSMPool>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
       auto num = pool->InUseCount();
       *cli.obuf << spaces(2) << num << CRLF;
@@ -1287,7 +1291,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            ssm->Output(*cli.obuf, 2, v);
+            ssm->Output(*cli.obuf, 2, disp == 'v');
             time -= 25;
          }
 
@@ -1452,7 +1456,8 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("TimersCommand.ProcessCommand");
 
    word fid;
-   bool all, c, v;
+   bool all;
+   char disp;
 
    switch(GetIntParmRc(fid, cli))
    {
@@ -1461,12 +1466,12 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<TimerPool>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
       auto num = pool->InUseCount();
       *cli.obuf << spaces(2) << num << CRLF;
@@ -1494,7 +1499,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
          }
          else
          {
-            tmr->Output(*cli.obuf, 2, v);
+            tmr->Output(*cli.obuf, 2, disp == 'v');
             time -= 25;
          }
 

@@ -234,7 +234,7 @@ void MsgPort::Initialize(const Message* msg)
    locAddr_.sbAddr_.pid = ObjectPool::ObjPid(this);
 
    auto reg = Singleton<ObjectPoolRegistry>::Instance();
-   auto pool = reg->Pool(locAddr_.sbAddr_.pid);
+   auto pool = reg->Pools().At(locAddr_.sbAddr_.pid);
    locAddr_.sbAddr_.bid = pool->ObjBid(this, true);
 
    auto ctx = GetContext();

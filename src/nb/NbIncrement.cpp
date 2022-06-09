@@ -100,10 +100,22 @@ namespace NodeBase
 {
 //  The ALARMS command.
 //
-fixed_string AlarmExpl = "alarm name";
+class AlarmsListText : public CliText
+{
+public: AlarmsListText();
+};
 
 fixed_string AlarmsListTextStr = "list";
-fixed_string AlarmsListTextExpl = "displays alarms";
+fixed_string AlarmsListTextExpl = "counts or displays alarms";
+
+AlarmsListText::AlarmsListText() :
+   CliText(AlarmsListTextExpl, AlarmsListTextStr)
+{
+   BindParm(*new IdOptParm);
+   BindParm(*new DispCSBVParm);
+}
+
+fixed_string AlarmExpl = "alarm name";
 
 class AlarmsExplainText : public CliText
 {
@@ -147,8 +159,7 @@ fixed_string AlarmsActionExpl = "subcommand...";
 
 AlarmsAction::AlarmsAction() : CliTextParm(AlarmsActionExpl)
 {
-   BindText(*new CliText
-      (AlarmsListTextExpl, AlarmsListTextStr), AlarmsListIndex);
+   BindText(*new AlarmsListText, AlarmsListIndex);
    BindText(*new AlarmsExplainText, AlarmsExplainIndex);
    BindText(*new AlarmsClearText, AlarmsClearIndex);
 }
@@ -175,25 +186,53 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(AlarmsCommand_ProcessCommand);
 
-   word rc = 0;
    id_t index;
+   char disp;
+   word id;
+   size_t size;
    string name, key, path;
    Alarm* alarm;
+   word rc = 0;
 
    if(!GetTextIndex(index, cli)) return -1;
+
+   auto reg = Singleton<AlarmRegistry>::Instance();
 
    switch(index)
    {
    case AlarmsListIndex:
+      if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
       if(!cli.EndOfInput()) return -1;
-      Singleton<AlarmRegistry>::Instance()->Output(*cli.obuf, 2, false);
-      break;
+
+      size = reg->Alarms().Size();
+
+      if(disp == 'c')
+      {
+         *cli.obuf << size << CRLF;
+      }
+      else if(disp == 's')
+      {
+         reg->Summarize(*cli.obuf);
+      }
+      else if(id == NIL_ID)
+      {
+         reg->Output(*cli.obuf, 2, disp == 'v');
+      }
+      else
+      {
+         alarm = reg->Alarms().At(id);
+         if(alarm == nullptr) return cli.Report(-2, NoAlarmExpl);
+         alarm->Output(*cli.obuf, 2, disp == 'v');
+         return 1;
+      }
+
+      return size;
 
    case AlarmsExplainIndex:
       if(!GetString(name, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
 
-      alarm = Singleton<AlarmRegistry>::Instance()->Find(name);
+      alarm = reg->Find(name);
 
       if(alarm == nullptr)
       {
@@ -218,7 +257,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
       if(!GetString(name, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
 
-      alarm = Singleton<AlarmRegistry>::Instance()->Find(name);
+      alarm = reg->Find(name);
 
       if(alarm == nullptr)
       {
@@ -356,16 +395,16 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("BuffersCommand.ProcessCommand");
 
-   bool c, v;
+   char disp;
 
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetDisp(*this, cli, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MsgBufferPool>::Instance();
    auto num = pool->InUseCount();
-   auto opts = (v ? VerboseOpt : NoFlags);
+   auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
 
-   if(c)
+   if(disp == 'c')
       *cli.obuf << spaces(2) << num << CRLF;
    else if(!pool->DisplayUsed(*cli.obuf, spaces(2), opts))
       return cli.Report(-2, NoBuffersExpl);
@@ -644,14 +683,13 @@ private:
 };
 
 fixed_string DaemonsListTextStr = "list";
-fixed_string DaemonsListTextExpl =
-   "displays info for all daemons or a specific daemon";
+fixed_string DaemonsListTextExpl = "counts or displays daemons";
 
 DaemonsListText::DaemonsListText() :
    CliText(DaemonsListTextExpl, DaemonsListTextStr)
 {
    BindParm(*new IdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 fixed_string DaemonsSetTextStr = "set";
@@ -690,8 +728,9 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(DaemonsCommand_ProcessCommand);
 
    id_t index, setHowIndex;
+   char disp;
    word id;
-   bool all, v = false;
+   size_t size;
    Daemon* daemon = nullptr;
    auto reg = Singleton<DaemonRegistry>::Instance();
 
@@ -700,28 +739,32 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case DaemonsListIndex:
-      switch(GetIntParmRc(id, cli))
-      {
-      case None: all = true; break;
-      case Ok: all = false; break;
-      default: return -1;
-      }
-
-      if(GetBV(*this, cli, v) == Error) return -1;
+      if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
       if(!cli.EndOfInput()) return -1;
 
-      if(all)
+      size = reg->Daemons().Size();
+
+      if(disp == 'c')
       {
-         reg->Output(*cli.obuf, 2, v);
+         *cli.obuf << size << CRLF;
+      }
+      else if(disp == 's')
+      {
+         reg->Summarize(*cli.obuf);
+      }
+      else if(id == NIL_ID)
+      {
+         reg->Output(*cli.obuf, 2, disp == 'v');
       }
       else
       {
          daemon = reg->Daemons().At(id);
          if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
-         daemon->Output(*cli.obuf, 2, v);
+         daemon->Output(*cli.obuf, 2, disp == 'v');
+         return 1;
       }
 
-      return 0;
+      return size;
 
    case DaemonsSetIndex:
       if(!GetIntParm(id, cli)) return -1;
@@ -759,20 +802,42 @@ fixed_string DeferredExpl = "Displays deferred work items.";
 
 DeferredCommand::DeferredCommand() : CliCommand(DeferredStr, DeferredExpl)
 {
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word DeferredCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("DeferredCommand.ProcessCommand");
 
-   bool v;
+   char disp;
+   size_t size;
 
-   if(GetBV(*this, cli, v) == Error) return -1;
+   switch(GetCharParmRc(disp, cli))
+   {
+   case CliParm::None: disp = 's'; break;
+   case CliParm::Ok: break;
+   default: return -1;
+   }
+
    if(!cli.EndOfInput()) return -1;
 
-   Singleton<DeferredRegistry>::Instance()->Output(*cli.obuf, 2, v);
-   return 0;
+   auto reg = Singleton<DeferredRegistry>::Instance();
+   size = reg->Items().Size();
+
+   if(disp == 'c')
+   {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
+   }
+
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -993,6 +1058,11 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The HEAPS command.
 //
+class HeapsListText : public CliText
+{
+public: HeapsListText();
+};
+
 class SizeScaleParm : public CliCharParm
 {
 public: SizeScaleParm();
@@ -1018,11 +1088,6 @@ class HeapsAction : public CliTextParm
 public: HeapsAction();
 };
 
-class HeapsShowText : public CliText
-{
-public: HeapsShowText();
-};
-
 class HeapsCommand : public CliCommand
 {
 public:
@@ -1032,7 +1097,13 @@ private:
 };
 
 fixed_string HeapsListTextStr = "list";
-fixed_string HeapsListTextExpl = "lists all heaps";
+fixed_string HeapsListTextExpl = "counts or displays heaps";
+
+HeapsListText::HeapsListText() : CliText(HeapsListTextExpl, HeapsListTextStr)
+{
+   BindParm(*new MemoryTypeOptParm);
+   BindParm(*new DispCSBVParm);
+}
 
 fixed_string SizeScaleStr = "kmg";
 fixed_string SizeScaleExpl = "'k'=kB 'm'=MB 'g'=GB";
@@ -1047,7 +1118,7 @@ fixed_string HeapsSetSizeTextExpl = "sets the desired size";
 HeapsSetSizeText::HeapsSetSizeText() :
    CliText(HeapsSetSizeTextExpl, HeapsSetSizeTextStr)
 {
-   BindParm(*new MemoryTypeParm);
+   BindParm(*new MemoryTypeMandParm);
    BindParm(*new CliIntParm(HeapSizeExpl, 1, 1023));
    BindParm(*new SizeScaleParm);
 }
@@ -1055,20 +1126,10 @@ HeapsSetSizeText::HeapsSetSizeText() :
 fixed_string HeapsValidateTextStr = "validate";
 fixed_string HeapsValidateTextExpl = "validates all heaps";
 
-fixed_string HeapsShowTextStr = "show";
-fixed_string HeapsShowTextExpl = "displays a heap";
-
-HeapsShowText::HeapsShowText() :
-   CliText(HeapsShowTextExpl, HeapsShowTextStr)
-{
-   BindParm(*new MemoryTypeParm);
-   BindParm(*new DispBVParm);
-}
-
 constexpr id_t HeapsResetIndex = 1;
 constexpr id_t HeapsStartIndex = 2;
 constexpr id_t HeapsStopIndex = 3;
-constexpr id_t HeapsDisplayIndex = 4;
+constexpr id_t HeapsShowIndex = 4;
 
 fixed_string HeapsResetTextStr = "reset";
 fixed_string HeapsResetTextExpl = "clears the list of allocated blocks";
@@ -1079,8 +1140,8 @@ fixed_string HeapsStartTextExpl = "starts tracing of allocated blocks";
 fixed_string HeapsStopTextStr = "stop";
 fixed_string HeapsStopTextExpl = "stops tracing of allocated blocks";
 
-fixed_string HeapsDisplayTextStr = "display";
-fixed_string HeapsDisplayTextExpl = "displays allocated blocks";
+fixed_string HeapsShowTextStr = "show";
+fixed_string HeapsShowTextExpl = "shows allocated blocks";
 
 fixed_string HeapsTraceActionExpl = "tracing subcommand...";
 
@@ -1093,7 +1154,7 @@ HeapsTraceAction::HeapsTraceAction() : CliTextParm(HeapsTraceActionExpl)
    BindText(*new CliText
       (HeapsStopTextExpl, HeapsStopTextStr), HeapsStopIndex);
    BindText(*new CliText
-      (HeapsDisplayTextExpl, HeapsDisplayTextStr), HeapsDisplayIndex);
+      (HeapsShowTextExpl, HeapsShowTextStr), HeapsShowIndex);
 }
 
 fixed_string HeapsTraceTextStr = "trace";
@@ -1102,31 +1163,28 @@ fixed_string HeapsTraceTextExpl = "controls heap trace tool";
 HeapsTraceText::HeapsTraceText() :
    CliText(HeapsTraceTextExpl, HeapsTraceTextStr)
 {
-   BindParm(*new MemoryTypeParm);
+   BindParm(*new MemoryTypeMandParm);
    BindParm(*new HeapsTraceAction);
 }
 
 constexpr id_t HeapsListIndex = 1;
 constexpr id_t HeapsSetSizeIndex = 2;
 constexpr id_t HeapsValidateIndex = 3;
-constexpr id_t HeapsShowIndex = 4;
-constexpr id_t HeapsTraceIndex = 5;
+constexpr id_t HeapsTraceIndex = 4;
 
 fixed_string HeapsActionExpl = "subcommand...";
 
 HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
 {
-   BindText(*new CliText
-      (HeapsListTextExpl, HeapsListTextStr), HeapsListIndex);
+   BindText(*new HeapsListText, HeapsListIndex);
    BindText(*new HeapsSetSizeText, HeapsSetSizeIndex);
    BindText(*new CliText
       (HeapsValidateTextExpl, HeapsValidateTextStr), HeapsValidateIndex);
-   BindText(*new HeapsShowText, HeapsShowIndex);
    BindText(*new HeapsTraceText, HeapsTraceIndex);
 }
 
 fixed_string HeapsStr = "heaps";
-fixed_string HeapsExpl = "Displays all heaps.";
+fixed_string HeapsExpl = "Interface to heaps.";
 
 HeapsCommand::HeapsCommand() : CliCommand(HeapsStr, HeapsExpl)
 {
@@ -1140,10 +1198,9 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(HeapsCommand_ProcessCommand);
 
    id_t index;
-   word memtype, size;
-   bool v;
+   word id, memtype, size;
    id_t trace;
-   char scale;
+   char disp, scale;
    string expl;
 
    if(!GetTextIndex(index, cli)) return -1;
@@ -1151,9 +1208,34 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case HeapsListIndex:
+      if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
       if(!cli.EndOfInput()) return -1;
-      Memory::DisplayHeaps(*cli.obuf, spaces(2));
-      return 0;
+
+      size = Memory::CountHeaps();
+
+      if(disp == 'c')
+      {
+         *cli.obuf << size << CRLF;
+      }
+      else if(disp == 's')
+      {
+         Memory::Summarize(*cli.obuf);
+      }
+      else if(id == NIL_ID)
+      {
+         auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+         Memory::Display(*cli.obuf, spaces(2), opts);
+      }
+      else
+      {
+         auto type = MemoryType(id);
+         auto heap = Memory::AccessHeap(type);
+         if(heap == nullptr) return cli.Report(-2, "Heap not found.");
+         heap->Output(*cli.obuf, 2, disp == 'v');
+         return 1;
+      }
+
+      return size;
 
    case HeapsSetSizeIndex:
    {
@@ -1211,19 +1293,6 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
 
       return 0;
 
-   case HeapsShowIndex:
-      if(!GetIntParm(memtype, cli)) return -1;
-      if(GetBV(*this, cli, v) == Error) return -1;
-      if(cli.EndOfInput())
-      {
-         auto type = MemoryType(memtype);
-         auto heap = Memory::AccessHeap(type);
-         if(heap == nullptr) return cli.Report(-2, "Heap not found.");
-         heap->Output(*cli.obuf, 2, v);
-         return 0;
-      }
-      return -1;
-
    case HeapsTraceIndex:
       if(!GetIntParm(memtype, cli)) return -1;
       if(!GetTextIndex(trace, cli)) return -1;
@@ -1244,7 +1313,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
          case HeapsStopIndex:
             heap->SetTrace(false);
             return cli.Report(0, SuccessExpl);
-         case HeapsDisplayIndex:
+         case HeapsShowIndex:
             heap->DisplayBlocks(*cli.obuf);
             return 0;
          default:
@@ -1987,45 +2056,48 @@ private:
 };
 
 fixed_string ModulesStr = "modules";
-fixed_string ModulesExpl = "Displays modules.";
+fixed_string ModulesExpl = "Counts or displays modules.";
 
 ModulesCommand::ModulesCommand() : CliCommand(ModulesStr, ModulesExpl)
 {
    BindParm(*new ModuleIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word ModulesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ModulesCommand.ProcessCommand");
 
-   word mid;
-   bool all, v = false;
+   char disp;
+   word id;
 
-   switch(GetIntParmRc(mid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ModuleRegistry>::Extant();
+   auto size = reg->Modules().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto mod = reg->GetModule(mid);
+      auto mod = reg->Modules().At(id);
       if(mod == nullptr) return cli.Report(-2, NoModuleExpl);
-      mod->Output(*cli.obuf, 2, v);
+      mod->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -2041,12 +2113,12 @@ private:
 };
 
 fixed_string MutexesStr = "mutexes";
-fixed_string MutexesExpl = "Displays mutexes.";
+fixed_string MutexesExpl = "Counts or displays mutexes.";
 
 MutexesCommand::MutexesCommand() : CliCommand(MutexesStr, MutexesExpl)
 {
    BindParm(*new IdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word MutexesCommand::ProcessCommand(CliThread& cli) const
@@ -2054,32 +2126,34 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MutexesCommand.ProcessCommand");
 
    word id;
-   bool all, v = false;
+   char disp;
 
-   switch(GetIntParmRc(id, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<MutexRegistry>::Instance();
+   auto size = reg->Mutexes().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
       auto mutex = reg->Mutexes().At(id);
       if(mutex == nullptr) return cli.Report(-2, NoMutexExpl);
-      mutex->Output(*cli.obuf, 2, v);
+      mutex->Output(*cli.obuf, 2, disp == 'v');
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -2095,45 +2169,47 @@ private:
 };
 
 fixed_string PoolsStr = "pools";
-fixed_string PoolsExpl = "Displays object pools.";
+fixed_string PoolsExpl = "Counts or displays object pools.";
 
 PoolsCommand::PoolsCommand() : CliCommand(PoolsStr, PoolsExpl)
 {
    BindParm(*new ObjPoolIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word PoolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("PoolsCommand.ProcessCommand");
 
-   word pid;
-   bool all, v = false;
+   word id;
+   char disp;
 
-   switch(GetIntParmRc(pid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ObjectPoolRegistry>::Instance();
+   auto size = reg->Pools().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto pool = reg->Pool(pid);
+      auto pool = reg->Pools().At(id);
       if(pool == nullptr) return cli.Report(-2, NoPoolExpl);
-      pool->Output(*cli.obuf, 2, v);
+      pool->Output(*cli.obuf, 2, disp == 'v');
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -2149,12 +2225,12 @@ private:
 };
 
 fixed_string PsignalsStr = "psignals";
-fixed_string PsignalsExpl = "Displays POSIX signals.";
+fixed_string PsignalsExpl = "Counts or displays POSIX signals.";
 
 PsignalsCommand::PsignalsCommand() : CliCommand(PsignalsStr, PsignalsExpl)
 {
-   BindParm(*new IdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new PosixSignalParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word PsignalsCommand::ProcessCommand(CliThread& cli) const
@@ -2162,32 +2238,35 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("PsignalsCommand.ProcessCommand");
 
    word id;
-   bool all, v = false;
+   char disp;
 
-   switch(GetIntParmRc(id, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<PosixSignalRegistry>::Instance();
+   auto size = reg->Signals().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto signal = reg->Signals().At(id);
+      auto signal = reg->Find(id);
       if(signal == nullptr) return cli.Report(-2, NoPosixSignalExpl);
-      signal->Output(*cli.obuf, 2, v);
+      signal->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -3198,14 +3277,12 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
 fixed_string HeapsHeader =
 "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
 "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
-//        1         2         3         4         5         6         7
-//234567890123456789012345678901234567890123456789012345678901234567890123456789
+//   5.      7.     6.         11.        10.        10.         11.   4.     6
 
 fixed_string PoolsHeader =
    "Alloc     Min    Curr    Curr                        Segments\n"
-   "Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Pool Name";
-// 0         1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890123456
+   "Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Name";
+// |    5.      7.      7.      7.        10.        10.   4.   4...<name>   
 
 word StatusCommand::ProcessCommand(CliThread& cli) const
 {
@@ -3228,21 +3305,21 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
          auto size = heap->Size();
          if(size == 0)
          {
-            *cli.obuf << setw(8) << "n/a";
-            *cli.obuf << setw(7) << "n/a";
+            *cli.obuf << SPACE << setw(7) << "n/a";
+            *cli.obuf << SPACE << setw(6) << "n/a";
          }
          else
          {
-            *cli.obuf << setw(8) << (heap->MinAvail() / kBs);
-            *cli.obuf << setw(7) << (heap->CurrAvail() / kBs);
+            *cli.obuf << SPACE<< setw(7) << (heap->MinAvail() / kBs);
+            *cli.obuf << SPACE << setw(6) << (heap->CurrAvail() / kBs);
          }
 
-         *cli.obuf << setw(12) << heap->CurrInUse();
-         *cli.obuf << setw(11) << heap->AllocCount();
-         *cli.obuf << setw(11) << heap->FreeCount();
-         *cli.obuf << setw(12) << heap->Type();
-         *cli.obuf << setw(5) << heap->GetAttrs();
-         *cli.obuf << setw(7) << heap->ChangeCount() << CRLF;
+         *cli.obuf << SPACE << setw(11) << heap->CurrInUse();
+         *cli.obuf << SPACE << setw(10) << heap->AllocCount();
+         *cli.obuf << SPACE << setw(10) << heap->FreeCount();
+         *cli.obuf << SPACE << setw(11) << heap->Type();
+         *cli.obuf << SPACE << setw(4) << heap->GetAttrs();
+         *cli.obuf << SPACE << setw(6) << heap->ChangeCount() << CRLF;
       }
    }
 
@@ -3258,16 +3335,16 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
       *cli.obuf << setw(5) << p->FailCount();
       if(low == LowWatermark::Initial)
-         *cli.obuf << setw(8) << '*';
+         *cli.obuf << SPACE << setw(7) << '*';
       else
-         *cli.obuf << setw(8) << low;
-      *cli.obuf << setw(8) << p->AvailCount();
-      *cli.obuf << setw(8) << p->InUseCount();
-      *cli.obuf << setw(11) << p->AllocCount();
-      *cli.obuf << setw(11) << p->FreeCount();
-      *cli.obuf << setw(5) << p->Expansions();
-      *cli.obuf << setw(5) << p->Segments();
-      *cli.obuf << spaces(3) << p->Name() << CRLF;
+         *cli.obuf << SPACE << setw(7) << low;
+      *cli.obuf << SPACE << setw(7) << p->AvailCount();
+      *cli.obuf << SPACE << setw(7) << p->InUseCount();
+      *cli.obuf << SPACE << setw(10) << p->AllocCount();
+      *cli.obuf << SPACE << setw(10) << p->FreeCount();
+      *cli.obuf << SPACE << setw(4) << p->Expansions();
+      *cli.obuf << SPACE << setw(4) << p->Segments();
+      *cli.obuf << SPACE << spaces(2) << p->Name() << CRLF;
    }
 
    *cli.obuf << CRLF;
@@ -3520,42 +3597,39 @@ fixed_string ThreadsExpl = "Counts or displays threads.";
 ThreadsCommand::ThreadsCommand() : CliCommand(ThreadsStr, ThreadsExpl)
 {
    BindParm(*new ThreadIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word ThreadsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ThreadsCommand.ProcessCommand");
 
-   word tid;
-   bool all, c, v;
+   word id;
+   char disp;
 
-   switch(GetIntParmRc(tid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetCBV(*this, cli, c, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto size = ThreadRegistry::Size();
    auto reg = Singleton<ThreadRegistry>::Instance();
 
-   if(c)
+   if(disp == 'c')
    {
-      *cli.obuf << spaces(2) << size << CRLF;
+      *cli.obuf << size << CRLF;
    }
-   else if(all)
+   else if(disp == 's')
    {
-      reg->Output(*cli.obuf, 2, v);
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto thr = reg->GetThread(tid);
+      auto thr = reg->GetThread(id);
       if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
-      thr->Output(*cli.obuf, 2, v);
+      thr->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }
 
@@ -3579,39 +3653,48 @@ private:
 };
 
 fixed_string ToolsStr = "tools";
-fixed_string ToolsExpl = "Displays available debugging tools.";
+fixed_string ToolsExpl = "Counts or displays debugging tools.";
 
-ToolsCommand::ToolsCommand() : CliCommand(ToolsStr, ToolsExpl) { }
+ToolsCommand::ToolsCommand() : CliCommand(ToolsStr, ToolsExpl)
+{
+   BindParm(*new IdOptParm);
+   BindParm(*new DispCSBVParm);
+}
 
 word ToolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ToolsCommand.ProcessCommand");
 
-   auto& tools = Singleton<ToolRegistry>::Instance()->Tools();
+   word id;
+   char disp;
 
-   //  Display the available tools.  If a tool's CLI character is not
-   //  printable, it is not supported through the CLI.  If a tool is
-   //  not field-safe, only display it in the lab.
-   //
-   *cli.obuf << ToolHeaderStr << CRLF;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!cli.EndOfInput()) return -1;
 
-   for(auto t = tools.First(); t != nullptr; tools.Next(t))
+   auto reg = Singleton<ToolRegistry>::Instance();
+   auto size = reg->Tools().Size();
+
+   if(disp == 'c')
    {
-      auto c = t->CliChar();
-      if(!isprint(c)) continue;
-      if(!t->IsSafe()) continue;
-
-      string name(t->Name());
-      if(name.size() > 17) name.erase(17);
-      *cli.obuf << spaces(2) << std::left << setw(17) << name;
-      *cli.obuf << spaces(2) << std::right << setw(4) << c;
-
-      string expl(t->Expl());
-      if(expl.size() > 52) expl.erase(52);
-      *cli.obuf << spaces(2) << std::left << expl << CRLF;
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
+   }
+   else
+   {
+      auto tool = reg->Tools().At(id);
+      if(tool == nullptr) return cli.Report(-2, NoToolExpl);
+      tool->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------

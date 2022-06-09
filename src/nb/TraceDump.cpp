@@ -35,11 +35,10 @@ namespace NodeBase
 {
 fixed_string EndOfTrace = "END OF TRACE";
 
-//                    0         1         2         3         4         5
-//                    01234567890123456789012345678901234567890123456789012
 fixed_string Header = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function\n"
                       "---------  ---  -----  ---------   -------  --------\n";
-
+//                    |        9..  3..    5..        9..       8..<func>
+//
 //------------------------------------------------------------------------------
 
 TraceRc TraceDump::Generate(ostream& stream, const string& opts)

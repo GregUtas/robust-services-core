@@ -273,8 +273,7 @@ fixed_string ObcStateHeader =
 //      Nu                                              Ac          Di    Ex //2
 fixed_string TbcStateHeader =
          "    AT                SF          PC    TA";    //  LS             //3
-// 0         1         2         3         4         5         6         7
-// 0123456789012345678901234567890123456789012345678901234567890123456789012
+// |     6     6     6     6     6     6     6     6     6     6     6     6     
 
 void BcSsm::DisplayStateCounts(ostream& stream, const string& prefix)
 {

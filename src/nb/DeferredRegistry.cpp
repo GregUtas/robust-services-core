@@ -22,6 +22,7 @@
 #include "DeferredRegistry.h"
 #include <bitset>
 #include <chrono>
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -33,6 +34,7 @@
 #include "SysTypes.h"
 
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -261,6 +263,30 @@ void DeferredRegistry::Shutdown(RestartLevel level)
       {
          Erase(curr);
       }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ItemHeader = "Secs  Warm?  Item / Owner";
+//                        |   4.     6..<item> / <owner>
+
+void DeferredRegistry::Summarize(ostream& stream) const
+{
+   stream << ItemHeader << CRLF;
+
+   if(itemq_.Empty())
+   {
+      stream << spaces(2) << "[No items found.]" << CRLF;
+      return;
+   }
+
+   for(auto i = itemq_.First(); i != nullptr; itemq_.Next(i))
+   {
+      stream << setw(4) << i->secs_;
+      stream << SPACE << setw(6) << i->warm_;
+      stream << spaces(2) << strObj(i);
+      stream << " / " << strObj(i->owner_) << CRLF;
    }
 }
 }

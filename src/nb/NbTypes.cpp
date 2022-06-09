@@ -35,11 +35,11 @@ const Flags VerboseOpt = Flags(1 << DispVerbose);
 
 fixed_string AlarmSymbols[AlarmStatus_N + 1] =
 {
-   "    ",  // NoAlarm
-   "  * ",  // MinorAlarm
-   " ** ",  // MajorAlarm
-   "*** ",  // CriticalAlarm
-   "  ? "   // AlarmStatus_N
+   "   ",  // NoAlarm
+   "  *",  // MinorAlarm
+   " **",  // MajorAlarm
+   "***",  // CriticalAlarm
+   "  ?"   // AlarmStatus_N
 };
 
 c_string AlarmStatusSymbol(AlarmStatus status)
@@ -50,10 +50,10 @@ c_string AlarmStatusSymbol(AlarmStatus status)
 
 fixed_string AlarmStatusStrings[AlarmStatus_N + 1] =
 {
-   "NoAlarm",
-   "Minor",
-   "Major",
-   "Critical",
+   "none",
+   "minor",
+   "major",
+   "critical",
    ERROR_STR
 };
 
@@ -69,7 +69,7 @@ fixed_string BlockingReasonStrings[BlockingReason_N + 1] =
    "network",   // BlockedOnNetwork
    "stream",    // BlockedOnStream
    "database",  // BlockedOnDatabase
-   "???"        // BlockingReason_N
+   ERROR_STR    // BlockingReason_N
 };
 
 char BlockingReasonChar(BlockingReason reason)
@@ -83,15 +83,15 @@ char BlockingReasonChar(BlockingReason reason)
 
 fixed_string FactionStrings[Faction_N + 1] =
 {
-   "Idle",
-   "Audit",
-   "Background",
-   "Operations",
-   "Maintenance",
-   "Payload",
-   "LoadTest",
-   "System",
-   "Watchdog",
+   "idle",
+   "audit",
+   "background",
+   "operations",
+   "maintenance",
+   "payload",
+   "loadtest",
+   "system",
+   "watchdog",
    ERROR_STR
 };
 

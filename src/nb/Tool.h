@@ -46,10 +46,6 @@ public:
    //
    Tool& operator=(const Tool& that) = delete;
 
-   //  Returns the tool's identifier.
-   //
-   id_t Tid() const { return tid_.GetId(); }
-
    //  Returns the character used in the >set tool command to enable or
    //  disable the tool.
    //
@@ -72,6 +68,10 @@ public:
    //  append to that string.
    //
    virtual std::string Status() const;
+
+   //  Returns the tool's index in the global ToolRegistry.
+   //
+   id_t Tid() const { return tid_.GetId(); }
 
    //  Returns the offset to tid_.
    //

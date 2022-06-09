@@ -139,7 +139,7 @@ word CorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(!GetIntParm(n, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pool(pid);
+   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pools().At(pid);
    if(pool == nullptr) return cli.Report(-2, NoPoolExpl);
    if(!pool->Corrupt(n)) return cli.Report(-3, EndOfFreeQueue);
    return cli.Report(0, SuccessExpl);
@@ -3061,7 +3061,7 @@ private:
    signal_t signal_;
 };
 
-static SysMutex RecoveryMutex_("RecoveryMutex");
+static SysMutex RecoveryMutex_("RecoveryTestMutex");
 
 //------------------------------------------------------------------------------
 

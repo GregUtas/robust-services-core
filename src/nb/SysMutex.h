@@ -119,6 +119,10 @@ public:
    //
    const std::string& Name() const { return name_; }
 
+   //  Returns the mutex's index in the global MutexRegistry.
+   //
+   id_t Mid() const { return mid_.GetId(); }
+
    //  Returns the offset to mid_.
    //
    static ptrdiff_t CellDiff();

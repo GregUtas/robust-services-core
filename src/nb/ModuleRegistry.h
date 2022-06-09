@@ -53,13 +53,13 @@ public:
    //
    ModuleRegistry& operator=(const ModuleRegistry& that) = delete;
 
-   //  Returns the module registered against MID.
-   //
-   Module* GetModule(ModuleId mid) const;
-
    //  Registers MODULE against its ModuleId.
    //
    void BindModule(Module& module);
+
+   //  Returns the modules in the registry.
+   //
+   const Registry<Module>& Modules() const { return modules_; }
 
    //  Overridden to display member variables.
    //
@@ -69,6 +69,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each module.
+   //
+   void Summarize(std::ostream& stream) const override;
 private:
    //  Private because this is a singleton.
    //

@@ -122,7 +122,7 @@ MemoryType Pooled::MemType() const
    Debug::ft("Pooled.MemType");
 
    auto pid = ObjectPool::ObjPid(this);
-   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pool(pid);
+   auto pool = Singleton<ObjectPoolRegistry>::Instance()->Pools().At(pid);
    if(pool != nullptr) return pool->BlockType();
    return MemNull;
 }
@@ -135,7 +135,7 @@ void Pooled::operator delete(void* addr)
 
    auto obj = (Pooled*) addr;
    auto pid = ObjectPool::ObjPid(obj);
-   auto pool = Singleton<ObjectPoolRegistry>::Extant()->Pool(pid);
+   auto pool = Singleton<ObjectPoolRegistry>::Extant()->Pools().At(pid);
    if(pool != nullptr) pool->EnqBlock(obj, true);
 }
 

@@ -1409,8 +1409,7 @@ fixed_string SchedHeader =
 "      THREADS          |   SINCE START OF CURRENT 15-MINUTE INTERVAL  | LAST\n"
 "                       |            rtc  max   max     max  total     |5 SEC\n"
 "id    name   native f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu";
-//        1         2         3         4         5         6         7
-//234567890123456789012345678901234567890123456789012345678901234567890123456
+//2.      7.       8.1.1.  3.     6.   4.   4.    5.      7.     6.   4.    5
 fixed_string SchedLine =
 "----------------------------------------------------------------------------";
 
@@ -1476,41 +1475,41 @@ void Thread::DisplaySummary
    (ostream& stream, const nsecs_t& time0, const nsecs_t& time1) const
 {
    stream << setw(2) << Tid();
-   stream << setw(8) << AbbrName() << SPACE;
+   stream << SPACE << setw(7) << AbbrName();
    auto nid = (NativeThreadId() & UINT32_MAX);
-   stream << setw(8) << std::hex << nid << std::dec;
+   stream << SPACE << setw(8) << std::hex << nid << std::dec;
 
    auto f = FactionChar(faction_);
    if(priv_->unpreempts_ == 0) f = tolower(f);
-   stream << setw(2) << f;
+   stream << SPACE << f;
 
    auto r = BlockingReasonChar(priv_->blocked_);
    r = (priv_->blocked_ == NotBlocked ? SPACE : toupper(r));
-   stream << setw(2) << r;
+   stream << SPACE << r;
 
-   stream << setw(4) << stats_->traps_->Curr();
-   stream << setw(7) << stats_->yields_->Curr();
-   stream << setw(5) << stats_->exceeds_->Curr();
-   stream << setw(5) << stats_->maxMsgs_->Curr();
-   stream << setw(6) << stats_->maxStack_->Curr();
+   stream << SPACE << setw(3) << stats_->traps_->Curr();
+   stream << SPACE << setw(6) << stats_->yields_->Curr();
+   stream << SPACE << setw(4) << stats_->exceeds_->Curr();
+   stream << SPACE << setw(4) << stats_->maxMsgs_->Curr();
+   stream << SPACE << setw(5) << stats_->maxStack_->Curr();
 
    auto usecs = stats_->maxTime_->Curr() / NS_TO_US;
 
    if(usecs <= 9999999)
-      stream << setw(8) << usecs;
+      stream << SPACE << setw(7) << usecs;
    else
-      stream << " 10+ sec";
+      stream << SPACE << "10+ sec";
 
    auto nsecs = stats_->totTime_->Curr();
    auto pct = 100 * double(nsecs) / time0.count();
    auto msecs = (nsecs + 500000) / NS_TO_MS;
-   stream << setw(7) << msecs;
-   stream << setw(5) << pct;
+   stream << SPACE << setw(6) << msecs;
+   stream << SPACE << setw(4) << pct;
 
    if(time1 > ZERO_SECS)
    {
       pct = 100 * double(priv_->prevTime_.count()) / time1.count();
-      stream << setw(6) << pct;
+      stream << SPACE << setw(5) << pct;
    }
 
    stream << CRLF;

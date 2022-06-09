@@ -75,6 +75,10 @@ public:
    //  Overridden for restarts.
    //
    void Startup(RestartLevel level) override;
+
+   //  Overridden to display each alarm.
+   //
+   void Summarize(std::ostream& stream) const override;
 private:
    //  Private because this is a singleton.
    //

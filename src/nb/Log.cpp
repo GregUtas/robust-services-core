@@ -299,7 +299,7 @@ ostringstreamPtr Log::Format(AlarmStatus status) const
    //  log-specific data.
    //
    *stream << std::boolalpha << std::nouppercase << CRLF;
-   *stream << AlarmStatusSymbol(status);
+   *stream << AlarmStatusSymbol(status) << SPACE;
    *stream << group_->Name() << id_ << SPACE;
    *stream << Element::strTimePlace() << SPACE;
    *stream << '{' << ++SeqNo_ << '}' << CRLF;

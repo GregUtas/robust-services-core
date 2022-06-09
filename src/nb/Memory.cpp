@@ -25,9 +25,11 @@
 #include <cstring>
 #include <iomanip>
 #include <ostream>
+#include <sstream>
 #include <vector>
 #include "AllocationException.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "HeapCfg.h"
 #include "MemoryTrace.h"
 #include "PermanentHeap.h"
@@ -208,6 +210,22 @@ static Heap* EnsureHeap(MemoryType type)
    return nullptr;
 }
 
+//------------------------------------------------------------------------------
+//
+//  Returns all heaps.
+//
+static std::vector<const Heap*> ListHeaps()
+{
+   std::vector<const Heap*> heaps;
+
+   for(int m = MemTemporary; m < MemoryType_N; ++m)
+   {
+      heaps.push_back(Memory::AccessHeap(MemoryType(m)));
+   }
+
+   return heaps;
+}
+
 //==============================================================================
 
 Heap* Memory::AccessHeap(MemoryType type)
@@ -328,50 +346,39 @@ void Memory::Copy(void* dest, const void* source, size_t size)
 
 //------------------------------------------------------------------------------
 
-fixed_string HeapHeader =
-   "MemoryType Id   Max kB  Curr kB  Targ kB  Used kB  Free kB  Address";
-
-void Memory::DisplayHeaps(ostream& stream, const string& prefix)
+size_t Memory::CountHeaps()
 {
-   std::vector<const Heap*> heaps;
+   return ListHeaps().size();
+}
 
-   for(int m = MemTemporary; m < MemoryType_N; ++m)
-   {
-      heaps.push_back(AccessHeap(MemoryType(m)));
-   }
+//------------------------------------------------------------------------------
 
-   stream << prefix << HeapHeader << CRLF;
-   auto config = Singleton<HeapCfg>::Instance();
+void Memory::Display(ostream& stream,
+   const string& prefix, const Flags& options)
+{
+   stream << prefix << "heaps [MemoryType]" << CRLF;
+
+   auto heaps = ListHeaps();
+   auto lead1 = prefix + spaces(2);
+   auto lead2 = prefix + spaces(4);
 
    for(auto h = heaps.cbegin(); h != heaps.cend(); ++h)
    {
-      auto type = (*h)->Type();
+      std::ostringstream type;
 
-      stream << prefix;
-      stream << setw(10) << type;
-      stream << setw(3) << int(type);
-      auto size = config->GetMaxSize(type);
-      if(size > 0)
-         stream << setw(9) << size / kBs;
+      type << '[' << (*h)->Type() << "]: ";
+
+      if(options.test(DispVerbose))
+      {
+         stream << lead1 << type.str();
+         stream << CRLF;
+         (*h)->Display(stream, lead2, NoFlags);
+      }
       else
-         stream << setw(9) << "expands";
-
-      size = config->GetCurrSize(type);
-      if(size > 0)
-         stream << setw(9) << size / kBs;
-      else
-         stream << setw(9) << "n/a";
-
-      size = config->GetTargSize(type);
-      if(size > 0)
-         stream << setw(9) << size / kBs;
-      else
-         stream << setw(9) << "n/a";
-
-      stream << setw(9) << ((*h)->CurrInUse() / kBs);
-      stream << setw(9) << ((*h)->CurrAvail() / kBs);
-
-      stream << setw(NIBBLES_PER_POINTER + 2) << *h << CRLF;
+      {
+         stream << lead1 << setw(14) << type.str();
+         stream << strObj(*h) << CRLF;
+      }
    }
 }
 
@@ -493,6 +500,52 @@ void Memory::Shutdown()
    {
       Unprotect(MemProtected);
       Singleton<ProtectedHeap>::Destroy();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapHeader =
+   "Id  MemoryType    Max kB  Curr kB  Targ kB  Used kB  Free kB";
+// | 2..10        .        9.       8.       8.       8.       8
+
+void Memory::Summarize(ostream& stream)
+{
+   stream << HeapHeader << CRLF;
+
+   auto config = Singleton<HeapCfg>::Instance();
+   auto heaps = ListHeaps();
+
+   for(auto h = heaps.cbegin(); h != heaps.cend(); ++h)
+   {
+      auto type = (*h)->Type();
+
+      stream << setw(2) << int(type);
+      stream << spaces(2) << std::left << setw(10) << type;
+
+      auto size = config->GetMaxSize(type);
+      stream << SPACE << std::right << setw(9);
+      if(size > 0)
+         stream << size / kBs;
+      else
+         stream << "expands";
+
+      size = config->GetCurrSize(type);
+      stream << SPACE << setw(8);
+      if(size > 0)
+         stream << size / kBs;
+      else
+         stream << "n/a";
+
+      size = config->GetTargSize(type);
+      stream << SPACE << setw(8);
+      if(size > 0)
+         stream << size / kBs;
+      else
+         stream << "n/a";
+
+      stream << SPACE << setw(8) << ((*h)->CurrInUse() / kBs);
+      stream << SPACE << setw(8) << ((*h)->CurrAvail() / kBs) << CRLF;
    }
 }
 

@@ -139,8 +139,8 @@ void DaemonRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string DaemonHeader = "Id  Name       Alarm      Lvl";
-//                          | 2..10        .10        .  3
+fixed_string DaemonHeader = "Id  Name       Alarm     AlarmId  Lvl";
+//                          | 2..10        .10              7    5
 
 void DaemonRegistry::Summarize(ostream& stream) const
 {
@@ -149,12 +149,20 @@ void DaemonRegistry::Summarize(ostream& stream) const
    for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
    {
       stream << setw(2) << d->Did();
-      stream << SPACE << std::left << setw(10) << d->Name();
+      stream << spaces(2) << std::left << setw(10) << d->Name();
+
       auto alarm = d->GetAlarm();
-      string name(alarm != nullptr ? alarm->Name() : "none");
-      stream << SPACE << setw(10) << name << std::right;
       if(alarm != nullptr)
-         stream << SPACE << AlarmStatusSymbol(alarm->Status());
+      {
+         stream << SPACE << setw(10) << alarm->Name();
+         stream << std::right << setw(7) << alarm->Aid();
+         stream << setw(5) << AlarmStatusSymbol(alarm->Status());
+      }
+      else
+      {
+         stream << SPACE << setw(10) << "none" << std::right;
+      }
+
       stream << CRLF;
    }
 }

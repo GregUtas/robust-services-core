@@ -147,8 +147,8 @@ void ToolRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string ToolHeader = "Id  Abbr  Name            Safe?  Explanation";
-//                        | 2.    5..15             .    5..<expl>
+fixed_string ToolHeader = "Id  Char  Name             Safe  Explanation";
+//                        | 2     6..15             .    5..<expl>
 
 void ToolRegistry::Summarize(ostream& stream) const
 {
@@ -164,7 +164,7 @@ void ToolRegistry::Summarize(ostream& stream) const
       if(!isprint(c)) continue;
 
       stream << setw(2) << t->Tid();
-      stream << SPACE << setw(5) << c;
+      stream << setw(6) << c;
       stream << spaces(2) << std::left << setw(15) << t->Name();
       stream << SPACE << std::right << setw(5) << t->IsSafe();
       stream << spaces(2) << t->Expl() << CRLF;

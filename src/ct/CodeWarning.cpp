@@ -1089,6 +1089,7 @@ bool CodeWarning::Suppress() const
       if(name.find("Print") == 0) return true;
       if(name.find("Output") == 0) return true;
       if(name.find("Show") == 0) return true;
+      if(name.find("Summarize") == 0) return true;
       if(name.find("CellDiff") == 0) return true;
       if(name.find("LinkDiff") == 0) return true;
       if(name.find("Shrink") == 0) return true;

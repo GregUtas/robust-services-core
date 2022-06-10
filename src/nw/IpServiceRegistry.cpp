@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "IpService.h"
+#include "NwTypes.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -121,8 +122,8 @@ void IpServiceRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string ServiceHeader = "Id   Port  Protocol      Faction  Enabled?  Name";
-//                           | 2      7        10.          12        10..<name>
+fixed_string ServiceHeader = "Id   Port  Protocol      Faction  Enabled  Name";
+//                           | 2      7        10.          12        9..<name>
 
 void IpServiceRegistry::Summarize(ostream& stream) const
 {
@@ -134,7 +135,7 @@ void IpServiceRegistry::Summarize(ostream& stream) const
       stream << setw(7) << s->Port();
       stream << setw(10) << s->Protocol();
       stream << SPACE << setw(12) << s->GetFaction();
-      stream << setw(10) << s->Enabled();
+      stream << setw(9) << s->Enabled();
       stream << spaces(2) << s->Name() << CRLF;
    }
 }

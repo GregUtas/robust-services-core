@@ -269,22 +269,22 @@ void DeferredRegistry::Shutdown(RestartLevel level)
 //------------------------------------------------------------------------------
 
 fixed_string ItemHeader = "Secs  Warm?  Item / Owner";
-//                        |   4.     6..<item> / <owner>
+//                        |   4      7..<item> / <owner>
 
 void DeferredRegistry::Summarize(ostream& stream) const
 {
-   stream << ItemHeader << CRLF;
-
    if(itemq_.Empty())
    {
       stream << spaces(2) << "[No items found.]" << CRLF;
       return;
    }
 
+   stream << ItemHeader << CRLF;
+
    for(auto i = itemq_.First(); i != nullptr; itemq_.Next(i))
    {
       stream << setw(4) << i->secs_;
-      stream << SPACE << setw(6) << i->warm_;
+      stream << setw(7) << i->warm_;
       stream << spaces(2) << strObj(i);
       stream << " / " << strObj(i->owner_) << CRLF;
    }

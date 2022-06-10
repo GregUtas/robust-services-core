@@ -34,6 +34,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
+#include "IoThread.h"
 #include "IpPort.h"
 #include "IpService.h"
 #include "LocalAddrTest.h"
@@ -431,8 +432,8 @@ void IpPortRegistry::Startup(RestartLevel level)
 //------------------------------------------------------------------------------
 
 fixed_string PortHeader =
-   " Port  ThreadId  AlarmId  Socket?  Handler?  ServiceId  Service";
-// |    5        10        9        9        10         11..<service>
+   " Port  ThreadId  AlarmId  Socket  Handler  ServiceId  Service";
+// |    5        10        9       8        9         11..<service>
 
 void IpPortRegistry::Summarize(ostream& stream) const
 {
@@ -445,8 +446,8 @@ void IpPortRegistry::Summarize(ostream& stream) const
       stream << setw(10) << (thread != nullptr ? thread->Tid() : NIL_ID);
       auto alarm = p->GetAlarm();
       stream << setw(9) << (alarm != nullptr ? alarm->Aid() : NIL_ID);
-      stream << setw(9) << (p->GetSocket() != nullptr);
-      stream << setw(10) << (p->GetHandler() != nullptr);
+      stream << setw(8) << (p->GetSocket() != nullptr);
+      stream << setw(9) << (p->GetHandler() != nullptr);
       auto service = p->GetService();
       if(service != nullptr)
       {

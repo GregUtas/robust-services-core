@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "IpServiceRegistry.h"
+#include <iomanip>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
@@ -28,6 +29,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -114,6 +116,26 @@ void IpServiceRegistry::Startup(RestartLevel level)
    for(auto s = services_.First(); s != nullptr; services_.Next(s))
    {
       s->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ServiceHeader = "Id   Port  Protocol      Faction  Enabled?  Name";
+//                           | 2      7        10.          12        10..<name>
+
+void IpServiceRegistry::Summarize(ostream& stream) const
+{
+   stream << ServiceHeader << CRLF;
+
+   for(auto s = services_.First(); s != nullptr; services_.Next(s))
+   {
+      stream << setw(2) << s->Sid();
+      stream << setw(7) << s->Port();
+      stream << setw(10) << s->Protocol();
+      stream << SPACE << setw(12) << s->GetFaction();
+      stream << setw(10) << s->Enabled();
+      stream << spaces(2) << s->Name() << CRLF;
    }
 }
 

@@ -62,6 +62,10 @@ public:
    //
    virtual c_string Name() const = 0;
 
+   //  Returns the service's well-known port number.
+   //
+   virtual ipport_t Port() const = 0;
+
    //  Returns the IP protocol over which the service runs.
    //
    virtual IpProtocol Protocol() const = 0;
@@ -150,10 +154,6 @@ private:
    //  by each IpProtocol-based subclass.
    //
    virtual IpPort* CreatePort(ipport_t pid) = 0;
-
-   //  Returns the service's well-known port number.
-   //
-   virtual ipport_t Port() const = 0;
 
    //  The service's identifier.
    //

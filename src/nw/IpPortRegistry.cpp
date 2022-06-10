@@ -23,6 +23,7 @@
 #include "CfgStrParm.h"
 #include "StatisticsGroup.h"
 #include <cstddef>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -46,6 +47,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -423,6 +425,40 @@ void IpPortRegistry::Startup(RestartLevel level)
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
    {
       p->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string PortHeader =
+   " Port  ThreadId  AlarmId  Socket?  Handler?  ServiceId  Service";
+// |    5        10        9        9        10         11..<service>
+
+void IpPortRegistry::Summarize(ostream& stream) const
+{
+   stream << PortHeader << CRLF;
+
+   for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
+   {
+      stream << setw(5) << p->GetPort();
+      auto thread = p->GetThread();
+      stream << setw(10) << (thread != nullptr ? thread->Tid() : NIL_ID);
+      auto alarm = p->GetAlarm();
+      stream << setw(9) << (alarm != nullptr ? alarm->Aid() : NIL_ID);
+      stream << setw(9) << (p->GetSocket() != nullptr);
+      stream << setw(10) << (p->GetHandler() != nullptr);
+      auto service = p->GetService();
+      if(service != nullptr)
+      {
+         stream << setw(11) << service->Sid();
+         stream << spaces(2) << service->Name();
+      }
+      else
+      {
+         stream << spaces(11) << NIL_ID;
+         stream << spaces(2) << "no service registered";
+      }
+      stream << CRLF;
    }
 }
 

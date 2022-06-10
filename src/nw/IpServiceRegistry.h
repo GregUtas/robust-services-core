@@ -76,6 +76,10 @@ public:
    //  Overridden for restarts.
    //
    void Startup(NodeBase::RestartLevel level) override;
+
+   //  Overridden to display each service.
+   //
+   void Summarize(std::ostream& stream) const override;
 private:
    //  Private because this is a singleton.
    //

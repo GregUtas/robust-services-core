@@ -110,6 +110,10 @@ public:
    //
    bool RaiseAlarm(nwerr_t errval) const;
 
+   //  Returns the port's alarm.
+   //
+   const NodeBase::Alarm* GetAlarm() const { return alarm_; }
+
    //  Clears any alarm after the port's I/O thread successfully configures
    //  its socket.
    //

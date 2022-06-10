@@ -406,7 +406,7 @@ fixed_string IpPortsExpl = "Displays IP ports.";
 IpPortsCommand::IpPortsCommand() : CliCommand(IpPortsStr, IpPortsExpl)
 {
    BindParm(*new IpPortOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word IpPortsCommand::ProcessCommand(CliThread& cli) const
@@ -414,32 +414,35 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("IpPortsCommand.ProcessCommand");
 
    word port;
-   bool all, v = false;
+   char disp;
 
-   switch(GetIntParmRc(port, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, port, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<IpPortRegistry>::Instance();
+   auto size = reg->Ports().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(port == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
       auto ipport = reg->GetPort(port);
       if(ipport == nullptr) return cli.Report(-2, NoIpPortExpl);
-      ipport->Output(*cli.obuf, 2, v);
+      ipport->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -469,32 +472,35 @@ word IpServicesCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("IpServicesCommand.ProcessCommand");
 
    word id;
-   bool all, v = false;
-   IpService* service = nullptr;
-   auto reg = Singleton<IpServiceRegistry>::Instance();
+   char disp;
 
-   switch(GetIntParmRc(id, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   if(all)
+   auto reg = Singleton<IpServiceRegistry>::Instance();
+   auto size = reg->Services().Size();
+
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      service = reg->Services().At(id);
+      auto service = reg->Services().At(id);
       if(service == nullptr) return cli.Report(-2, NoIpServiceExpl);
-      service->Output(*cli.obuf, 2, v);
+      service->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------

@@ -53,8 +53,8 @@ exit thread; constructor traps first time daemon recreates thread, so daemon is 
 trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail[5]** | **fail[9]**
 raise SIGBUS | SIGBUS | trap.28 | n/a | n/a | pass
 
-  1. file name in [_output_](output) directory
-  1. file name in [_input_](input) directory
+  1. file name in [_output_](/output) directory
+  1. file name in [_input_](/input) directory
   1. causes stack overflow rethrowing exceptions (release build only)
   1. causes infinite loop dividing by zero
   1. causes stack overflow rethrowing exceptions

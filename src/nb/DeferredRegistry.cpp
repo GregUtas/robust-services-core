@@ -271,7 +271,7 @@ void DeferredRegistry::Shutdown(RestartLevel level)
 fixed_string ItemHeader = "Secs  Warm?  Item / Owner";
 //                        |   4      7..<item> / <owner>
 
-void DeferredRegistry::Summarize(ostream& stream) const
+void DeferredRegistry::Summarize(ostream& stream, uint8_t n) const
 {
    if(itemq_.Empty())
    {

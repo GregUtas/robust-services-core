@@ -428,7 +428,7 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
    }
    else if(disp == 's')
    {
-      reg->Summarize(*cli.obuf);
+      reg->Summarize(*cli.obuf, 0);
    }
    else if(port == NIL_ID)
    {
@@ -486,7 +486,7 @@ word IpServicesCommand::ProcessCommand(CliThread& cli) const
    }
    else if(disp == 's')
    {
-      reg->Summarize(*cli.obuf);
+      reg->Summarize(*cli.obuf, 0);
    }
    else if(id == NIL_ID)
    {

@@ -483,7 +483,7 @@ void ModuleRegistry::Startup(RestartLevel level)
 fixed_string ModuleHeader = "Id  Module";
 //                          | 2..<object>
 
-void ModuleRegistry::Summarize(ostream& stream) const
+void ModuleRegistry::Summarize(ostream& stream, uint8_t n) const
 {
    stream << ModuleHeader << CRLF;
 

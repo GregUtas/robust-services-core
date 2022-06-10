@@ -154,7 +154,7 @@ void AlarmRegistry::Startup(RestartLevel level)
 fixed_string AlarmHeader = "Id  Lvl  Name       Explanation";
 //                         | 2.   4..10        .<expl>
 
-void AlarmRegistry::Summarize(ostream& stream) const
+void AlarmRegistry::Summarize(ostream& stream, uint8_t n) const
 {
    stream << AlarmHeader << CRLF;
 

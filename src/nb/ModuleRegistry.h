@@ -72,7 +72,7 @@ public:
 
    //  Overridden to display each module.
    //
-   void Summarize(std::ostream& stream) const override;
+   void Summarize(std::ostream& stream, uint8_t n) const override;
 private:
    //  Private because this is a singleton.
    //

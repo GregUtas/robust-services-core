@@ -125,7 +125,7 @@ void IpServiceRegistry::Startup(RestartLevel level)
 fixed_string ServiceHeader = "Id   Port  Protocol      Faction  Enabled  Name";
 //                           | 2      7        10.          12        9..<name>
 
-void IpServiceRegistry::Summarize(ostream& stream) const
+void IpServiceRegistry::Summarize(ostream& stream, uint8_t n) const
 {
    stream << ServiceHeader << CRLF;
 

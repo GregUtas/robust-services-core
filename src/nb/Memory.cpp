@@ -511,7 +511,7 @@ fixed_string HeapHeader =
    "Id  MemoryType    Max kB  Curr kB  Targ kB  Used kB  Free kB";
 // | 2..10        .        9.       8.       8.       8.       8
 
-void Memory::Summarize(ostream& stream)
+void Memory::Summarize(ostream& stream, uint8_t n)
 {
    stream << HeapHeader << CRLF;
 

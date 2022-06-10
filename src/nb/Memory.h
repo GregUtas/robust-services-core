@@ -108,7 +108,7 @@ namespace Memory
 
    //  Displays a summary of each heap in STREAM.
    //
-   void Summarize(std::ostream& stream);
+   void Summarize(std::ostream& stream, uint8_t n);
 
    //  Frees the appropriate heap(s) during a restart.
    //

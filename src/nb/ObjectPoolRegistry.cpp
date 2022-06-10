@@ -317,7 +317,7 @@ void ObjectPoolRegistry::Startup(RestartLevel level)
 fixed_string PoolHeader = "Id   Avail   InUse  Segments  MemoryType  Name";
 //                        | 2.      7.      7.        9.         11..<name>
 
-void ObjectPoolRegistry::Summarize(ostream& stream) const
+void ObjectPoolRegistry::Summarize(ostream& stream, uint8_t n) const
 {
    stream << PoolHeader << CRLF;
 

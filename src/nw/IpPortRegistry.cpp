@@ -435,7 +435,7 @@ fixed_string PortHeader =
    " Port  ThreadId  AlarmId  Socket  Handler  ServiceId  Service";
 // |    5        10        9       8        9         11..<service>
 
-void IpPortRegistry::Summarize(ostream& stream) const
+void IpPortRegistry::Summarize(ostream& stream, uint8_t n) const
 {
    stream << PortHeader << CRLF;
 

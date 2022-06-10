@@ -23,6 +23,7 @@ Document | Description
 <img src="images/md.png" alt="markdown" height="30"> [Executables](/docs/RSC-Executables.md) | executables provided with each release
 <img src="images/md.png" alt="markdown" height="30"> [Building Using CMake](/docs/RSC-Building-Using-CMake.md) | how to build RSC using CMake
 <img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2022
+<img src="images/md.png" alt="markdown" height="30"> [RSC Trap Recovery](/docs/RSC-Trap-Recovery.md) | current status of Safety Net tests
 <img src="images/txt.jpg" alt="txt" height="30"> [help.cli](/docs/help.cli.txt) | summary of all CLI commands
 ![pdf](images/pdf24.png) [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
 ![pdf](images/pdf24.png) [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_

@@ -22,11 +22,8 @@ tests begin recover.SIGBUS
 read trap.28
 tests begin recover.abort
 read trap.09
-/ A bug in Windows is currently preventing a release
-/ build from recovering from std::terminate.
-/
-/ tests begin recover.terminate
-/ read trap.10
+tests begin recover.terminate
+read trap.10
 tests begin recover.KillLocal
 read trap.11
 tests begin recover.KillRemote

@@ -150,7 +150,7 @@ void ToolRegistry::Patch(sel_t selector, void* arguments)
 fixed_string ToolHeader = "Id  Char  Name             Safe  Explanation";
 //                        | 2     6..15             .    5..<expl>
 
-void ToolRegistry::Summarize(ostream& stream, uint8_t n) const
+void ToolRegistry::Summarize(ostream& stream, uint8_t index) const
 {
    //  Display the available tools.  If a tool's CLI character is not
    //  printable, it is not supported through the CLI.  If a tool is

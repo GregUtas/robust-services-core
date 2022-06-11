@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Registry.h"
 #include "Restart.h"
 #include "SbAppIds.h"
 #include "ServiceRegistry.h"
@@ -70,7 +71,7 @@ void ServiceCodeRegistry::Display(ostream& stream,
 
       if(sid != NIL_ID)
       {
-         auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+         auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
 
          stream << lead << strIndex(i);
 

@@ -29,6 +29,7 @@
 #include "NbTypes.h"
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
+#include "Registry.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -48,7 +49,7 @@ Signal::Signal(ProtocolId prid, Id sid) : prid_(prid)
    //  Register the signal with its protocol.
    //
    sid_.SetId(sid);
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid_);
 
    if(pro == nullptr)
    {
@@ -69,7 +70,7 @@ Signal::~Signal()
 
    Debug::SwLog(Signal_dtor, UnexpectedInvocation, 0);
 
-   auto pro = Singleton<ProtocolRegistry>::Extant()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Extant()->Protocols().At(prid_);
    if(pro != nullptr) pro->UnbindSignal(*this);
 }
 

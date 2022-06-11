@@ -27,6 +27,7 @@
 #include "MsgHeader.h"
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
+#include "Registry.h"
 #include "SbCliParms.h"
 #include "SbPools.h"
 #include "Singleton.h"
@@ -87,7 +88,7 @@ void SbIpBuffer::Display(ostream& stream,
    stream << prefix << "Parameters:" << CRLF;
 
    auto reg = Singleton<ProtocolRegistry>::Instance();
-   auto pro = reg->GetProtocol(header->protocol);
+   auto pro = reg->Protocols().At(header->protocol);
 
    if(pro != nullptr)
       pro->DisplayMsg(stream, prefix + spaces(2), *this);

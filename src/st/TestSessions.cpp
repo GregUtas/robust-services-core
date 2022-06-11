@@ -34,6 +34,7 @@
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "NwTypes.h"
+#include "Registry.h"
 #include "SbAppIds.h"
 #include "SbEvents.h"
 #include "SbTrace.h"
@@ -929,7 +930,7 @@ EventHandler::Rc TestNuInject::ProcessEvent
    //
    auto amsg = tmsg->GetAppMsg();
    auto afid = amsg->Header()->txAddr.fid;
-   auto afac = Singleton<FactoryRegistry>::Instance()->GetFactory(afid);
+   auto afac = Singleton<FactoryRegistry>::Instance()->Factories().At(afid);
    auto apsm = static_cast<SsmFactory*>(afac)->AllocOgPsm(*amsg);
 
    if(apsm == nullptr)

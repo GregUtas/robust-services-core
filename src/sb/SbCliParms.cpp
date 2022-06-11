@@ -148,6 +148,11 @@ StateIdOptParm::StateIdOptParm() :
 
 //------------------------------------------------------------------------------
 
+fixed_string TriggerIdMandExpl = "TriggerId";
+
+TriggerIdMandParm::TriggerIdMandParm() :
+   CliIntParm(TriggerIdMandExpl, 0, Trigger::MaxId) { }
+
 fixed_string TriggerIdOptExpl = "TriggerId (default=all)";
 
 TriggerIdOptParm::TriggerIdOptParm() :

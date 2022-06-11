@@ -24,6 +24,7 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
+#include "Registry.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -116,7 +117,7 @@ RouteResult::RouteResult(const AnalysisResult& ar) :
 
 void RouteResult::Display(ostream& stream, const string& prefix) const
 {
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(selector);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(selector);
 
    stream << prefix << "selector   : " << int(selector);
    stream << " (" << strClass(fac, false) << ')' << CRLF;

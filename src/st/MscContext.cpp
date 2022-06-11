@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
+#include "Registry.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
 
@@ -108,12 +109,12 @@ void MscContext::Names(string& text1, string& text2) const
    if(type_ == MultiPort)
    {
       auto reg = Singleton<ServiceRegistry>::Instance();
-      text1 = strClass(reg->GetService(cid_), false);
+      text1 = strClass(reg->Services().At(cid_), false);
    }
    else
    {
       auto reg = Singleton<FactoryRegistry>::Instance();
-      text1 = strClass(reg->GetFactory(FactoryId(cid_)), false);
+      text1 = strClass(reg->Factories().At(FactoryId(cid_)), false);
    }
 
    text2 = strContextType(type_);

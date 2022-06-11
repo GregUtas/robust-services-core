@@ -78,6 +78,10 @@ public:
    //  Overridden for restarts.
    //
    void Startup(NodeBase::RestartLevel level) override;
+
+   //  Overridden to display each pool.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
 private:
    //  Private because this is a singleton.
    //

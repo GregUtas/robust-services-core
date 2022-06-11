@@ -129,7 +129,7 @@ ProtocolLayer* MsgPort::AllocUpper(const Message& msg)
    //
    auto hdr = msg.Header();
    auto fid = hdr->rxAddr.fid;
-   auto fac = Singleton <FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton <FactoryRegistry>::Instance()->Factories().At(fid);
 
    if(fac == nullptr)
    {
@@ -254,7 +254,7 @@ void MsgPort::Initialize(const Message* msg)
    //  Inform our factory about our allocation.
    //
    auto fid = locAddr_.sbAddr_.fid;
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
 
    if(fac != nullptr)
       static_cast<PsmFactory*>(fac)->PortAllocated(*this, msg);

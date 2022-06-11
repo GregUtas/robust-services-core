@@ -147,7 +147,7 @@ string PosixSignalRegistry::strSignal(signal_t value) const
 fixed_string SignalHeader = " Id  Name        Explanation";
 //                          |  3..11         .<expl>
 
-void PosixSignalRegistry::Summarize(ostream& stream, uint8_t n) const
+void PosixSignalRegistry::Summarize(ostream& stream, uint8_t index) const
 {
    stream << SignalHeader << CRLF;
 

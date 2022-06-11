@@ -267,7 +267,7 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
    if(disp == 'c')
       *cli.obuf << spaces(2) << num << CRLF;
    else if(!pool->DisplayUsed(*cli.obuf, spaces(2), opts))
-      return cli.Report(-2, NoContextsExpl);
+      return cli.Report(0, NoContextsExpl);
 
    return num;
 }
@@ -291,62 +291,59 @@ EventsCommand::EventsCommand() : CliCommand(EventsStr, EventsExpl)
 {
    BindParm(*new ServiceIdMandParm);
    BindParm(*new EventIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word EventsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("EventsCommand.ProcessCommand");
 
-   word sid, eid;
-   bool all, one = false, v = false;
+   word sid, id;
+   char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-
-   switch(GetIntParmRc(eid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
-
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
+   auto size = svc->EventCount();
 
-   *cli.obuf << spaces(2) << strClass(svc) << CRLF;
-
-   if(all)
+   if(disp == 'c')
    {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      svc->Summarize(*cli.obuf, Service::SummarizeEvents);
+   }
+   else if(id == NIL_ID)
+   {
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
       *cli.obuf << spaces(4) << "eventNames [EventId]" << CRLF;
+      if(size == 0) return cli.Report(0, NoEventsExpl, 6);
 
       for(auto i = 0; i <= Event::MaxId; ++i)
       {
          auto name = svc->EventName(i);
-
          if(name != nullptr)
          {
             *cli.obuf << spaces(6) << strIndex(i) << name << CRLF;
-            one = true;
          }
       }
-
-      if(!one) return cli.Report(-2, NoEventsExpl, 6);
    }
    else
    {
-      auto name = svc->EventName(eid);
-
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
+      auto name = svc->EventName(id);
       if(name != nullptr)
          *cli.obuf << spaces(4) << name << CRLF;
       else
-         return cli.Report(-2, NoEventExpl, 4);
+         return cli.Report(0, NoEventExpl, 4);
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -433,40 +430,43 @@ fixed_string FactoriesExpl = "Displays factories.";
 FactoriesCommand::FactoriesCommand() : CliCommand(FactoriesStr, FactoriesExpl)
 {
    BindParm(*new FactoryIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word FactoriesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("FactoriesCommand.ProcessCommand");
 
-   word fid;
-   bool all, v = false;
+   word id;
+   char disp;
 
-   switch(GetIntParmRc(fid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<FactoryRegistry>::Instance();
+   auto size = reg->Factories().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf, 0);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto fac = reg->GetFactory(fid);
-      if(fac == nullptr) return cli.Report(-2, NoFactoryExpl);
-      fac->Output(*cli.obuf, 2, v);
+      auto fac = reg->Factories().At(id);
+      if(fac == nullptr) return cli.Report(0, NoFactoryExpl);
+      fac->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -488,56 +488,56 @@ HandlersCommand::HandlersCommand() : CliCommand(HandlersStr, HandlersExpl)
 {
    BindParm(*new ServiceIdMandParm);
    BindParm(*new HandlerIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word HandlersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("HandlersCommand.ProcessCommand");
 
-   word sid, ehid;
-   bool all, one = false, v = false;
+   word sid, id;
+   char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-
-   switch(GetIntParmRc(ehid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
+   auto& handlers = svc->Handlers();
+   auto size = handlers.Size();
 
-   *cli.obuf << spaces(2) << strClass(svc) << CRLF;
-
-   if(all)
+   if(disp == 'c')
    {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      svc->Summarize(*cli.obuf, Service::SummarizeHandlers);
+   }
+   else if(id == NIL_ID)
+   {
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
       *cli.obuf << spaces(4) << "handlers [EventHandlerId]" << CRLF;
+      if(size == 0) return cli.Report(0, NoHandlersExpl, 6);
 
-      auto& handlers = svc->Handlers();
-      auto id = NIL_ID;
+      id_t hid = NIL_ID;
 
-      for(auto eh = handlers.First(id); eh != nullptr; eh = handlers.Next(id))
+      for(auto h = handlers.First(hid); h != nullptr; h = handlers.Next(hid))
       {
-         *cli.obuf << spaces(6) << strIndex(id) << strObj(eh) << CRLF;
-         one = true;
+         *cli.obuf << spaces(6) << strIndex(hid) << strObj(h) << CRLF;
       }
-
-      if(!one) return cli.Report(-2, NoHandlersExpl, 6);
    }
    else
    {
-      auto handler = svc->GetHandler(ehid);
-      if(handler == nullptr) return cli.Report(-2, NoHandlerExpl, 4);
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
+      auto handler = handlers.At(id);
+      if(handler == nullptr) return cli.Report(0, NoHandlerExpl, 4);
       *cli.obuf << spaces(4) << strObj(handler) << CRLF;
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -608,6 +608,71 @@ word SbIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
 //------------------------------------------------------------------------------
 //
+//  The INITIATORS command.
+//
+class InitiatorsCommand : public CliCommand
+{
+public:
+   InitiatorsCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string InitiatorsStr = "initiators";
+fixed_string InitiatorsExpl =
+   "Displays the initiators registered with a trigger.";
+
+InitiatorsCommand::InitiatorsCommand() : CliCommand(InitiatorsStr, InitiatorsExpl)
+{
+   BindParm(*new ServiceIdMandParm);
+   BindParm(*new TriggerIdMandParm);
+   BindParm(*new DispCSBVParm);
+}
+
+word InitiatorsCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("InitiatorsCommand.ProcessCommand");
+
+   word sid, tid;
+   char disp;
+
+   if(!GetIntParm(sid, cli)) return -1;
+   if(!GetIntParm(tid, cli)) return -1;
+
+   switch(GetCharParmRc(disp, cli))
+   {
+   case CliParm::None: disp = 's'; break;
+   case CliParm::Ok: break;
+   default: return -1;
+   }
+
+   if(!cli.EndOfInput()) return -1;
+
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
+   if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
+   auto trigger = svc->Triggers().At(tid);
+   if(trigger == nullptr) return cli.Report(-2, NoTriggerExpl);
+   auto size = trigger->Initiators().Size();
+
+   if(disp == 'c')
+   {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      trigger->Summarize(*cli.obuf, 0);
+   }
+   else
+   {
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
+      trigger->Output(*cli.obuf, 4, disp == 'v');
+   }
+
+   return size;
+}
+
+//------------------------------------------------------------------------------
+//
 //  The INVPOOLS command.
 //
 class InvPoolsCommand : public CliCommand
@@ -624,40 +689,43 @@ fixed_string InvPoolsExpl = "Displays invoker pools.";
 InvPoolsCommand::InvPoolsCommand() : CliCommand(InvPoolsStr, InvPoolsExpl)
 {
    BindParm(*new FactionOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word InvPoolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("InvPoolsCommand.ProcessCommand");
 
-   word sc;
-   bool all, v = false;
+   word sf;
+   char disp;
 
-   switch(GetIntParmRc(sc, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, sf, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<InvokerPoolRegistry>::Instance();
+   auto size = reg->Pools().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf, 0);
+   }
+   else if(sf == IdleFaction)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto pool = reg->Pool(Faction(sc));
-      if(pool == nullptr) return cli.Report(-2, NoInvPoolExpl);
-      pool->Output(*cli.obuf, 2, v);
+      auto pool = reg->Pool(Faction(sf));
+      if(pool == nullptr) return cli.Report(0, NoInvPoolExpl);
+      pool->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -788,7 +856,7 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(count == 0) return cli.Report(-2, NoMessagesExpl);
+   if(count == 0) return cli.Report(0, NoMessagesExpl);
    return count;
 }
 
@@ -871,7 +939,7 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(count == 0) return cli.Report(-2, NoMsgsPortsExpl);
+   if(count == 0) return cli.Report(0, NoMsgsPortsExpl);
    return count;
 }
 
@@ -902,47 +970,52 @@ word ParametersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ParametersCommand.ProcessCommand");
 
-   word prid, pid;
-   bool all, one = false, v = false;
+   word prid, id;
+   char disp;
 
    if(!GetIntParm(prid, cli)) return -1;
-
-   switch(GetIntParmRc(pid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
    if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
+   auto& parms = pro->Parameters();
+   auto size = parms.Size();
 
-   *cli.obuf << spaces(2) << strClass(pro) << CRLF;
-
-   if(all)
+   if(disp == 'c')
    {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      pro->Summarize(*cli.obuf, Protocol::SummarizeParameters);
+   }
+   else if(id == NIL_ID)
+   {
+      *cli.obuf << spaces(2) << strClass(pro) << CRLF;
       *cli.obuf << spaces(4) << "parameters [ParameterId]" << CRLF;
+
+      auto one = false;
 
       for(auto p = pro->FirstParm(); p != nullptr; pro->NextParm(p))
       {
          *cli.obuf << spaces(6) << strIndex(p->Pid()) << CRLF;
-         p->Output(*cli.obuf, 8, v);
+         p->Output(*cli.obuf, 8, disp == 'v');
          one = true;
       }
 
-      if(!one) return cli.Report(-2, NoParametersExpl, 6);
+      if(!one) return cli.Report(0, NoParametersExpl, 6);
    }
    else
    {
-      auto parm = pro->GetParameter(pid);
-      if(parm == nullptr) return cli.Report(-2, NoParameterExpl, 4);
-      parm->Output(*cli.obuf, 4, v);
+      *cli.obuf << spaces(2) << strClass(pro) << CRLF;
+      auto parm = pro->GetParameter(id);
+      if(parm == nullptr) return cli.Report(0, NoParameterExpl, 4);
+      parm->Output(*cli.obuf, 4, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -963,40 +1036,43 @@ fixed_string ProtocolsExpl = "Displays protocols.";
 ProtocolsCommand::ProtocolsCommand() : CliCommand(ProtocolsStr, ProtocolsExpl)
 {
    BindParm(*new ProtocolIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word ProtocolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ProtocolsCommand.ProcessCommand");
 
-   word prid;
-   bool all, v = false;
+   word id;
+   char disp;
 
-   switch(GetIntParmRc(prid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ProtocolRegistry>::Instance();
+   auto size = reg->Protocols().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf, 0);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto pro = reg->GetProtocol(prid);
-      if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
-      pro->Output(*cli.obuf, 2, v);
+      auto pro = reg->Protocols().At(id);
+      if(pro == nullptr) return cli.Report(0, NoProtocolExpl);
+      pro->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -1078,7 +1154,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(count == 0) return cli.Report(-2, NoPsmsExpl);
+   if(count == 0) return cli.Report(0, NoPsmsExpl);
    return count;
 }
 
@@ -1119,40 +1195,43 @@ fixed_string ServicesExpl = "Displays services.";
 ServicesCommand::ServicesCommand() : CliCommand(ServicesStr, ServicesExpl)
 {
    BindParm(*new ServiceIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word ServicesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ServicesCommand.ProcessCommand");
 
-   word sid;
-   bool all, v = false;
+   word id;
+   char disp;
 
-   switch(GetIntParmRc(sid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ServiceRegistry>::Instance();
+   auto size = reg->Services().Size();
 
-   if(all)
+   if(disp == 'c')
    {
-      reg->Output(*cli.obuf, 2, v);
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      reg->Summarize(*cli.obuf, 0);
+   }
+   else if(id == NIL_ID)
+   {
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
-      auto svc = reg->GetService(sid);
-      if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
-      svc->Output(*cli.obuf, 2, v);
+      auto svc = reg->Services().At(id);
+      if(svc == nullptr) return cli.Report(0, NoServiceExpl);
+      svc->Output(*cli.obuf, 2, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -1181,47 +1260,52 @@ word SignalsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("SignalsCommand.ProcessCommand");
 
-   word prid, sid;
-   bool all, one = false, v = false;
+   word prid, id;
+   char disp;
 
    if(!GetIntParm(prid, cli)) return -1;
-
-   switch(GetIntParmRc(sid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
    if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
+   auto& signals = pro->Signals();
+   auto size = signals.Size();
 
-   *cli.obuf << spaces(2) << strClass(pro) << CRLF;
-
-   if(all)
+   if(disp == 'c')
    {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      pro->Summarize(*cli.obuf, Protocol::SummarizeSignals);
+   }
+   else if(id == NIL_ID)
+   {
+      *cli.obuf << spaces(2) << strClass(pro) << CRLF;
       *cli.obuf << spaces(4) << "signals [SignalId]" << CRLF;
+
+      auto one = false;
 
       for(auto s = pro->FirstSignal(); s != nullptr; pro->NextSignal(s))
       {
          *cli.obuf << spaces(6) << strIndex(s->Sid()) << CRLF;
-         s->Output(*cli.obuf, 8, v);
+         s->Output(*cli.obuf, 8, disp == 'v');
          one = true;
       }
 
-      if(!one) return cli.Report(-2, NoSignalsExpl, 6);
+      if(!one) return cli.Report(0, NoSignalsExpl, 6);
    }
    else
    {
-      auto sig = pro->GetSignal(sid);
-      if(sig == nullptr) return cli.Report(-2, NoSignalExpl, 4);
-      sig->Output(*cli.obuf, 4, v);
+      *cli.obuf << spaces(2) << strClass(pro) << CRLF;
+      auto sig = pro->GetSignal(id);
+      if(sig == nullptr) return cli.Report(0, NoSignalExpl, 4);
+      sig->Output(*cli.obuf, 4, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -1303,7 +1387,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(count == 0) return cli.Report(-2, NoSsmsExpl);
+   if(count == 0) return cli.Report(0, NoSsmsExpl);
    return count;
 }
 
@@ -1326,56 +1410,55 @@ StatesCommand::StatesCommand() : CliCommand(StatesStr, StatesExpl)
 {
    BindParm(*new ServiceIdMandParm);
    BindParm(*new StateIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word StatesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("StatesCommand.ProcessCommand");
 
-   word sid, stid;
-   bool all, one = false, v = false;
+   word sid, id;
+   char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-
-   switch(GetIntParmRc(stid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
+   auto& states = svc->States();
+   auto size = states.Size();
 
-   *cli.obuf << spaces(2) << strClass(svc) << CRLF;
-
-   if(all)
+   if(disp == 'c')
    {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      svc->Summarize(*cli.obuf, Service::SummarizeStates);
+   }
+   else if(id == NIL_ID)
+   {
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
       *cli.obuf << spaces(4) << "states [State::Id]" << CRLF;
-
-      auto& states = svc->States();
+      if(size == 0) return cli.Report(0, NoStatesExpl, 6);
 
       for(auto s = states.First(); s != nullptr; states.Next(s))
       {
          *cli.obuf << spaces(6) << strIndex(s->Stid()) << CRLF;
-         s->Output(*cli.obuf, 8, v);
-         one = true;
+         s->Output(*cli.obuf, 8, disp == 'v');
       }
-
-      if(!one) return cli.Report(-2, NoStatesExpl, 6);
    }
    else
    {
-      auto state = svc->GetState(stid);
-      if(state == nullptr) return cli.Report(-2, NoStateExpl);
-      state->Output(*cli.obuf, 4, v);
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
+      auto state = svc->States().At(id);
+      if(state == nullptr) return cli.Report(0, NoStateExpl);
+      state->Output(*cli.obuf, 4, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -1511,7 +1594,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(count == 0) return cli.Report(-2, NoTimersExpl);
+   if(count == 0) return cli.Report(0, NoTimersExpl);
    return count;
 }
 
@@ -1534,57 +1617,57 @@ TriggersCommand::TriggersCommand() : CliCommand(TriggersStr, TriggersExpl)
 {
    BindParm(*new ServiceIdMandParm);
    BindParm(*new TriggerIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word TriggersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("TriggersCommand.ProcessCommand");
 
-   word sid, tid;
-   bool all, one = false, v = false;
+   word sid, id;
+   char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-
-   switch(GetIntParmRc(tid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
+   auto& triggers = svc->Triggers();
+   auto size = triggers.Size();
 
-   *cli.obuf << spaces(2) << strClass(svc) << CRLF;
-
-   if(all)
+   if(disp == 'c')
    {
+      *cli.obuf << size << CRLF;
+   }
+   else if(disp == 's')
+   {
+      svc->Summarize(*cli.obuf, Service::SummarizeTriggers);
+   }
+   else if(id == NIL_ID)
+   {
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
       *cli.obuf << spaces(4) << "triggers [TriggerId]" << CRLF;
+      if(size == 0) return cli.Report(0, NoTriggersExpl, 6);
 
-      auto& triggers = svc->Triggers();
-      auto id = NIL_ID;
+      auto tid = NIL_ID;
 
-      for(auto t = triggers.First(id); t != nullptr; t = triggers.Next(id))
+      for(auto t = triggers.First(tid); t != nullptr; t = triggers.Next(tid))
       {
          *cli.obuf << spaces(6) << strIndex(t->Tid()) << CRLF;
-         t->Output(*cli.obuf, 8, v);
-         one = true;
+         t->Output(*cli.obuf, 8, disp == 'v');
       }
-
-      if(!one) return cli.Report(-2, NoTriggersExpl, 6);
    }
    else
    {
-      auto trigger = svc->GetTrigger(tid);
-      if(trigger == nullptr) return cli.Report(-2, NoTriggerExpl, 4);
-      trigger->Output(*cli.obuf, 4, v);
+      *cli.obuf << spaces(2) << strClass(svc) << CRLF;
+      auto trigger = triggers.At(id);
+      if(trigger == nullptr) return cli.Report(0, NoTriggerExpl, 4);
+      trigger->Output(*cli.obuf, 4, disp == 'v');
+      return 1;
    }
 
-   return 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -1599,11 +1682,12 @@ SbIncrement::SbIncrement() : CliIncrement(SessionsText, SessionsExpl)
    Debug::ft("SbIncrement.ctor");
 
    BindCommand(*new ServicesCommand);
+   BindCommand(*new FactoriesCommand);
    BindCommand(*new StatesCommand);
    BindCommand(*new EventsCommand);
    BindCommand(*new HandlersCommand);
    BindCommand(*new TriggersCommand);
-   BindCommand(*new FactoriesCommand);
+   BindCommand(*new InitiatorsCommand);
    BindCommand(*new ProtocolsCommand);
    BindCommand(*new SignalsCommand);
    BindCommand(*new ParametersCommand);

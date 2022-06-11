@@ -86,6 +86,10 @@ public:
    //
    Id Tid() const { return tid_; }
 
+   //  Returns the initiators registered with the trigger.
+   //
+   const NodeBase::Q1Way<Initiator>& Initiators() const { return initq_; }
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -94,6 +98,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each trigger.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
 protected:
    //  Sets tid_.  Protected because this class is virtual.
    //

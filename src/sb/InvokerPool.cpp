@@ -639,7 +639,7 @@ bool InvokerPool::ReceiveBuff(SbIpBufferPtr& buff, bool atIoLevel)
    }
 
    auto fid = header->rxAddr.fid;
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
 
    if(fac == nullptr)
    {
@@ -674,7 +674,7 @@ bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
    }
 
    auto fid = header->rxAddr.fid;
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
 
    if(fac == nullptr)
    {

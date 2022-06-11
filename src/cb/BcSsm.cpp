@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
+#include "Registry.h"
 #include "SbEvents.h"
 #include "ServiceCodeRegistry.h"
 #include "Singleton.h"
@@ -821,7 +822,7 @@ EventHandler::Rc BcSsm::SelectRoute(Event*& nextEvent)
    if(route_.selector != NIL_ID)
    {
       auto reg = Singleton<FactoryRegistry>::Instance();
-      auto fac = static_cast<BcFactory*>(reg->GetFactory(route_.selector));
+      auto fac = static_cast<BcFactory*>(reg->Factories().At(route_.selector));
 
       if(fac != nullptr)
       {

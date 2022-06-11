@@ -74,7 +74,7 @@ public:
 
    //  Overridden to display each mutex.
    //
-   void Summarize(std::ostream& stream, uint8_t n) const override;
+   void Summarize(std::ostream& stream, uint8_t index) const override;
 private:
    //  Private because this is a singleton.
    //

@@ -24,6 +24,7 @@
 
 #include "Immutable.h"
 #include <cstddef>
+#include <cstdint>
 #include "Event.h"
 #include "EventHandler.h"
 #include "RegCell.h"
@@ -86,23 +87,13 @@ public:
    //
    virtual NodeBase::c_string PortName(PortId pid) const;
 
-   //  Returns the state registered against SID.
-   //
-   State* GetState(State::Id stid) const
-   {
-      return states_.At(stid);
-   }
-
-   //  Returns the event handler registered against EHID.
-   //
-   EventHandler* GetHandler(EventHandlerId ehid) const
-   {
-      return handlers_.At(ehid);
-   }
-
    //  Returns the name of the event associated with EID.
    //
    NodeBase::c_string EventName(EventId eid) const;
+
+   //  Returns the total number of events known to the service.
+   //
+   size_t EventCount() const;
 
    //  Returns the trigger registered against TID.
    //
@@ -172,6 +163,18 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display, based on INDEX, each state, event, event
+   //  handler, or trigger.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
+
+   //  Constants for Summarize's INDEX parameter.
+   //
+   static const uint8_t SummarizeStates = 1;
+   static const uint8_t SummarizeEvents = 2;
+   static const uint8_t SummarizeHandlers = 3;
+   static const uint8_t SummarizeTriggers = 4;
 protected:
    //  Sets the corresponding member variables.  Sets the service's status to
    //  enabled, initializes its registries, registers system event handlers

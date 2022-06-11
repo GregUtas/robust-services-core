@@ -33,6 +33,7 @@
 #include "LocalAddress.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"
+#include "Registry.h"
 #include "RootServiceSM.h"
 #include "SbAppIds.h"
 #include "SbPools.h"
@@ -273,7 +274,7 @@ ProtocolId ProtocolSM::GetProtocol() const
 {
    Debug::ft(ProtocolSM_GetProtocol);
 
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid_);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid_);
    if(fac != nullptr) return fac->GetProtocol();
 
    Debug::SwLog(ProtocolSM_GetProtocol, "factory not found", fid_);

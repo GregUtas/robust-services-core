@@ -176,7 +176,7 @@ InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
       }
 
       auto prid = fac->GetProtocol();
-      auto pro = preg->GetProtocol(prid);
+      auto pro = preg->Protocols().At(prid);
 
       auto sparm = new CliTextParm(WhichSignalExpl, false, Signal::MaxId + 1);
       ftext->BindParm(*sparm);
@@ -227,13 +227,13 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
    //
    if(!GetTextIndex(fid, cli)) return -1;
 
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
    if(fac == nullptr) return cli.Report(-2, NoFactoryExpl);
 
    //  Find the message's protocol.
    //
    auto prid = fac->GetProtocol();
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
    if(pro == nullptr) return cli.Report(-6, NoFactoryProtocol);
 
    //  If the factory uses a PSM or SSM context, find the session from
@@ -529,7 +529,7 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
       //  contain each signal that the factory can receive.
       //
       auto prid = fac->GetProtocol();
-      auto pro = preg->GetProtocol(prid);
+      auto pro = preg->Protocols().At(prid);
 
       auto sparm = new CliTextParm(WhichSignalExpl, false, Signal::MaxId + 1);
       ftext->BindParm(*sparm);
@@ -590,13 +590,13 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
    //
    if(!GetTextIndex(fid, cli)) return -1;
 
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
    if(fac == nullptr) return cli.Report(-2, NoFactoryExpl);
 
    //  Find the expected message's protocol.
    //
    auto prid = fac->GetProtocol();
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
    if(pro == nullptr) return cli.Report(-6, NoFactoryProtocol);
 
    //  If the factory uses a PSM or SSM context, see if a session is to be

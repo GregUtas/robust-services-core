@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ServiceRegistry.h"
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -29,6 +30,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -75,16 +77,31 @@ void ServiceRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-Service* ServiceRegistry::GetService(ServiceId sid) const
+void ServiceRegistry::Patch(sel_t selector, void* arguments)
 {
-   return services_.At(sid);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
 
-void ServiceRegistry::Patch(sel_t selector, void* arguments)
+fixed_string ServiceHeader =
+   "Id  Enabled  Modifier  States  Handlers  Triggers  Name";
+// | 2        9        10       8        10        10..<name>
+
+void ServiceRegistry::Summarize(ostream& stream, uint8_t index) const
 {
-   Immutable::Patch(selector, arguments);
+   stream << ServiceHeader << CRLF;
+
+   for(auto s = services_.First(); s != nullptr; services_.Next(s))
+   {
+      stream << setw(2) << s->Sid();
+      stream << setw(9) << (s->GetStatus() == Service::Enabled);
+      stream << setw(10) << s->IsModifier();
+      stream << setw(8) << s->States().Size();
+      stream << setw(10) << s->Handlers().Size();
+      stream << setw(10) << s->Triggers().Size();
+      stream << spaces(2) << strClass(s) << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

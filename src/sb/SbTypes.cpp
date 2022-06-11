@@ -31,7 +31,7 @@ namespace SessionBase
 {
 fixed_string ContextTypeStrings[ContextType_N + 1] =
 {
-   "fac",  // SingleMsg
+   "msg",  // SingleMsg
    "psm",  // SinglePort
    "ssm",  // MultiPort
    "???"

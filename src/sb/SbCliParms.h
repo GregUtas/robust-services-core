@@ -159,8 +159,13 @@ public: StateIdOptParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for a TriggerId.
+//  Parameters for a TriggerId.
 //
+class TriggerIdMandParm : public NodeBase::CliIntParm
+{
+public: TriggerIdMandParm();
+};
+
 class TriggerIdOptParm : public NodeBase::CliIntParm
 {
 public: TriggerIdOptParm();

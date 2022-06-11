@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ProtocolRegistry.h"
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -29,6 +30,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -75,16 +77,28 @@ void ProtocolRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-Protocol* ProtocolRegistry::GetProtocol(ProtocolId prid) const
+void ProtocolRegistry::Patch(sel_t selector, void* arguments)
 {
-   return protocols_.At(prid);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
 
-void ProtocolRegistry::Patch(sel_t selector, void* arguments)
+fixed_string ProtocolHeader = "Id  Base  Signals  Parameters  Name";
+//                            | 2     6        9          12..<name>
+
+void ProtocolRegistry::Summarize(ostream& stream, uint8_t index) const
 {
-   Immutable::Patch(selector, arguments);
+   stream << ProtocolHeader << CRLF;
+
+   for(auto p = protocols_.First(); p != nullptr; protocols_.Next(p))
+   {
+      stream << setw(2) << p->Prid();
+      stream << setw(6) << p->GetBase();
+      stream << setw(9) << p->Signals().Size();
+      stream << setw(12) << p->Parameters().Size();
+      stream << spaces(2) << strClass(p) << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

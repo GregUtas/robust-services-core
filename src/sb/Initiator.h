@@ -59,13 +59,17 @@ public:
    //
    Initiator& operator=(const Initiator& that) = delete;
 
+   //  Returns the initiator's priority.
+   //
+   Priority GetPriority() const { return prio_; }
+
    //  Returns the service associated with the initiator.
    //
    ServiceId Sid() const { return sid_; }
 
-   //  Returns the initiator's priority.
+   //  Returns the service being observed by the initiator.
    //
-   Priority GetPriority() const { return prio_; }
+   ServiceId Aid() const { return aid_; }
 
    //  Invokes the initiator's ProcessEvent function.
    //

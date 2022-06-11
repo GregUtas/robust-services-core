@@ -200,7 +200,7 @@ public: IstreamMandParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for a LogBuffer.
+//  Parameter for a mandatory LogBuffer index.
 //
 class LogBufferIdParm : public CliIntParm
 {
@@ -209,7 +209,7 @@ public: LogBufferIdParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameters for a LogGroup.
+//  Parameters for a LogGroup name.
 //
 class LogGroupMandParm : public CliTextParm
 {

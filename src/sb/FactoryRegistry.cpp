@@ -21,6 +21,7 @@
 //
 #include "FactoryRegistry.h"
 #include "StatisticsGroup.h"
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -34,6 +35,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -86,7 +88,7 @@ void FactoryStatsGroup::DisplayStats
    }
    else
    {
-      auto f = reg->GetFactory(id);
+      auto f = reg->Factories().At(id);
 
       if(f == nullptr)
       {
@@ -144,13 +146,6 @@ void FactoryRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-Factory* FactoryRegistry::GetFactory(FactoryId fid) const
-{
-   return factories_.At(fid);
-}
-
-//------------------------------------------------------------------------------
-
 void FactoryRegistry::Patch(sel_t selector, void* arguments)
 {
    Immutable::Patch(selector, arguments);
@@ -186,6 +181,25 @@ void FactoryRegistry::Startup(RestartLevel level)
    for(auto f = factories_.First(); f != nullptr; factories_.Next(f))
    {
       f->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string FactoryHeader = "Id  Type     Faction  Protocol  Name";
+//                           | 2     6          12        10..<name>
+
+void FactoryRegistry::Summarize(ostream& stream, uint8_t index) const
+{
+   stream << FactoryHeader << CRLF;
+
+   for(auto f = factories_.First(); f != nullptr; factories_.Next(f))
+   {
+      stream << setw(2) << f->Fid();
+      stream << setw(6) << f->GetType();
+      stream << setw(12) << f->GetFaction();
+      stream << setw(10) << f->GetProtocol();
+      stream << spaces(2) << strClass(f) << CRLF;
    }
 }
 

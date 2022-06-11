@@ -71,6 +71,11 @@ public:
    NodeBase::Faction GetFaction() const
       { return NodeBase::Faction(faction_.GetId()); }
 
+   //  Returns the pool's invokers.
+   //
+   const NodeBase::Registry<InvokerThread>& Invokers() const
+      { return invokers_; }
+
    //  Returns the length of the work queue associated with PRIO.
    //
    size_t WorkQCurrLength(MsgPriority prio) const;

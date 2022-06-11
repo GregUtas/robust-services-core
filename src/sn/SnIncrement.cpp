@@ -85,7 +85,7 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto tq = reg->TreatmentQ(qid);
-      if(tq == nullptr) return cli.Report(-2, NoTreatmentExpl);
+      if(tq == nullptr) return cli.Report(0, NoTreatmentExpl);
       tq->Output(*cli.obuf, 2, v);
    }
 

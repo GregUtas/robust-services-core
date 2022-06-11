@@ -103,7 +103,6 @@ void SysStackTrace::Display(ostream& stream) NO_FT
    //  namely the 28 uppermost and the 20 lowermost functions.
    //
    string prefix = Log::Tab + spaces(2);
-   string name;
    auto xlo = 30;
    auto xhi = depth - 21;
 

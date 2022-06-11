@@ -421,7 +421,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(count == 0) return cli.Report(-2, NoMepsExpl);
+   if(count == 0) return cli.Report(0, NoMepsExpl);
    return count;
 }
 
@@ -603,7 +603,7 @@ word TonesCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto tone = reg->GetTone(id);
-      if(tone == nullptr) return cli.Report(-2, NoToneExpl);
+      if(tone == nullptr) return cli.Report(0, NoToneExpl);
       tone->Output(*cli.obuf, 2, v);
    }
 
@@ -677,7 +677,7 @@ word TsPortsCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if(!one) return cli.Report(-2, NoCircuitsExpl);
+   if(!one) return cli.Report(0, NoCircuitsExpl);
    return 0;
 }
 

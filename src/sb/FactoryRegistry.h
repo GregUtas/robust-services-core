@@ -46,10 +46,6 @@ public:
    //
    FactoryRegistry& operator=(const FactoryRegistry& that) = delete;
 
-   //  Returns the factory registered against FID.
-   //
-   Factory* GetFactory(FactoryId fid) const;
-
    //  Returns the registry of factories.  Used for iteration.
    //
    const NodeBase::Registry<Factory>& Factories() const { return factories_; }
@@ -70,6 +66,10 @@ public:
    //  Overridden for restarts.
    //
    void Startup(NodeBase::RestartLevel level) override;
+
+   //  Overridden to display each protocol.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
 private:
    //  Private because this is a singleton.
    //

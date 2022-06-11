@@ -30,6 +30,7 @@
 #include "Message.h"
 #include "NwTracer.h"
 #include "ProtocolRegistry.h"
+#include "Registry.h"
 #include "SbIpBuffer.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
@@ -286,7 +287,7 @@ void SbTracer::QuerySelections(ostream& stream) const
          if(factories_[i] != TraceDefault)
          {
             stream << spaces(2) << factories_[i] << ": ";
-            stream << strClass(reg->GetFactory(i)) << CRLF;
+            stream << strClass(reg->Factories().At(i)) << CRLF;
          }
       }
    }
@@ -306,7 +307,7 @@ void SbTracer::QuerySelections(ostream& stream) const
          if(protocols_[i] != TraceDefault)
          {
             stream << spaces(2) << protocols_[i] << ": ";
-            stream << strClass(reg->GetProtocol(i)) << CRLF;
+            stream << strClass(reg->Protocols().At(i)) << CRLF;
          }
       }
    }
@@ -325,7 +326,7 @@ void SbTracer::QuerySelections(ostream& stream) const
       {
          if(signals_[i].status != TraceDefault)
          {
-            auto pro = reg->GetProtocol(signals_[i].prid);
+            auto pro = reg->Protocols().At(signals_[i].prid);
             stream << spaces(2) << signals_[i].status << ": ";
             stream << strClass(pro) << '.';
             stream << strClass(pro->GetSignal(signals_[i].sid)) << CRLF;
@@ -348,7 +349,7 @@ void SbTracer::QuerySelections(ostream& stream) const
          if(services_[i] != TraceDefault)
          {
             stream << spaces(2) << services_[i] << ": ";
-            stream << strClass(reg->GetService(i)) << CRLF;
+            stream << strClass(reg->Services().At(i)) << CRLF;
          }
       }
    }
@@ -365,7 +366,7 @@ TraceRc SbTracer::SelectFactory(FactoryId fid, TraceStatus status)
 {
    Debug::ft("SbTracer.SelectFactory");
 
-   if(Singleton<FactoryRegistry>::Instance()->GetFactory(fid) == nullptr)
+   if(Singleton<FactoryRegistry>::Instance()->Factories().At(fid) == nullptr)
    {
       return NoSuchItem;
    }
@@ -390,7 +391,7 @@ TraceRc SbTracer::SelectProtocol(ProtocolId prid, TraceStatus status)
 {
    Debug::ft("SbTracer.SelectProtocol");
 
-   if(Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid) == nullptr)
+   if(Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid) == nullptr)
    {
       return NoSuchItem;
    }
@@ -415,7 +416,7 @@ TraceRc SbTracer::SelectService(ServiceId sid, TraceStatus status)
 {
    Debug::ft("SbTracer.SelectService");
 
-   if(Singleton<ServiceRegistry>::Instance()->GetService(sid) == nullptr)
+   if(Singleton<ServiceRegistry>::Instance()->Services().At(sid) == nullptr)
    {
       return NoSuchItem;
    }
@@ -441,7 +442,7 @@ TraceRc SbTracer::SelectSignal
 {
    Debug::ft("SbTracer.SelectSignal");
 
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
 
    if(pro == nullptr) return NoSuchItem;
 

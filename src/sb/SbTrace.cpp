@@ -40,6 +40,7 @@
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
 #include "ProtocolSM.h"
+#include "Registry.h"
 #include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbEvents.h"
@@ -67,7 +68,7 @@ namespace SessionBase
 //
 static void DisplayEvent(ostream& stream, ServiceId sid, EventId eid)
 {
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
 
    if(svc != nullptr)
    {
@@ -189,18 +190,18 @@ bool TransTrace::Display(ostream& stream, const string& opts)
       if(service_)
       {
          auto reg = Singleton<ServiceRegistry>::Instance();
-         stream << strClass(reg->GetService(ServiceId(cid_)), false);
+         stream << strClass(reg->Services().At(ServiceId(cid_)), false);
       }
       else
       {
          auto reg = Singleton<FactoryRegistry>::Instance();
-         stream << strClass(reg->GetFactory(FactoryId(cid_)), false);
+         stream << strClass(reg->Factories().At(FactoryId(cid_)), false);
       }
    }
    else
    {
       auto reg = Singleton<ProtocolRegistry>::Instance();
-      auto pro = reg->GetProtocol(prid_);
+      auto pro = reg->Protocols().At(prid_);
 
       if(pro != nullptr) stream << strClass(pro->GetSignal(sid_), false);
    }
@@ -345,7 +346,7 @@ bool BuffTrace::Display(ostream& stream, const string& opts)
    }
 
    auto fid = ActiveFid();
-   auto fac = Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
    stream << "factory=" << int(fid);
    stream << " (" << strClass(fac, false) << ')' << CRLF;
 
@@ -462,7 +463,7 @@ Message* BuffTrace::Rewrap()
    if(buff_ == nullptr) return nullptr;
 
    auto reg = Singleton<FactoryRegistry>::Instance();
-   auto fac = reg->GetFactory(Header()->rxAddr.fid);
+   auto fac = reg->Factories().At(Header()->rxAddr.fid);
    SbIpBufferPtr ipb(new (ToolUser) SbIpBuffer(*buff_));
 
    verified_ = true;
@@ -520,7 +521,7 @@ bool SsmTrace::Display(ostream& stream, const string& opts)
    auto reg = Singleton<ServiceRegistry>::Instance();
 
    stream << spaces(TraceDump::ObjToDesc);
-   stream << strClass(reg->GetService(sid_), false);
+   stream << strClass(reg->Services().At(sid_), false);
 
    return true;
 }
@@ -562,7 +563,7 @@ bool PsmTrace::Display(ostream& stream, const string& opts)
    auto reg = Singleton<FactoryRegistry>::Instance();
 
    stream << OutputId("port=", bid_);
-   stream << strClass(reg->GetFactory(fid_), false);
+   stream << strClass(reg->Factories().At(fid_), false);
 
    return true;
 }
@@ -602,7 +603,7 @@ bool PortTrace::Display(ostream& stream, const string& opts)
    auto reg = Singleton<FactoryRegistry>::Instance();
 
    stream << OutputId("port=", bid_);
-   stream << strClass(reg->GetFactory(fid_), false);
+   stream << strClass(reg->Factories().At(fid_), false);
 
    return true;
 }
@@ -672,7 +673,7 @@ bool MsgTrace::Display(ostream& stream, const string& opts)
 
    stream << OutputId("port=", locAddr_.bid);
 
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid_);
    Signal* sig = nullptr;
 
    if(pro != nullptr) sig = pro->GetSignal(sid_);
@@ -832,10 +833,10 @@ bool HandlerTrace::Display(ostream& stream, const string& opts)
 
 void HandlerTrace::DisplayState(ostream& stream) const
 {
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid_);
 
    if(svc != nullptr)
-      stream << strClass(svc->GetState(stid_), false);
+      stream << strClass(svc->States().At(stid_), false);
    else
       stream << "state=" << stid_;
 }
@@ -897,7 +898,7 @@ bool SipTrace::Display(ostream& stream, const string& opts)
    DisplayEvent(stream, sid_, eid_);
 
    stream << '(';
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(mod_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(mod_);
    if(svc != nullptr)
       stream << strClass(svc, false);
    else

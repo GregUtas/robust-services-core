@@ -29,6 +29,7 @@
 #include "NbTypes.h"
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
+#include "Registry.h"
 #include "SbCliParms.h"
 #include "Singleton.h"
 
@@ -56,7 +57,7 @@ Parameter::Parameter(ProtocolId prid, Id pid) :
 
    //  Register the parameter with its protocol.
    //
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid_);
 
    if(pro == nullptr)
    {
@@ -77,7 +78,7 @@ Parameter::~Parameter()
 
    Debug::SwLog(Parameter_dtor, UnexpectedInvocation, 0);
 
-   auto pro = Singleton<ProtocolRegistry>::Extant()->GetProtocol(prid_);
+   auto pro = Singleton<ProtocolRegistry>::Extant()->Protocols().At(prid_);
    if(pro == nullptr) return;
    pro->UnbindParameter(*this);
 }

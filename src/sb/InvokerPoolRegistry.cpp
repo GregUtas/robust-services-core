@@ -21,6 +21,7 @@
 //
 #include "InvokerPoolRegistry.h"
 #include "StatisticsGroup.h"
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -32,6 +33,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -192,6 +194,25 @@ void InvokerPoolRegistry::Startup(RestartLevel level)
    for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
    {
       p->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string InvokerHeader = "Id     Faction  Invokers  Name";
+//                           | 2          12        10..<name>
+
+void InvokerPoolRegistry::Summarize(ostream& stream, uint8_t index) const
+{
+   stream << InvokerHeader << CRLF;
+
+   for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
+   {
+      auto sf = p->GetFaction();
+      stream << setw(2) << int(sf);
+      stream << setw(12) << sf;
+      stream << setw(10) << p->Invokers().Size();
+      stream << spaces(2) << strClass(this) << CRLF;
    }
 }
 

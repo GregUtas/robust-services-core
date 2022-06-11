@@ -46,9 +46,9 @@ public:
    //
    ServiceRegistry& operator=(const ServiceRegistry& that) = delete;
 
-   //  Returns the service registered against SID.
+   //  Returns the services in the registry.
    //
-   Service* GetService(ServiceId sid) const;
+   const NodeBase::Registry<Service>& Services() const { return services_; }
 
    //  Overridden to display member variables.
    //
@@ -58,6 +58,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each service.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
 private:
    //  Private because this is a singleton.
    //

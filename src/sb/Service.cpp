@@ -20,13 +20,14 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Service.h"
-#include <cstdint>
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
+#include "SbCliParms.h"
 #include "SbHandlers.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
@@ -34,6 +35,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -148,7 +150,6 @@ bool Service::BindEventName(NodeBase::c_string name, EventId eid)
 
    //  Before registering the event name, check that
    //  o the service is already registered
-   //  o the event name actually exists
    //  o the event identifier is valid
    //
    if(status_ == NotRegistered)
@@ -186,7 +187,6 @@ bool Service::BindHandler(EventHandler& handler, EventHandlerId ehid)
    //  Before registering the event handler, check that
    //  o the service is already registered
    //  o the event handler identifier is valid
-   //  o an event handler is not already registered against that identifier
    //
    if(status_ == NotRegistered)
    {
@@ -261,8 +261,6 @@ bool Service::BindTrigger(Trigger& trigger)
    //  Before registering the trigger, check that
    //  o the service is already registered
    //  o the service allows modifiers
-   //  o the trigger's identifier is valid
-   //  o a trigger is not already registered against that identifier
    //
    if(status_ == NotRegistered)
    {
@@ -365,6 +363,20 @@ bool Service::Enable()
 
 //------------------------------------------------------------------------------
 
+size_t Service::EventCount() const
+{
+   size_t count = 0;
+
+   for(auto i = 0; i <= Event::MaxId; ++i)
+   {
+      if(EventName(i) != nullptr) ++count;
+   }
+
+   return count;
+}
+
+//------------------------------------------------------------------------------
+
 c_string Service::EventName(EventId eid) const
 {
    if(!Event::IsValidId(eid)) return nullptr;
@@ -401,6 +413,96 @@ c_string Service::PortName(PortId pid) const
    }
 
    return UnknownPortStr;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ItemHeader = " Id  Name";
+//                        |  3..<name>
+
+void Service::Summarize(ostream& stream, uint8_t index) const
+{
+   id_t id = NIL_ID;
+
+   switch(index)
+   {
+   case SummarizeStates:
+      stream << "States for " << strClass(this) << ':' << CRLF;
+
+      if(states_.Empty())
+      {
+         stream << spaces(3) << NoStatesExpl << CRLF;
+         return;
+      }
+
+      stream << ItemHeader << CRLF;
+
+      for(auto s = states_.First(); s != nullptr; states_.Next(s))
+      {
+         stream << setw(3) << s->Stid();
+         stream << spaces(2) << strClass(s) << CRLF;
+      }
+      break;
+
+   case SummarizeEvents:
+      stream << "Events for " << strClass(this) << ':' << CRLF;
+
+      if(EventCount() == 0)
+      {
+         stream << spaces(2) << NoEventsExpl << CRLF;
+         return;
+      }
+
+      stream << ItemHeader << CRLF;
+
+      for(auto i = 0; i <= Event::MaxId; ++i)
+      {
+         auto name = EventName(i);
+
+         if(name != nullptr)
+         {
+            stream << setw(3) << i;
+            stream << spaces(2) << name << CRLF;
+         }
+      }
+      break;
+
+   case SummarizeHandlers:
+      stream << "Handlers for " << strClass(this) << ':' << CRLF;
+
+      if(handlers_.Empty())
+      {
+         stream << spaces(2) << NoHandlersExpl << CRLF;
+         return;
+      }
+
+      stream << ItemHeader << CRLF;
+
+      for(auto h = handlers_.First(id); h != nullptr; h = handlers_.Next(id))
+      {
+         stream << setw(3) << id;
+         stream << spaces(2) << strClass(h) << CRLF;
+      }
+      break;
+
+   case SummarizeTriggers:
+      stream << "Triggers for " << strClass(this) << ':' << CRLF;
+
+      if(triggers_.Empty())
+      {
+         stream << spaces(2) << NoTriggersExpl << CRLF;
+         return;
+      }
+
+      stream << ItemHeader << CRLF;
+
+      for(auto t = triggers_.First(id); t != nullptr; t = triggers_.Next(id))
+      {
+         stream << setw(3) << id;
+         stream << spaces(2) << strClass(t) << CRLF;
+      }
+      break;
+   }
 }
 
 //------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 //
 #include "Trigger.h"
 #include <bitset>
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -31,6 +32,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -93,6 +95,25 @@ void Trigger::Display(ostream& stream,
 void Trigger::Patch(sel_t selector, void* arguments)
 {
    Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string InitiatorHeader = "Priority  Service  Ancestor  Name";
+//                             |       8        7        10..<name>
+
+void Trigger::Summarize(ostream& stream, uint8_t index) const
+{
+   stream << "Triggers for " << strClass(this) << ':' << CRLF;
+   stream << InitiatorHeader << CRLF;
+
+   for(auto i = initq_.First(); i != nullptr; initq_.Next(i))
+   {
+      stream << setw(8) << int(i->GetPriority());
+      stream << setw(7) << i->Sid();
+      stream << setw(10) << i->Aid();
+      stream << spaces(2) << strClass(i) << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------

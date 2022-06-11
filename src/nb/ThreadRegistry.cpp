@@ -669,7 +669,7 @@ void ThreadRegistry::Startup(RestartLevel level)
 fixed_string ThreadHeader = "Id  Name     NativeId  Faction";
 //                          | 2..8       .8       ..<faction>
 
-void ThreadRegistry::Summarize(ostream& stream, uint8_t n) const
+void ThreadRegistry::Summarize(ostream& stream, uint8_t index) const
 {
    auto threads = GetThreads();
 

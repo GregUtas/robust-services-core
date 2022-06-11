@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Initiator.h"
+#include "Registry.h"
 #include "SbEvents.h"
 #include "SbPools.h"
 #include "SbTrace.h"
@@ -311,7 +312,7 @@ bool ServiceSM::ExqEvent(Event& evt, Event::Location loc)
 
 Service* ServiceSM::GetService() const
 {
-   return Singleton<ServiceRegistry>::Instance()->GetService(sid_);
+   return Singleton<ServiceRegistry>::Instance()->Services().At(sid_);
 }
 
 //------------------------------------------------------------------------------
@@ -528,9 +529,9 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
          phase = FreeEventPhase;
          {
             auto svc = GetService();
-            auto state = svc->GetState(currState_);
+            auto state = svc->States().At(currState_);
             auto ehid = state->GetHandler(currEvent->Eid());
-            auto handler = svc->GetHandler(ehid);
+            auto handler = svc->Handlers().At(ehid);
 
             if(handler == nullptr)
             {
@@ -1006,7 +1007,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
    if(currEvent.Owner() != this) return rc;
 
    auto reg = Singleton<ServiceRegistry>::Instance();
-   auto svc = reg->GetService(initEvent.GetModifier());
+   auto svc = reg->Services().At(initEvent.GetModifier());
    auto modifier = svc->AllocModifier();
    if(modifier == nullptr) return EventHandler::Pass;
 

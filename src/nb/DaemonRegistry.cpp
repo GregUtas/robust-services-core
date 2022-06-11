@@ -142,7 +142,7 @@ void DaemonRegistry::Startup(RestartLevel level)
 fixed_string DaemonHeader = "Id  Name       Alarm     AlarmId  Lvl";
 //                          | 2..10        .10              7    5
 
-void DaemonRegistry::Summarize(ostream& stream, uint8_t n) const
+void DaemonRegistry::Summarize(ostream& stream, uint8_t index) const
 {
    stream << DaemonHeader << CRLF;
 

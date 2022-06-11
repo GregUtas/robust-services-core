@@ -31,6 +31,7 @@
 #include "MscContextPair.h"
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
+#include "Registry.h"
 #include "SbTrace.h"
 #include "Singleton.h"
 #include "TraceBuffer.h"
@@ -157,7 +158,7 @@ TraceRc MscBuilder::AnalyzeEvents()
             if(!mt->Self() && (mt->Route() == Message::Internal))
             {
                auto reg = Singleton<FactoryRegistry>::Instance();
-               auto fac = reg->GetFactory(mt->LocAddr().fid);
+               auto fac = reg->Factories().At(mt->LocAddr().fid);
 
                if(fac != nullptr)
                {
@@ -478,7 +479,7 @@ void MscBuilder::EnsureFactories()
       {
          if(FindAddr(peer) == nullptr)
          {
-            auto fac = reg->GetFactory(peer.fid);
+            auto fac = reg->Factories().At(peer.fid);
 
             if(FindContext(fac, peer.fid) == nullptr)
             {
@@ -1154,7 +1155,8 @@ bool MscBuilder::OutputMessage
    //  Find the message's signal so that it can be displayed.  Strip out
    //  the word "Signal".
    //
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(mt.Prid());
+   auto reg = Singleton<ProtocolRegistry>::Instance();
+   auto pro = reg->Protocols().At(mt.Prid());
    if(pro == nullptr)
       return Error("protocol not found", pack2(mt.Prid(), mt.Sid()));
 

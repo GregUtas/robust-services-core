@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "Event.h"
 #include "Formatters.h"
+#include "Registry.h"
 #include "Service.h"
 #include "ServiceRegistry.h"
 #include "ServiceSM.h"
@@ -120,7 +121,7 @@ Trigger* Initiator::GetTrigger() const
 {
    Debug::ftnt(Initiator_GetTrigger);
 
-   auto svc = Singleton<ServiceRegistry>::Extant()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Extant()->Services().At(sid_);
 
    if(svc == nullptr)
    {
@@ -129,7 +130,7 @@ Trigger* Initiator::GetTrigger() const
       return nullptr;
    }
 
-   auto anc = Singleton<ServiceRegistry>::Extant()->GetService(aid_);
+   auto anc = Singleton<ServiceRegistry>::Extant()->Services().At(aid_);
 
    if(anc == nullptr)
    {
@@ -162,7 +163,7 @@ EventHandler::Rc Initiator::InvokeHandler
    //  When an initiator receives an event, it may only pass the event on or
    //  request the creation of its modifier.
    //
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid_);
 
    if(svc->GetStatus() != Service::Enabled) return EventHandler::Pass;
 

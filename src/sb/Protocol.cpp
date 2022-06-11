@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Protocol.h"
+#include <iomanip>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -33,6 +34,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -157,7 +159,7 @@ Parameter* Protocol::GetParameter(ParameterId pid) const
    auto parm = parameters_.At(pid);
    if(parm != nullptr) return parm;
    if(base_ == NIL_ID) return nullptr;
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(base_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(base_);
    if(pro == nullptr) return nullptr;
    return pro->GetParameter(pid);
 }
@@ -169,7 +171,7 @@ Signal* Protocol::GetSignal(SignalId sid) const
    auto sig = signals_.At(sid);
    if(sig != nullptr) return sig;
    if(base_ == NIL_ID) return nullptr;
-   auto pro = Singleton<ProtocolRegistry>::Instance()->GetProtocol(base_);
+   auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(base_);
    if(pro == nullptr) return nullptr;
    return pro->GetSignal(sid);
 }
@@ -209,6 +211,39 @@ void Protocol::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fixed_string ItemHeader = " Id  Name";
+//                        |  3..<name>
+
+void Protocol::Summarize(ostream& stream, uint8_t index) const
+{
+   switch(index)
+   {
+   case SummarizeSignals:
+      stream << "Signals for " << strClass(this) << ':' << CRLF;
+      stream << ItemHeader << CRLF;
+
+      for(auto s = FirstSignal(); s != nullptr; NextSignal(s))
+      {
+         stream << setw(3) << s->Sid();
+         stream << spaces(2) << strClass(s) << CRLF;
+      }
+      break;
+
+   case SummarizeParameters:
+      stream << "Parameters for " << strClass(this) << ':' << CRLF;
+      stream << ItemHeader << CRLF;
+
+      for(auto p = FirstParm(); p != nullptr; NextParm(p))
+      {
+         stream << setw(3) << p->Pid();
+         stream << spaces(2) << strClass(p) << CRLF;
+      }
+      break;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Protocol::UnbindParameter(Parameter& parameter)
 {
    Debug::ftnt("Protocol.UnbindParameter");
@@ -234,12 +269,12 @@ bool Protocol::Understands(Id prid1, Id prid2)
    if(prid1 == prid2) return true;
 
    auto reg = Singleton<ProtocolRegistry>::Instance();
-   auto pro = reg->GetProtocol(prid1);
+   auto pro = reg->Protocols().At(prid1);
 
    while(pro != nullptr)
    {
       if(pro->base_ == prid2) return true;
-      pro = reg->GetProtocol(pro->base_);
+      pro = reg->Protocols().At(pro->base_);
    }
 
    return false;

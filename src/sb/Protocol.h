@@ -72,20 +72,24 @@ public:
    //
    static const Id MaxId = UINT8_MAX;
 
-   //  Returns true if PRID1 understands PRID2 (that is, if PRID1 = PRID2
-   //  or PRID2 is a base for PRID1).
-   //
-   static bool Understands(Id prid1, Id prid2);
-
    //  Returns the signal within BUFF.
    //
    virtual SignalId ExtractSignal(const SbIpBuffer& buff) const = 0;
 
-   //  Returns the signal registered against SID.
+   //  Displays BUFF in text format.  The default version outputs
+   //  a string stating that symbolic display is not supported and
+   //  should be overridden by protocols that uses binary encoding.
+   //
+   virtual void DisplayMsg(std::ostream& stream,
+      const std::string& prefix, const SbIpBuffer& buff) const;
+
+   //  Returns the signal registered against SID, whether in this
+   //  protocol or its base protocol.
    //
    Signal* GetSignal(SignalId sid) const;
 
-   //  Returns the parameter registered against PID.
+   //  Returns the parameter registered against PID, whether in this
+   //  protocol or its base protocol.
    //
    Parameter* GetParameter(ParameterId pid) const;
 
@@ -107,12 +111,27 @@ public:
    //
    void NextParm(Parameter*& parm) const;
 
-   //  Displays BUFF in text format.  The default version outputs
-   //  a string stating that symbolic display is not supported and
-   //  should be overridden by protocols that uses binary encoding.
+   //  Returns the protocol's signals.
    //
-   virtual void DisplayMsg(std::ostream& stream,
-      const std::string& prefix, const SbIpBuffer& buff) const;
+   const NodeBase::Registry<Signal>& Signals() const { return signals_; }
+
+   //  Returns the protocol's parameters.
+   //
+   const NodeBase::Registry<Parameter>& Parameters() const
+      { return parameters_; }
+
+   //  Returns true if PRID1 understands PRID2 (that is, if PRID1 = PRID2
+   //  or PRID2 is a base for PRID1).
+   //
+   static bool Understands(Id prid1, Id prid2);
+
+   //  Returns the protocol's identifier in the global ProtocolRegistry.
+   //
+   Id Prid() const { return prid_.GetId(); }
+
+   //  Returns the identifier of the protocol's base protocol, if any
+   //
+   Id GetBase() const { return base_; }
 
    //  Returns the offset to prid_.
    //
@@ -126,6 +145,15 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display, based on INDEX, each signal or parameter.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
+
+   //  Constants for Summarize's INDEX parameter.
+   //
+   static const uint8_t SummarizeSignals = 1;
+   static const uint8_t SummarizeParameters = 2;
 protected:
    //  Sets the corresponding member variables and adds the protocol to
    //  ProtocolRegistry.  Protected because this class is virtual.

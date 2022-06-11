@@ -33,6 +33,7 @@
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "ProtocolSM.h"
+#include "Registry.h"
 #include "RootServiceSM.h"
 #include "SbLogs.h"
 #include "SbTrace.h"
@@ -69,7 +70,7 @@ static RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm)
    }
 
    auto fid = header->rxAddr.fid;
-   auto fac = Singleton <FactoryRegistry>::Instance()->GetFactory(fid);
+   auto fac = Singleton <FactoryRegistry>::Instance()->Factories().At(fid);
 
    if(fac == nullptr)
    {

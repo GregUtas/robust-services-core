@@ -437,7 +437,7 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto ipport = reg->GetPort(port);
-      if(ipport == nullptr) return cli.Report(-2, NoIpPortExpl);
+      if(ipport == nullptr) return cli.Report(0, NoIpPortExpl);
       ipport->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }
@@ -464,7 +464,7 @@ IpServicesCommand::IpServicesCommand() :
    CliCommand(IpServicesStr, IpServicesExpl)
 {
    BindParm(*new IdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word IpServicesCommand::ProcessCommand(CliThread& cli) const
@@ -495,7 +495,7 @@ word IpServicesCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto service = reg->Services().At(id);
-      if(service == nullptr) return cli.Report(-2, NoIpServiceExpl);
+      if(service == nullptr) return cli.Report(0, NoIpServiceExpl);
       service->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }

@@ -221,7 +221,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
       else
       {
          alarm = reg->Alarms().At(id);
-         if(alarm == nullptr) return cli.Report(-2, NoAlarmExpl);
+         if(alarm == nullptr) return cli.Report(0, NoAlarmExpl);
          alarm->Output(*cli.obuf, 2, disp == 'v');
          return 1;
       }
@@ -407,7 +407,7 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
    if(disp == 'c')
       *cli.obuf << spaces(2) << num << CRLF;
    else if(!pool->DisplayUsed(*cli.obuf, spaces(2), opts))
-      return cli.Report(-2, NoBuffersExpl);
+      return cli.Report(0, NoBuffersExpl);
 
    return num;
 }
@@ -759,7 +759,7 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
       else
       {
          daemon = reg->Daemons().At(id);
-         if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
+         if(daemon == nullptr) return cli.Report(0, NoDaemonExpl);
          daemon->Output(*cli.obuf, 2, disp == 'v');
          return 1;
       }
@@ -1219,7 +1219,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       }
       else if(disp == 's')
       {
-         Memory::Summarize(*cli.obuf, 0);
+         Memory::Summarize(*cli.obuf);
       }
       else if(id == NIL_ID)
       {
@@ -1230,7 +1230,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       {
          auto type = MemoryType(id);
          auto heap = Memory::AccessHeap(type);
-         if(heap == nullptr) return cli.Report(-2, "Heap not found.");
+         if(heap == nullptr) return cli.Report(0, "Heap not found.");
          heap->Output(*cli.obuf, 2, disp == 'v');
          return 1;
       }
@@ -2092,7 +2092,7 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto mod = reg->Modules().At(id);
-      if(mod == nullptr) return cli.Report(-2, NoModuleExpl);
+      if(mod == nullptr) return cli.Report(0, NoModuleExpl);
       mod->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }
@@ -2149,7 +2149,7 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto mutex = reg->Mutexes().At(id);
-      if(mutex == nullptr) return cli.Report(-2, NoMutexExpl);
+      if(mutex == nullptr) return cli.Report(0, NoMutexExpl);
       mutex->Output(*cli.obuf, 2, disp == 'v');
    }
 
@@ -2205,7 +2205,7 @@ word PoolsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto pool = reg->Pools().At(id);
-      if(pool == nullptr) return cli.Report(-2, NoPoolExpl);
+      if(pool == nullptr) return cli.Report(0, NoPoolExpl);
       pool->Output(*cli.obuf, 2, disp == 'v');
    }
 
@@ -2261,7 +2261,7 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto signal = reg->Find(id);
-      if(signal == nullptr) return cli.Report(-2, NoPosixSignalExpl);
+      if(signal == nullptr) return cli.Report(0, NoPosixSignalExpl);
       signal->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }
@@ -3628,7 +3628,7 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto thr = reg->GetThread(id);
-      if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
+      if(thr == nullptr) return cli.Report(0, NoThreadExpl);
       thr->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }
@@ -3685,7 +3685,7 @@ word ToolsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       auto tool = reg->Tools().At(id);
-      if(tool == nullptr) return cli.Report(-2, NoToolExpl);
+      if(tool == nullptr) return cli.Report(0, NoToolExpl);
       tool->Output(*cli.obuf, 2, disp == 'v');
       return 1;
    }

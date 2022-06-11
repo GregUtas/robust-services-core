@@ -25,7 +25,6 @@
 #include "Immutable.h"
 #include "NbTypes.h"
 #include "Registry.h"
-#include "SbTypes.h"
 
 namespace SessionBase
 {
@@ -51,9 +50,9 @@ public:
    //
    ProtocolRegistry& operator=(const ProtocolRegistry& that) = delete;
 
-   //  Returns the protocol registered against PRID.
+   //  Returns the protocols in the registry.
    //
-   Protocol* GetProtocol(ProtocolId prid) const;
+   const NodeBase::Registry<Protocol>& Protocols() const { return protocols_; }
 
    //  Overridden to display member variables.
    //
@@ -63,6 +62,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each protocol.
+   //
+   void Summarize(std::ostream& stream, uint8_t index) const override;
 private:
    //  Private because this is a singleton.
    //

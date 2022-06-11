@@ -23,6 +23,7 @@
 #include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
+#include "Registry.h"
 #include "SbEvents.h"
 #include "Service.h"
 #include "ServiceRegistry.h"
@@ -53,9 +54,9 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
 
    auto service = ssm.GetService();
    auto stid = ssm.CurrState();
-   auto state = service->GetState(stid);
+   auto state = service->States().At(stid);
    auto ehid = state->MsgAnalyzer(pid);
-   auto handler = service->GetHandler(ehid);
+   auto handler = service->Handlers().At(ehid);
 
    if(handler == nullptr)
    {
@@ -171,7 +172,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
    if(modifier == nullptr)
    {
       auto reg = Singleton<ServiceRegistry>::Instance();
-      auto svc = reg->GetService(ire.GetModifier());
+      auto svc = reg->Services().At(ire.GetModifier());
 
       if(svc == nullptr)
       {

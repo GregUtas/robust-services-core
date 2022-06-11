@@ -42,6 +42,7 @@
 #include "IpPortRegistry.h"
 #include "IpServiceCfg.h"
 #include "NbAppIds.h"
+#include "Registry.h"
 #include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbAppIds.h"
@@ -1259,7 +1260,7 @@ RootServiceSM* CipTbcFactory::AllocRoot
    if(rte == nullptr) return nullptr;
 
    auto reg = Singleton<FactoryRegistry>::Instance();
-   auto fac = static_cast<SsmFactory*>(reg->GetFactory(rte->selector));
+   auto fac = static_cast<SsmFactory*>(reg->Factories().At(rte->selector));
    return fac->AllocRoot(msg, psm);
 }
 

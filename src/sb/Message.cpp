@@ -37,6 +37,7 @@
 #include "Protocol.h"
 #include "ProtocolSM.h"
 #include "Q1Way.h"
+#include "Registry.h"
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "SbTracer.h"
@@ -619,7 +620,7 @@ Factory* Message::RxFactory() const
 
    auto fid = buff_->Header()->rxAddr.fid;
 
-   return Singleton<FactoryRegistry>::Instance()->GetFactory(fid);
+   return Singleton<FactoryRegistry>::Instance()->Factories().At(fid);
 }
 
 //------------------------------------------------------------------------------
@@ -754,7 +755,7 @@ bool Message::Send(Route route)
    //
    if(local)
    {
-      auto fac = facreg->GetFactory(header->rxAddr.fid);
+      auto fac = facreg->Factories().At(header->rxAddr.fid);
 
       if(fac == nullptr)
       {
@@ -806,7 +807,7 @@ bool Message::Send(Route route)
          ctx->TraceMsg(header->protocol, header->signal, MsgOutgoing);
       }
 
-      auto fac = facreg->GetFactory(header->txAddr.fid);
+      auto fac = facreg->Factories().At(header->txAddr.fid);
 
       if(fac == nullptr)
          Debug::SwLog(Message_Send,

@@ -29,6 +29,7 @@
 #include "EventHandler.h"
 #include "Formatters.h"
 #include "NbTypes.h"
+#include "Registry.h"
 #include "Service.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
@@ -59,7 +60,7 @@ State::State(ServiceId sid, Id stid) :
 
    //  Check that the state's service is registered.
    //
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
 
    if(svc == nullptr)
    {
@@ -115,7 +116,7 @@ State::~State()
 
    Debug::SwLog(State_dtor, UnexpectedInvocation, 0);
 
-   auto svc = Singleton<ServiceRegistry>::Extant()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Extant()->Services().At(sid_);
    if(svc != nullptr) svc->UnbindState(*this);
 }
 
@@ -207,7 +208,7 @@ void State::Display(ostream& stream,
 
    if(!options.test(DispVerbose)) return;
 
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid_);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid_);
 
    stream << prefix << "stid : " << stid_.to_str() << CRLF;
    stream << prefix << "sid  : " << int(sid_);
@@ -223,7 +224,7 @@ void State::Display(ostream& stream,
       if(handlers_[i] != NIL_ID)
       {
          stream << lead1 << '[' << strName(svc->EventName(i), i) << ']' << CRLF;
-         stream << lead2 << strClass(svc->GetHandler(handlers_[i])) << CRLF;
+         stream << lead2 << strClass(svc->Handlers().At(handlers_[i])) << CRLF;
       }
    }
 
@@ -234,7 +235,8 @@ void State::Display(ostream& stream,
       if(msgAnalyzers_[i] != NIL_ID)
       {
          stream << lead1 << '[' << svc->PortName(i) << ']' << CRLF;
-         stream << lead2 << strClass(svc->GetHandler(msgAnalyzers_[i])) << CRLF;
+         stream << lead2
+            << strClass(svc->Handlers().At(msgAnalyzers_[i])) << CRLF;
       }
    }
 }

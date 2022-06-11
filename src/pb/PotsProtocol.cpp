@@ -33,6 +33,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "PotsCliParms.h"
+#include "Registry.h"
 #include "SbAppIds.h"
 #include "SbCliParms.h"
 #include "Service.h"
@@ -595,7 +596,7 @@ PotsFacilityInfo::PotsFacilityInfo() :
 
 void PotsFacilityInfo::Display(ostream& stream, const string& prefix) const
 {
-   auto svc = Singleton<ServiceRegistry>::Instance()->GetService(sid);
+   auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
 
    stream << prefix << "sid : " << sid;
    stream << " (" << strClass(svc, false) << ')' << CRLF;

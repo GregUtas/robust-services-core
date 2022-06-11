@@ -1,26 +1,31 @@
 # Robust Services Core: Trap Recovery
 
-RSC uses the term _trap_ to refer to something, usually a POSIX signal, that
-gets handled as a C++ exception. A common example is SIGSEGV, the signal
-that a thread receives when it performs an illegal memory access, which
-is often caused by using a bad pointer.
+In RSC, the term _trap_ refers to something, usually a POSIX signal, that
+results in a C++ exception. A common example is SIGSEGV, the signal that a
+thread receives when it performs an illegal memory access, perhaps because
+it used a bad pointer.
 
 The article
 [Robust C++: Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net)
 describes how RSC handles traps. To summarize, RSC installs a handler that
 intercepts POSIX signals and throws a C++ exception so that a signal can be
-handled using the usual `try`-`catch` approach. However, it is _undefined
-behavior_ for a signal handler to try to do almost anything useful in C++,
-so the extent to which this strategy works depends on the compiler that was
-used and platform for which it targeted the executable.
+handled by a `catch` clause in [`Thread::Start`](/src/nb/Thread.cpp), the
+function that underlies all RSC threads. However, it is _undefined behavior_
+for a signal handler to try to do almost anything useful in C++, so how well
+this strategy works depends on the compiler that was used and the platform
+for which it targeted the executable.
 
 ## Current Status
 
 There are currently 28 tests that exercise RSC's Safety Net by causing traps
-in various ways. RSC is currently built using the MSVC compiler, targeted to
-Windows; the clang compiler, also targeted to Windows, and the gcc compiler,
-targeted to Linux. The following table provides the current status of each
-Safety Net test.
+in various ways. RSC is currently built using
+
+- the MSVC compiler, targeted to Windows;
+- the clang compiler, also targeted to Windows; and
+- the gcc compiler, targeted to Linux.
+
+The following table provides the current status of each Safety Net test for
+the above combinations.
 
 Description | Test Name[1] | Script[2] | MSVC/Windows | clang/Windows | gcc/Linux
 ----------- | ------------ | --------- | ------------ | ------------- | ---------
@@ -55,10 +60,10 @@ raise SIGBUS | SIGBUS | trap.28 | n/a | n/a | pass
 
   1. file name in [_output_](/output) directory
   1. file name in [_input_](/input) directory
-  1. causes stack overflow rethrowing exceptions (release build only)
-  1. causes infinite loop dividing by zero
-  1. causes stack overflow rethrowing exceptions
-  1. causes stack overflow rethrowing exceptions
+  1. causes stack overflow by rethrowing exceptions (release build only)
+  1. causes infinite loop that divides by zero
+  1. causes stack overflow by rethrowing exceptions
+  1. causes stack overflow by rethrowing exceptions
   1. not killed; WSL does not appear to forward ctrl-C to Linux console
-  1. causes infinite loop rethrowing exceptions
-  1. causes stack overflow rethrowing exceptions
+  1. causes infinite loop that rethrows exceptions
+  1. causes stack overflow by rethrowing exceptions

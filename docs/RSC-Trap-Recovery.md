@@ -5,7 +5,6 @@ results in a C++ exception. A common example is SIGSEGV, the signal that a
 thread receives when it performs an illegal memory access, perhaps because
 it used a bad pointer.
 
-The article
 [Robust C++: Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net)
 describes how RSC handles traps. To summarize, RSC installs a handler that
 intercepts POSIX signals and throws a C++ exception so that a signal can be
@@ -15,10 +14,12 @@ for a signal handler to try to do almost anything useful in C++, so how well
 this strategy works depends on the compiler that was used and the platform
 for which it targeted the executable.
 
+There are 28 tests that exercise RSC's Safety Net by telling
+[`RecoveryThread`](/src/nt/NtIncrement.cpp) to cause traps in various ways.
+
 ## Current Status
 
-There are currently 28 tests that exercise RSC's Safety Net by causing traps
-in various ways. RSC is currently built using
+RSC is built using
 
 - the MSVC compiler, targeted to Windows;
 - the clang compiler, also targeted to Windows; and
@@ -48,15 +49,15 @@ delete `Thread` object of another thread | DeleteRemote | trap.16 | pass | pass 
 delete `Thread` object of running thread | DeleteLocal | trap.17 | pass | pass | pass
 cause an infinite loop and be killed by **ctrl-C** | Ctrl-C  | trap.18 | pass | pass | **fail[7]**
 call `Thread::EnterBlockingOperation` while holding a mutex | MutexBlock | trap.19 | pass | pass | pass
-trap, and trap once in constructor when recreated | ThreadCtorTrap | trap.20 | pass | pass | pass
+trap, and constructor traps first time thread is recreated | ThreadCtorTrap | trap.20 | pass | pass | pass
 exit thread while holding a mutex | MutexExit | trap.21 | pass | pass | pass
 trap while holding a mutex | MutexTrap | trap.22 | pass | pass | pass
-trap, and trap once again during trap recovery | Retrap | trap.23 | pass | pass | **fail[8]**
+trap, and trap once more during trap recovery | Retrap | trap.23 | pass | pass | **fail[8]**
 trap and allow thread to exit | BadPtrExit | trap.24 | pass | pass | pass
-disable daemon; kill thread; reenble daemon; thread recreated | DaemonReenable | trap.25 | pass | pass | pass
-exit thread; constructor traps first time daemon recreates thread, so daemon is disabled; reenable daemon; thread recreated | DaemonRetrap | trap.26 | pass | pass | pass
+disable [`Daemon`](/src/nb/Daemon.h); kill thread; reenable `Daemon`; thread recreated | DaemonReenable | trap.25 | pass | pass | pass
+exit thread; constructor traps first time `Daemon` recreates thread, so `Daemon` is disabled; reenable `Daemon`; thread recreated | DaemonTrap | trap.26 | pass | pass | pass
 trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail[5]** | **fail[9]**
-raise SIGBUS | SIGBUS | trap.28 | n/a | n/a | pass
+raise `SIGBUS` | SIGBUS | trap.28 | n/a | n/a | pass
 
   1. file name in [_output_](/output) directory
   1. file name in [_input_](/input) directory

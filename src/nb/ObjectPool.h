@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <string>
+#include <vector>
 #include "NbTypes.h"
 #include "RegCell.h"
 #include "SysTypes.h"
@@ -106,6 +107,10 @@ public:
    //
    virtual void EnqBlock(Pooled* obj, bool deleted);
 
+   //  Returns all in-use blocks.
+   //
+   std::vector<Pooled*> GetUsed() const;
+
    //  Returns the pool's first in-use block and updates the iterator
    //  BID to reference it.
    //
@@ -178,10 +183,12 @@ public:
    //
    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
-   //  Displays in-use blocks.  Returns false if no block were in use.
+   //  Displays in-use blocks.  Returns the number of blocks displayed.
+   //  The Filter function is invoked with FILTER so that a subset of
+   //  all blocks can be displayed.
    //
-   bool DisplayUsed(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const;
+   size_t DisplayUsed(std::ostream& stream, const std::string& prefix,
+      const Flags& options, uint32_t filter) const;
 
    //  Corrupts the Nth link on the free queue for testing (0 = queue header).
    //  Returns false if the queue contained less than N elements.

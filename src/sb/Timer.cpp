@@ -200,6 +200,13 @@ void* Timer::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
+bool Timer::Passes(uint32_t selector) const
+{
+   return ((selector == 0) || (Psm()->GetFactory() == selector));
+}
+
+//------------------------------------------------------------------------------
+
 void Timer::Patch(sel_t selector, void* arguments)
 {
    Pooled::Patch(selector, arguments);

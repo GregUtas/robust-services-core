@@ -38,10 +38,6 @@ class RootServiceSM : public ServiceSM
 {
    friend class SsmContext;
 public:
-   //  Returns the SSM's context.
-   //
-   SsmContext* GetContext() const { return ctx_; }
-
    //  Raises an appropriate event when PSM has detected a protocol error.
    //  This is invoked when an implementation of ProtocolSM::ProcessIcMsg
    //  does not wish to raise AnalyzeMsgEvent.  The default version raises
@@ -53,6 +49,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Returns the SSM's context.
+   //
+   SsmContext* GetContext() const override { return ctx_; }
 
    //  Overridden for patching.
    //

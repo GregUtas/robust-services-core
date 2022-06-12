@@ -850,7 +850,7 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       return test->SetFailed(rc, text);
 
    case TestQueryIndex:
-      if(GetBV(*this, cli, v) == Error) return -1;
+      if(!GetBV(*this, cli, v)) return -1;
       if(!cli.EndOfInput()) return -1;
       test->Query(v, expl);
       return cli.Report(0, expl);

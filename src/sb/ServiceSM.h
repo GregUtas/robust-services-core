@@ -58,6 +58,10 @@ public:
    //
    static const StateId Null = 1;
 
+   //  Returns the Context on which the SSM is running.
+   //
+   virtual SsmContext* GetContext() const;
+
    //  Returns the port (local PSM identifier) associated with the message
    //  to be analyzed.  The PSM on which the message arrived is available
    //  as ame.Msg()->Psm().  Before it performs its own analysis, a modifier
@@ -150,6 +154,10 @@ public:
    //  Overridden to enumerate all objects that the SSM owns.
    //
    void GetSubtended(std::vector<Base*>& objects) const override;
+
+   //  Overridden to select SSMs by ServiceId and StateId.
+   //
+   bool Passes(uint32_t selector) const override;
 
    //  Overridden for patching.
    //

@@ -164,10 +164,10 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to display, based on INDEX, each state, event, event
+   //  Overridden to display, based on SELECTOR, each state, event, event
    //  handler, or trigger.
    //
-   void Summarize(std::ostream& stream, uint8_t index) const override;
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 
    //  Constants for Summarize's INDEX parameter.
    //

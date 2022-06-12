@@ -64,7 +64,7 @@ public:
    static const Id Reorder = 8;
    static const Id ReceiverOffHook = 9;
    static const Id Held = 10;
-   static const Id MaxId = 10;
+   static const Id MaxId = 15;
 
    static const Id Media = UINT8_MAX;  // not connected to a tone
 

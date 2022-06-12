@@ -54,7 +54,7 @@ BotTrace::~BotTrace()
    //  clear the flag afterwards.  If it flagged as corrupt when we come in
    //  here, we know that it was bad, so skip it and let the audit find it.
    //
-   if((buff_ != nullptr) && !buff_->IsInvalid())
+   if((buff_ != nullptr) && buff_->IsValid())
    {
       if(!corrupt_)
       {
@@ -73,7 +73,7 @@ void BotTrace::ClaimBlocks()
 {
    Debug::ft("BotTrace.ClaimBlocks");
 
-   if((buff_ != nullptr) && !corrupt_ && !buff_->IsInvalid())
+   if((buff_ != nullptr) && !corrupt_ && buff_->IsValid())
    {
       buff_->ClaimBlocks();
    }
@@ -95,7 +95,7 @@ bool BotTrace::Display(ostream& stream, const string& opts)
       return true;
    }
 
-   if(!buff_->IsInvalid())
+   if(buff_->IsValid())
    {
       auto message = reinterpret_cast<const DipMessage*>(buff_->HeaderPtr());
       message->Display(stream);

@@ -271,14 +271,14 @@ void DeferredRegistry::Shutdown(RestartLevel level)
 fixed_string ItemHeader = "Secs  Warm?  Item / Owner";
 //                        |   4      7..<item> / <owner>
 
-void DeferredRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t DeferredRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << ItemHeader << CRLF;
 
    if(itemq_.Empty())
    {
       stream << spaces(2) << "No items found." << CRLF;
-      return;
+      return 0;
    }
 
    for(auto i = itemq_.First(); i != nullptr; itemq_.Next(i))
@@ -288,5 +288,7 @@ void DeferredRegistry::Summarize(ostream& stream, uint8_t index) const
       stream << spaces(2) << strObj(i);
       stream << " / " << strObj(i->owner_) << CRLF;
    }
+
+   return itemq_.Size();
 }
 }

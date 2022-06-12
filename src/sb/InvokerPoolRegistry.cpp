@@ -202,7 +202,7 @@ void InvokerPoolRegistry::Startup(RestartLevel level)
 fixed_string InvokerHeader = "Id     Faction  Invokers  Name";
 //                           | 2          12        10..<name>
 
-void InvokerPoolRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t InvokerPoolRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << InvokerHeader << CRLF;
 
@@ -214,6 +214,8 @@ void InvokerPoolRegistry::Summarize(ostream& stream, uint8_t index) const
       stream << setw(10) << p->Invokers().Size();
       stream << spaces(2) << strClass(this) << CRLF;
    }
+
+   return pools_.Size();
 }
 
 //------------------------------------------------------------------------------

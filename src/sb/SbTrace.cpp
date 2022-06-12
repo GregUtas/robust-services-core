@@ -294,7 +294,7 @@ BuffTrace::~BuffTrace()
    //  clear the flag afterwards.  If it flagged as corrupt when we come in
    //  here, we know that it was bad, so skip it and let the audit find it.
    //
-   if((buff_ != nullptr) && !buff_->IsInvalid())
+   if((buff_ != nullptr) && buff_->IsValid())
    {
       if(!corrupt_)
       {
@@ -323,7 +323,7 @@ void BuffTrace::ClaimBlocks()
 {
    Debug::ft("BuffTrace.ClaimBlocks");
 
-   if((buff_ != nullptr) && !corrupt_ && !buff_->IsInvalid())
+   if((buff_ != nullptr) && !corrupt_ && buff_->IsValid())
    {
       buff_->ClaimBlocks();
    }
@@ -350,7 +350,7 @@ bool BuffTrace::Display(ostream& stream, const string& opts)
    stream << "factory=" << int(fid);
    stream << " (" << strClass(fac, false) << ')' << CRLF;
 
-   if(!buff_->IsInvalid()) buff_->Display(stream, spaces(2), VerboseOpt);
+   if(buff_->IsValid()) buff_->Display(stream, spaces(2), VerboseOpt);
    stream << string(COUT_LENGTH_MAX, '-');
    return true;
 }

@@ -21,10 +21,14 @@
 //
 #include "SbPools.h"
 #include <cstddef>
+#include <iomanip>
+#include <iosfwd>
 #include <ostream>
 #include <string>
+#include <vector>
 #include "Debug.h"
 #include "Event.h"
+#include "Formatters.h"
 #include "FunctionGuard.h"
 #include "GlobalAddress.h"
 #include "InvokerPoolRegistry.h"
@@ -34,7 +38,9 @@
 #include "ProtocolSM.h"
 #include "Restart.h"
 #include "RootServiceSM.h"
+#include "SbCliParms.h"
 #include "SbIpBuffer.h"
+#include "SbTypes.h"
 #include "Singleton.h"
 #include "SsmContext.h"
 #include "Statistics.h"
@@ -46,12 +52,60 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
+//  Displays a summary of CTX in STREAM, under a header that contains
+//    |SSM  State  PSM1  State  PSM2  State
+//    |  3      7     6      7     6      7
+//
+static void SummarizeContext(ostream& stream, const Context* ctx)
+{
+   auto ssm = ctx->RootSsm();
+   if(ssm != nullptr)
+   {
+      stream << setw(3) << ssm->Sid();
+      stream << setw(7) << ssm->CurrState();
+   }
+   else
+   {
+      stream << setw(5) << "-";
+      stream << setw(7) << "-";
+   }
+
+   auto psm = ctx->FirstPsm();
+   if(psm != nullptr)
+   {
+      stream << setw(6) << psm->GetFactory();
+      stream << setw(7) << psm->GetState();
+
+      ctx->NextPsm(psm);
+      if(psm != nullptr)
+      {
+         stream << setw(6) << psm->GetFactory();
+         stream << setw(7) << psm->GetState();
+      }
+      else
+      {
+         stream << setw(6) << '-';
+         stream << setw(7) << '-';
+      }
+   }
+   else
+   {
+      stream << setw(6) << '-';
+      stream << setw(7) << '-';
+      stream << setw(6) << '-';
+      stream << setw(7) << '-';
+   }
+}
+
+//------------------------------------------------------------------------------
+
 constexpr size_t SbIpBufferSize = sizeof(SbIpBuffer);
 
 //------------------------------------------------------------------------------
@@ -111,6 +165,38 @@ void ContextPool::Patch(sel_t selector, void* arguments)
    ObjectPool::Patch(selector, arguments);
 }
 
+//------------------------------------------------------------------------------
+
+fixed_string ContextHeader = "Type  SSM  State  PSM1  PSM2  Address";
+//                           |   4    5      7     6     6..<address>
+
+size_t ContextPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << ContextHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoContextsExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid())
+      {
+         auto ctx = static_cast<const Context*>(*obj);
+         stream << setw(4) << ctx->Type();
+         SummarizeContext(stream, ctx);
+         stream << spaces(2) << this << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
+}
+
 //==============================================================================
 
 constexpr size_t EventSize = sizeof(Event) + (20 * BYTES_PER_WORD);
@@ -161,6 +247,56 @@ MessagePool::~MessagePool()
 void MessagePool::Patch(sel_t selector, void* arguments)
 {
    ObjectPool::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string MessageHeader =
+   "Pro  Sig  SSM  State  PSM1  State  PSM2  State  Address";
+// |  3    5..  3      7     6      7     6      7..<address>
+
+size_t MessagePool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << MessageHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoMessagesExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
+      {
+         auto msg = static_cast<const Message*>(*obj);
+         stream << setw(3) << msg->GetProtocol();
+         stream << setw(5) << msg->GetSignal();
+
+         auto psm = msg->Psm();
+         if(psm != nullptr)
+         {
+            stream << spaces(2);
+            SummarizeContext(stream, psm->GetContext());
+         }
+         else
+         {
+            stream << setw(5) << '-';
+            stream << setw(7) << '-';
+            stream << setw(6) << '-';
+            stream << setw(7) << '-';
+            stream << setw(6) << '-';
+            stream << setw(7) << '-';
+         }
+
+         stream << spaces(2) << this << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
 }
 
 //==============================================================================
@@ -216,6 +352,37 @@ MsgPort* MsgPortPool::FindPeerPort(const GlobalAddress& remAddr) const
 void MsgPortPool::Patch(sel_t selector, void* arguments)
 {
    ObjectPool::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string PortHeader = "SSM  State  PSM1  State  PSM2  State  Address";
+//                        |  3      7     6      7     6      7..<address>
+
+size_t MsgPortPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << PortHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoMsgsPortsExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
+      {
+         auto port = static_cast<const MsgPort*>(*obj);
+         SummarizeContext(stream, port->GetContext());
+         stream << spaces(2) << this << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
 }
 
 //==============================================================================
@@ -297,6 +464,37 @@ void ProtocolSMPool::Patch(sel_t selector, void* arguments)
    ObjectPool::Patch(selector, arguments);
 }
 
+//------------------------------------------------------------------------------
+
+fixed_string PsmHeader = "SSM  State  PSM1  State  PSM2  State  Address";
+//                       |  3      7     6      7     6      7..<address>
+
+size_t ProtocolSMPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << PsmHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoPsmsExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
+      {
+         auto psm = static_cast<const ProtocolSM*>(*obj);
+         SummarizeContext(stream, psm->GetContext());
+         stream << spaces(2) << this;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
+}
+
 //==============================================================================
 
 constexpr size_t ServiceSMSize = sizeof(RootServiceSM) + (60 * BYTES_PER_WORD);
@@ -321,6 +519,37 @@ ServiceSMPool::~ServiceSMPool()
 void ServiceSMPool::Patch(sel_t selector, void* arguments)
 {
    ObjectPool::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string SsmHeader = "SSM  State  PSM1  State  PSM2  State  Address";
+//                       |  3      7     6      7     6      7..<address>
+
+size_t ServiceSMPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << SsmHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoSsmsExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
+      {
+         auto ssm = static_cast<const ServiceSM*>(*obj);
+         SummarizeContext(stream, ssm->GetContext());
+         stream << spaces(2) << this << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
 }
 
 //==============================================================================
@@ -403,6 +632,39 @@ void TimerPool::Startup(RestartLevel level)
       FunctionGuard guard(Guard_MemUnprotect);
       timeouts_.reset(new Counter("timeout messages sent"));
    }
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string TimerHeader = " Id  SSM  State  PSM1  State  PSM2  State  Address";
+//                         |  3..  5      7     6      7     6      7..<address>
+
+size_t TimerPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << TimerHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoTimersExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
+      {
+         auto tmr = static_cast<const Timer*>(*obj);
+         stream << setw(3) << tmr->Tid();
+         stream << spaces(2);
+         SummarizeContext(stream, tmr->Psm()->GetContext());
+         stream << spaces(2) << this << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
 }
 
 //==============================================================================

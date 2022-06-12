@@ -73,7 +73,7 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetBV(*this, cli, v)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<PotsTreatmentRegistry>::Instance();

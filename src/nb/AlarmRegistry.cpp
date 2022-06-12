@@ -151,20 +151,22 @@ void AlarmRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string AlarmHeader = "Id  Lvl  Name       Explanation";
-//                         | 2.   4..10        .<expl>
+fixed_string AlarmHeader = " Id  Lvl  Name       Explanation";
+//                         |  3.   4..10        .<expl>
 
-void AlarmRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t AlarmRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << AlarmHeader << CRLF;
 
    for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
    {
-      stream << setw(2) << a->Aid();
+      stream << setw(3) << a->Aid();
       stream << SPACE << setw(4) << AlarmStatusSymbol(a->Status());
       stream << spaces(2) << std::left << setw(10) << a->Name();
       stream << SPACE << std::right << a->Expl() << CRLF;
    }
+
+   return alarms_.Size();
 }
 
 //------------------------------------------------------------------------------

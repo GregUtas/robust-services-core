@@ -23,10 +23,13 @@
 #include "CliCommand.h"
 #include "CliText.h"
 #include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <iomanip>
 #include <iosfwd>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "CliPtrParm.h"
 #include "CliThread.h"
 #include "Debug.h"
@@ -37,14 +40,12 @@
 #include "Formatters.h"
 #include "InvokerPool.h"
 #include "InvokerPoolRegistry.h"
-#include "LocalAddress.h"
-#include "Message.h"
-#include "MsgPort.h"
 #include "NbCliParms.h"
 #include "Parameter.h"
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
 #include "ProtocolSM.h"
+#include "Q1Way.h"
 #include "Registry.h"
 #include "SbCliParms.h"
 #include "SbPools.h"
@@ -52,13 +53,9 @@
 #include "SbTypes.h"
 #include "Service.h"
 #include "ServiceRegistry.h"
-#include "ServiceSM.h"
 #include "Signal.h"
 #include "Singleton.h"
 #include "State.h"
-#include "ThisThread.h"
-#include "Timer.h"
-#include "TimerRegistry.h"
 #include "Tool.h"
 #include "ToolTypes.h"
 #include "Trigger.h"
@@ -248,7 +245,7 @@ fixed_string ContextsExpl = "Counts or displays contexts.";
 
 ContextsCommand::ContextsCommand() : CliCommand(ContextsStr, ContextsExpl)
 {
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSVParm);
 }
 
 word ContextsCommand::ProcessCommand(CliThread& cli) const
@@ -257,19 +254,28 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
 
    char disp;
 
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<ContextPool>::Instance();
-   auto num = pool->InUseCount();
-   auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+   size_t count = 0;
 
    if(disp == 'c')
-      *cli.obuf << spaces(2) << num << CRLF;
-   else if(!pool->DisplayUsed(*cli.obuf, spaces(2), opts))
-      return cli.Report(0, NoContextsExpl);
+   {
+      count = pool->InUseCount();
+      *cli.obuf << spaces(2) << count << CRLF;
+   }
+   else if(disp == 's')
+   {
+      count = pool->Summarize(*cli.obuf, 0);
+   }
+   else
+   {
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, 0);
+      if(count == 0) return cli.Report(0, NoContextsExpl);
+   }
 
-   return num;
+   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -302,7 +308,7 @@ word EventsCommand::ProcessCommand(CliThread& cli) const
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
@@ -440,7 +446,7 @@ word FactoriesCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<FactoryRegistry>::Instance();
@@ -499,7 +505,7 @@ word HandlersCommand::ProcessCommand(CliThread& cli) const
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
@@ -622,7 +628,8 @@ fixed_string InitiatorsStr = "initiators";
 fixed_string InitiatorsExpl =
    "Displays the initiators registered with a trigger.";
 
-InitiatorsCommand::InitiatorsCommand() : CliCommand(InitiatorsStr, InitiatorsExpl)
+InitiatorsCommand::InitiatorsCommand() :
+   CliCommand(InitiatorsStr, InitiatorsExpl)
 {
    BindParm(*new ServiceIdMandParm);
    BindParm(*new TriggerIdMandParm);
@@ -665,7 +672,7 @@ word InitiatorsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       *cli.obuf << spaces(2) << strClass(svc) << CRLF;
-      trigger->Output(*cli.obuf, 4, disp == 'v');
+      trigger->Output(*cli.obuf, 4, true);
    }
 
    return size;
@@ -699,7 +706,7 @@ word InvPoolsCommand::ProcessCommand(CliThread& cli) const
    word sf;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, sf, disp)) return -1;
+   if(!GetIdDispV(*this, cli, sf, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<InvokerPoolRegistry>::Instance();
@@ -785,7 +792,7 @@ MessagesCommand::MessagesCommand() : CliCommand(MessagesStr, MessagesExpl)
 {
    BindParm(*new ProtocolIdOptParm);
    BindParm(*new SignalIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSVParm);
 }
 
 word MessagesCommand::ProcessCommand(CliThread& cli) const
@@ -793,70 +800,33 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MessagesCommand.ProcessCommand");
 
    word pid, sid;
-   bool allProtocols, allSignals;
    char disp;
 
-   switch(GetIntParmRc(pid, cli))
-   {
-   case None: allProtocols = true; break;
-   case Ok: allProtocols = false; break;
-   default: return -1;
-   }
-
-   switch(GetIntParmRc(sid, cli))
-   {
-   case None: allSignals = true; break;
-   case Ok: allSignals = false; break;
-   default: return -1;
-   }
-
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(GetIntParmRc(pid, cli) == Error) return -1;
+   if(!GetIdDispS(*this, cli, sid, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MessagePool>::Instance();
+   uint32_t filter = (pid << 8) + sid;
+   size_t count = 0;
 
    if(disp == 'c')
    {
-      auto num = pool->InUseCount();
-      *cli.obuf << spaces(2) << num << CRLF;
-      return num;
+      auto items = pool->GetUsed();
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+         if((*i)->Passes(filter)) ++count;
+      if(count == 0) return cli.Report(0, NoMessagesExpl);
+      *cli.obuf << spaces(2) << count << CRLF;
    }
-
-   PooledObjectId id;
-   auto time = 200;
-   word count = 0;
-
-   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
+   else if(disp == 's')
    {
-      auto msg = static_cast<Message*>(obj);
-      auto show = allProtocols || (msg->GetProtocol() == pid);
-
-      show = show && (allSignals || (msg->GetSignal() == sid));
-
-      if(show)
-      {
-         ++count;
-
-         if(allProtocols)
-         {
-            *cli.obuf << spaces(2) << strObj(msg) << CRLF;
-            --time;
-         }
-         else
-         {
-            msg->Output(*cli.obuf, 2, disp == 'v');
-            time -= 25;
-         }
-
-         if(time <= 0)
-         {
-            ThisThread::Pause();
-            time = 200;
-         }
-      }
+      count = pool->Summarize(*cli.obuf, filter);
+   }
+   else
+   {
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, filter);
    }
 
-   if(count == 0) return cli.Report(0, NoMessagesExpl);
    return count;
 }
 
@@ -878,7 +848,7 @@ fixed_string MsgPortsExpl = "Counts or displays message ports.";
 MsgPortsCommand::MsgPortsCommand() : CliCommand(MsgPortsStr, MsgPortsExpl)
 {
    BindParm(*new FactoryIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSVParm);
 }
 
 word MsgPortsCommand::ProcessCommand(CliThread& cli) const
@@ -886,60 +856,31 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MsgPortsCommand.ProcessCommand");
 
    word fid;
-   bool all;
    char disp;
 
-   switch(GetIntParmRc(fid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(!GetIdDispS(*this, cli, fid, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MsgPortPool>::Instance();
+   size_t count = 0;
 
    if(disp == 'c')
    {
-      auto num = pool->InUseCount();
-      *cli.obuf << spaces(2) << num << CRLF;
-      return num;
+      auto items = pool->GetUsed();
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+         if((*i)->Passes(fid)) ++count;
+      if(count == 0) return cli.Report(0, NoMsgsPortsExpl);
+      *cli.obuf << spaces(2) << count << CRLF;
    }
-
-   PooledObjectId id;
-   word count = 0;
-   auto time = 200;
-
-   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
+   else if(disp == 's')
    {
-      auto port = static_cast<MsgPort*>(obj);
-
-      if(all || (port->ObjAddr().fid == fid))
-      {
-         ++count;
-
-         if(all)
-         {
-            *cli.obuf << spaces(2) << strObj(port) << CRLF;
-            --time;
-         }
-         else
-         {
-            port->Output(*cli.obuf, 2, disp == 'v');
-            time -= 25;
-         }
-
-         if(time <= 0)
-         {
-            ThisThread::Pause();
-            time = 200;
-         }
-      }
+      count = pool->Summarize(*cli.obuf, fid);
+   }
+   else
+   {
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, fid);
    }
 
-   if(count == 0) return cli.Report(0, NoMsgsPortsExpl);
    return count;
 }
 
@@ -963,7 +904,7 @@ ParametersCommand::ParametersCommand() :
 {
    BindParm(*new ProtocolIdMandParm);
    BindParm(*new ParameterIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word ParametersCommand::ProcessCommand(CliThread& cli) const
@@ -974,7 +915,7 @@ word ParametersCommand::ProcessCommand(CliThread& cli) const
    char disp;
 
    if(!GetIntParm(prid, cli)) return -1;
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
@@ -1046,7 +987,7 @@ word ProtocolsCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ProtocolRegistry>::Instance();
@@ -1093,68 +1034,44 @@ fixed_string PsmsExpl = "Counts or displays protocol state machines.";
 PsmsCommand::PsmsCommand() : CliCommand(PsmsStr, PsmsExpl)
 {
    BindParm(*new FactoryIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new StateIdOptParm);
+   BindParm(*new DispCSVParm);
 }
 
 word PsmsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("PsmsCommand.ProcessCommand");
 
-   word fid;
-   bool all;
+   word fid = NIL_ID;
+   word stid = NIL_ID;
    char disp;
 
-   switch(GetIntParmRc(fid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(GetIntParmRc(fid, cli) == Error) return -1;
+   if(!GetIdDispS(*this, cli, stid, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<ProtocolSMPool>::Instance();
+   uint32_t selector = (fid << 8) + stid;
+   size_t count = 0;
 
    if(disp == 'c')
    {
-      auto num = pool->InUseCount();
-      *cli.obuf << spaces(2) << num << CRLF;
-      return num;
+      auto items = pool->GetUsed();
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+         if((*i)->Passes(fid)) ++count;
+      if(count == 0) return cli.Report(0, NoPsmsExpl);
+      *cli.obuf << spaces(2) << count << CRLF;
    }
-
-   PooledObjectId id;
-   word count = 0;
-   auto time = 200;
-
-   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
+   else if(disp == 's')
    {
-      auto psm = static_cast<ProtocolSM*>(obj);
-
-      if(all || (psm->GetFactory() == fid))
-      {
-         ++count;
-
-         if(all)
-         {
-            *cli.obuf << spaces(2) << strObj(psm) << CRLF;
-            --time;
-         }
-         else
-         {
-            psm->Output(*cli.obuf, 2, disp == 'v');
-            time -= 25;
-         }
-
-         if(time <= 0)
-         {
-            ThisThread::Pause();
-            time = 200;
-         }
-      }
+      count = pool->Summarize(*cli.obuf, selector);
+   }
+   else
+   {
+      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
    }
 
-   if(count == 0) return cli.Report(0, NoPsmsExpl);
    return count;
 }
 
@@ -1205,7 +1122,7 @@ word ServicesCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ServiceRegistry>::Instance();
@@ -1253,7 +1170,7 @@ SignalsCommand::SignalsCommand() : CliCommand(SignalsStr, SignalsExpl)
 {
    BindParm(*new ProtocolIdMandParm);
    BindParm(*new SignalIdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DispCSBVParm);
 }
 
 word SignalsCommand::ProcessCommand(CliThread& cli) const
@@ -1264,7 +1181,7 @@ word SignalsCommand::ProcessCommand(CliThread& cli) const
    char disp;
 
    if(!GetIntParm(prid, cli)) return -1;
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
@@ -1326,68 +1243,44 @@ fixed_string SsmsExpl = "Counts or displays service state machines.";
 SsmsCommand::SsmsCommand() : CliCommand(SsmsStr, SsmsExpl)
 {
    BindParm(*new ServiceIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new StateIdOptParm);
+   BindParm(*new DispCSVParm);
 }
 
 word SsmsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("SsmsCommand.ProcessCommand");
 
-   word sid;
-   bool all;
+   word sid = NIL_ID;
+   word stid = NIL_ID;
    char disp;
 
-   switch(GetIntParmRc(sid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(GetIntParmRc(sid, cli) == Error) return -1;
+   if(!GetIdDispS(*this, cli, stid, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<ServiceSMPool>::Instance();
+   uint32_t selector = (sid << 8) + stid;
+   size_t count = 0;
 
    if(disp == 'c')
    {
-      auto num = pool->InUseCount();
-      *cli.obuf << spaces(2) << num << CRLF;
-      return num;
+      auto items = pool->GetUsed();
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+         if((*i)->Passes(sid)) ++count;
+      if(count == 0) return cli.Report(0, NoSsmsExpl);
+      *cli.obuf << spaces(2) << count << CRLF;
    }
-
-   PooledObjectId id;
-   word count = 0;
-   auto time = 200;
-
-   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
+   else if(disp == 's')
    {
-      auto ssm = static_cast<ServiceSM*>(obj);
-
-      if(all || (ssm->Sid() == sid))
-      {
-         ++count;
-
-         if(all)
-         {
-            *cli.obuf << spaces(2) << strObj(ssm) << CRLF;
-            --time;
-         }
-         else
-         {
-            ssm->Output(*cli.obuf, 2, disp == 'v');
-            time -= 25;
-         }
-
-         if(time <= 0)
-         {
-            ThisThread::Pause();
-            time = 200;
-         }
-      }
+      count = pool->Summarize(*cli.obuf, selector);
+   }
+   else
+   {
+      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, sid);
    }
 
-   if(count == 0) return cli.Report(0, NoSsmsExpl);
    return count;
 }
 
@@ -1421,7 +1314,7 @@ word StatesCommand::ProcessCommand(CliThread& cli) const
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
@@ -1531,7 +1424,7 @@ fixed_string TimersExpl = "Counts or displays timers.";
 TimersCommand::TimersCommand() : CliCommand(TimersStr, TimersExpl)
 {
    BindParm(*new FactoryIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSVParm);
 }
 
 word TimersCommand::ProcessCommand(CliThread& cli) const
@@ -1539,62 +1432,33 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("TimersCommand.ProcessCommand");
 
    word fid;
-   bool all;
    char disp;
 
-   switch(GetIntParmRc(fid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(!GetIdDispS(*this, cli, fid, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<TimerPool>::Instance();
+   size_t count = 0;
 
    if(disp == 'c')
    {
-      auto num = pool->InUseCount();
-      *cli.obuf << spaces(2) << num << CRLF;
-      return num;
+      auto items = pool->GetUsed();
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+         if((*i)->Passes(fid)) ++count;
+      count = items.size();
+      if(count == 0) return cli.Report(0, NoTimersExpl);
+      *cli.obuf << spaces(2) << count << CRLF;
    }
-
-   Singleton<TimerRegistry>::Instance()->Output(*cli.obuf, 2, false);
-
-   PooledObjectId id;
-   word count = 0;
-   auto time = 200;
-
-   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
+   else if(disp == 's')
    {
-      auto tmr = static_cast<Timer*>(obj);
-
-      if(all || (tmr->Psm()->GetFactory() == fid))
-      {
-         ++count;
-
-         if(all)
-         {
-            *cli.obuf << spaces(2) << strObj(tmr) << CRLF;
-            --time;
-         }
-         else
-         {
-            tmr->Output(*cli.obuf, 2, disp == 'v');
-            time -= 25;
-         }
-
-         if(time <= 0)
-         {
-            ThisThread::Pause();
-            time = 0;
-         }
-      }
+      count = pool->Summarize(*cli.obuf, fid);
+   }
+   else
+   {
+      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
    }
 
-   if(count == 0) return cli.Report(0, NoTimersExpl);
    return count;
 }
 
@@ -1628,7 +1492,7 @@ word TriggersCommand::ProcessCommand(CliThread& cli) const
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);

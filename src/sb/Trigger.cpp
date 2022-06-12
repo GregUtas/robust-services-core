@@ -100,9 +100,9 @@ void Trigger::Patch(sel_t selector, void* arguments)
 //------------------------------------------------------------------------------
 
 fixed_string InitiatorHeader = "Priority  Service  Ancestor  Name";
-//                             |       8        7        10..<name>
+//                             |       8        9        10..<name>
 
-void Trigger::Summarize(ostream& stream, uint8_t index) const
+size_t Trigger::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << "Triggers for " << strClass(this) << ':' << CRLF;
    stream << InitiatorHeader << CRLF;
@@ -110,10 +110,12 @@ void Trigger::Summarize(ostream& stream, uint8_t index) const
    for(auto i = initq_.First(); i != nullptr; initq_.Next(i))
    {
       stream << setw(8) << int(i->GetPriority());
-      stream << setw(7) << i->Sid();
+      stream << setw(9) << i->Sid();
       stream << setw(10) << i->Aid();
       stream << spaces(2) << strClass(i) << CRLF;
    }
+
+   return initq_.Size();
 }
 
 //------------------------------------------------------------------------------

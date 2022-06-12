@@ -47,10 +47,18 @@ public:
    //
    ProtocolSM* Psm() const { return psm_; }
 
+   //  Returns the timer's identifier.
+   //
+   TimerId Tid() const { return tid_; }
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to select timers by FactoryId.
+   //
+   bool Passes(uint32_t selector) const override;
 
    //  Overridden for patching.
    //
@@ -70,10 +78,6 @@ private:
    //  Returns the timer's owner.
    //
    Base* Owner() const { return owner_; }
-
-   //  Returns the timer's identifier.
-   //
-   TimerId Tid() const { return tid_; }
 
    //  Removes the timer from its PSM's timer queue.
    //

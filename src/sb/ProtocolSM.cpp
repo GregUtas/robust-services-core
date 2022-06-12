@@ -442,6 +442,18 @@ void* ProtocolSM::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
+bool ProtocolSM::Passes(uint32_t selector) const
+{
+   if(selector == 0) return true;
+   auto fid = selector >> 8;
+   if(fid != fid_) return false;
+   auto stid = selector & 0xff;
+   if(stid == 0) return true;
+   return (stid == state_);
+}
+
+//------------------------------------------------------------------------------
+
 void ProtocolSM::Patch(sel_t selector, void* arguments)
 {
    ProtocolLayer::Patch(selector, arguments);

@@ -67,7 +67,7 @@ public:
 
    //> Highest valid factory identifier.
    //
-   static const Id MaxId = UINT8_MAX;
+   static const Id MaxId = 255;
 
    //  Outcomes when receiving a message.
    //

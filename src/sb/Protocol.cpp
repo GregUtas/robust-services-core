@@ -214,15 +214,17 @@ void Protocol::Patch(sel_t selector, void* arguments)
 fixed_string ItemHeader = " Id  Name";
 //                        |  3..<name>
 
-void Protocol::Summarize(ostream& stream, uint8_t index) const
+size_t Protocol::Summarize(ostream& stream, uint32_t selector) const
 {
-   switch(index)
+   size_t count = 0;
+
+   switch(selector)
    {
    case SummarizeSignals:
       stream << "Signals for " << strClass(this) << ':' << CRLF;
       stream << ItemHeader << CRLF;
 
-      for(auto s = FirstSignal(); s != nullptr; NextSignal(s))
+      for(auto s = FirstSignal(); s != nullptr; NextSignal(s), ++count)
       {
          stream << setw(3) << s->Sid();
          stream << spaces(2) << strClass(s) << CRLF;
@@ -233,13 +235,15 @@ void Protocol::Summarize(ostream& stream, uint8_t index) const
       stream << "Parameters for " << strClass(this) << ':' << CRLF;
       stream << ItemHeader << CRLF;
 
-      for(auto p = FirstParm(); p != nullptr; NextParm(p))
+      for(auto p = FirstParm(); p != nullptr; NextParm(p), ++count)
       {
          stream << setw(3) << p->Pid();
          stream << spaces(2) << strClass(p) << CRLF;
       }
       break;
    }
+
+   return count;
 }
 
 //------------------------------------------------------------------------------

@@ -118,6 +118,10 @@ public:
    //
    FactoryId GetFactory() const override { return locAddr_.sbAddr_.fid; }
 
+   //  Overridden to select MsgPorts by FactoryId.
+   //
+   bool Passes(uint32_t selector) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;

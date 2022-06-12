@@ -34,7 +34,7 @@ using std::string;
 
 namespace NodeBase
 {
-const signal_t PosixSignal::MaxId = UINT8_MAX;
+const signal_t PosixSignal::MaxId = 255;
 
 //------------------------------------------------------------------------------
 

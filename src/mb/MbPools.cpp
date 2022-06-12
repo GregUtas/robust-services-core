@@ -21,10 +21,21 @@
 //
 #include "MbPools.h"
 #include <cstddef>
+#include <iomanip>
+#include <ostream>
+#include <string>
+#include <vector>
 #include "Debug.h"
+#include "Formatters.h"
 #include "MediaEndpt.h"
+#include "MediaPsm.h"
 #include "NbAppIds.h"
+#include "SbCliParms.h"
 #include "SysTypes.h"
+#include "ThisThread.h"
+
+using std::ostream;
+using std::setw;
 
 //------------------------------------------------------------------------------
 
@@ -45,5 +56,37 @@ MediaEndptPool::MediaEndptPool() :
 MediaEndptPool::~MediaEndptPool()
 {
    Debug::ftnt("MediaEndptPool.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string MepHeader = "Factory  State  Object";
+//                       |      7      7..<object>
+
+size_t MediaEndptPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << MepHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoMepsExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
+      {
+         auto mep = static_cast<const MediaEndpt*>(*obj);
+         stream << setw(7) << mep->Psm()->GetFactory();
+         stream << setw(7) << mep->GetState();
+         stream << spaces(2) << strObj(this) << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
 }
 }

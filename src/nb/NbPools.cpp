@@ -21,15 +21,20 @@
 //
 #include "NbPools.h"
 #include <cstddef>
+#include <iomanip>
 #include "ClassRegistry.h"
 #include "Debug.h"
 #include "DeferredRegistry.h"
 #include "MsgBuffer.h"
 #include "NbAppIds.h"
+#include "NbCliParms.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "ThreadRegistry.h"
 #include "TraceBuffer.h"
+
+using std::ostream;
+using std::setw;
 
 //------------------------------------------------------------------------------
 
@@ -76,5 +81,37 @@ void MsgBufferPool::ClaimBlocks()
 void MsgBufferPool::Patch(sel_t selector, void* arguments)
 {
    ObjectPool::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string MsgBufferHeader = "RxTime(>>20)  Address";
+//                             |          11..<address>
+
+size_t MsgBufferPool::Summarize(ostream& stream, uint32_t selector) const
+{
+   stream << MsgBufferHeader << CRLF;
+
+   auto items = GetUsed();
+
+   if(items.empty())
+   {
+      stream << spaces(2) << NoBuffersExpl << CRLF;
+      return 0;
+   }
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
+   {
+      if((*obj)->IsValid())
+      {
+         auto buff = static_cast<const MsgBuffer*>(*obj);
+         stream << setw(11)
+            << (buff->RxTime().time_since_epoch().count() >> 20);
+         stream << spaces(2) << this << CRLF;
+         ThisThread::PauseOver(90);
+      }
+   }
+
+   return items.size();
 }
 }

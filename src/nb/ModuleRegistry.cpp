@@ -480,18 +480,20 @@ void ModuleRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string ModuleHeader = "Id  Module";
-//                          | 2..<object>
+fixed_string ModuleHeader = " Id  Module";
+//                          |  3..<object>
 
-void ModuleRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t ModuleRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << ModuleHeader << CRLF;
 
    for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
    {
-      stream << setw(2) << m->Mid();
+      stream << setw(3) << m->Mid();
       stream << spaces(2) << strClass(m) << CRLF;
    }
+
+   return modules_.Size();
 }
 
 //------------------------------------------------------------------------------

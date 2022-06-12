@@ -64,7 +64,7 @@ public:
 
    //> Highest valid event handler identifier.
    //
-   static const Id MaxId = UINT8_MAX;
+   static const Id MaxId = 255;
 
    //  Event handler identifiers used within the SessionBase framework.  See
    //  SbHandlers.h for the event handlers associated with these.  The event

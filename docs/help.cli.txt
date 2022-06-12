@@ -101,7 +101,9 @@ logs              : Interface to the log subsystem.
 
 alarms            : Interface to the alarm subsystem.
 (                 : subcommand...
-  list            : displays alarms
+  list            : counts or displays alarms
+    [0:65535]     : index (location in registry)
+    [c|s|b|v]     : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
   explain         : displays documentation for an alarm
     <str>         : alarm name
   clear           : clears an alarm
@@ -132,13 +134,13 @@ stats             : Supports performance statistics.
     [t|f]         : clear history prior to this interval? (default=f)
 )
 
-modules           : Displays modules.
-  [0:4000]        : ModuleId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+modules           : Counts or displays modules.
+  [0:255]         : ModuleId (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
-pools             : Displays object pools.
-  [0:250]         : ObjectPoolId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+pools             : Counts or displays object pools.
+  [0:255]         : ObjectPoolId (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 audit             : Controls the object pool audit.
 (                 : subcommand...
@@ -160,13 +162,13 @@ sched             : Provides scheduler information.
 
 threads           : Counts or displays threads.
   [0:99]          : ThreadId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 daemons           : Displays daemons.
 (                 : subcommand...
-  list            : displays info for all daemons or a specific daemon
+  list            : counts or displays daemons
     [0:65535]     : index (location in registry)
-    [b|v]         : 'b'=brief 'v'=verbose (default='b')
+    [c|s|b|v]     : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
   set             : disables (off) or enables (on) a daemon
     (0:65535)     : index (location in registry)
   (               : setting...
@@ -175,47 +177,48 @@ daemons           : Displays daemons.
   )
 )
 
-mutexes           : Displays mutexes.
+mutexes           : Counts or displays mutexes.
   [0:65535]       : index (location in registry)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 buffers           : Counts or displays message buffers.
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 deferred          : Displays deferred work items.
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
-psignals          : Displays POSIX signals.
-  [0:65535]       : index (location in registry)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+psignals          : Counts or displays POSIX signals.
+  [0:127]         : signal_t (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 singletons        : Displays the singletons registry.
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
-heaps             : Displays all heaps.
+heaps             : Interface to heaps.
 (                 : subcommand...
-  list            : lists all heaps
+  list            : counts or displays heaps
+    [0:7]         : memory type (see mem.* symbols; default=all)
+    [c|s|b|v]     : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
   setsize         : sets the desired size
     (1:7)         : memory type (see mem.* symbols)
     (1:1023)      : size
     [k|m|g]       : 'k'=kB 'm'=MB 'g'=GB
   validate        : validates all heaps
-  show            : displays a heap
-    (1:7)         : memory type (see mem.* symbols)
-    [b|v]         : 'b'=brief 'v'=verbose (default='b')
   trace           : controls heap trace tool
     (1:7)         : memory type (see mem.* symbols)
   (               : tracing subcommand...
     reset         : clears the list of allocated blocks
     start         : starts tracing of allocated blocks
     stop          : stops tracing of allocated blocks
-    display       : displays allocated blocks
+    show          : shows allocated blocks
   )
 )
 
 status            : Displays system statistics.
 
-tools             : Displays available debugging tools.
+tools             : Counts or displays debugging tools.
+  [0:65535]       : index (location in registry)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 set               : Controls trace tool settings.
 (                 : what to set...
@@ -424,7 +427,7 @@ swflags           : Supports flags used to control branching
 corrupt           : Corrupts a data structure for testing purposes.
 (                 : what to corrupt...
   pool            : object pool
-    (0:250)       : ObjectPoolId
+    (0:255)       : ObjectPoolId
     (0:1024)      : offset into free queue (0 = head)
 )
 
@@ -563,11 +566,11 @@ ip                : Executes IP functions.
 
 ipports           : Displays IP ports.
   [0:65535]       : ipport_t
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 ipservices        : Displays IP services.
   [0:65535]       : index (location in registry)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 status            : Displays system statistics.
 
@@ -632,73 +635,80 @@ nb>sb
 sb>help full
 services          : Displays services.
   [0:511]         : ServiceId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
+
+factories         : Displays factories.
+  [0:255]         : FactoryId (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 states            : Displays a service's states.
   (0:511)         : ServiceId
   [0:63]          : State::Id (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 events            : Displays a service's event names.
   (0:511)         : ServiceId
   [0:127]         : EventId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 handlers          : Displays a service's event handlers.
   (0:511)         : ServiceId
   [0:255]         : EventHandlerId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 triggers          : Displays a service's triggers.
   (0:511)         : ServiceId
-  [0:127]         : TriggerId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [0:63]          : TriggerId (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
-factories         : Displays factories.
-  [0:255]         : FactoryId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+initiators        : Displays the initiators registered with a trigger.
+  (0:511)         : ServiceId
+  (0:63)          : TriggerId
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 protocols         : Displays protocols.
   [0:255]         : ProtocolId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 signals           : Displays a protocol's signals.
   (0:255)         : ProtocolId
   [0:63]          : SignalId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 parameters        : Displays a protocol's parameters.
   (0:255)         : ProtocolId
   [0:63]          : ParameterId (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 contexts          : Counts or displays contexts.
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 ssms              : Counts or displays service state machines.
   [0:511]         : ServiceId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [0:63]          : State::Id (default=all)
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 psms              : Counts or displays protocol state machines.
   [0:255]         : FactoryId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [0:63]          : State::Id (default=all)
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 msgports          : Counts or displays message ports.
   [0:255]         : FactoryId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 messages          : Counts or displays messages.
   [0:255]         : ProtocolId (default=all)
   [0:63]          : SignalId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 timers            : Counts or displays timers.
   [0:255]         : FactoryId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 invpools          : Displays invoker pools.
   [0:8]           : faction (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 status            : Displays system statistics.
 
@@ -845,7 +855,7 @@ tests             : Configures or executes tests.
 corrupt           : Corrupts a data structure for testing purposes.
 (                 : what to corrupt...
   pool            : object pool
-    (0:250)       : ObjectPoolId
+    (0:255)       : ObjectPoolId
     (0:1024)      : offset into free queue (0 = head)
   context         : first in-use context
 )
@@ -1121,12 +1131,12 @@ tsports           : Displays the circuit(s) in a range of timeswitch ports.
   [0:100000]      : Switch::PortId
 
 tones             : Displays tones.
-  [0:10]          : Tone::Id (default=all)
+  [0:15]          : Tone::Id (default=all)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 meps              : Counts or displays media endpoints.
   [0:255]         : FactoryId (default=all)
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 codes             : Displays service codes.
 

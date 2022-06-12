@@ -435,7 +435,7 @@ fixed_string PortHeader =
    " Port  ThreadId  AlarmId  Socket  Handler  ServiceId  Service";
 // |    5        10        9       8        9         11..<service>
 
-void IpPortRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t IpPortRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << PortHeader << CRLF;
 
@@ -461,6 +461,8 @@ void IpPortRegistry::Summarize(ostream& stream, uint8_t index) const
       }
       stream << CRLF;
    }
+
+   return portq_.Size();
 }
 
 //------------------------------------------------------------------------------

@@ -669,7 +669,7 @@ void ThreadRegistry::Startup(RestartLevel level)
 fixed_string ThreadHeader = "Id  Name     NativeId  Faction";
 //                          | 2..8       .8       ..<faction>
 
-void ThreadRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t ThreadRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    auto threads = GetThreads();
 
@@ -683,6 +683,8 @@ void ThreadRegistry::Summarize(ostream& stream, uint8_t index) const
       stream << SPACE << setw(8) << std::right << std::hex << nid << std::dec;
       stream << spaces(2) << (*t)->GetFaction() << CRLF;
    }
+
+   return threads.size();
 }
 
 //------------------------------------------------------------------------------

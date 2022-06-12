@@ -76,9 +76,9 @@ public:
    //
    void Shutdown(RestartLevel level) override;
 
-   //  Overridden to display each item.
+   //  Overridden to display each work item.
    //
-   void Summarize(std::ostream& stream, uint8_t index) const override;
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //

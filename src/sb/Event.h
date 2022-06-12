@@ -47,7 +47,7 @@ public:
 
    //> Highest valid event identifier.
    //
-   static const Id MaxId = INT8_MAX;
+   static const Id MaxId = 127;
 
    //  Returns true if EID is a valid identifier.
    //

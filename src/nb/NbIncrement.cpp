@@ -201,7 +201,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case AlarmsListIndex:
-      if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+      if(!GetIdDispV(*this, cli, id, disp)) return -1;
       if(!cli.EndOfInput()) return -1;
 
       size = reg->Alarms().Size();
@@ -388,7 +388,7 @@ fixed_string BuffersExpl = "Counts or displays message buffers.";
 
 BuffersCommand::BuffersCommand() : CliCommand(BuffersStr, BuffersExpl)
 {
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSVParm);
 }
 
 word BuffersCommand::ProcessCommand(CliThread& cli) const
@@ -397,17 +397,31 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
 
    char disp;
 
-   if(!GetDisp(*this, cli, disp)) return -1;
+   switch(GetCharParmRc(disp, cli))
+   {
+   case None: disp = 's'; break;
+   case Ok: break;
+   default: return -1;
+   }
+
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MsgBufferPool>::Instance();
    auto num = pool->InUseCount();
-   auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
 
    if(disp == 'c')
+   {
       *cli.obuf << spaces(2) << num << CRLF;
-   else if(!pool->DisplayUsed(*cli.obuf, spaces(2), opts))
-      return cli.Report(0, NoBuffersExpl);
+   }
+   else if(disp == 's')
+   {
+      pool->Summarize(*cli.obuf, 0);
+   }
+   else
+   {
+      num = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, 0);
+      if(num == 0) return cli.Report(0, NoBuffersExpl);
+   }
 
    return num;
 }
@@ -739,7 +753,7 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case DaemonsListIndex:
-      if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+      if(!GetIdDispV(*this, cli, id, disp)) return -1;
       if(!cli.EndOfInput()) return -1;
 
       size = reg->Daemons().Size();
@@ -908,7 +922,7 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
    std::ostringstream prompt;
 
    if(!GetPtrParm(p, cli)) return -1;
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetBV(*this, cli, v)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
@@ -1208,7 +1222,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case HeapsListIndex:
-      if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+      if(!GetIdDispV(*this, cli, id, disp)) return -1;
       if(!cli.EndOfInput()) return -1;
 
       size = Memory::CountHeaps();
@@ -1984,7 +1998,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       return cli.Report(0, SuccessExpl);
 
    case BuffersIndex:
-      if(GetBV(*this, cli, v) == Error) return -1;
+      if(!GetBV(*this, cli, v)) return -1;
       if(!cli.EndOfInput()) return -1;
       reg->Output(*cli.obuf, 2, v);
       break;
@@ -2071,7 +2085,7 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
    char disp;
    word id;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ModuleRegistry>::Extant();
@@ -2128,7 +2142,7 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<MutexRegistry>::Instance();
@@ -2184,7 +2198,7 @@ word PoolsCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ObjectPoolRegistry>::Instance();
@@ -2240,7 +2254,7 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<PosixSignalRegistry>::Instance();
@@ -3067,7 +3081,7 @@ word SingletonsCommand::ProcessCommand(CliThread& cli) const
 
    bool v = false;
 
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetBV(*this, cli, v)) return -1;
    if(!cli.EndOfInput()) return -1;
    Singletons::Instance()->Output(*cli.obuf, 2, v);
    return 0;
@@ -3211,7 +3225,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       }
 
       if(GetIntParmRc(mid, cli) == Error) return -1;
-      if(GetBV(*this, cli, v) == Error) return -1;
+      if(!GetBV(*this, cli, v)) return -1;
       if(!GetFileName(title, cli)) title.clear();
       if(!cli.EndOfInput()) return -1;
 
@@ -3607,7 +3621,7 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto size = ThreadRegistry::Size();
@@ -3664,7 +3678,7 @@ word ToolsCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ToolRegistry>::Instance();

@@ -41,7 +41,7 @@ using std::string;
 
 namespace NetworkBase
 {
-const id_t IpService::MaxId = 1000;
+const id_t IpService::MaxId = 255;
 
 //------------------------------------------------------------------------------
 

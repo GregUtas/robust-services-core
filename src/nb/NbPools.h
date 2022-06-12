@@ -42,6 +42,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each buffer.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //

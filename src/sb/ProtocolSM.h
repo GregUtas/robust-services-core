@@ -195,6 +195,10 @@ public:
    //
    void GetSubtended(std::vector<Base*>& objects) const override;
 
+   //  Overridden to select PSMs by FactoryId and StateId.
+   //
+   bool Passes(uint32_t selector) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;

@@ -55,13 +55,23 @@ public:
    //
    Pooled& operator=(const Pooled& that) = delete;
 
+   //  Returns true if the object satisifes SELECTOR, whose interpretation
+   //  is subclass specific.  This function is used to select a subset of
+   //  the objects from an ObjectPool.  Note that IsValid must be invoked
+   //  *before* invoking this function if the object could have been deleted
+   //  since the time that ObjectPool::GetUsed found it.  This is a virtual
+   //  function, so it will trap on an invalid object, whereas IsValid is
+   //  not virtual and can therefore check assigned_ safely.
+   //
+   virtual bool Passes(uint32_t selector) const { return assigned_; }
+
    //  Returns true if the object is marked corrupt.
    //
    bool IsCorrupt() const { return corrupt_; }
 
-   //  Returns true if the object is invalid.
+   //  Returns true if the object is in use.
    //
-   bool IsInvalid() const { return !assigned_; }
+   bool IsValid() const { return assigned_; }
 
    //  Returns the offset to link_.
    //

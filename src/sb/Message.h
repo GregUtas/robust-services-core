@@ -286,6 +286,10 @@ public:
    //
    void GetSubtended(std::vector<Base*>& objects) const override;
 
+   //  Overridden to select messages by ProtocolId and SignalId.
+   //
+   bool Passes(uint32_t selector) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;

@@ -69,6 +69,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display each context.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //
@@ -90,6 +94,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display messages.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //
@@ -120,6 +128,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display ports.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //
@@ -150,6 +162,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display PSMs.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //
@@ -192,6 +208,10 @@ public:
    //  Overridden for restarts.
    //
    void Startup(NodeBase::RestartLevel level) override;
+
+   //  Overridden to display timers.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //
@@ -217,6 +237,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to display SSMs.
+   //
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //

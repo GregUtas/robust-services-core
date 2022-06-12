@@ -21,8 +21,10 @@
 //
 #include "PotsIncrement.h"
 #include "CliCommand.h"
+#include <cstddef>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "BcCause.h"
 #include "CliTextParm.h"
 #include "CliThread.h"
@@ -31,8 +33,6 @@
 #include "FunctionGuard.h"
 #include "LocalAddress.h"
 #include "MbPools.h"
-#include "MediaEndpt.h"
-#include "MediaPsm.h"
 #include "NbCliParms.h"
 #include "PotsCircuit.h"
 #include "PotsCliParms.h"
@@ -47,7 +47,6 @@
 #include "Singleton.h"
 #include "Switch.h"
 #include "SysTypes.h"
-#include "ThisThread.h"
 #include "ToneRegistry.h"
 #include "Tones.h"
 
@@ -323,7 +322,7 @@ word FeaturesCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetBV(*this, cli, v)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<PotsFeatureRegistry>::Instance();
@@ -360,7 +359,7 @@ fixed_string MepsExpl = "Counts or displays media endpoints.";
 MepsCommand::MepsCommand() : CliCommand(MepsStr, MepsExpl)
 {
    BindParm(*new FactoryIdOptParm);
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispCSVParm);
 }
 
 word MepsCommand::ProcessCommand(CliThread& cli) const
@@ -368,60 +367,32 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("MepsCommand.ProcessCommand");
 
    word fid;
-   bool all;
    char disp;
 
-   switch(GetIntParmRc(fid, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(!GetDisp(*this, cli, disp)) return -1;
+   if(!GetIdDispS(*this, cli, fid, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MediaEndptPool>::Instance();
+   size_t count = 0;
 
    if(disp == 'c')
    {
-      auto num = pool->InUseCount();
-      *cli.obuf << spaces(2) << num << CRLF;
-      return num;
+      auto items = pool->GetUsed();
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+         if((*i)->Passes(fid)) ++count;
+      if(count == 0) return cli.Report(0, NoMepsExpl);
+      *cli.obuf << spaces(2) << count << CRLF;
    }
-
-   PooledObjectId id;
-   word count = 0;
-   auto time = 200;
-
-   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
+   else if(disp == 's')
    {
-      auto mep = static_cast<MediaEndpt*>(obj);
-
-      ++count;
-
-      if(all || (mep->Psm()->GetFactory() == fid))
-      {
-         if(all)
-         {
-            *cli.obuf << spaces(2) << strObj(mep) << CRLF;
-            --time;
-         }
-         else
-         {
-            mep->Output(*cli.obuf, 2, disp == 'v');
-            time -= 25;
-         }
-
-         if(time <= 0)
-         {
-            ThisThread::Pause();
-            time = 200;
-         }
-      }
+      count = pool->Summarize(*cli.obuf, fid);
+   }
+   else
+   {
+      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
    }
 
-   if(count == 0) return cli.Report(0, NoMepsExpl);
    return count;
 }
 
@@ -591,7 +562,7 @@ word TonesCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!GetBV(*this, cli, v)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ToneRegistry>::Instance();

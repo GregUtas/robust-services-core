@@ -85,16 +85,16 @@ void ServiceRegistry::Patch(sel_t selector, void* arguments)
 //------------------------------------------------------------------------------
 
 fixed_string ServiceHeader =
-   "Id  Enabled  Modifier  States  Handlers  Triggers  Name";
-// | 2        9        10       8        10        10..<name>
+   " Id  Enabled  Modifier  States  Handlers  Triggers  Name";
+// |  3        9        10       8        10        10..<name>
 
-void ServiceRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t ServiceRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << ServiceHeader << CRLF;
 
    for(auto s = services_.First(); s != nullptr; services_.Next(s))
    {
-      stream << setw(2) << s->Sid();
+      stream << setw(3) << s->Sid();
       stream << setw(9) << (s->GetStatus() == Service::Enabled);
       stream << setw(10) << s->IsModifier();
       stream << setw(8) << s->States().Size();
@@ -102,6 +102,8 @@ void ServiceRegistry::Summarize(ostream& stream, uint8_t index) const
       stream << setw(10) << s->Triggers().Size();
       stream << spaces(2) << strClass(s) << CRLF;
    }
+
+   return services_.Size();
 }
 
 //------------------------------------------------------------------------------

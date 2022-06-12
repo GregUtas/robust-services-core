@@ -101,7 +101,7 @@ public:
 
    //  Overridden to display each port.
    //
-   void Summarize(std::ostream& stream, uint8_t index) const override;
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:
    //  Private because this is a singleton.
    //

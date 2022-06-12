@@ -84,21 +84,23 @@ void ProtocolRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string ProtocolHeader = "Id  Base  Signals  Parameters  Name";
-//                            | 2     6        9          12..<name>
+fixed_string ProtocolHeader = " Id  Base  Signals  Parameters  Name";
+//                            |  3     6        9          12..<name>
 
-void ProtocolRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t ProtocolRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << ProtocolHeader << CRLF;
 
    for(auto p = protocols_.First(); p != nullptr; protocols_.Next(p))
    {
-      stream << setw(2) << p->Prid();
+      stream << setw(3) << p->Prid();
       stream << setw(6) << p->GetBase();
       stream << setw(9) << p->Signals().Size();
       stream << setw(12) << p->Parameters().Size();
       stream << spaces(2) << strClass(p) << CRLF;
    }
+
+   return protocols_.Size();
 }
 
 //------------------------------------------------------------------------------

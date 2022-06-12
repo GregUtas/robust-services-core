@@ -73,7 +73,7 @@ public:
 
    //> Highest valid trigger identifier.
    //
-   static const Id MaxId = INT8_MAX;
+   static const Id MaxId = 63;
 
    //  Returns true if TID is a valid trigger identifier.
    //
@@ -101,7 +101,7 @@ public:
 
    //  Overridden to display each trigger.
    //
-   void Summarize(std::ostream& stream, uint8_t index) const override;
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 protected:
    //  Sets tid_.  Protected because this class is virtual.
    //

@@ -76,10 +76,11 @@ public:
       const std::string& prefix, const Flags& options) const;
 
    //  Displays a list of items, one per line.  Primarily intended for
-   //  displaying the items in a registry.  A class with more than one
-   //  registry uses INDEX to specify which registry to summarize.
+   //  displaying items in a registry.  The interpretation of SELECTOR
+   //  is up to the override.  Returns the number of items displayed.
    //
-   virtual void Summarize(std::ostream& stream, uint8_t index) const { }
+   virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
+      { return 0; }
 
    //  Invokes Display(stream, spaces(indent), opts), setting DispVerbose
    //  in OPTS if VERBOSE is set.

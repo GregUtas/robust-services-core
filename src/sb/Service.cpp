@@ -420,11 +420,12 @@ c_string Service::PortName(PortId pid) const
 fixed_string ItemHeader = " Id  Name";
 //                        |  3..<name>
 
-void Service::Summarize(ostream& stream, uint8_t index) const
+size_t Service::Summarize(ostream& stream, uint32_t selector) const
 {
+   size_t count = 0;
    id_t id = NIL_ID;
 
-   switch(index)
+   switch(selector)
    {
    case SummarizeStates:
       stream << "States for " << strClass(this) << ':' << CRLF;
@@ -432,7 +433,7 @@ void Service::Summarize(ostream& stream, uint8_t index) const
       if(states_.Empty())
       {
          stream << spaces(3) << NoStatesExpl << CRLF;
-         return;
+         return 0;
       }
 
       stream << ItemHeader << CRLF;
@@ -442,7 +443,7 @@ void Service::Summarize(ostream& stream, uint8_t index) const
          stream << setw(3) << s->Stid();
          stream << spaces(2) << strClass(s) << CRLF;
       }
-      break;
+      return states_.Size();
 
    case SummarizeEvents:
       stream << "Events for " << strClass(this) << ':' << CRLF;
@@ -450,7 +451,7 @@ void Service::Summarize(ostream& stream, uint8_t index) const
       if(EventCount() == 0)
       {
          stream << spaces(2) << NoEventsExpl << CRLF;
-         return;
+         return 0;
       }
 
       stream << ItemHeader << CRLF;
@@ -461,11 +462,12 @@ void Service::Summarize(ostream& stream, uint8_t index) const
 
          if(name != nullptr)
          {
+            ++count;
             stream << setw(3) << i;
             stream << spaces(2) << name << CRLF;
          }
       }
-      break;
+      return count;
 
    case SummarizeHandlers:
       stream << "Handlers for " << strClass(this) << ':' << CRLF;
@@ -473,7 +475,7 @@ void Service::Summarize(ostream& stream, uint8_t index) const
       if(handlers_.Empty())
       {
          stream << spaces(2) << NoHandlersExpl << CRLF;
-         return;
+         return 0;
       }
 
       stream << ItemHeader << CRLF;
@@ -483,7 +485,7 @@ void Service::Summarize(ostream& stream, uint8_t index) const
          stream << setw(3) << id;
          stream << spaces(2) << strClass(h) << CRLF;
       }
-      break;
+      return handlers_.Size();
 
    case SummarizeTriggers:
       stream << "Triggers for " << strClass(this) << ':' << CRLF;
@@ -491,7 +493,7 @@ void Service::Summarize(ostream& stream, uint8_t index) const
       if(triggers_.Empty())
       {
          stream << spaces(2) << NoTriggersExpl << CRLF;
-         return;
+         return 0;
       }
 
       stream << ItemHeader << CRLF;
@@ -501,8 +503,10 @@ void Service::Summarize(ostream& stream, uint8_t index) const
          stream << setw(3) << id;
          stream << spaces(2) << strClass(t) << CRLF;
       }
-      break;
+      return triggers_.Size();
    }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------

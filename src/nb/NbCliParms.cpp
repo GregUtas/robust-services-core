@@ -114,10 +114,10 @@ DispBVParm::DispBVParm() : CliCharParm(DispBVExpl, DispBVStr, true) { }
 
 //------------------------------------------------------------------------------
 
-fixed_string DispCBVStr = "cbv";
-fixed_string DispCBVExpl = "'c'=count 'b'=brief 'v'=verbose (default='b')";
+fixed_string DispCSVStr = "csv";
+fixed_string DispCSVExpl = "'c'=count 's'=summary 'v'=verbose (default='s')";
 
-DispCBVParm::DispCBVParm() : CliCharParm(DispCBVExpl, DispCBVStr, true) { }
+DispCSVParm::DispCSVParm() : CliCharParm(DispCSVExpl, DispCSVStr, true) { }
 
 //------------------------------------------------------------------------------
 
@@ -137,26 +137,38 @@ word ExplainTraceRc(const CliThread& cli, TraceRc rc)
 
 //------------------------------------------------------------------------------
 
-CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v)
+bool GetBV(const CliCommand& comm, CliThread& cli, bool& v)
 {
    Debug::ft("NodeBase.GetBV");
 
    char c;
    auto rc = comm.GetCharParmRc(c, cli);
    v = (c == 'v');
-   return rc;
+   return (rc != CliParm::Error);
 }
 
 //------------------------------------------------------------------------------
 
-bool GetDisp(const CliCommand& comm, CliThread& cli, char& disp)
+bool GetIdDispS(const CliCommand& comm, CliThread& cli, word& id, char& disp)
 {
-   Debug::ft("NodeBase.GetDisp");
+   Debug::ft("NodeBase.GetIdDispS");
+
+   switch(comm.GetIntParmRc(id, cli))
+   {
+   case CliParm::None:
+      id = NIL_ID;
+      break;
+   case CliParm::Ok:
+      disp = 's';
+      break;
+   default:
+      return false;
+   }
 
    switch(comm.GetCharParmRc(disp, cli))
    {
    case CliParm::None:
-      disp = 'b';
+      if(id == NIL_ID) disp = 's';
       break;
    case CliParm::Ok:
       break;
@@ -169,9 +181,9 @@ bool GetDisp(const CliCommand& comm, CliThread& cli, char& disp)
 
 //------------------------------------------------------------------------------
 
-bool GetIdAndDisp(const CliCommand& comm, CliThread& cli, word& id, char& disp)
+bool GetIdDispV(const CliCommand& comm, CliThread& cli, word& id, char& disp)
 {
-   Debug::ft("NodeBase.GetIdAndDisp");
+   Debug::ft("NodeBase.GetIdDispV");
 
    switch(comm.GetIntParmRc(id, cli))
    {

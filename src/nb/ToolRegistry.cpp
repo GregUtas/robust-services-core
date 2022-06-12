@@ -150,7 +150,7 @@ void ToolRegistry::Patch(sel_t selector, void* arguments)
 fixed_string ToolHeader = "Id  Char  Name             Safe  Explanation";
 //                        | 2     6..15             .    5..<expl>
 
-void ToolRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t ToolRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    //  Display the available tools.  If a tool's CLI character is not
    //  printable, it is not supported through the CLI.  If a tool is
@@ -169,6 +169,8 @@ void ToolRegistry::Summarize(ostream& stream, uint8_t index) const
       stream << SPACE << std::right << setw(5) << t->IsSafe();
       stream << spaces(2) << t->Expl() << CRLF;
    }
+
+   return tools_.Size();
 }
 
 //------------------------------------------------------------------------------

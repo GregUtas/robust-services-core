@@ -416,7 +416,7 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
    word port;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, port, disp)) return -1;
+   if(!GetIdDispV(*this, cli, port, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<IpPortRegistry>::Instance();
@@ -474,7 +474,7 @@ word IpServicesCommand::ProcessCommand(CliThread& cli) const
    word id;
    char disp;
 
-   if(!GetIdAndDisp(*this, cli, id, disp)) return -1;
+   if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<IpServiceRegistry>::Instance();

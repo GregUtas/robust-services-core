@@ -93,58 +93,46 @@ extern fixed_string UnknownSignalExpl;
 
 //------------------------------------------------------------------------------
 //
-//  Optional parameter for specifying whether to display an object briefly (the
-//  default) or verbosely.
+//  Optional character parameters for specifying whether to display
+//  o c: the number of objects in a registry or pool
+//  o s: a one-line summary of each object in a registry or pool
+//  o b: briefly (a registry's objects, or an individual object)
+//  o v: verbosely (a registry's or pool's objects, or an individual object)
 //
 class DispBVParm : public CliCharParm
 {
 public: DispBVParm();
 };
 
-//  Obtains the value of a DispBVParm.  COMM is the command invoking this
-//  function, and CLI is the CLI thread.  Sets V to true if a "v" was entered
-//  Returns the result of GetCharParmRc.
-//
-CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v);
-
-//------------------------------------------------------------------------------
-//
-//  Optional parameter for specifying whether to display the number of objects
-//  of a given type or to display them briefly (the default) or verbosely.
-//
-class DispCBVParm : public CliCharParm
+class DispCSVParm : public CliCharParm
 {
-public: DispCBVParm();
+public: DispCSVParm();
 };
 
-//  Obtains the value of a DispCBVParm (DISP).  COMM is the command invoking
-//  this function, and CLI is the CLI thread.  Returns false on invalid input.
-//
-bool GetDisp(const CliCommand& comm, CliThread& cli, char& disp);
-
-//------------------------------------------------------------------------------
-//
-//  Optional parameter for specifying whether to display
-//    c: the number of objects in a registry
-//    s: a one-line summary of each object in a registry
-//    b: briefly (a registry's objects)
-//    v: verbosely (a registry's objects)
-//  It is followed by an optional identifier.  If no identifier or 0 (the nil
-//  identifier) is entered, the default is 's'.  If an identifier is provided,
-//  the default is 'v' when displaying the object with that identifier.
-//
 class DispCSBVParm : public CliCharParm
 {
 public: DispCSBVParm();
 };
 
+//  Obtains the value of a DispBVParm.  COMM is the command invoking this
+//  function, and CLI is the CLI thread.  Sets V to true if 'v' was entered,
+//  so the default is 'b'.  Returns false on invalid input.
+//
+bool GetBV(const CliCommand& comm, CliThread& cli, bool& v);
+
+//  Obtains the value of a DispCBVParm (DISP).  COMM is the command invoking
+//  this function, and CLI is the CLI thread.  Sets ID to 0 if no identifier
+//  is found.  Sets DISP to 's' if not found.  Returns false on invalid input.
+//
+bool GetIdDispS(const CliCommand& comm, CliThread& cli, word& id, char& disp);
+
 //  Obtains the value of an optional identifier (ID) and DispCSBVParm (DISP).
 //  COMM is the command invoking this function, and CLI is the CLI thread.
-//  Sets ID to 0 if no identifier was found, in which case C defaults to 's'.
-//  If an identifier was found, C defaults to 'v' if not found.  Returns
+//  Sets ID to 0 if no identifier is found, in which case C defaults to 's'.
+//  If an identifier *is* found, C defaults to 'v' if not found.  Returns
 //  false on invalid input.
 //
-bool GetIdAndDisp(const CliCommand& comm, CliThread& cli, word& id, char& disp);
+bool GetIdDispV(const CliCommand& comm, CliThread& cli, word& id, char& disp);
 
 //------------------------------------------------------------------------------
 //

@@ -70,7 +70,7 @@ public:
 
    //> Highest valid protocol identifier.
    //
-   static const Id MaxId = UINT8_MAX;
+   static const Id MaxId = 255;
 
    //  Returns the signal within BUFF.
    //
@@ -146,9 +146,9 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to display, based on INDEX, each signal or parameter.
+   //  Overridden to display, based on SELECTOR, each signal or parameter.
    //
-   void Summarize(std::ostream& stream, uint8_t index) const override;
+   size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 
    //  Constants for Summarize's INDEX parameter.
    //

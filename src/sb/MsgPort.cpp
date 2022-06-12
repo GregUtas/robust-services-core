@@ -321,6 +321,13 @@ void* MsgPort::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
+bool MsgPort::Passes(uint32_t selector) const
+{
+   return ((selector == 0) || (GetFactory() == selector));
+}
+
+//------------------------------------------------------------------------------
+
 void MsgPort::Patch(sel_t selector, void* arguments)
 {
    ProtocolLayer::Patch(selector, arguments);

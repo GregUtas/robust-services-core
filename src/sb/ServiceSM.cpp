@@ -310,6 +310,20 @@ bool ServiceSM::ExqEvent(Event& evt, Event::Location loc)
 
 //------------------------------------------------------------------------------
 
+SsmContext* ServiceSM::GetContext() const
+{
+   if(parentSsm_ != nullptr) return parentSsm_->GetContext();
+
+   //  We shouldn't get here.  If PARENT is nullptr, this should be
+   //  a RootServiceSM, which overrides this function to return the
+   //  context.
+   //
+   Debug::SwLog("ServiceSM.GetContext", "No RootServiceSM?", sid_);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 Service* ServiceSM::GetService() const
 {
    return Singleton<ServiceRegistry>::Instance()->Services().At(sid_);
@@ -376,6 +390,18 @@ void* ServiceSM::operator new(size_t size)
    Debug::ft("ServiceSM.operator new");
 
    return Singleton<ServiceSMPool>::Instance()->DeqBlock(size);
+}
+
+//------------------------------------------------------------------------------
+
+bool ServiceSM::Passes(uint32_t selector) const
+{
+   if(selector == 0) return true;
+   auto sid = selector >> 8;
+   if(sid != sid_) return false;
+   auto stid = selector & 0xff;
+   if(stid == 0) return true;
+   return (stid == currState_);
 }
 
 //------------------------------------------------------------------------------

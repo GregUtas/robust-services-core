@@ -128,6 +128,13 @@ void* MediaEndpt::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
+bool MediaEndpt::Passes(uint32_t selector) const
+{
+   return ((selector == 0) || (Psm()->GetFactory() == selector));
+}
+
+//------------------------------------------------------------------------------
+
 void MediaEndpt::ProcessIcMsg(Message& msg)
 {
    Debug::ft("MediaEndpt.ProcessIcMsg");

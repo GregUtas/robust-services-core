@@ -186,21 +186,23 @@ void FactoryRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string FactoryHeader = "Id  Type     Faction  Protocol  Name";
-//                           | 2     6          12        10..<name>
+fixed_string FactoryHeader = " Id  Type     Faction  Protocol  Name";
+//                           |  3     6          12        10..<name>
 
-void FactoryRegistry::Summarize(ostream& stream, uint8_t index) const
+size_t FactoryRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << FactoryHeader << CRLF;
 
    for(auto f = factories_.First(); f != nullptr; factories_.Next(f))
    {
-      stream << setw(2) << f->Fid();
+      stream << setw(3) << f->Fid();
       stream << setw(6) << f->GetType();
       stream << setw(12) << f->GetFaction();
       stream << setw(10) << f->GetProtocol();
       stream << spaces(2) << strClass(f) << CRLF;
    }
+
+   return factories_.Size();
 }
 
 //------------------------------------------------------------------------------

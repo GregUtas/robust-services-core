@@ -476,6 +476,19 @@ void* Message::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
+bool Message::Passes(uint32_t selector) const
+{
+   if(selector == 0) return true;
+   auto pid = selector >> 8;
+   if(pid == 0) return true;
+   if(GetProtocol() != pid) return false;
+   auto sid = selector & 0xff;
+   if(sid == 0) return true;
+   return (GetSignal() == sid);
+}
+
+//------------------------------------------------------------------------------
+
 void Message::Patch(sel_t selector, void* arguments)
 {
    Pooled::Patch(selector, arguments);

@@ -237,7 +237,7 @@ struct ObjectPoolDynamic : public Persistent
 
 //==============================================================================
 
-const ObjectPoolId ObjectPool::MaxId = 250;
+const ObjectPoolId ObjectPool::MaxId = 255;
 
 //> The number of audit cycles over which a block must be unclaimed
 //  before it is recovered.
@@ -702,36 +702,29 @@ void ObjectPool::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-bool ObjectPool::DisplayUsed(ostream& stream,
-   const string& prefix, const Flags& options) const
+size_t ObjectPool::DisplayUsed(ostream& stream,
+   const string& prefix, const Flags& options, uint32_t filter) const
 {
-   PooledObjectId bid;
-   auto time = 200;
-   auto count = 0;
+   size_t count = 0;
 
-   for(auto obj = FirstUsed(bid); obj != nullptr; obj = NextUsed(bid))
+   auto items = GetUsed();
+
+   for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
-      ++count;
+      if((*obj)->assigned_ && (*obj)->Passes(filter))
+      {
+         ++count;
 
-      if(options.test(DispVerbose))
-      {
-         obj->Display(stream, prefix, NoFlags);
-         time -= 25;
-      }
-      else
-      {
-         stream << prefix << strObj(obj) << CRLF;
-         --time;
-      }
+         if(options.test(DispVerbose))
+            (*obj)->Display(stream, prefix, NoFlags);
+         else
+            stream << prefix << strObj(*obj) << CRLF;
 
-      if(time <= 0)
-      {
-         ThisThread::Pause();
-         time = 200;
+         ThisThread::PauseOver(90);
       }
    }
 
-   return (count > 0);
+   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -884,6 +877,32 @@ Pooled* ObjectPool::FirstUsed(PooledObjectId& bid) const
 size_t ObjectPool::FreeCount() const
 {
    return stats_->freeCount_->Curr();
+}
+
+//------------------------------------------------------------------------------
+
+std::vector<Pooled*> ObjectPool::GetUsed() const
+{
+   Debug::ft("ObjectPool.GetUsed");
+
+   std::vector<Pooled*> items;
+
+   for(size_t i = 0; i < currSegments_; ++i)
+   {
+      auto seg = blocks_[i];
+
+      for(size_t j = 0; j < segSize_; j += segIncr_)
+      {
+         auto b = (ObjectBlock*) &seg[j];
+
+         if(b->obj.assigned_)
+         {
+            items.push_back(&b->obj);
+         }
+      }
+   }
+
+   return items;
 }
 
 //------------------------------------------------------------------------------

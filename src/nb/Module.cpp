@@ -36,7 +36,7 @@ using std::string;
 
 namespace NodeBase
 {
-const ModuleId Module::MaxId = 4000;
+const ModuleId Module::MaxId = 255;
 
 //------------------------------------------------------------------------------
 

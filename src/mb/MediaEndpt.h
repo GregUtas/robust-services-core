@@ -85,6 +85,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to select MEPs by FactoryID.
+   //
+   bool Passes(uint32_t selector) const override;
 protected:
    //  Creates a MEP that is owned by PSM.  Protected because this class is
    //  virtual.

@@ -23,7 +23,6 @@
 #define TRIGGER_H_INCLUDED
 
 #include "Immutable.h"
-#include <cstdint>
 #include "Q1Way.h"
 #include "SbTypes.h"
 #include "SysTypes.h"

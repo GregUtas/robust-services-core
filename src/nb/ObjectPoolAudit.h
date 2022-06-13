@@ -25,6 +25,7 @@
 #include "Thread.h"
 #include "Duration.h"
 #include "NbTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 

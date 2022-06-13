@@ -27,7 +27,6 @@
 #include "NbDaemons.h"
 #include "ObjectPoolRegistry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;

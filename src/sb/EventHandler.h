@@ -23,7 +23,6 @@
 #define EVENTHANDLER_H_INCLUDED
 
 #include "Immutable.h"
-#include <cstdint>
 #include <iosfwd>
 #include "SbTypes.h"
 

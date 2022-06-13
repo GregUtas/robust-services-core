@@ -24,7 +24,6 @@
 
 #include "Pooled.h"
 #include <cstddef>
-#include <cstdint>
 #include "EventHandler.h"
 #include "SbTypes.h"
 #include "SysTypes.h"

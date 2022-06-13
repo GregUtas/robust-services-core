@@ -24,7 +24,6 @@
 
 #include "Immutable.h"
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include "Message.h"
 #include "NbTypes.h"

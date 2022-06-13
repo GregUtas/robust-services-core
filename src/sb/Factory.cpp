@@ -21,6 +21,7 @@
 //
 #include "Factory.h"
 #include "Dynamic.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"

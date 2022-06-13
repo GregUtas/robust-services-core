@@ -323,8 +323,6 @@ void* MsgPort::operator new(size_t size)
 
 bool MsgPort::Passes(uint32_t selector) const
 {
-   if(GetFactory() == NIL_ID)  //*
-      Debug::noop();
    return ((selector == 0) || (GetFactory() == selector));
 }
 

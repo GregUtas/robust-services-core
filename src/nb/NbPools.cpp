@@ -20,16 +20,22 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbPools.h"
+#include <chrono>
 #include <cstddef>
 #include <iomanip>
+#include <ostream>
+#include <string>
+#include <vector>
 #include "ClassRegistry.h"
 #include "Debug.h"
 #include "DeferredRegistry.h"
+#include "Formatters.h"
 #include "MsgBuffer.h"
 #include "NbAppIds.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
 #include "SysTypes.h"
+#include "ThisThread.h"
 #include "ThreadRegistry.h"
 #include "TraceBuffer.h"
 

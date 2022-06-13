@@ -579,7 +579,7 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
    if(stest == nullptr) return cli.Report(-7, AllocationError);
 
    id_t fid, sid;
-   word tid = 0;
+   word tid = NIL_ID;
    auto failed = false;
 
    //  Return if the command is currently disabled.
@@ -630,7 +630,7 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
    //  A candidate message must match the expected factory, protocol, signal,
    //  and PSM.  It parameters will then be compared to the expected values.
    //
-   if(tid != 0)
+   if(tid != NIL_ID)
    {
       auto sess = stest->AccessSession(tid);
       if(sess == nullptr) return ntest->SetFailed(-7, AllocationError);

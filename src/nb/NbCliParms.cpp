@@ -137,18 +137,6 @@ word ExplainTraceRc(const CliThread& cli, TraceRc rc)
 
 //------------------------------------------------------------------------------
 
-bool GetBV(const CliCommand& comm, CliThread& cli, bool& v)
-{
-   Debug::ft("NodeBase.GetBV");
-
-   char c;
-   auto rc = comm.GetCharParmRc(c, cli);
-   v = (c == 'v');
-   return (rc != CliParm::Error);
-}
-
-//------------------------------------------------------------------------------
-
 bool GetIdDispS(const CliCommand& comm, CliThread& cli, word& id, char& disp)
 {
    Debug::ft("NodeBase.GetIdDispS");
@@ -168,7 +156,7 @@ bool GetIdDispS(const CliCommand& comm, CliThread& cli, word& id, char& disp)
    switch(comm.GetCharParmRc(disp, cli))
    {
    case CliParm::None:
-      if(id == NIL_ID) disp = 's';
+      disp = 's';
       break;
    case CliParm::Ok:
       break;
@@ -200,7 +188,7 @@ bool GetIdDispV(const CliCommand& comm, CliThread& cli, word& id, char& disp)
    switch(comm.GetCharParmRc(disp, cli))
    {
    case CliParm::None:
-      if(id == NIL_ID) disp = 's';
+      if(id == NIL_ID) disp = 's';  // 'v' if identifier specified above
       break;
    case CliParm::Ok:
       break;

@@ -643,7 +643,7 @@ size_t ThreadRegistry::Size()
 {
    auto reg = Singleton<ThreadRegistry>::Extant();
    if(reg == nullptr) return 0;
-   return reg->Threads().size();
+   return reg->GetThreads().size();
 }
 
 //------------------------------------------------------------------------------

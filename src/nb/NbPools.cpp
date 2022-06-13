@@ -85,31 +85,32 @@ void MsgBufferPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string MsgBufferHeader = "RxTime(>>20)  Address";
-//                             |          11..<address>
+fixed_string MsgBufferHeader = "RxTime(>>20)  Object";
+//                             |          11..<object>
 
 size_t MsgBufferPool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << MsgBufferHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoBuffersExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
-      if((*obj)->IsValid())
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
       {
          auto buff = static_cast<const MsgBuffer*>(*obj);
          stream << setw(11)
             << (buff->RxTime().time_since_epoch().count() >> 20);
-         stream << spaces(2) << this << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
+   }
+
+   if(count == 0)
+   {
+      stream << spaces(2) << NoBuffersExpl << CRLF;
    }
 
    return items.size();

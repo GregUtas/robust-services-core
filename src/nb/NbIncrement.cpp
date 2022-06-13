@@ -187,8 +187,8 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(AlarmsCommand_ProcessCommand);
 
    id_t index;
+   word id = NIL_ID;
    char disp;
-   word id;
    size_t size;
    string name, key, path;
    Alarm* alarm;
@@ -395,23 +395,17 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("BuffersCommand.ProcessCommand");
 
-   char disp;
+   char disp = 's';
 
-   switch(GetCharParmRc(disp, cli))
-   {
-   case None: disp = 's'; break;
-   case Ok: break;
-   default: return -1;
-   }
-
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MsgBufferPool>::Instance();
-   auto num = pool->InUseCount();
+   auto count = pool->InUseCount();
 
    if(disp == 'c')
    {
-      *cli.obuf << spaces(2) << num << CRLF;
+      *cli.obuf << spaces(2) << count << CRLF;
    }
    else if(disp == 's')
    {
@@ -419,11 +413,11 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      num = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, 0);
-      if(num == 0) return cli.Report(0, NoBuffersExpl);
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, 0);
+      if(count == 0) return cli.Report(0, NoBuffersExpl);
    }
 
-   return num;
+   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -628,7 +622,7 @@ word ClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    TraceRc rc;
    auto nbt = Singleton<NbTracer>::Instance();
-   word id = 0;
+   word id;
 
    switch(index)
    {
@@ -742,8 +736,8 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(DaemonsCommand_ProcessCommand);
 
    id_t index, setHowIndex;
+   word id = NIL_ID;
    char disp;
-   word id;
    size_t size;
    Daemon* daemon = nullptr;
    auto reg = Singleton<DaemonRegistry>::Instance();
@@ -823,16 +817,10 @@ word DeferredCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("DeferredCommand.ProcessCommand");
 
-   char disp;
+   char disp = 's';
    size_t size;
 
-   switch(GetCharParmRc(disp, cli))
-   {
-   case CliParm::None: disp = 's'; break;
-   case CliParm::Ok: break;
-   default: return -1;
-   }
-
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<DeferredRegistry>::Instance();
@@ -918,16 +906,16 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("DisplayCommand.ProcessCommand");
 
    void* p = nullptr;
-   bool v = false;
+   char disp = 'b';
    std::ostringstream prompt;
 
    if(!GetPtrParm(p, cli)) return -1;
-   if(!GetBV(*this, cli, v)) return -1;
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
-   static_cast<const Base*>(p)->Output(*cli.obuf, 2, v);
+   static_cast<const Base*>(p)->Output(*cli.obuf, 2, disp == 'v');
    return 0;
 }
 
@@ -1212,7 +1200,8 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(HeapsCommand_ProcessCommand);
 
    id_t index;
-   word id, memtype, size;
+   word id = NIL_ID;
+   word memtype, size;
    id_t trace;
    char disp, scale;
    string expl;
@@ -1915,7 +1904,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    word rc = 0;
    string name, expl, key, path;
    word id, count, interval;
-   auto v = false;
+   char disp = 'b';
    id_t setHowIndex;
    Log* log;
    LogGroup* group;
@@ -1998,9 +1987,9 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       return cli.Report(0, SuccessExpl);
 
    case BuffersIndex:
-      if(!GetBV(*this, cli, v)) return -1;
+      if(GetCharParmRc(disp, cli) == Error) return -1;
       if(!cli.EndOfInput()) return -1;
-      reg->Output(*cli.obuf, 2, v);
+      reg->Output(*cli.obuf, 2, disp == 'v');
       break;
 
    case WriteIndex:
@@ -2082,8 +2071,8 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ModulesCommand.ProcessCommand");
 
+   word id = NIL_ID;
    char disp;
-   word id;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
    if(!cli.EndOfInput()) return -1;
@@ -2139,7 +2128,7 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("MutexesCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -2195,7 +2184,7 @@ word PoolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("PoolsCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -2251,7 +2240,7 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("PsignalsCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -3079,11 +3068,11 @@ word SingletonsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("SingletonsCommand.ProcessCommand");
 
-   bool v = false;
+   char disp = 'b';
 
-   if(!GetBV(*this, cli, v)) return -1;
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
-   Singletons::Instance()->Output(*cli.obuf, 2, v);
+   Singletons::Instance()->Output(*cli.obuf, 2, disp == 'v');
    return 0;
 }
 
@@ -3200,8 +3189,11 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
    auto rc = 0;
    auto reg = Singleton<StatisticsRegistry>::Instance();
    id_t index;
-   word gid, mid = 0;
-   bool all, first, v = false;
+   word gid = NIL_ID;
+   word mid = NIL_ID;
+   bool all;
+   auto first = false;
+   char disp = 'b';
    string title;
    Flags options;
    ostream* stream = cli.obuf.get();
@@ -3225,7 +3217,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       }
 
       if(GetIntParmRc(mid, cli) == Error) return -1;
-      if(!GetBV(*this, cli, v)) return -1;
+      if(GetCharParmRc(disp, cli) == Error) return -1;
       if(!GetFileName(title, cli)) title.clear();
       if(!cli.EndOfInput()) return -1;
 
@@ -3238,7 +3230,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
          if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       }
 
-      options = (v ? VerboseOpt : NoFlags);
+      options = (disp == 'v' ? VerboseOpt : NoFlags);
 
       if(all)
       {
@@ -3618,7 +3610,7 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ThreadsCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -3675,7 +3667,7 @@ word ToolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ToolsCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -3729,19 +3721,19 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new AlarmsCommand);
    BindCommand(*new SymbolsCommand);
    BindCommand(*new StatisticsCommand);
-   BindCommand(*new ModulesCommand);
-   BindCommand(*new PoolsCommand);
-   BindCommand(*new AuditCommand);
+   BindCommand(*new StatusCommand);
    BindCommand(*new SchedCommand);
    BindCommand(*new ThreadsCommand);
    BindCommand(*new DaemonsCommand);
    BindCommand(*new MutexesCommand);
    BindCommand(*new BuffersCommand);
    BindCommand(*new DeferredCommand);
+   BindCommand(*new ModulesCommand);
+   BindCommand(*new HeapsCommand);
+   BindCommand(*new PoolsCommand);
+   BindCommand(*new AuditCommand);
    BindCommand(*new PsignalsCommand);
    BindCommand(*new SingletonsCommand);
-   BindCommand(*new HeapsCommand);
-   BindCommand(*new StatusCommand);
    BindCommand(*new ToolsCommand);
    BindCommand(*new SetCommand);
    BindCommand(*new IncludeCommand);

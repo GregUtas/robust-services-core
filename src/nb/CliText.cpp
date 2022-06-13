@@ -160,8 +160,6 @@ CliParm::Rc CliText::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 {
    Debug::ft("CliText.GetTextParmRc");
 
-   i = 0;
-
    string t;
 
    //  Get the next string after saving the current location in the buffer.

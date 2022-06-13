@@ -184,11 +184,11 @@ public:
    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Displays in-use blocks.  Returns the number of blocks displayed.
-   //  The Filter function is invoked with FILTER so that a subset of
+   //  The Passes function is invoked with SELECTOR so that a subset of
    //  all blocks can be displayed.
    //
    size_t DisplayUsed(std::ostream& stream, const std::string& prefix,
-      const Flags& options, uint32_t filter) const;
+      const Flags& options, uint32_t selector) const;
 
    //  Corrupts the Nth link on the free queue for testing (0 = queue header).
    //  Returns false if the queue contained less than N elements.

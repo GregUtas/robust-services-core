@@ -82,8 +82,6 @@ CliParm::Rc CliIntParm::GetIntParmRc(word& n, CliThread& cli) const
 {
    Debug::ft("CliIntParm.GetIntParmRc");
 
-   n = 0;
-
    string s;
    string t;
 

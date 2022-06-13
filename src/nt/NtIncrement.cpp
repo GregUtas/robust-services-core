@@ -811,7 +811,7 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    word rc;
    string text, expl;
-   auto v = false;
+   char disp = 'b';
 
    switch(index)
    {
@@ -850,9 +850,9 @@ word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       return test->SetFailed(rc, text);
 
    case TestQueryIndex:
-      if(!GetBV(*this, cli, v)) return -1;
+      if(GetCharParmRc(disp, cli) == Error) return -1;
       if(!cli.EndOfInput()) return -1;
-      test->Query(v, expl);
+      test->Query(disp == 'v', expl);
       return cli.Report(0, expl);
 
    case TestRetestIndex:
@@ -2720,7 +2720,8 @@ word InsertCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("InsertCommand.ProcessCommand");
 
-   word id1, id2;
+   word id1;
+   word id2 = NIL_ID;
    bool fixed;
 
    if(!GetIntParm(id1, cli)) return -1;
@@ -2762,7 +2763,8 @@ word RemoveCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("RemoveCommand.ProcessCommand");
 
-   word id1, id2;
+   word id1;
+   word id2 = NIL_ID;
    bool fixed, result;
 
    if(!GetIntParm(id1, cli)) return -1;
@@ -2827,7 +2829,7 @@ word FirstCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("FirstCommand.ProcessCommand");
 
-   word id1;
+   word id1 = NIL_ID;
    bool start;
    id_t rid;
    RegistryItem* item;

@@ -369,8 +369,7 @@ void InvokerPool::Display(ostream& stream,
 
    stream << prefix << "faction     : " << faction_.to_str() << CRLF;
    stream << prefix << "corrupt     : " << corrupt_ << CRLF;
-   stream << prefix << "invokersCfg : " << CRLF;
-   stream << strObj(invokersCfg_.get()) << CRLF;
+   stream << prefix << "invokersCfg : " << strObj(invokersCfg_.get()) << CRLF;
 
    stream << prefix << "invokers []" << CRLF;
    invokers_.Display(stream, prefix + spaces(2), options);

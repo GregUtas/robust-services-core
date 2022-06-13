@@ -413,7 +413,7 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("IpPortsCommand.ProcessCommand");
 
-   word port;
+   word port = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, port, disp)) return -1;
@@ -471,7 +471,7 @@ word IpServicesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("IpServicesCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;

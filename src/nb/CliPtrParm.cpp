@@ -52,8 +52,6 @@ CliParm::Rc CliPtrParm::GetPtrParmRc(void*& p, CliThread& cli) const
 {
    Debug::ft("CliPtrParm.GetPtrParmRc");
 
-   p = nullptr;
-
    string s;
    string t;
 

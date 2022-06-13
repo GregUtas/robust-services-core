@@ -68,12 +68,7 @@ size_t MediaEndptPool::Summarize(ostream& stream, uint32_t selector) const
    stream << MepHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoMepsExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
@@ -82,11 +77,17 @@ size_t MediaEndptPool::Summarize(ostream& stream, uint32_t selector) const
          auto mep = static_cast<const MediaEndpt*>(*obj);
          stream << setw(7) << mep->Psm()->GetFactory();
          stream << setw(7) << mep->GetState();
-         stream << spaces(2) << strObj(this) << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoMepsExpl << CRLF;
+   }
+
+   return count;
 }
 }

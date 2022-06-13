@@ -703,22 +703,28 @@ void ObjectPool::DisplayStats(ostream& stream, const Flags& options) const
 //------------------------------------------------------------------------------
 
 size_t ObjectPool::DisplayUsed(ostream& stream,
-   const string& prefix, const Flags& options, uint32_t filter) const
+   const string& prefix, const Flags& options, uint32_t selector) const
 {
    size_t count = 0;
 
    auto items = GetUsed();
+   string rule(20, '-');
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
-      if((*obj)->assigned_ && (*obj)->Passes(filter))
+      if((*obj)->assigned_ && (*obj)->Passes(selector))
       {
          ++count;
 
          if(options.test(DispVerbose))
+         {
+            if(obj != items.cbegin()) stream << rule << CRLF;
             (*obj)->Display(stream, prefix, NoFlags);
+         }
          else
+         {
             stream << prefix << strObj(*obj) << CRLF;
+         }
 
          ThisThread::PauseOver(90);
       }

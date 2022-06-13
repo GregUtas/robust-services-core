@@ -139,8 +139,8 @@ void DaemonRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string DaemonHeader = "Id  Name       Alarm     AlarmId  Lvl";
-//                          | 2..10        .10              7    5
+fixed_string DaemonHeader = "Id  Name       Alarm     AlarmId  Level";
+//                          | 2..10        .10              7      7
 
 size_t DaemonRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
@@ -156,7 +156,7 @@ size_t DaemonRegistry::Summarize(ostream& stream, uint32_t selector) const
       {
          stream << SPACE << setw(10) << alarm->Name();
          stream << std::right << setw(7) << alarm->Aid();
-         stream << setw(5) << AlarmStatusSymbol(alarm->Status());
+         stream << setw(7) << AlarmStatusSymbol(alarm->Status());
       }
       else
       {

@@ -167,34 +167,37 @@ void ContextPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string ContextHeader = "Type  SSM  State  PSM1  PSM2  Address";
-//                           |   4    5      7     6     6..<address>
+fixed_string ContextHeader =
+   "Type  SSM  State  PSM1  State  PSM2  State  Object";
+// |   4..  3      7     6      7     6      7..<object>
 
 size_t ContextPool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << ContextHeader << CRLF;
+   size_t count = 0;
 
    auto items = GetUsed();
 
-   if(items.empty())
-   {
-      stream << spaces(2) << NoContextsExpl << CRLF;
-      return 0;
-   }
-
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
-      if((*obj)->IsValid())
+      if((*obj)->IsValid() && (*obj)->Passes(selector))
       {
          auto ctx = static_cast<const Context*>(*obj);
          stream << setw(4) << ctx->Type();
+         stream << spaces(2);
          SummarizeContext(stream, ctx);
-         stream << spaces(2) << this << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoContextsExpl << CRLF;
+   }
+
+   return count;
 }
 
 //==============================================================================
@@ -252,20 +255,15 @@ void MessagePool::Patch(sel_t selector, void* arguments)
 //------------------------------------------------------------------------------
 
 fixed_string MessageHeader =
-   "Pro  Sig  SSM  State  PSM1  State  PSM2  State  Address";
-// |  3    5..  3      7     6      7     6      7..<address>
+   "Pro  Sig  SSM  State  PSM1  State  PSM2  State  Object";
+// |  3    5..  3      7     6      7     6      7..<object>
 
 size_t MessagePool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << MessageHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoMessagesExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
@@ -291,12 +289,18 @@ size_t MessagePool::Summarize(ostream& stream, uint32_t selector) const
             stream << setw(7) << '-';
          }
 
-         stream << spaces(2) << this << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoMessagesExpl << CRLF;
+   }
+
+   return count;
 }
 
 //==============================================================================
@@ -356,20 +360,15 @@ void MsgPortPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string PortHeader = "SSM  State  PSM1  State  PSM2  State  Address";
-//                        |  3      7     6      7     6      7..<address>
+fixed_string PortHeader = "SSM  State  PSM1  State  PSM2  State  Object";
+//                        |  3      7     6      7     6      7..<object>
 
 size_t MsgPortPool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << PortHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoMsgsPortsExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
@@ -377,12 +376,18 @@ size_t MsgPortPool::Summarize(ostream& stream, uint32_t selector) const
       {
          auto port = static_cast<const MsgPort*>(*obj);
          SummarizeContext(stream, port->GetContext());
-         stream << spaces(2) << this << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoMsgsPortsExpl << CRLF;
+   }
+
+   return count;
 }
 
 //==============================================================================
@@ -466,20 +471,15 @@ void ProtocolSMPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string PsmHeader = "SSM  State  PSM1  State  PSM2  State  Address";
-//                       |  3      7     6      7     6      7..<address>
+fixed_string PsmHeader = "SSM  State  PSM1  State  PSM2  State  Object";
+//                       |  3      7     6      7     6      7..<object>
 
 size_t ProtocolSMPool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << PsmHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoPsmsExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
@@ -487,12 +487,18 @@ size_t ProtocolSMPool::Summarize(ostream& stream, uint32_t selector) const
       {
          auto psm = static_cast<const ProtocolSM*>(*obj);
          SummarizeContext(stream, psm->GetContext());
-         stream << spaces(2) << this;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoPsmsExpl << CRLF;
+   }
+
+   return count;
 }
 
 //==============================================================================
@@ -523,20 +529,15 @@ void ServiceSMPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fixed_string SsmHeader = "SSM  State  PSM1  State  PSM2  State  Address";
-//                       |  3      7     6      7     6      7..<address>
+fixed_string SsmHeader = "SSM  State  PSM1  State  PSM2  State  Object";
+//                       |  3      7     6      7     6      7..<object>
 
 size_t ServiceSMPool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << SsmHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoSsmsExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
@@ -544,12 +545,18 @@ size_t ServiceSMPool::Summarize(ostream& stream, uint32_t selector) const
       {
          auto ssm = static_cast<const ServiceSM*>(*obj);
          SummarizeContext(stream, ssm->GetContext());
-         stream << spaces(2) << this << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoSsmsExpl << CRLF;
+   }
+
+   return count;
 }
 
 //==============================================================================
@@ -636,20 +643,16 @@ void TimerPool::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string TimerHeader = " Id  SSM  State  PSM1  State  PSM2  State  Address";
-//                         |  3..  5      7     6      7     6      7..<address>
+fixed_string TimerHeader =
+   " Id  PSM  SSM  State  PSM1  State  PSM2  State  Object";
+// |  3..  5    5      7     6      7     6      7..<object>
 
 size_t TimerPool::Summarize(ostream& stream, uint32_t selector) const
 {
    stream << TimerHeader << CRLF;
 
    auto items = GetUsed();
-
-   if(items.empty())
-   {
-      stream << spaces(2) << NoTimersExpl << CRLF;
-      return 0;
-   }
+   size_t count = 0;
 
    for(auto obj = items.cbegin(); obj != items.cend(); ++obj)
    {
@@ -657,14 +660,21 @@ size_t TimerPool::Summarize(ostream& stream, uint32_t selector) const
       {
          auto tmr = static_cast<const Timer*>(*obj);
          stream << setw(3) << tmr->Tid();
+         stream << setw(3) << tmr->Psm()->GetFactory();
          stream << spaces(2);
          SummarizeContext(stream, tmr->Psm()->GetContext());
-         stream << spaces(2) << this << CRLF;
+         stream << spaces(2) << strObj(*obj) << CRLF;
+         ++count;
          ThisThread::PauseOver(90);
       }
    }
 
-   return items.size();
+   if(count == 0)
+   {
+      stream << spaces(2) << NoTimersExpl << CRLF;
+   }
+
+   return count;
 }
 
 //==============================================================================

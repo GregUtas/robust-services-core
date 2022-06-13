@@ -64,7 +64,8 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("TreatmentsCommand.ProcessCommand");
 
    word qid;
-   bool all, v = false;
+   bool all;
+   char disp = 'b';
 
    switch(GetIntParmRc(qid, cli))
    {
@@ -73,20 +74,20 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(!GetBV(*this, cli, v)) return -1;
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<PotsTreatmentRegistry>::Instance();
 
    if(all)
    {
-      reg->Output(*cli.obuf, 2, v);
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
       auto tq = reg->TreatmentQ(qid);
       if(tq == nullptr) return cli.Report(0, NoTreatmentExpl);
-      tq->Output(*cli.obuf, 2, v);
+      tq->Output(*cli.obuf, 2, disp == 'v');
    }
 
    return 0;

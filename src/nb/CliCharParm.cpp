@@ -75,8 +75,6 @@ CliParm::Rc CliCharParm::GetCharParmRc(char& c, CliThread& cli) const
 {
    Debug::ft("CliCharParm.GetCharParmRc");
 
-   c = SPACE;
-
    string s;
    string t;
 

@@ -481,7 +481,7 @@ void ModuleRegistry::Startup(RestartLevel level)
 //------------------------------------------------------------------------------
 
 fixed_string ModuleHeader = " Id  Module";
-//                          |  3..<object>
+//                          |  3..<class>
 
 size_t ModuleRegistry::Summarize(ostream& stream, uint32_t selector) const
 {

@@ -114,12 +114,6 @@ class DispCSBVParm : public CliCharParm
 public: DispCSBVParm();
 };
 
-//  Obtains the value of a DispBVParm.  COMM is the command invoking this
-//  function, and CLI is the CLI thread.  Sets V to true if 'v' was entered,
-//  so the default is 'b'.  Returns false on invalid input.
-//
-bool GetBV(const CliCommand& comm, CliThread& cli, bool& v);
-
 //  Obtains the value of a DispCBVParm (DISP).  COMM is the command invoking
 //  this function, and CLI is the CLI thread.  Sets ID to 0 if no identifier
 //  is found.  Sets DISP to 's' if not found.  Returns false on invalid input.

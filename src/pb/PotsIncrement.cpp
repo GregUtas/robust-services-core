@@ -313,7 +313,8 @@ word FeaturesCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("FeaturesCommand.ProcessCommand");
 
    word id;
-   bool all, v = false;
+   bool all;
+   char disp = 'b';
 
    switch(GetIntParmRc(id, cli))
    {
@@ -322,20 +323,20 @@ word FeaturesCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(!GetBV(*this, cli, v)) return -1;
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<PotsFeatureRegistry>::Instance();
 
    if(all)
    {
-      reg->Output(*cli.obuf, 2, v);
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
       auto ftr = reg->Feature(id);
       if(ftr == nullptr) return cli.Report(-2, NoFeatureExpl);
-      ftr->Output(*cli.obuf, 4, v);
+      ftr->Output(*cli.obuf, 4, disp == 'v');
    }
 
    return 0;
@@ -391,6 +392,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    {
       auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
+      if(count == 0) return cli.Report(0, NoMepsExpl);
    }
 
    return count;
@@ -553,7 +555,8 @@ word TonesCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("TonesCommand.ProcessCommand");
 
    word id;
-   bool all, v = false;
+   bool all;
+   char disp = 'b';
 
    switch(GetIntParmRc(id, cli))
    {
@@ -562,20 +565,20 @@ word TonesCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   if(!GetBV(*this, cli, v)) return -1;
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton<ToneRegistry>::Instance();
 
    if(all)
    {
-      reg->Output(*cli.obuf, 2, v);
+      reg->Output(*cli.obuf, 2, disp == 'v');
    }
    else
    {
       auto tone = reg->GetTone(id);
       if(tone == nullptr) return cli.Report(0, NoToneExpl);
-      tone->Output(*cli.obuf, 2, v);
+      tone->Output(*cli.obuf, 2, disp == 'v');
    }
 
    return 0;
@@ -705,11 +708,8 @@ PotsIncrement::PotsIncrement() : CliIncrement(PotsText, PotsExpl)
 {
    Debug::ft("PotsIncrement.ctor");
 
-   BindCommand(*new TsPortsCommand);
-   BindCommand(*new TonesCommand);
-   BindCommand(*new MepsCommand);
-   BindCommand(*new CodesCommand);
    BindCommand(*new DnsCommand);
+   BindCommand(*new CodesCommand);
    BindCommand(*new FeaturesCommand);
    BindCommand(*new RegisterCommand);
    BindCommand(*new DeregisterCommand);
@@ -718,6 +718,9 @@ PotsIncrement::PotsIncrement() : CliIncrement(PotsText, PotsExpl)
    BindCommand(*new DeactivateCommand);
    BindCommand(*new UnsubscribeCommand);
    BindCommand(*new ResetCommand);
+   BindCommand(*new TsPortsCommand);
+   BindCommand(*new TonesCommand);
+   BindCommand(*new MepsCommand);
 }
 
 //------------------------------------------------------------------------------

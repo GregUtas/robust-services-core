@@ -252,7 +252,7 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ContextsCommand.ProcessCommand");
 
-   char disp;
+   char disp = 's';
 
    if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
@@ -304,7 +304,8 @@ word EventsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("EventsCommand.ProcessCommand");
 
-   word sid, id;
+   word sid;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
@@ -443,7 +444,7 @@ word FactoriesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("FactoriesCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -501,7 +502,8 @@ word HandlersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("HandlersCommand.ProcessCommand");
 
-   word sid, id;
+   word sid;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
@@ -641,18 +643,11 @@ word InitiatorsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft("InitiatorsCommand.ProcessCommand");
 
    word sid, tid;
-   char disp;
+   char disp = 's';
 
    if(!GetIntParm(sid, cli)) return -1;
    if(!GetIntParm(tid, cli)) return -1;
-
-   switch(GetCharParmRc(disp, cli))
-   {
-   case CliParm::None: disp = 's'; break;
-   case CliParm::Ok: break;
-   default: return -1;
-   }
-
+   if(GetCharParmRc(disp, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
@@ -703,7 +698,7 @@ word InvPoolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("InvPoolsCommand.ProcessCommand");
 
-   word sf;
+   word sf = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, sf, disp)) return -1;
@@ -799,7 +794,8 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("MessagesCommand.ProcessCommand");
 
-   word pid, sid;
+   word pid = NIL_ID;
+   word sid = NIL_ID;
    char disp;
 
    if(GetIntParmRc(pid, cli) == Error) return -1;
@@ -807,24 +803,25 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
    if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton<MessagePool>::Instance();
-   uint32_t filter = (pid << 8) + sid;
+   uint32_t selector = (pid << 8) + sid;
    size_t count = 0;
 
    if(disp == 'c')
    {
       auto items = pool->GetUsed();
       for(auto i = items.cbegin(); i != items.cend(); ++i)
-         if((*i)->Passes(filter)) ++count;
+         if((*i)->Passes(selector)) ++count;
       if(count == 0) return cli.Report(0, NoMessagesExpl);
       *cli.obuf << spaces(2) << count << CRLF;
    }
    else if(disp == 's')
    {
-      count = pool->Summarize(*cli.obuf, filter);
+      count = pool->Summarize(*cli.obuf, selector);
    }
    else
    {
-      count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, filter);
+      count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, selector);
+      if(count == 0) return cli.Report(0, NoMessagesExpl);
    }
 
    return count;
@@ -855,7 +852,7 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("MsgPortsCommand.ProcessCommand");
 
-   word fid;
+   word fid = NIL_ID;
    char disp;
 
    if(!GetIdDispS(*this, cli, fid, disp)) return -1;
@@ -879,6 +876,7 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
    else
    {
       count = pool->DisplayUsed(*cli.obuf, spaces(2), VerboseOpt, fid);
+      if(count == 0) return cli.Report(0, NoMsgsPortsExpl);
    }
 
    return count;
@@ -911,7 +909,8 @@ word ParametersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ParametersCommand.ProcessCommand");
 
-   word prid, id;
+   word prid;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIntParm(prid, cli)) return -1;
@@ -984,7 +983,7 @@ word ProtocolsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ProtocolsCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -1058,7 +1057,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    {
       auto items = pool->GetUsed();
       for(auto i = items.cbegin(); i != items.cend(); ++i)
-         if((*i)->Passes(fid)) ++count;
+         if((*i)->Passes(selector)) ++count;
       if(count == 0) return cli.Report(0, NoPsmsExpl);
       *cli.obuf << spaces(2) << count << CRLF;
    }
@@ -1070,6 +1069,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    {
       auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
+      if(count == 0) return cli.Report(0, NoPsmsExpl);
    }
 
    return count;
@@ -1119,7 +1119,7 @@ word ServicesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("ServicesCommand.ProcessCommand");
 
-   word id;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIdDispV(*this, cli, id, disp)) return -1;
@@ -1177,7 +1177,8 @@ word SignalsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("SignalsCommand.ProcessCommand");
 
-   word prid, id;
+   word prid;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIntParm(prid, cli)) return -1;
@@ -1267,7 +1268,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    {
       auto items = pool->GetUsed();
       for(auto i = items.cbegin(); i != items.cend(); ++i)
-         if((*i)->Passes(sid)) ++count;
+         if((*i)->Passes(selector)) ++count;
       if(count == 0) return cli.Report(0, NoSsmsExpl);
       *cli.obuf << spaces(2) << count << CRLF;
    }
@@ -1279,6 +1280,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    {
       auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, sid);
+      if(count == 0) return cli.Report(0, NoSsmsExpl);
    }
 
    return count;
@@ -1310,7 +1312,8 @@ word StatesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("StatesCommand.ProcessCommand");
 
-   word sid, id;
+   word sid;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
@@ -1431,7 +1434,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("TimersCommand.ProcessCommand");
 
-   word fid;
+   word fid = NIL_ID;
    char disp;
 
    if(!GetIdDispS(*this, cli, fid, disp)) return -1;
@@ -1457,6 +1460,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    {
       auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
+      if(count == 0) return cli.Report(0, NoTimersExpl);
    }
 
    return count;
@@ -1488,7 +1492,8 @@ word TriggersCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("TriggersCommand.ProcessCommand");
 
-   word sid, id;
+   word sid;
+   word id = NIL_ID;
    char disp;
 
    if(!GetIntParm(sid, cli)) return -1;
@@ -1545,8 +1550,8 @@ SbIncrement::SbIncrement() : CliIncrement(SessionsText, SessionsExpl)
 {
    Debug::ft("SbIncrement.ctor");
 
-   BindCommand(*new ServicesCommand);
    BindCommand(*new FactoriesCommand);
+   BindCommand(*new ServicesCommand);
    BindCommand(*new StatesCommand);
    BindCommand(*new EventsCommand);
    BindCommand(*new HandlersCommand);
@@ -1557,8 +1562,8 @@ SbIncrement::SbIncrement() : CliIncrement(SessionsText, SessionsExpl)
    BindCommand(*new ParametersCommand);
    BindCommand(*new ContextsCommand);
    BindCommand(*new SsmsCommand);
-   BindCommand(*new PsmsCommand);
    BindCommand(*new MsgPortsCommand);
+   BindCommand(*new PsmsCommand);
    BindCommand(*new MessagesCommand);
    BindCommand(*new TimersCommand);
    BindCommand(*new InvPoolsCommand);

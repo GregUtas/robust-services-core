@@ -36,7 +36,7 @@ namespace MediaBase
 class MediaEndptPool : public ObjectPool
 {
 public:
-   //  Overridden to display MEPs filtered by the FactoryId of each one's PSM.
+   //  Overridden to display MEPs selected by the FactoryId of each one's PSM.
    //
    size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:

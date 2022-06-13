@@ -1,358 +1,359 @@
-START OF TRACE: May-25-2022 17:36:24.270 on Reigi
+START OF TRACE: Jun-13-2022 17:37:21.081 on Reigi
 
 mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
 ---------  ---  -----  ---------   -------  --------
-36:25.280   25           2016340      2071    :   :   Thread.ExitBlockingOperation
-36:25.280   25                 2         2    :   :   :   :   :   :   Thread.ExitSwLog
-36:25.280   25              1225         0    :   :   :   :   : SignalException.ctor
-36:25.280   25              1225         2    :   :   :   :   :   Exception.ctor
-36:25.280   25              1223      1223    :   :   :   :   :   : Thread.ExtendTime
-36:25.282   25               194        10    :   :   :   Thread.TrapHandler
-36:25.282   25                 1         1    :   :   :   :   Heap.SetPermissions
-36:25.282   25                 1         1    :   :   :   :   Heap.SetPermissions
-36:25.282   25                 2         2    :   :   :   : MutexRegistry.Abandon
-36:25.282   25                10         2    :   :   :   : ThreadRegistry.GetState
-36:25.282   25                 4         1    :   :   :   :   MutexGuard.ctor
-36:25.282   25                 3         3    :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 4         1    :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   SysMutex.Release
-36:25.282   25                 1         1    :   :   :   : Thread.SetSignal
-36:25.282   25               169         3    :   :   :   : Thread.LogTrap
-36:25.282   25                44         2    :   :   :   :   Log.Create
-36:25.282   25                 6         3    :   :   :   :   : Log.Find
-36:25.282   25                 2         2    :   :   :   :   :   LogGroupRegistry.FindGroup
-36:25.282   25                 1         1    :   :   :   :   :   LogGroup.FindLog
-36:25.282   25                36        36    :   :   :   :   : Log.Format
-36:25.282   25                86        86    :   :   :   :   LeakyBucketCounter.HasReachedLimit
-36:25.282   25                36         5    :   :   :   :   Log.Submit
-36:25.282   25                 7         2    :   :   :   :   : Log.Find(log)
-36:25.282   25                 5         2    :   :   :   :   :   Log.Find
-36:25.282   25                 2         2    :   :   :   :   :   : LogGroupRegistry.FindGroup
-36:25.282   25                 1         1    :   :   :   :   :   : LogGroup.FindLog
-36:25.282   25                 1         1    :   :   :   :   : LogBufferRegistry.Active
-36:25.282   25                23         6    :   :   :   :   : LogBuffer.Push
-36:25.282   25                 3         1    :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 2         2    :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 4         2    :   :   :   :   :   LogBuffer.InsertionPoint
-36:25.282   25                 1         1    :   :   :   :   :   : LogBuffer.First
-36:25.282   25                 1         1    :   :   :   :   :   : LogBuffer.SetNext
-36:25.282   25                 2         1    :   :   :   :   :   Memory.Copy
-36:25.282   25                 1         1    :   :   :   :   :   : LogBuffer.First
-36:25.282   25                 2         1    :   :   :   :   :   MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   : SysMutex.Release
-36:25.282   25                 5         1    :   :   :   :   :   Thread.Interrupt
-36:25.282   25                 4         2    :   :   :   :   :   : SysThread.Interrupt
-36:25.282   25                 2         2    :   :   :   :   :   :   Gate.Notify
-36:25.282   25                 1         1    :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 2         2    :   :   :   : Debug.SwFlagOn
-36:25.282   25               529         5    :   :   :   Thread.Exit
-36:25.282   25                 1         1    :   :   :   : MutexRegistry.Abandon
-36:25.282   25                 1         1    :   :   :   : Thread.LogSignal
-36:25.282   25                20         1    :   :   :   : Log.Create
-36:25.282   25                 4         2    :   :   :   :   Log.Find
-36:25.282   25                 1         1    :   :   :   :   : LogGroupRegistry.FindGroup
-36:25.282   25                 1         1    :   :   :   :   : LogGroup.FindLog
-36:25.282   25                15        15    :   :   :   :   Log.Format
-36:25.282   25                29         3    :   :   :   : Log.Submit
-36:25.282   25                 5         1    :   :   :   :   Log.Find(log)
-36:25.282   25                 4         2    :   :   :   :   : Log.Find
-36:25.282   25                 1         1    :   :   :   :   :   LogGroupRegistry.FindGroup
-36:25.282   25                 1         1    :   :   :   :   :   LogGroup.FindLog
-36:25.282   25                 1         1    :   :   :   :   LogBufferRegistry.Active
-36:25.282   25                20         4    :   :   :   :   LogBuffer.Push
-36:25.282   25                 3         2    :   :   :   :   : MutexGuard.ctor
-36:25.282   25                 1         1    :   :   :   :   :   SysMutex.Acquire
-36:25.282   25                 4         2    :   :   :   :   : LogBuffer.InsertionPoint
-36:25.282   25                 1         1    :   :   :   :   :   LogBuffer.First
-36:25.282   25                 1         1    :   :   :   :   :   LogBuffer.SetNext
-36:25.282   25                 2         1    :   :   :   :   : Memory.Copy
-36:25.282   25                 1         1    :   :   :   :   :   LogBuffer.First
-36:25.282   25                 2         1    :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   SysMutex.Release
-36:25.282   25                 4         1    :   :   :   :   : Thread.Interrupt
-36:25.282   25                 3         1    :   :   :   :   :   SysThread.Interrupt
-36:25.282   25                 2         2    :   :   :   :   :   : Gate.Notify
-36:25.282   25                 1         1    :   :   :   :   : MutexGuard.dtor
-36:25.282   25               473         2    :   :   :   : RecoveryThread.Destroy
-36:25.282   25               471        11    :   :   :   :   Singleton.Destroy
-36:25.282   25               460         4    :   :   :   :   : Singletons.UnbindInstance
-36:25.282   25               450         2    :   :   :   :   :   RecoveryThread.dtor
-36:25.282   25                 1         1    :   :   :   :   :   : Debug.SwFlagOn
-36:25.282   25               447         2    :   :   :   :   :   : Thread.dtor
-36:25.282   25                 9         2    :   :   :   :   :   :   ThreadRegistry.Destroying
-36:25.282   25                 3         1    :   :   :   :   :   :   : MutexGuard.ctor
-36:25.282   25                 2         2    :   :   :   :   :   :   :   SysMutex.Acquire
-36:25.282   25                 4         1    :   :   :   :   :   :   : MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   : SysMutex.Release
-36:25.282   25                16         2    :   :   :   :   :   :   Thread.Suspend
-36:25.282   25                13        13    :   :   :   :   :   :   : Thread.LogContextSwitch
-36:25.282   25                 3         2    :   :   :   :   :   :   :   : MutexGuard.ctor
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   SysMutex.Acquire
-36:25.282   25                 4         1    :   :   :   :   :   :   :   : MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   : SysMutex.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 1         1    :   :   :   :   :   :   :   : SysMutex.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   : Thread.Schedule
-36:25.282   25               420         2    :   :   :   :   :   :   Thread.ReleaseResources
-36:25.282   25                 1         1    :   :   :   :   :   :   : Q1Way.Init
-36:25.282   25               417         4    :   :   :   :   :   :   : Thread.Purge
-36:25.282   25                 9         2    :   :   :   :   :   :   :   ThreadRegistry.Exiting
-36:25.282   25                 3         1    :   :   :   :   :   :   :   : MutexGuard.ctor
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   SysMutex.Acquire
-36:25.282   25                 4         1    :   :   :   :   :   :   :   : MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   : SysMutex.Release
-36:25.282   25                18         2    :   :   :   :   :   :   :   Daemon.ThreadDeleted
-36:25.282   25                 3         3    :   :   :   :   :   :   :   : Daemon.Find
-36:25.282   25                13         2    :   :   :   :   :   :   :   : Thread.Interrupt
-36:25.282   25                11         2    :   :   :   :   :   :   :   :   SysThread.Interrupt
-36:25.282   25                 9         9    :   :   :   :   :   :   :   :   : Gate.Notify
-36:25.282   25               357         1    :   :   :   :   :   :   :   C++.delete
-36:25.282   25               337       337    :   :   :   :   :   :   :   : ThreadStats.dtor
-36:25.282   25                81         0    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                49         3    :   :   :   :   :   :   :   :   :   : Accumulator.dtor
-36:25.282   25                46         3    :   :   :   :   :   :   :   :   :   :   Counter.dtor
-36:25.282   25                43         3    :   :   :   :   :   :   :   :   :   :   : Statistic.dtor
-36:25.282   25                40         3    :   :   :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
-36:25.282   25                37        37    :   :   :   :   :   :   :   :   :   :   :   : Registry.Erase
-36:25.282   25                33         4    :   :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
-36:25.282   25                29         5    :   :   :   :   :   :   :   :   :   :   :   :   :   NbHeap.Free
-36:25.282   25                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   : NbHeap.BlockToSize
-36:25.282   25                11         3    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.ctor
-36:25.282   25                 8         8    :   :   :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Acquire
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
-36:25.282   25                 9         3    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.dtor
-36:25.282   25                 6         3    :   :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.Release
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Release
-36:25.282   25                32         3    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                29         3    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                26         4    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                10         3    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 7         7    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 9         3    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 6         3    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                50         1    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                30         3    :   :   :   :   :   :   :   :   :   : HighWatermark.dtor
-36:25.282   25                27         3    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                24         3    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                21        21    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                19         3    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                16         3    :   :   :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                19         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                18         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                16         3    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 8         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 6         3    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                42         1    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                22         1    :   :   :   :   :   :   :   :   :   : HighWatermark.dtor
-36:25.282   25                21         2    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                19         1    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                18        18    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                16         2    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                14         1    :   :   :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                19         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                18         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                16         3    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 8         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 6         3    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                42         1    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                24         1    :   :   :   :   :   :   :   :   :   : HighWatermark.dtor
-36:25.282   25                23         2    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                21         1    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                20        20    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                18         2    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                16         2    :   :   :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 8         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                17         2    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                15         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                14         3    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 5         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 4         4    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                27         0    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                21         2    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                19         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                18         4    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 9         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 7         2    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Exq
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                23         0    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                17         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                16         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                14         3    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                41         1    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                24         1    :   :   :   :   :   :   :   :   :   : Counter.dtor
-36:25.282   25                23         2    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                21         1    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                20        20    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                18         2    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                16         2    :   :   :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 8         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                16         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                15         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                13         3    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                24         0    :   :   :   :   :   :   :   :   :   C++.delete
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
-36:25.282   25                18         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                17         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                15         3    :   :   :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 7         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
-36:25.282   25                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                19         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-36:25.282   25                18         1    :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                17         3    :   :   :   :   :   :   :   :   : NbHeap.Free
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   NbHeap.BlockToSize
-36:25.282   25                 8         1    :   :   :   :   :   :   :   :   :   MutexGuard.ctor
-36:25.282   25                 7         2    :   :   :   :   :   :   :   :   :   : SysMutex.Acquire
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   :   :   : Q2Way.Exq
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
-36:25.282   25                 5         2    :   :   :   :   :   :   :   :   :   MutexGuard.dtor
-36:25.282   25                 3         1    :   :   :   :   :   :   :   :   :   : MutexGuard.Release
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   :   SysMutex.Release
-36:25.282   25                13         0    :   :   :   :   :   :   :   C++.delete
-36:25.282   25                 5         2    :   :   :   :   :   :   :   : ThreadPriv.dtor
-36:25.282   25                 1         1    :   :   :   :   :   :   :   :   LeakyBucketCounter.dtor
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   LeakyBucketCounter.dtor
-36:25.282   25                 8         2    :   :   :   :   :   :   :   : Permanent.operator delete
-36:25.282   25                 6         2    :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                 4         2    :   :   :   :   :   :   :   :   : SysHeap.Free
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-36:25.282   25                16         0    :   :   :   :   :   :   :   C++.delete
-36:25.282   25                 5         2    :   :   :   :   :   :   :   : SysThread.dtor
-36:25.282   25                 3         3    :   :   :   :   :   :   :   :   SysThread.Delete
-36:25.282   25                11         2    :   :   :   :   :   :   :   : Permanent.operator delete
-36:25.282   25                 9         5    :   :   :   :   :   :   :   :   Memory.Free
-36:25.282   25                 4         2    :   :   :   :   :   :   :   :   : SysHeap.Free
-36:25.282   25                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-36:25.282   25                 6         1    :   :   :   :   :   Permanent.operator delete
-36:25.282   25                 5         1    :   :   :   :   :   : Memory.Free
-36:25.282   25                 4         1    :   :   :   :   :   :   SysHeap.Free
-36:25.282   25                 3         3    :   :   :   :   :   :   : SysHeap.BlockToSize
-36:25.282   25           2014269         2    :   :   : SignalException.dtor
-36:25.282   25           2014267   2014267    :   :   :   Exception.dtor
-36:27.297   26>             4288        11    NodeBase.EnterThread
-36:27.297   26              4236         8    : Thread.Start(initializing)
-36:27.297   26                13        13    :   Thread.RegisterForSignals
-36:27.297   26                52         8    :   ThreadRegistry.GetState
-36:27.297   26                22         8    :   : MutexGuard.ctor
-36:27.297   26                14        14    :   :   SysMutex.Acquire
-36:27.297   26                22         7    :   : MutexGuard.dtor
-36:27.297   26                15         8    :   :   MutexGuard.Release
-36:27.297   26                 7         7    :   :   : SysMutex.Release
-36:27.297   26              4148         8    :   Thread.Ready
-36:27.297   26              4140         6    :   : SysThread.Wait
-36:27.297   26              4134         8    :   :   SysThread.Suspend
-36:27.297   26              4126      4126    :   :   : Gate.WaitFor
-36:27.301   26                15        13    :   Thread.Resume
-36:27.301   26                 1         1    :   : ThreadAdmin.WarpFactor
-36:27.301   26                 1         1    :   : Thread.InitialTime
-36:27.301   26                41         2    : Thread.Start
-36:27.301   26                 3         3    :   SysThread.Start
-36:27.301   26                36         3    :   RecoveryThread.Enter
-36:27.301   26                33         2    :   : Thread.Pause (msecs=5000)
-36:27.301   26                29         2    :   :   Thread.EnterBlockingOperation
-36:27.301   26                27         3    :   :   : Thread.Suspend
-36:27.301   26                16        16    :   :   :   Thread.LogContextSwitch
-36:27.301   26                 5         2    :   :   :   :   MutexGuard.ctor
-36:27.301   26                 3         3    :   :   :   :   : SysMutex.Acquire
-36:27.301   26                 4         1    :   :   :   :   MutexGuard.dtor
-36:27.301   26                 3         2    :   :   :   :   : MutexGuard.Release
-36:27.301   26                 1         1    :   :   :   :   :   SysMutex.Release
-36:27.301   26                 1         1    :   :   :   :   SysMutex.Acquire
-36:27.301   26                 2         2    :   :   :   :   SysMutex.Release
-36:27.301   26                 8         2    :   :   :   Thread.Schedule
-36:27.301   26                 6         2    :   :   :   : Thread.Interrupt
-36:27.301   26                 4         2    :   :   :   :   SysThread.Interrupt
-36:27.301   26                 2         2    :   :   :   :   : Gate.Notify
-36:27.301   26                 2         1    :   :   SysThread.Delay
-36:27.301   26                 1         1    :   :   : SysThread.Suspend
-36:27.301   26                 0         0    :   :   :   Gate.WaitFor
+37:22.102   27           2024484      1726    :   :   Thread.ExitBlockingOperation
+37:22.102   27                18        18    :   :   :   :   :   :   Thread.ExitSwLog
+37:22.102   27               979         0    :   :   :   :   : SignalException.ctor
+37:22.102   27               979         1    :   :   :   :   :   Exception.ctor
+37:22.102   27               978       978    :   :   :   :   :   : Thread.ExtendTime
+37:22.103   27               159         9    :   :   :   Thread.TrapHandler
+37:22.103   27                 1         1    :   :   :   :   BuddyHeap.SetPermissions
+37:22.103   27                 1         1    :   :   :   :   BuddyHeap.SetPermissions
+37:22.103   27                 2         2    :   :   :   : MutexRegistry.Abandon
+37:22.103   27                28         2    :   :   :   : ThreadRegistry.GetState
+37:22.103   27                 4         2    :   :   :   :   MutexGuard.ctor
+37:22.103   27                 2         2    :   :   :   :   : Mutex.Acquire
+37:22.103   27                22         1    :   :   :   :   MutexGuard.dtor
+37:22.103   27                21         3    :   :   :   :   : MutexGuard.Release
+37:22.103   27                18        18    :   :   :   :   :   Mutex.Release
+37:22.103   27                 1         1    :   :   :   : Thread.SetSignal
+37:22.103   27               118         3    :   :   :   : Thread.LogTrap
+37:22.103   27                30         2    :   :   :   :   Log.Create
+37:22.103   27                 5         2    :   :   :   :   : Log.Find
+37:22.103   27                 2         2    :   :   :   :   :   LogGroupRegistry.FindGroup
+37:22.103   27                 1         1    :   :   :   :   :   LogGroup.FindLog
+37:22.103   27                23        23    :   :   :   :   : Log.Format
+37:22.103   27                43        43    :   :   :   :   LeakyBucketCounter.HasReachedLimit
+37:22.103   27                42         3    :   :   :   :   Log.Submit
+37:22.103   27                 6         2    :   :   :   :   : Log.Find(log)
+37:22.103   27                 4         2    :   :   :   :   :   Log.Find
+37:22.103   27                 1         1    :   :   :   :   :   : LogGroupRegistry.FindGroup
+37:22.103   27                 1         1    :   :   :   :   :   : LogGroup.FindLog
+37:22.103   27                 1         1    :   :   :   :   : LogBufferRegistry.Active
+37:22.103   27                32         4    :   :   :   :   : LogBuffer.Push
+37:22.103   27                 3         1    :   :   :   :   :   MutexGuard.ctor
+37:22.103   27                 2         2    :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                15         3    :   :   :   :   :   LogBuffer.InsertionPoint
+37:22.103   27                11        11    :   :   :   :   :   : LogBuffer.First
+37:22.103   27                 1         1    :   :   :   :   :   : LogBuffer.SetNext
+37:22.103   27                 2         1    :   :   :   :   :   Memory.Copy
+37:22.103   27                 1         1    :   :   :   :   :   : LogBuffer.First
+37:22.103   27                 2         1    :   :   :   :   :   MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   : Mutex.Release
+37:22.103   27                 5         2    :   :   :   :   :   Thread.Interrupt
+37:22.103   27                 3         1    :   :   :   :   :   : SysThread.Interrupt
+37:22.103   27                 2         2    :   :   :   :   :   :   Gate.Notify
+37:22.103   27                 1         1    :   :   :   :   :   MutexGuard.dtor
+37:22.103   27                 1         1    :   :   :   : Debug.SwFlagOn
+37:22.103   27               467         2    :   :   :   Thread.Exit
+37:22.103   27                 3         3    :   :   :   : MutexRegistry.Abandon
+37:22.103   27                 1         1    :   :   :   : Thread.LogSignal
+37:22.103   27                17         2    :   :   :   : Log.Create
+37:22.103   27                 4         2    :   :   :   :   Log.Find
+37:22.103   27                 1         1    :   :   :   :   : LogGroupRegistry.FindGroup
+37:22.103   27                 1         1    :   :   :   :   : LogGroup.FindLog
+37:22.103   27                11        11    :   :   :   :   Log.Format
+37:22.103   27                28         3    :   :   :   : Log.Submit
+37:22.103   27                 5         1    :   :   :   :   Log.Find(log)
+37:22.103   27                 4         2    :   :   :   :   : Log.Find
+37:22.103   27                 1         1    :   :   :   :   :   LogGroupRegistry.FindGroup
+37:22.103   27                 1         1    :   :   :   :   :   LogGroup.FindLog
+37:22.103   27                 1         1    :   :   :   :   LogBufferRegistry.Active
+37:22.103   27                19         5    :   :   :   :   LogBuffer.Push
+37:22.103   27                 2         1    :   :   :   :   : MutexGuard.ctor
+37:22.103   27                 1         1    :   :   :   :   :   Mutex.Acquire
+37:22.103   27                 3         1    :   :   :   :   : LogBuffer.InsertionPoint
+37:22.103   27                 1         1    :   :   :   :   :   LogBuffer.First
+37:22.103   27                 1         1    :   :   :   :   :   LogBuffer.SetNext
+37:22.103   27                 2         1    :   :   :   :   : Memory.Copy
+37:22.103   27                 1         1    :   :   :   :   :   LogBuffer.First
+37:22.103   27                 2         1    :   :   :   :   : MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   Mutex.Release
+37:22.103   27                 4         1    :   :   :   :   : Thread.Interrupt
+37:22.103   27                 3         2    :   :   :   :   :   SysThread.Interrupt
+37:22.103   27                 1         1    :   :   :   :   :   : Gate.Notify
+37:22.103   27                 1         1    :   :   :   :   : MutexGuard.dtor
+37:22.103   27               416         2    :   :   :   : RecoveryThread.Destroy
+37:22.103   27               414         2    :   :   :   :   Singleton.Destroy
+37:22.103   27               412         2    :   :   :   :   : Singletons.UnbindInstance
+37:22.103   27               404         2    :   :   :   :   :   RecoveryThread.dtor
+37:22.103   27                 1         1    :   :   :   :   :   : Debug.SwFlagOn
+37:22.103   27               401         3    :   :   :   :   :   : Thread.dtor
+37:22.103   27                 8         1    :   :   :   :   :   :   ThreadRegistry.Destroying
+37:22.103   27                 3         2    :   :   :   :   :   :   : MutexGuard.ctor
+37:22.103   27                 1         1    :   :   :   :   :   :   :   Mutex.Acquire
+37:22.103   27                 4         2    :   :   :   :   :   :   : MutexGuard.dtor
+37:22.103   27                 2         1    :   :   :   :   :   :   :   MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   : Mutex.Release
+37:22.103   27                19         2    :   :   :   :   :   :   Thread.Suspend
+37:22.103   27                16        16    :   :   :   :   :   :   : Thread.LogContextSwitch
+37:22.103   27                 4         1    :   :   :   :   :   :   :   : MutexGuard.ctor
+37:22.103   27                 3         3    :   :   :   :   :   :   :   :   Mutex.Acquire
+37:22.103   27                 6         2    :   :   :   :   :   :   :   : MutexGuard.dtor
+37:22.103   27                 4         1    :   :   :   :   :   :   :   :   MutexGuard.Release
+37:22.103   27                 3         3    :   :   :   :   :   :   :   :   : Mutex.Release
+37:22.103   27                 2         2    :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                 1         1    :   :   :   :   :   :   :   : Mutex.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   : Thread.Schedule
+37:22.103   27               371         2    :   :   :   :   :   :   Thread.ReleaseResources
+37:22.103   27                 1         1    :   :   :   :   :   :   : Q1Way.Init
+37:22.103   27               368         4    :   :   :   :   :   :   : Thread.Purge
+37:22.103   27                 9         2    :   :   :   :   :   :   :   ThreadRegistry.Exiting
+37:22.103   27                 3         1    :   :   :   :   :   :   :   : MutexGuard.ctor
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   Mutex.Acquire
+37:22.103   27                 4         1    :   :   :   :   :   :   :   : MutexGuard.dtor
+37:22.103   27                 3         2    :   :   :   :   :   :   :   :   MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   : Mutex.Release
+37:22.103   27                14         2    :   :   :   :   :   :   :   Daemon.ThreadDeleted
+37:22.103   27                 3         3    :   :   :   :   :   :   :   : Daemon.Find
+37:22.103   27                 9         1    :   :   :   :   :   :   :   : Thread.Interrupt
+37:22.103   27                 8         2    :   :   :   :   :   :   :   :   SysThread.Interrupt
+37:22.103   27                 6         6    :   :   :   :   :   :   :   :   : Gate.Notify
+37:22.103   27               318         0    :   :   :   :   :   :   :   C++.delete
+37:22.103   27               298       298    :   :   :   :   :   :   :   : ThreadStats.dtor
+37:22.103   27                49         1    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.103   27                31         2    :   :   :   :   :   :   :   :   :   : Accumulator.dtor
+37:22.103   27                29         2    :   :   :   :   :   :   :   :   :   :   Counter.dtor
+37:22.103   27                27         2    :   :   :   :   :   :   :   :   :   :   : Statistic.dtor
+37:22.103   27                25         2    :   :   :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+37:22.103   27                23        23    :   :   :   :   :   :   :   :   :   :   :   : Registry.Erase
+37:22.103   27                21         3    :   :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+37:22.103   27                18         4    :   :   :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.Free
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : BuddyHeap.BlockToSize
+37:22.103   27                 7         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.ctor
+37:22.103   27                 5         5    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Acquire
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
+37:22.103   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.dtor
+37:22.103   27                 3         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.Release
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : Mutex.Release
+37:22.103   27                17         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.103   27                16         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.103   27                14         2    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.103   27                 5         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.103   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.103   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.103   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.103   27                43         1    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.103   27                23         2    :   :   :   :   :   :   :   :   :   : HighWatermark.dtor
+37:22.103   27                21         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.103   27                20         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.103   27                18        18    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.103   27                17         2    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.103   27                15         2    :   :   :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.103   27                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.103   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.103   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.103   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.103   27                19         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.103   27                18         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.103   27                16         3    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.103   27                 8         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.103   27                 6         2    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
+37:22.103   27                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.103   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.103   27                42         0    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.103   27                23         2    :   :   :   :   :   :   :   :   :   : HighWatermark.dtor
+37:22.103   27                21         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.103   27                20         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.103   27                18        18    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.103   27                16         2    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.103   27                14         1    :   :   :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.103   27                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.103   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.103   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.103   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.103   27                19         2    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.103   27                17         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.103   27                16         4    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.103   27                 7         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.103   27                 6         3    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.103   27                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
+37:22.103   27                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.103   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.103   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.103   27                42         0    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.103   27                25         2    :   :   :   :   :   :   :   :   :   : HighWatermark.dtor
+37:22.103   27                23         2    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.103   27                21         1    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.103   27                20        20    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.103   27                18         1    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.103   27                17         3    :   :   :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 8         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                17         2    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.104   27                15         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                14         3    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 5         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         1    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                27         0    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.104   27                 6         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
+37:22.104   27                 4         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.104   27                21         2    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.104   27                19         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                18         3    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 9         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 7         2    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.104   27                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Exq
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                23         0    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.104   27                 6         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
+37:22.104   27                 4         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.104   27                17         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.104   27                16         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                14         2    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 3         3    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                42         0    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.104   27                25         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
+37:22.104   27                23         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.104   27                22         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.104   27                20        20    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.104   27                18         1    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                17         3    :   :   :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 8         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 6         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                17         2    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.104   27                15         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                13         3    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 5         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 4         4    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.104   27                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                25         1    :   :   :   :   :   :   :   :   :   C++.delete
+37:22.104   27                 6         2    :   :   :   :   :   :   :   :   :   : Counter.dtor
+37:22.104   27                 4         1    :   :   :   :   :   :   :   :   :   :   Statistic.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   Registry.Erase
+37:22.104   27                18         1    :   :   :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.104   27                17         2    :   :   :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                15         3    :   :   :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 7         2    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 3         3    :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   :   :   :   Q2Way.Enq
+37:22.104   27                 4         1    :   :   :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                20         2    :   :   :   :   :   :   :   : Dynamic.operator delete
+37:22.104   27                18         1    :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                17         3    :   :   :   :   :   :   :   :   : BuddyHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   BuddyHeap.BlockToSize
+37:22.104   27                 8         1    :   :   :   :   :   :   :   :   :   MutexGuard.ctor
+37:22.104   27                 7         2    :   :   :   :   :   :   :   :   :   : Mutex.Acquire
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   :   Q2Way.Exq
+37:22.104   27                 3         3    :   :   :   :   :   :   :   :   :   :   : Q2Way.Exq
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   :   :   : Q2Way.Enq
+37:22.104   27                 5         2    :   :   :   :   :   :   :   :   :   MutexGuard.dtor
+37:22.104   27                 3         1    :   :   :   :   :   :   :   :   :   : MutexGuard.Release
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   :   Mutex.Release
+37:22.104   27                13         0    :   :   :   :   :   :   :   C++.delete
+37:22.104   27                 5         3    :   :   :   :   :   :   :   : ThreadPriv.dtor
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   LeakyBucketCounter.dtor
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   LeakyBucketCounter.dtor
+37:22.104   27                 8         1    :   :   :   :   :   :   :   : Permanent.operator delete
+37:22.104   27                 7         3    :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                 4         2    :   :   :   :   :   :   :   :   : SysHeap.Free
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+37:22.104   27                10         0    :   :   :   :   :   :   :   C++.delete
+37:22.104   27                 4         2    :   :   :   :   :   :   :   : SysThread.dtor
+37:22.104   27                 2         2    :   :   :   :   :   :   :   :   SysThread.Delete
+37:22.104   27                 6         2    :   :   :   :   :   :   :   : Permanent.operator delete
+37:22.104   27                 4         1    :   :   :   :   :   :   :   :   Memory.Free
+37:22.104   27                 3         2    :   :   :   :   :   :   :   :   : SysHeap.Free
+37:22.104   27                 1         1    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+37:22.104   27                 6         2    :   :   :   :   :   Permanent.operator delete
+37:22.104   27                 4         1    :   :   :   :   :   : Memory.Free
+37:22.104   27                 3         1    :   :   :   :   :   :   SysHeap.Free
+37:22.104   27                 2         2    :   :   :   :   :   :   : SysHeap.BlockToSize
+37:22.104   27           2022758         1    :   :   : SignalException.dtor
+37:22.104   27           2022757   2022757    :   :   :   Exception.dtor
+37:24.126   28>             2413         4    NodeBase.EnterThread
+37:24.126   28              2365         3    : Thread.Start(initializing)
+37:24.126   28                 3         3    :   Thread.RegisterForSignals
+37:24.126   28                25         2    :   Thread.WaitUntilConstructed
+37:24.126   28                23         3    :   : ThreadRegistry.GetState
+37:24.126   28                16         2    :   :   MutexGuard.ctor
+37:24.126   28                14        14    :   :   : Mutex.Acquire
+37:24.126   28                 4         2    :   :   MutexGuard.dtor
+37:24.126   28                 2         1    :   :   : MutexGuard.Release
+37:24.126   28                 1         1    :   :   :   Mutex.Release
+37:24.126   28              2328         1    :   Thread.Ready
+37:24.126   28              2327         2    :   : SysThread.Wait
+37:24.126   28              2325         1    :   :   SysThread.Suspend
+37:24.126   28              2324      2324    :   :   : Gate.WaitFor
+37:24.129   28                 6         3    :   Thread.Resume
+37:24.129   28                 1         1    :   : ThreadAdmin.WarpFactor
+37:24.129   28                 2         2    :   : Thread.InitialTime
+37:24.129   28                44         2    : Thread.Start
+37:24.129   28                 2         2    :   SysThread.Start
+37:24.129   28                40         3    :   RecoveryThread.Enter
+37:24.129   28                37         2    :   : Thread.Pause (msecs=5000)
+37:24.129   28                32         2    :   :   Thread.EnterBlockingOperation
+37:24.129   28                30         2    :   :   : Thread.Suspend
+37:24.129   28                17        17    :   :   :   Thread.LogContextSwitch
+37:24.129   28                 5         2    :   :   :   :   MutexGuard.ctor
+37:24.129   28                 3         3    :   :   :   :   : Mutex.Acquire
+37:24.129   28                 5         2    :   :   :   :   MutexGuard.dtor
+37:24.129   28                 3         1    :   :   :   :   : MutexGuard.Release
+37:24.129   28                 2         2    :   :   :   :   :   Mutex.Release
+37:24.129   28                 1         1    :   :   :   :   Mutex.Acquire
+37:24.129   28                 2         2    :   :   :   :   Mutex.Release
+37:24.129   28                11         2    :   :   :   Thread.Schedule
+37:24.129   28                 9         3    :   :   :   : Thread.Interrupt
+37:24.129   28                 6         2    :   :   :   :   SysThread.Interrupt
+37:24.129   28                 4         4    :   :   :   :   : Gate.Notify
+37:24.129   28                 3         2    :   :   SysThread.Delay
+37:24.129   28                 1         1    :   :   : SysThread.Suspend
+37:24.129   28                 0         0    :   :   :   Gate.WaitFor
 END OF TRACE

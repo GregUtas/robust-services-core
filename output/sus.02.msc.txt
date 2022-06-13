@@ -1,193 +1,193 @@
-MESSAGE SEQUENCE CHART: May-25-2022 17:42:54.486 on Reigi
+MESSAGE SEQUENCE CHART: Jun-13-2022 16:37:48.171 on Reigi
 
 PotsShelfFactory  CipTbcFactory     PotsBcService          txmsg       RXNET       TRANS
-  fac:external    fac:external  ssm:000001A08883B648        time        time        time
+  msg:external    msg:external  ssm:000001C6F21E3648        time        time        time
         :               :                 :
-        :--PotsOffhook------------------->:                        42:54.490   42:54.491
-        :<-----------------PotsSupervise--|            42:54.491            
-        :--PotsDigits-------------------->:                        42:55.500   42:55.500
-        :<-----------------PotsSupervise--|            42:55.501            
-        :               :<----CipIam------|            42:55.501            
-        :               :-----CipRel----->:                        42:55.505   42:55.505
-        :<-----------------PotsSupervise--|            42:55.506            
-        :--PotsOnhook-------------------->:                        42:57.519   42:57.520
-        :<------------------PotsRelease---|            42:57.520            
+        :--PotsOffhook------------------->:                        37:48.175   37:48.175
+        :<-----------------PotsSupervise--|            37:48.176            
+        :--PotsDigits-------------------->:                        37:49.182   37:49.182
+        :<-----------------PotsSupervise--|            37:49.183            
+        :               :<----CipIam------|            37:49.183            
+        :               :-----CipRel----->:                        37:49.187   37:49.187
+        :<-----------------PotsSupervise--|            37:49.188            
+        :--PotsOnhook-------------------->:                        37:51.200   37:51.200
+        :<------------------PotsRelease---|            37:51.201            
         :               :                 :
 
 PotsCallFactory  PotsShelfFactory         txmsg       RXNET       TRANS
- fac:external  fac:000001A0854FAF00        time        time        time
+ msg:external  msg:000001C6ED909A00        time        time        time
        :                 :
-       :--PotsSupervise->:                        42:54.492   42:54.492
-       :--PotsSupervise->:                        42:55.503   42:55.504
-       :--PotsSupervise->:                        42:55.507   42:55.507
-       :---PotsRelease-->:                        42:57.522   42:57.523
+       :--PotsSupervise->:                        37:48.177   37:48.177
+       :--PotsSupervise->:                        37:49.184   37:49.184
+       :--PotsSupervise->:                        37:49.188   37:49.188
+       :---PotsRelease-->:                        37:51.201   37:51.202
        :                 :
 
 CipObcFactory     PotsBcService          txmsg       RXNET       TRANS
-fac:external  ssm:000001A08883B9A8        time        time        time
+msg:external  ssm:000001C6F21E39A8        time        time        time
       :                 :
-      :------CipIam---->:                        42:55.504   42:55.504
-      :<-----CipRel-----|            42:55.504            
+      :------CipIam---->:                        37:49.184   37:49.184
+      :<-----CipRel-----|            37:49.185            
       :                 :
 
-START OF TRACE: May-25-2022 17:42:54.486 on Reigi
+START OF TRACE: Jun-13-2022 16:37:48.171 on Reigi
 
 mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
 ---------  ---  -----  ---------   -------  --------
-42:54.490   17> RXNET        172  000001A08883B648  ssm         PotsCallFactory
-42:54.491   17  +port             000001A088EB2D50  port=64     PotsCallFactory
-42:54.491   17   +msg             000001A0890F48E8              PotsOffhookSignal
-42:54.491   14> TRANS        673  000001A08883B648  ssm prio=0  PotsOffhookSignal
-42:54.491   14  >>msg             000001A0890F48E8  port=64     PotsOffhookSignal
-42:54.491   14   +psm             000001A0892B97A0  port=64     PotsCallFactory
-42:54.491   14   +evt             000001A08AFD0A68              evt=1
-42:54.491   14   +ssm             000001A08AAB7160              PotsBcService
-42:54.491   14   +evt             000001A08AFD0B48              BcOriginateEvent
-42:54.491   14  >>evt             000001A08AFD0A68  continue    AnalyzeMsgEvent >> PotsBcNull
-42:54.491   14   -evt             000001A08AFD0A68              AnalyzeMsgEvent
-42:54.491   14   +evt             000001A08AFD0C28              BcAuthorizeOriginationEvent
-42:54.491   14  >>evt             000001A08AFD0B48  continue    BcOriginateEvent >> PotsBcNull
-42:54.491   14   -evt             000001A08AFD0B48              BcOriginateEvent
-42:54.491   14   +evt             000001A08AFD0D08              AnalyzeSapEvent
-42:54.491   14   +evt             000001A08AFD0DE8              BcCollectInformationEvent
-42:54.491   14  >>evt             000001A08AFD0C28  continue    BcAuthorizeOriginationEvent >> PotsBcAuthorizingOrigination
-42:54.491   14   -evt             000001A08AFD0C28              BcAuthorizeOriginationEvent
-42:54.491   14   -evt             000001A08AFD0D08              AnalyzeSapEvent
-42:54.491   14   +evt             000001A08AFD0EC8              AnalyzeSapEvent
-42:54.491   14   +msg             000001A0890F4A78  port=64     PotsProtocol sig=0
-42:54.491   14   +tmr             000001A089251E48  id=1        secs=10 psm=000001A0892B97A0
-42:54.491   14  >>evt             000001A08AFD0DE8  suspend     BcCollectInformationEvent >> PotsBcCollectingInformation
-42:54.491   14   -evt             000001A08AFD0DE8              BcCollectInformationEvent
-42:54.491   14   -evt             000001A08AFD0EC8              AnalyzeSapEvent
-42:54.491   14   -msg             000001A0890F48E8  port=64     PotsOffhookSignal
-42:54.491   14  <<msg             000001A0890F4A78  port=64     PotsSuperviseSignal
-42:54.491   14   -msg             000001A0890F4A78  port=64     PotsSuperviseSignal
-42:54.492   18> RXNET         83  000001A0854FAF00  fac         PotsShelfFactory
-42:54.492   18   +msg             000001A0890F4C08              PotsSuperviseSignal
-42:54.492   14> TRANS         95  000001A0854FAF00  fac prio=2  PotsSuperviseSignal
-42:54.492   14  >>msg             000001A0890F4C08              PotsSuperviseSignal
-42:54.492   14   -msg             000001A0890F4C08              PotsSuperviseSignal
-42:55.500   17> RXNET        106  000001A08883B648  ssm         PotsCallFactory
-42:55.500   17   +msg             000001A0890F4F28              PotsDigitsSignal
-42:55.500   14> TRANS        914  000001A08883B648  ssm prio=2  PotsDigitsSignal
-42:55.500   14  >>msg             000001A0890F4F28  port=64     PotsDigitsSignal
-42:55.500   14   +evt             000001A08AFD0FA8              AnalyzeMsgEvent
-42:55.500   14   -tmr             000001A089251E48  id=1        secs=10 psm=000001A0892B97A0
-42:55.500   14   +evt             000001A08AFD1088              BcLocalInformationEvent
-42:55.500   14  >>evt             000001A08AFD0FA8  continue    AnalyzeMsgEvent >> PotsBcCollectingInformation
-42:55.500   14   -evt             000001A08AFD0FA8              AnalyzeMsgEvent
-42:55.500   14   +msg             000001A0890F50B8  port=64     PotsProtocol sig=0
-42:55.500   14   +evt             000001A08AFD1168              BcAnalyzeInformationEvent
-42:55.500   14  >>evt             000001A08AFD1088  continue    BcLocalInformationEvent >> PotsBcCollectingInformation
-42:55.500   14   -evt             000001A08AFD1088              BcLocalInformationEvent
-42:55.501   14   +evt             000001A08AFD1248              BcSelectRouteEvent
-42:55.501   14  >>evt             000001A08AFD1168  continue    BcAnalyzeInformationEvent >> PotsBcAnalyzingInformation
-42:55.501   14   -evt             000001A08AFD1168              BcAnalyzeInformationEvent
-42:55.501   14   +evt             000001A08AFD1328              BcAuthorizeCallSetupEvent
-42:55.501   14  >>evt             000001A08AFD1248  continue    BcSelectRouteEvent >> PotsBcSelectingRoute
-42:55.501   14   -evt             000001A08AFD1248              BcSelectRouteEvent
-42:55.501   14   +evt             000001A08AFD1408              BcSendCallEvent
-42:55.501   14  >>evt             000001A08AFD1328  continue    BcAuthorizeCallSetupEvent >> PotsBcAuthorizingCallSetup
-42:55.501   14   -evt             000001A08AFD1328              BcAuthorizeCallSetupEvent
-42:55.501   14   +psm             000001A0892B9A08              CipObcFactory
-42:55.501   14   +msg             000001A0890F5248              CipProtocol sig=0
-42:55.501   14  >>evt             000001A08AFD1408  suspend     BcSendCallEvent >> PotsBcSendingCall
-42:55.501   14   -evt             000001A08AFD1408              BcSendCallEvent
-42:55.501   14   -msg             000001A0890F4F28  port=64     PotsDigitsSignal
-42:55.501   14  <<msg             000001A0890F50B8  port=64     PotsSuperviseSignal
-42:55.501   14   -msg             000001A0890F50B8  port=64     PotsSuperviseSignal
-42:55.501   14   +tmr             000001A089251EA0  id=1        secs=10 psm=000001A0892B9A08
-42:55.501   14  +port             000001A088EB2E08  port=65     CipObcFactory
-42:55.501   14  <<msg             000001A0890F5248  port=65     CipIamSignal
-42:55.501   14   -msg             000001A0890F5248  port=65     CipIamSignal
-42:55.503   18> RXNET         96  000001A0854FAF00  fac         PotsShelfFactory
-42:55.503   18   +msg             000001A0890F53D8              PotsSuperviseSignal
-42:55.504   15> RXNET        104  000001A08883B9A8  ssm         CipTbcFactory
-42:55.504   15  +port             000001A088EB2EC0  port=66     CipTbcFactory
-42:55.504   15   +msg             000001A0890F5568              CipIamSignal
-42:55.504   14> TRANS         83  000001A0854FAF00  fac prio=2  PotsSuperviseSignal
-42:55.504   14  >>msg             000001A0890F53D8              PotsSuperviseSignal
-42:55.504   14   -msg             000001A0890F53D8              PotsSuperviseSignal
-42:55.504   14  TRANS        662  000001A08883B9A8  ssm prio=1  CipIamSignal
-42:55.504   14  >>msg             000001A0890F5568  port=66     CipIamSignal
-42:55.504   14   +psm             000001A0892B9C70  port=66     CipTbcFactory
-42:55.504   14   +evt             000001A08AFD14E8              evt=1
-42:55.504   14   +ssm             000001A08AAB7448              PotsBcService
-42:55.504   14   +evt             000001A08AFD15C8              BcTerminateEvent
-42:55.504   14  >>evt             000001A08AFD14E8  continue    AnalyzeMsgEvent >> PotsBcNull
-42:55.504   14   -evt             000001A08AFD14E8              AnalyzeMsgEvent
-42:55.504   14   +evt             000001A08AFD16A8              BcAuthorizeTerminationEvent
-42:55.504   14  >>evt             000001A08AFD15C8  continue    BcTerminateEvent >> PotsBcNull
-42:55.504   14   -evt             000001A08AFD15C8              BcTerminateEvent
-42:55.504   14   +evt             000001A08AFD1788              AnalyzeSapEvent
-42:55.504   14   +evt             000001A08AFD1868              InitiationEvent
-42:55.504   14   +ssm             000001A08AAB7730              PotsSusService
-42:55.504   14   +evt             000001A08AFD1948              BcTerminationDeniedEvent
-42:55.504   14  >>evt             000001A08AFD1868  revert      InitiationEvent(PotsSusService) >> PotsSusNull
-42:55.504   14   -ssm             000001A08AAB7730              PotsSusService
-42:55.504   14   -evt             000001A08AFD1868              InitiationEvent
-42:55.504   14   -evt             000001A08AFD16A8              BcAuthorizeTerminationEvent
-42:55.504   14   -evt             000001A08AFD1788              AnalyzeSapEvent
-42:55.504   14   +msg             000001A0890F56F8  port=66     CipProtocol sig=0
-42:55.504   14  >>evt             000001A08AFD1948  suspend     BcTerminationDeniedEvent >> PotsBcAuthorizingTermination
-42:55.504   14   -evt             000001A08AFD1948              BcTerminationDeniedEvent
-42:55.504   14  <<msg             000001A0890F56F8  port=66     CipRelSignal
-42:55.504   14   -msg             000001A0890F56F8  port=66     CipRelSignal
-42:55.505   14   -psm             000001A0892B9C70  port=66     CipTbcFactory
-42:55.505   14   -msg             000001A0890F5568  port=66     CipIamSignal
-42:55.505   14  -port             000001A088EB2EC0  port=66     CipTbcFactory
-42:55.505   14   -ssm             000001A08AAB7448              PotsBcService
-42:55.505   15> RXNET         63  000001A08883B648  ssm         CipObcFactory
-42:55.505   15   +msg             000001A0890F5888              CipRelSignal
-42:55.505   14> TRANS        518  000001A08883B648  ssm prio=2  CipRelSignal
-42:55.505   14  >>msg             000001A0890F5888  port=65     CipRelSignal
-42:55.506   14   -tmr             000001A089251EA0  id=1        secs=10 psm=000001A0892B9A08
-42:55.506   14   +evt             000001A08AFD1A28              AnalyzeMsgEvent
-42:55.506   14   +evt             000001A08AFD1B08              BcRemoteReleaseEvent
-42:55.506   14  >>evt             000001A08AFD1A28  continue    AnalyzeMsgEvent >> PotsBcSendingCall
-42:55.506   14   -evt             000001A08AFD1A28              AnalyzeMsgEvent
-42:55.506   14   +evt             000001A08AFD1BE8              BcReleaseCallEvent
-42:55.506   14  >>evt             000001A08AFD1B08  continue    BcRemoteReleaseEvent >> PotsBcSendingCall
-42:55.506   14   -evt             000001A08AFD1B08              BcRemoteReleaseEvent
-42:55.506   14   +evt             000001A08AFD1CC8              BcApplyTreatmentEvent
-42:55.506   14  >>evt             000001A08AFD1BE8  continue    BcReleaseCallEvent >> PotsBcSendingCall
-42:55.506   14   -evt             000001A08AFD1BE8              BcReleaseCallEvent
-42:55.506   14   +msg             000001A0890F5A18  port=64     PotsProtocol sig=0
-42:55.506   14   +tmr             000001A089251EF8  id=5        secs=10 psm=000001A0892B97A0
-42:55.506   14  >>evt             000001A08AFD1CC8  suspend     BcApplyTreatmentEvent >> PotsBcException
-42:55.506   14   -evt             000001A08AFD1CC8              BcApplyTreatmentEvent
-42:55.506   14   -msg             000001A0890F5888  port=65     CipRelSignal
-42:55.506   14  <<msg             000001A0890F5A18  port=64     PotsSuperviseSignal
-42:55.506   14   -msg             000001A0890F5A18  port=64     PotsSuperviseSignal
-42:55.506   14   -psm             000001A0892B9A08  port=65     CipObcFactory
-42:55.506   14  -port             000001A088EB2E08  port=65     CipObcFactory
-42:55.507   18> RXNET         77  000001A0854FAF00  fac         PotsShelfFactory
-42:55.507   18   +msg             000001A0890F5BA8              PotsSuperviseSignal
-42:55.507   14> TRANS         80  000001A0854FAF00  fac prio=2  PotsSuperviseSignal
-42:55.507   14  >>msg             000001A0890F5BA8              PotsSuperviseSignal
-42:55.507   14   -msg             000001A0890F5BA8              PotsSuperviseSignal
-42:57.519   17> RXNET         82  000001A08883B648  ssm         PotsCallFactory
-42:57.519   17   +msg             000001A0890F5EC8              PotsOnhookSignal
-42:57.520   14> TRANS        514  000001A08883B648  ssm prio=2  PotsOnhookSignal
-42:57.520   14  >>msg             000001A0890F5EC8  port=64     PotsOnhookSignal
-42:57.520   14   +evt             000001A08AFD1DA8              AnalyzeMsgEvent
-42:57.520   14   -tmr             000001A089251EF8  id=5        secs=10 psm=000001A0892B97A0
-42:57.520   14   +evt             000001A08AFD1E88              BcLocalReleaseEvent
-42:57.520   14  >>evt             000001A08AFD1DA8  continue    AnalyzeMsgEvent >> PotsBcException
-42:57.520   14   -evt             000001A08AFD1DA8              AnalyzeMsgEvent
-42:57.520   14   +msg             000001A0890F6058  port=64     PotsProtocol sig=0
-42:57.520   14  >>evt             000001A08AFD1E88  suspend     BcLocalReleaseEvent >> PotsBcException
-42:57.520   14   -evt             000001A08AFD1E88              BcLocalReleaseEvent
-42:57.520   14   -msg             000001A0890F5EC8  port=64     PotsOnhookSignal
-42:57.520   14  <<msg             000001A0890F6058  port=64     PotsReleaseSignal
-42:57.520   14   -msg             000001A0890F6058  port=64     PotsReleaseSignal
-42:57.520   14   -psm             000001A0892B97A0  port=64     PotsCallFactory
-42:57.520   14  -port             000001A088EB2D50  port=64     PotsCallFactory
-42:57.520   14   -ssm             000001A08AAB7160              PotsBcService
-42:57.522   18> RXNET         88  000001A0854FAF00  fac         PotsShelfFactory
-42:57.522   18   +msg             000001A0890F61E8              PotsReleaseSignal
-42:57.523   14> TRANS         86  000001A0854FAF00  fac prio=2  PotsReleaseSignal
-42:57.523   14  >>msg             000001A0890F61E8              PotsReleaseSignal
-42:57.523   14   -msg             000001A0890F61E8              PotsReleaseSignal
+37:48.175   17> RXNET        142  000001C6F21E3648  ssm         PotsCallFactory
+37:48.175   17  +port             000001C6F2342D50  port=64     PotsCallFactory
+37:48.175   17   +msg             000001C6F24F48E8              PotsOffhookSignal
+37:48.175   14> TRANS        645  000001C6F21E3648  ssm prio=0  PotsOffhookSignal
+37:48.175   14  >>msg             000001C6F24F48E8  port=64     PotsOffhookSignal
+37:48.175   14   +psm             000001C6F2E3D7A0  port=64     PotsCallFactory
+37:48.175   14   +evt             000001C6F369AA68              evt=1
+37:48.175   14   +ssm             000001C6F330A7A0              PotsBcService
+37:48.176   14   +evt             000001C6F369AB48              BcOriginateEvent
+37:48.176   14  >>evt             000001C6F369AA68  continue    AnalyzeMsgEvent >> PotsBcNull
+37:48.176   14   -evt             000001C6F369AA68              AnalyzeMsgEvent
+37:48.176   14   +evt             000001C6F369AC28              BcAuthorizeOriginationEvent
+37:48.176   14  >>evt             000001C6F369AB48  continue    BcOriginateEvent >> PotsBcNull
+37:48.176   14   -evt             000001C6F369AB48              BcOriginateEvent
+37:48.176   14   +evt             000001C6F369AD08              AnalyzeSapEvent
+37:48.176   14   +evt             000001C6F369ADE8              BcCollectInformationEvent
+37:48.176   14  >>evt             000001C6F369AC28  continue    BcAuthorizeOriginationEvent >> PotsBcAuthorizingOrigination
+37:48.176   14   -evt             000001C6F369AC28              BcAuthorizeOriginationEvent
+37:48.176   14   -evt             000001C6F369AD08              AnalyzeSapEvent
+37:48.176   14   +evt             000001C6F369AEC8              AnalyzeSapEvent
+37:48.176   14   +msg             000001C6F24F4A78  port=64     PotsProtocol sig=0
+37:48.176   14   +tmr             000001C6F2579E48  id=1        secs=10 psm=000001C6F2E3D7A0
+37:48.176   14  >>evt             000001C6F369ADE8  suspend     BcCollectInformationEvent >> PotsBcCollectingInformation
+37:48.176   14   -evt             000001C6F369ADE8              BcCollectInformationEvent
+37:48.176   14   -evt             000001C6F369AEC8              AnalyzeSapEvent
+37:48.176   14   -msg             000001C6F24F48E8  port=64     PotsOffhookSignal
+37:48.176   14  <<msg             000001C6F24F4A78  port=64     PotsSuperviseSignal
+37:48.176   14   -msg             000001C6F24F4A78  port=64     PotsSuperviseSignal
+37:48.177   18> RXNET         91  000001C6ED909A00  msg         PotsShelfFactory
+37:48.177   18   +msg             000001C6F24F4C08              PotsSuperviseSignal
+37:48.177   14> TRANS         88  000001C6ED909A00  msg prio=2  PotsSuperviseSignal
+37:48.177   14  >>msg             000001C6F24F4C08              PotsSuperviseSignal
+37:48.177   14   -msg             000001C6F24F4C08              PotsSuperviseSignal
+37:49.182   17> RXNET         85  000001C6F21E3648  ssm         PotsCallFactory
+37:49.182   17   +msg             000001C6F24F4F28              PotsDigitsSignal
+37:49.182   14> TRANS        910  000001C6F21E3648  ssm prio=2  PotsDigitsSignal
+37:49.182   14  >>msg             000001C6F24F4F28  port=64     PotsDigitsSignal
+37:49.182   14   +evt             000001C6F369AFA8              AnalyzeMsgEvent
+37:49.182   14   -tmr             000001C6F2579E48  id=1        secs=10 psm=000001C6F2E3D7A0
+37:49.182   14   +evt             000001C6F369B088              BcLocalInformationEvent
+37:49.182   14  >>evt             000001C6F369AFA8  continue    AnalyzeMsgEvent >> PotsBcCollectingInformation
+37:49.182   14   -evt             000001C6F369AFA8              AnalyzeMsgEvent
+37:49.183   14   +msg             000001C6F24F50B8  port=64     PotsProtocol sig=0
+37:49.183   14   +evt             000001C6F369B168              BcAnalyzeInformationEvent
+37:49.183   14  >>evt             000001C6F369B088  continue    BcLocalInformationEvent >> PotsBcCollectingInformation
+37:49.183   14   -evt             000001C6F369B088              BcLocalInformationEvent
+37:49.183   14   +evt             000001C6F369B248              BcSelectRouteEvent
+37:49.183   14  >>evt             000001C6F369B168  continue    BcAnalyzeInformationEvent >> PotsBcAnalyzingInformation
+37:49.183   14   -evt             000001C6F369B168              BcAnalyzeInformationEvent
+37:49.183   14   +evt             000001C6F369B328              BcAuthorizeCallSetupEvent
+37:49.183   14  >>evt             000001C6F369B248  continue    BcSelectRouteEvent >> PotsBcSelectingRoute
+37:49.183   14   -evt             000001C6F369B248              BcSelectRouteEvent
+37:49.183   14   +evt             000001C6F369B408              BcSendCallEvent
+37:49.183   14  >>evt             000001C6F369B328  continue    BcAuthorizeCallSetupEvent >> PotsBcAuthorizingCallSetup
+37:49.183   14   -evt             000001C6F369B328              BcAuthorizeCallSetupEvent
+37:49.183   14   +psm             000001C6F2E3DA08              CipObcFactory
+37:49.183   14   +msg             000001C6F24F5248              CipProtocol sig=0
+37:49.183   14  >>evt             000001C6F369B408  suspend     BcSendCallEvent >> PotsBcSendingCall
+37:49.183   14   -evt             000001C6F369B408              BcSendCallEvent
+37:49.183   14   -msg             000001C6F24F4F28  port=64     PotsDigitsSignal
+37:49.183   14  <<msg             000001C6F24F50B8  port=64     PotsSuperviseSignal
+37:49.183   14   -msg             000001C6F24F50B8  port=64     PotsSuperviseSignal
+37:49.183   14   +tmr             000001C6F2579EA0  id=1        secs=10 psm=000001C6F2E3DA08
+37:49.183   14  +port             000001C6F2342E08  port=65     CipObcFactory
+37:49.183   14  <<msg             000001C6F24F5248  port=65     CipIamSignal
+37:49.183   14   -msg             000001C6F24F5248  port=65     CipIamSignal
+37:49.184   18> RXNET        116  000001C6ED909A00  msg         PotsShelfFactory
+37:49.184   18   +msg             000001C6F24F53D8              PotsSuperviseSignal
+37:49.184   15> RXNET        111  000001C6F21E39A8  ssm         CipTbcFactory
+37:49.184   15  +port             000001C6F2342EC0  port=66     CipTbcFactory
+37:49.184   15   +msg             000001C6F24F5568              CipIamSignal
+37:49.184   14> TRANS        146  000001C6ED909A00  msg prio=2  PotsSuperviseSignal
+37:49.184   14  >>msg             000001C6F24F53D8              PotsSuperviseSignal
+37:49.184   14   -msg             000001C6F24F53D8              PotsSuperviseSignal
+37:49.184   14  TRANS       1228  000001C6F21E39A8  ssm prio=1  CipIamSignal
+37:49.184   14  >>msg             000001C6F24F5568  port=66     CipIamSignal
+37:49.184   14   +psm             000001C6F2E3DC70  port=66     CipTbcFactory
+37:49.185   14   +evt             000001C6F369B4E8              evt=1
+37:49.185   14   +ssm             000001C6F330AA48              PotsBcService
+37:49.185   14   +evt             000001C6F369B5C8              BcTerminateEvent
+37:49.185   14  >>evt             000001C6F369B4E8  continue    AnalyzeMsgEvent >> PotsBcNull
+37:49.185   14   -evt             000001C6F369B4E8              AnalyzeMsgEvent
+37:49.185   14   +evt             000001C6F369B6A8              BcAuthorizeTerminationEvent
+37:49.185   14  >>evt             000001C6F369B5C8  continue    BcTerminateEvent >> PotsBcNull
+37:49.185   14   -evt             000001C6F369B5C8              BcTerminateEvent
+37:49.185   14   +evt             000001C6F369B788              AnalyzeSapEvent
+37:49.185   14   +evt             000001C6F369B868              InitiationEvent
+37:49.185   14   +ssm             000001C6F330ACF0              PotsSusService
+37:49.185   14   +evt             000001C6F369B948              BcTerminationDeniedEvent
+37:49.185   14  >>evt             000001C6F369B868  revert      InitiationEvent(PotsSusService) >> PotsSusNull
+37:49.185   14   -ssm             000001C6F330ACF0              PotsSusService
+37:49.185   14   -evt             000001C6F369B868              InitiationEvent
+37:49.185   14   -evt             000001C6F369B6A8              BcAuthorizeTerminationEvent
+37:49.185   14   -evt             000001C6F369B788              AnalyzeSapEvent
+37:49.185   14   +msg             000001C6F24F56F8  port=66     CipProtocol sig=0
+37:49.185   14  >>evt             000001C6F369B948  suspend     BcTerminationDeniedEvent >> PotsBcAuthorizingTermination
+37:49.185   14   -evt             000001C6F369B948              BcTerminationDeniedEvent
+37:49.185   14  <<msg             000001C6F24F56F8  port=66     CipRelSignal
+37:49.185   14   -msg             000001C6F24F56F8  port=66     CipRelSignal
+37:49.185   14   -psm             000001C6F2E3DC70  port=66     CipTbcFactory
+37:49.186   14   -msg             000001C6F24F5568  port=66     CipIamSignal
+37:49.186   14  -port             000001C6F2342EC0  port=66     CipTbcFactory
+37:49.186   14   -ssm             000001C6F330AA48              PotsBcService
+37:49.187   15> RXNET         96  000001C6F21E3648  ssm         CipObcFactory
+37:49.187   15   +msg             000001C6F24F5888              CipRelSignal
+37:49.187   14> TRANS        923  000001C6F21E3648  ssm prio=2  CipRelSignal
+37:49.187   14  >>msg             000001C6F24F5888  port=65     CipRelSignal
+37:49.187   14   -tmr             000001C6F2579EA0  id=1        secs=10 psm=000001C6F2E3DA08
+37:49.187   14   +evt             000001C6F369BA28              AnalyzeMsgEvent
+37:49.187   14   +evt             000001C6F369BB08              BcRemoteReleaseEvent
+37:49.187   14  >>evt             000001C6F369BA28  continue    AnalyzeMsgEvent >> PotsBcSendingCall
+37:49.187   14   -evt             000001C6F369BA28              AnalyzeMsgEvent
+37:49.187   14   +evt             000001C6F369BBE8              BcReleaseCallEvent
+37:49.187   14  >>evt             000001C6F369BB08  continue    BcRemoteReleaseEvent >> PotsBcSendingCall
+37:49.187   14   -evt             000001C6F369BB08              BcRemoteReleaseEvent
+37:49.187   14   +evt             000001C6F369BCC8              BcApplyTreatmentEvent
+37:49.187   14  >>evt             000001C6F369BBE8  continue    BcReleaseCallEvent >> PotsBcSendingCall
+37:49.187   14   -evt             000001C6F369BBE8              BcReleaseCallEvent
+37:49.187   14   +msg             000001C6F24F5A18  port=64     PotsProtocol sig=0
+37:49.187   14   +tmr             000001C6F2579EF8  id=5        secs=10 psm=000001C6F2E3D7A0
+37:49.187   14  >>evt             000001C6F369BCC8  suspend     BcApplyTreatmentEvent >> PotsBcException
+37:49.187   14   -evt             000001C6F369BCC8              BcApplyTreatmentEvent
+37:49.187   14   -msg             000001C6F24F5888  port=65     CipRelSignal
+37:49.188   14  <<msg             000001C6F24F5A18  port=64     PotsSuperviseSignal
+37:49.188   14   -msg             000001C6F24F5A18  port=64     PotsSuperviseSignal
+37:49.188   14   -psm             000001C6F2E3DA08  port=65     CipObcFactory
+37:49.188   14  -port             000001C6F2342E08  port=65     CipObcFactory
+37:49.188   18> RXNET        121  000001C6ED909A00  msg         PotsShelfFactory
+37:49.188   18   +msg             000001C6F24F5BA8              PotsSuperviseSignal
+37:49.188   14> TRANS        161  000001C6ED909A00  msg prio=2  PotsSuperviseSignal
+37:49.188   14  >>msg             000001C6F24F5BA8              PotsSuperviseSignal
+37:49.188   14   -msg             000001C6F24F5BA8              PotsSuperviseSignal
+37:51.200   17> RXNET         73  000001C6F21E3648  ssm         PotsCallFactory
+37:51.200   17   +msg             000001C6F24F5EC8              PotsOnhookSignal
+37:51.200   14> TRANS        489  000001C6F21E3648  ssm prio=2  PotsOnhookSignal
+37:51.200   14  >>msg             000001C6F24F5EC8  port=64     PotsOnhookSignal
+37:51.200   14   +evt             000001C6F369BDA8              AnalyzeMsgEvent
+37:51.200   14   -tmr             000001C6F2579EF8  id=5        secs=10 psm=000001C6F2E3D7A0
+37:51.200   14   +evt             000001C6F369BE88              BcLocalReleaseEvent
+37:51.200   14  >>evt             000001C6F369BDA8  continue    AnalyzeMsgEvent >> PotsBcException
+37:51.200   14   -evt             000001C6F369BDA8              AnalyzeMsgEvent
+37:51.200   14   +msg             000001C6F24F6058  port=64     PotsProtocol sig=0
+37:51.200   14  >>evt             000001C6F369BE88  suspend     BcLocalReleaseEvent >> PotsBcException
+37:51.200   14   -evt             000001C6F369BE88              BcLocalReleaseEvent
+37:51.200   14   -msg             000001C6F24F5EC8  port=64     PotsOnhookSignal
+37:51.201   14  <<msg             000001C6F24F6058  port=64     PotsReleaseSignal
+37:51.201   14   -msg             000001C6F24F6058  port=64     PotsReleaseSignal
+37:51.201   14   -psm             000001C6F2E3D7A0  port=64     PotsCallFactory
+37:51.201   14  -port             000001C6F2342D50  port=64     PotsCallFactory
+37:51.201   14   -ssm             000001C6F330A7A0              PotsBcService
+37:51.201   18> RXNET         64  000001C6ED909A00  msg         PotsShelfFactory
+37:51.201   18   +msg             000001C6F24F61E8              PotsReleaseSignal
+37:51.202   14> TRANS         71  000001C6ED909A00  msg prio=2  PotsReleaseSignal
+37:51.202   14  >>msg             000001C6F24F61E8              PotsReleaseSignal
+37:51.202   14   -msg             000001C6F24F61E8              PotsReleaseSignal
 END OF TRACE
 END OF MSC

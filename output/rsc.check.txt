@@ -1,26 +1,26 @@
 LINE COUNTS
-   82563   source code not in one of the categories below
-   42782   blank line
-   19021   blank comment
+   82625   source code not in one of the categories below
+   42780   blank line
+   19017   blank comment
    10714   comment at the top of a file (e.g. for the file's name or license info)
-    8284   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   21977   comment not in one of the categories above (e.g. //  <text>)
-   16862   bare left brace
-   15271   bare right brace
+    8282   comment followed by a repeated character to draw a rule (e.g. //---- ...)
+   21970   comment not in one of the categories above (e.g. //  <text>)
+   16867   bare left brace
+   15276   bare right brace
     1592   bare right brace with semicolon
     1792   access control
-    5193   invocation of Debug::ft
+    5192   invocation of Debug::ft
      668   definition of an fn_name
-    6577   #include directive
+    6582   #include directive
     1179   preprocessor directive other than #include
-     980   using statement
-  235455   TOTAL
+     982   using statement
+  235518   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   139  C-style cast
   W005    56  Functional cast
   W006   120  reinterpret_cast
-  W007   656  Cast down the inheritance hierarchy
+  W007   657  Cast down the inheritance hierarchy
   W008    47  Cast removes const qualification
   W009    15  Pointer arithmetic
 * W015     3  #include not sorted in standard order
@@ -51,7 +51,6 @@ WARNING COUNTS (* if supported by >fix)
   W075   404  Virtual function is public
 * W077    58  Virtual function has no overrides
   W082   115  Adjacent arguments have the same type
-* W084    12  Override renames argument in root base class
 * W088    15  Argument could be const
 * W090   100  Function could be const
 * W092   119  Function could be free
@@ -69,7 +68,6 @@ WARNING COUNTS (* if supported by >fix)
 * W127    16  Data could be free
 * W130     9  Redundant scope
   W131     2  C-style preprocessor directive
-* W138     1  Override not sorted in standard order
   W141     3  Function could be moved to a subclass
 ====================================================================================================================================
 WARNINGS SORTED BY TYPE/FILE/LINE (i = informational)
@@ -115,7 +113,7 @@ W004 C-style cast
   nb/BuddyHeap.cpp(955):       if((HeapBlock*) block->link.prev->next != block)
   nb/BuddyHeap.cpp(957):       if((HeapBlock*) block->link.next->prev != block)
   nb/Class.cpp(227):    return (Object*) addr;
-  nb/CliPtrParm.cpp(91):          p = (void*) n;
+  nb/CliPtrParm.cpp(89):          p = (void*) n;
   nb/Formatters.cpp(162):       auto base = (const Base*) obj;
   nb/LogBuffer.cpp(313):    auto after = (ptr_t) next_ + size;
   nb/LogBuffer.cpp(326):       if(wrap && (after > (const_ptr_t) first)) return nullptr;
@@ -129,14 +127,14 @@ W004 C-style cast
   nb/ObjectPool.cpp(335):          auto b = (ObjectBlock*) &seg[j];
   nb/ObjectPool.cpp(385):             auto b = (ObjectBlock*) &seg[j];
   nb/ObjectPool.cpp(421):             auto curr = (Pooled*) getptr1(item, diff);
-  nb/ObjectPool.cpp(850):       return (ObjectBlock*) &blocks_[0][0];
-  nb/ObjectPool.cpp(896):          auto b = (ObjectBlock*) &seg[j];
-  nb/ObjectPool.cpp(944):       return (ObjectBlock*) &blocks_[i][j];
-  nb/ObjectPool.cpp(969):             auto b = (ObjectBlock*) &seg[j];
-  nb/ObjectPool.cpp(1000):    auto block = (const_ptr_t) ObjToBlock(obj);
-  nb/ObjectPool.cpp(1001):    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
-  nb/ObjectPool.cpp(1005):       auto b0 = (const_ptr_t) &blocks_[i][0];
-  nb/ObjectPool.cpp(1068):          auto b = (ObjectBlock*) &seg[j];
+  nb/ObjectPool.cpp(856):       return (ObjectBlock*) &blocks_[0][0];
+  nb/ObjectPool.cpp(902):          auto b = (ObjectBlock*) &seg[j];
+  nb/ObjectPool.cpp(950):       return (ObjectBlock*) &blocks_[i][j];
+  nb/ObjectPool.cpp(975):             auto b = (ObjectBlock*) &seg[j];
+  nb/ObjectPool.cpp(1006):    auto block = (const_ptr_t) ObjToBlock(obj);
+  nb/ObjectPool.cpp(1007):    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
+  nb/ObjectPool.cpp(1011):       auto b0 = (const_ptr_t) &blocks_[i][0];
+  nb/ObjectPool.cpp(1074):          auto b = (ObjectBlock*) &seg[j];
   nb/Pooled.cpp(137):    auto obj = (Pooled*) addr;
   nb/Q1Way.h(143):       auto ante = (Q1Link*)
   nb/Q1Way.h(166):       return (T*) getptr1(item, diff_);  // location of item's vptr
@@ -209,7 +207,7 @@ W004 C-style cast
   nw/SysUdpSocket.win.cpp(185):       peer = (sockaddr*) &ipv6peer;
   nw/SysUdpSocket.win.cpp(192):          ((IPv4Addr&) ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
   nw/SysUdpSocket.win.cpp(193):       peer = (sockaddr*) &ipv4peer;
-  sb/SbIncrement.cpp(772):    ((ProtocolSM*) p)->Kill();
+  sb/SbIncrement.cpp(767):    ((ProtocolSM*) p)->Kill();
   sb/TlvMessage.cpp(166):    auto pptr = (TlvParm*) (layout->bytes + layout->header.length);
   sb/TlvMessage.cpp(250):    return (Fence*) fence;
   sb/TlvMessage.cpp(395):    pit.pptr = (TlvParm*) &pit.mptr->bytes[nextIndex];
@@ -242,28 +240,28 @@ W005 Functional cast
   mb/Tones.h(73):    Id Tid() const { return Id(tid_.GetId()); }
   nb/BuddyHeap.cpp(787):    return BlockState(state);
   nb/Memory.cpp(225):       heaps.push_back(Memory::AccessHeap(MemoryType(m)));
-  nb/NbIncrement.cpp(641):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-  nb/NbIncrement.cpp(1048):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-  nb/NbIncrement.cpp(1236):          auto type = MemoryType(id);
-  nb/NbIncrement.cpp(1253):       auto type = MemoryType(memtype);
-  nb/NbIncrement.cpp(1285):          auto type = MemoryType(m);
-  nb/NbIncrement.cpp(1296):          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-  nb/NbIncrement.cpp(1306):          auto type = MemoryType(memtype);
-  nb/NbIncrement.cpp(1672):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-  nb/NbIncrement.cpp(3304):       auto heap = Memory::AccessHeap(MemoryType(m));
+  nb/NbIncrement.cpp(644):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
+  nb/NbIncrement.cpp(1045):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+  nb/NbIncrement.cpp(1234):          auto type = MemoryType(id);
+  nb/NbIncrement.cpp(1251):       auto type = MemoryType(memtype);
+  nb/NbIncrement.cpp(1283):          auto type = MemoryType(m);
+  nb/NbIncrement.cpp(1294):          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+  nb/NbIncrement.cpp(1304):          auto type = MemoryType(memtype);
+  nb/NbIncrement.cpp(1670):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+  nb/NbIncrement.cpp(3305):       auto heap = Memory::AccessHeap(MemoryType(m));
   nb/NbTracer.cpp(228):             stream << Faction(f) << CRLF;
   nb/ObjectPool.h(98):    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
   nb/TraceBuffer.cpp(593):    stream << indent << "buffsize : " << int(std::log2(size_));
-  nt/NtIncrement.cpp(3594):    auto test = RecoveryThread::Test(index);
+  nt/NtIncrement.cpp(3596):    auto test = RecoveryThread::Test(index);
   nw/SysIpL2Addr.cpp(64):    byte = uint8_t(value);
   nw/SysIpL2Addr.cpp(101):    quartet = uint16_t(value);
   nw/SysIpL3Addr.cpp(64):    port = ipport_t(value);
   pb/PotsFeature.h(72):    Id Fid() const { return Id(fid_.GetId()); }
-  sb/Factory.h(91):    Id Fid() const { return Id(fid_.GetId()); }
+  sb/Factory.h(90):    Id Fid() const { return Id(fid_.GetId()); }
   sb/InvokerPool.h(72):       { return NodeBase::Faction(faction_.GetId()); }
   sb/InvokerPoolRegistry.cpp(89):       auto p = reg->Pool(Faction(id));
   sb/Parameter.h(85):    Id Pid() const { return Id(pid_.GetId()); }
-  sb/SbIncrement.cpp(729):       auto pool = reg->Pool(Faction(sf));
+  sb/SbIncrement.cpp(724):       auto pool = reg->Pool(Faction(sf));
   sb/SbTrace.cpp(103):    width -= col_t(label.size());
   sb/SbTrace.cpp(193):          stream << strClass(reg->Services().At(ServiceId(cid_)), false);
   sb/SbTrace.cpp(198):          stream << strClass(reg->Factories().At(FactoryId(cid_)), false);
@@ -363,7 +361,7 @@ W006 reinterpret_cast
   pb/PotsProtocol.cpp(831):    reinterpret_cast<const PotsScanInfo*>(bytes)->Display(stream, prefix);
   sb/Context.cpp(576):    auto fake = reinterpret_cast<const Context*>(&local);
   sb/Context.cpp(865):             auto toi = reinterpret_cast<TimeoutInfo*>(pptr->bytes);
-  sb/Factory.cpp(201):    auto fake = reinterpret_cast<const Factory*>(&local);
+  sb/Factory.cpp(202):    auto fake = reinterpret_cast<const Factory*>(&local);
   sb/Initiator.cpp(218):    auto fake = reinterpret_cast<const Initiator*>(&local);
   sb/InvokerPool.cpp(283):    auto fake = reinterpret_cast<const InvokerPool*>(&local);
   sb/InvokerThread.cpp(130):    auto fake = reinterpret_cast<const InvokerThread*>(&local);
@@ -678,7 +676,7 @@ W007 Cast down the inheritance hierarchy
   dip/BotThread.cpp(203):    DipIpBufferPtr ipb(static_cast<DipIpBuffer*>(msg));
   dip/DipProtocol.cpp(274):    auto dipbuff = static_cast<DipIpBuffer*>(&buff);
   dip/DipProtocol.cpp(327):    DipIpBufferPtr dipbuff(static_cast<DipIpBuffer*>(buff.release()));
-  mb/MbPools.cpp(82):          auto mep = static_cast<const MediaEndpt*>(*obj);
+  mb/MbPools.cpp(77):          auto mep = static_cast<const MediaEndpt*>(*obj);
   mb/MediaPsm.cpp(228):    if(root->Sid() != TestServiceId) return static_cast<MediaSsm*>(root);
   mb/MediaSsm.cpp(86):       auto mpsm = static_cast<MediaPsm*>(psm);
   mb/MediaSsm.cpp(108):       auto mpsm = static_cast<MediaPsm*>(psm);
@@ -697,6 +695,7 @@ W007 Cast down the inheritance hierarchy
   nb/FunctionTrace.cpp(913):       auto curr = static_cast<FunctionTrace*>(rec);
   nb/LogThread.cpp(85):       (static_cast<CfgIntParm*>(reg->FindParm("NoSpoolingMessageCount")));
   nb/MemoryTrace.cpp(89):       auto curr = static_cast<MemoryTrace*>(rec);
+  nb/NbPools.cpp(108):          auto buff = static_cast<const MsgBuffer*>(*obj);
   nb/TraceBuffer.cpp(447):          auto ft = static_cast<FunctionTrace*>(rec);
   nb/TraceBuffer.cpp(478):          auto ft = static_cast<FunctionTrace*>(rec);
   nt/FunctionProfiler.cpp(203):             auto ft = static_cast<FunctionTrace*>(rec);
@@ -728,7 +727,7 @@ W007 Cast down the inheritance hierarchy
   sb/Context.cpp(756):                inv = static_cast<InvokerThread*>(Thread::RunningThread());
   sb/Context.cpp(861):          auto pptr = static_cast<TlvMessage*>(m)->FindParm(Parameter::Timeout);
   sb/InvokerPool.cpp(240):    invokersCfg_.reset(static_cast<CfgIntParm*>(reg->FindParm(parmKey)));
-  sb/InvokerPool.cpp(567):       auto inv = static_cast<InvokerThread*>(Thread::RunningThread());
+  sb/InvokerPool.cpp(566):       auto inv = static_cast<InvokerThread*>(Thread::RunningThread());
   sb/MsgContext.cpp(75):    static_cast<MsgFactory*>(fac)->ProcessIcMsg(msg);
   sb/MsgPort.cpp(75):    locAddr_.sbAddr_.fid = static_cast<ProtocolSM&>(upper).GetFactory();
   sb/MsgPort.cpp(147):    return static_cast<PsmFactory*>(fac)->AllocIcPsm(msg, *this);
@@ -743,31 +742,31 @@ W007 Cast down the inheritance hierarchy
   sb/SbInputHandler.cpp(103):    SbIpBufferPtr sbbuff(static_cast<SbIpBuffer*>(buff.release()));
   sb/SbInvokerPools.cpp(62):       (static_cast<CfgIntParm*>(reg->FindParm("NoIngressQueueLength")));
   sb/SbInvokerPools.cpp(73):       (static_cast<CfgIntParm*>(reg->FindParm("NoIngressMessageCount")));
-  sb/SbPools.cpp(189):          auto ctx = static_cast<const Context*>(*obj);
-  sb/SbPools.cpp(274):          auto msg = static_cast<const Message*>(*obj);
-  sb/SbPools.cpp(339):       auto port = static_cast<MsgPort*>(obj);
-  sb/SbPools.cpp(378):          auto port = static_cast<const MsgPort*>(*obj);
-  sb/SbPools.cpp(427):    auto psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
-  sb/SbPools.cpp(444):       psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
+  sb/SbPools.cpp(185):          auto ctx = static_cast<const Context*>(*obj);
+  sb/SbPools.cpp(272):          auto msg = static_cast<const Message*>(*obj);
+  sb/SbPools.cpp(343):       auto port = static_cast<MsgPort*>(obj);
+  sb/SbPools.cpp(377):          auto port = static_cast<const MsgPort*>(*obj);
+  sb/SbPools.cpp(432):    auto psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
+  sb/SbPools.cpp(449):       psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
   sb/SbPools.cpp(488):          auto psm = static_cast<const ProtocolSM*>(*obj);
-  sb/SbPools.cpp(545):          auto ssm = static_cast<const ServiceSM*>(*obj);
-  sb/SbPools.cpp(658):          auto tmr = static_cast<const Timer*>(*obj);
+  sb/SbPools.cpp(546):          auto ssm = static_cast<const ServiceSM*>(*obj);
+  sb/SbPools.cpp(661):          auto tmr = static_cast<const Timer*>(*obj);
   sb/SbTrace.cpp(403):          bt = static_cast<BuffTrace*>(rec);
   sb/SbTrace.cpp(856):       curr_ = static_cast<const AnalyzeSapEvent&>(sxp).CurrEvent()->Eid();
   sb/SbTrace.cpp(859):       curr_ = static_cast<const AnalyzeSnpEvent&>(sxp).CurrEvent()->Eid();
   sb/SbTrace.cpp(886):    mod_((static_cast<const InitiationReqEvent&>(sip)).GetModifier())
-  sb/ServiceSM.cpp(469):             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
-  sb/ServiceSM.cpp(473):          modifierSsm = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrSsm();
-  sb/ServiceSM.cpp(474):          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
-  sb/ServiceSM.cpp(525):             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
-  sb/ServiceSM.cpp(531):          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
-  sb/ServiceSM.cpp(532):          modifierInit = static_cast<AnalyzeSapEvent*>
-  sb/ServiceSM.cpp(785):             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
-  sb/ServiceSM.cpp(788):             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
-  sb/ServiceSM.cpp(886):          initEvent = static_cast<InitiationReqEvent*>(nextEvent);
-  sb/ServiceSM.cpp(890):             initEvent->SetSapEvent(static_cast<AnalyzeSapEvent&>(sapEvent));
-  sb/ServiceSM.cpp(952):             auto sibling = static_cast<InitiationReqEvent*>
-  sb/ServiceSM.cpp(993):    auto& initEvent = static_cast<InitiationReqEvent&>(currEvent);
+  sb/ServiceSM.cpp(474):             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
+  sb/ServiceSM.cpp(478):          modifierSsm = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrSsm();
+  sb/ServiceSM.cpp(479):          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
+  sb/ServiceSM.cpp(530):             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
+  sb/ServiceSM.cpp(536):          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
+  sb/ServiceSM.cpp(537):          modifierInit = static_cast<AnalyzeSapEvent*>
+  sb/ServiceSM.cpp(790):             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
+  sb/ServiceSM.cpp(793):             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
+  sb/ServiceSM.cpp(891):          initEvent = static_cast<InitiationReqEvent*>(nextEvent);
+  sb/ServiceSM.cpp(895):             initEvent->SetSapEvent(static_cast<AnalyzeSapEvent&>(sapEvent));
+  sb/ServiceSM.cpp(957):             auto sibling = static_cast<InitiationReqEvent*>
+  sb/ServiceSM.cpp(998):    auto& initEvent = static_cast<InitiationReqEvent&>(currEvent);
   sb/SsmContext.cpp(82):    return static_cast<SsmFactory*>(fac)->AllocRoot(msg, psm);
   sb/TlvIntParameter.h(69):       auto& tlvmsg = static_cast<TlvMessage&>(msg);
   sb/TlvIntParameter.h(101):       auto& tlvmsg = static_cast<const TlvMessage&>(msg);
@@ -1093,8 +1092,8 @@ W008 Cast removes const qualification
   nb/Algorithms.cpp(50):    return (void*) ((const_ptr_t) ptr1 + diff);
   nb/Base.cpp(67):    objects.push_back(const_cast<Base*>(this));
   nb/SysThread.win.cpp(191):       (_beginthreadex_proc_type) EnterThread, (void*) client, 0, &id);
-  sb/MsgPort.cpp(342):    return const_cast<MsgPort*>(this);
-  sb/ProtocolSM.cpp(645):    if(upper == nullptr) return const_cast<ProtocolSM*>(this);
+  sb/MsgPort.cpp(344):    return const_cast<MsgPort*>(this);
+  sb/ProtocolSM.cpp(650):    if(upper == nullptr) return const_cast<ProtocolSM*>(this);
   sb/TlvMessage.cpp(395):    pit.pptr = (TlvParm*) &pit.mptr->bytes[nextIndex];
 W009 Pointer arithmetic
   dip/DipProtocol.cpp(211):       dest = payload + received;
@@ -1548,9 +1547,9 @@ W026 Unused argument
   pb/PotsFeature.h(95/1):       (PotsProfile& profile, CliThread& cli) const = 0;  //d
   pb/PotsFeatureProfile.h(63/1):    virtual bool Deactivate(PotsProfile& profile);
   pb/PotsFeatureProfile.h(87/1):    virtual bool Unsubscribe(PotsProfile& profile);
-  sb/Factory.h(131/1):    virtual Message* AllocOgMsg(SignalId sid) const;
-  sb/Factory.h(151/1):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
-  sb/Factory.h(151/2):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+  sb/Factory.h(130/1):    virtual Message* AllocOgMsg(SignalId sid) const;
+  sb/Factory.h(150/1):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+  sb/Factory.h(150/2):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
   sb/ProtocolLayer.h(150/1):    virtual ProtocolLayer* AllocLower(const Message* msg);
   sb/ProtocolSM.h(290/1):    virtual void MsgHandled(Message& msg) { }
   sb/ProtocolSM.h(296/1):    virtual void RestoreIcMsg(Message& msg) { }
@@ -1621,7 +1620,7 @@ W030 Unused enumerator
   nb/SysTypes.h(198):    MemReadExecute = 5,       // r-x
   nb/SysTypes.h(200):    MemReadWriteExecute = 7,  // rwx
   nb/ToolTypes.h(66):    TraceFailed,        // operation failed for some other reason
-  sb/Factory.h(85):       PortAllocFailed,      // failed to create PSM for context
+  sb/Factory.h(84):       PortAllocFailed,      // failed to create PSM for context
   sb/Message.h(88):       IllegalSignal,   // illegal signal found              0000  sid
   sb/Message.h(89):       IllegalParm,     // illegal parameter found          index  pid
   sb/Message.h(90):       IncompleteParm,  // parameter too short              index  pid
@@ -1724,7 +1723,7 @@ W032 Unused function
   rsc/main.cpp(123): main_t main(int argc, char* argv[])
   sb/Context.h(120):    static void Kill(NodeBase::debug64_t errval, NodeBase::debug64_t offset);
   sb/Context.h(125):    static void Dump(NodeBase::fn_name_arg func,
-  sb/Factory.h(231):    void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
+  sb/Factory.h(230):    void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
   sb/GlobalAddress.h(47):    GlobalAddress(const NetworkBase::SysIpL3Addr& l3Addr, FactoryId fid);
   sb/GlobalAddress.h(66):    GlobalAddress(GlobalAddress&& that) = default;
   sb/LocalAddress.h(55):    LocalAddress(LocalAddress&& that) = default;
@@ -1902,11 +1901,11 @@ W042 Member could be private
   pb/PotsFeatureProfile.h(67):    PotsFeature::Id Fid() const { return fid_; }
   sb/Context.h(158):    bool StopTimer(const Base& owner, TimerId tid);
   sb/Context.h(192):    virtual void EndOfTransaction() { }
-  sb/Event.h(130):    virtual bool Save();
-  sb/Event.h(134):    virtual Event* Restore(EventHandler::Rc& rc);
-  sb/Event.h(138):    virtual void Free();
-  sb/Factory.h(151):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
-  sb/Factory.h(235):    virtual Context* AllocContext() const;
+  sb/Event.h(129):    virtual bool Save();
+  sb/Event.h(133):    virtual Event* Restore(EventHandler::Rc& rc);
+  sb/Event.h(137):    virtual void Free();
+  sb/Factory.h(150):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+  sb/Factory.h(234):    virtual Context* AllocContext() const;
   sb/InvokerPool.h(76):    const NodeBase::Registry<InvokerThread>& Invokers() const
   sb/InvokerThread.h(57):    static NodeBase::word RtcYieldPercent() { return RtcYieldPercent_; }
   sb/Message.h(333):    virtual void Handled(bool retain);
@@ -1928,7 +1927,7 @@ W042 Member could be private
   sb/TlvMessage.h(280):    TlvMsgLayout* TlvLayout() const
   sb/TlvMessage.h(291):    Fence* FencePtr() const;
   sb/TlvMessage.h(295):    void CheckFence() const;
-  sb/Trigger.h(80):    static bool IsValidId(Id tid)
+  sb/Trigger.h(79):    static bool IsValidId(Id tid)
   sn/PotsCwtService.cpp(263):    void StartTimer(TimerId tid, uint32_t secs);
   sn/PotsMultiplexer.h(160):    void SetProfile(PotsProfile* prof) { prof_ = prof; }
   sn/PotsSessions.h(410):    ProtocolSM* TimerPsm(TimerId tid) const;
@@ -2001,7 +2000,7 @@ W043 Member could be protected
   nw/SysSocket.h(128):    virtual AllocRc SetService(const IpService* service, bool shared);
   nw/SysSocket.h(145):    void OutputLog(NodeBase::LogId id,
   pb/PotsProtocol.h(263):    explicit PotsMessage(SbIpBufferPtr& buff);
-  sb/Event.h(96):    enum Location
+  sb/Event.h(95):    enum Location
   sb/Message.h(132):    virtual InspectRc InspectMsg(NodeBase::debug64_t& errval) const;
   sb/Message.h(241):    NodeBase::MsgDirection Dir() const;
   sb/ProtocolLayer.h(64):    bool IsUppermost() const { return upper_ == nullptr; }
@@ -2517,7 +2516,7 @@ W075 Virtual function is public
   nb/ObjectPool.h(103):    virtual Pooled* DeqBlock(size_t size);
   nb/ObjectPool.h(108):    virtual void EnqBlock(Pooled* obj, bool deleted);
   nb/ObjectPool.h(184):    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
-  nb/Pooled.h(66):    virtual bool Passes(uint32_t filter) const { return assigned_; }
+  nb/Pooled.h(66):    virtual bool Passes(uint32_t selector) const { return assigned_; }
   nb/Statistics.h(64):    virtual uint64_t Overall() const;
   nb/Statistics.h(68):    virtual void DisplayStat(std::ostream& stream, const Flags& options) const;
   nb/StatisticsGroup.h(66):    virtual void DisplayStats
@@ -2568,14 +2567,14 @@ W075 Virtual function is public
   sb/Context.h(106):    virtual ProtocolSM* FirstPsm() const { return nullptr; }
   sb/Context.h(110):    virtual void NextPsm(ProtocolSM*& psm) const { psm = nullptr; }
   sb/Context.h(114):    virtual void NextPort(MsgPort*& port) const { port = nullptr; }
-  sb/EventHandler.h(123):    virtual Rc ProcessEvent
-  sb/Factory.h(125):    virtual NodeBase::CliText* CreateText() const;
-  sb/Factory.h(131):    virtual Message* AllocOgMsg(SignalId sid) const;
-  sb/Factory.h(138):    virtual bool InjectMsg(Message& msg) const;
-  sb/Factory.h(144):    virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const;
-  sb/Factory.h(151):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
-  sb/Factory.h(161):    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
-  sb/Factory.h(183):    virtual void DisplayStats
+  sb/EventHandler.h(122):    virtual Rc ProcessEvent
+  sb/Factory.h(124):    virtual NodeBase::CliText* CreateText() const;
+  sb/Factory.h(130):    virtual Message* AllocOgMsg(SignalId sid) const;
+  sb/Factory.h(137):    virtual bool InjectMsg(Message& msg) const;
+  sb/Factory.h(143):    virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const;
+  sb/Factory.h(150):    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+  sb/Factory.h(160):    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
+  sb/Factory.h(182):    virtual void DisplayStats
   sb/InvokerPool.h(95):    virtual void DisplayStats
   sb/Message.h(132):    virtual InspectRc InspectMsg(NodeBase::debug64_t& errval) const;
   sb/Message.h(152):    virtual void Save();
@@ -2650,7 +2649,7 @@ W077 Virtual function has no overrides
   nw/SysTcpSocket.h(181):    virtual void Acquire();
   nw/SysTcpSocket.h(185):    virtual void Release();
   pb/PotsFeatureProfile.h(87):    virtual bool Unsubscribe(PotsProfile& profile);
-  sb/Factory.h(183):    virtual void DisplayStats
+  sb/Factory.h(182):    virtual void DisplayStats
   sb/InvokerPool.h(95):    virtual void DisplayStats
   sb/Message.h(152):    virtual void Save();
   sb/Message.h(157):    virtual void Unsave();
@@ -2766,7 +2765,7 @@ W082 Adjacent arguments have the same type
   nb/FileThread.h(63):    static void Spool(const std::string& name,
   nb/Formatters.h(99):    int strCompare
   nb/Formatters.h(111):    std::string strCenter(const std::string& s, size_t breadth, size_t blanks);
-  nb/NbCliParms.h(155): bool ValidateOptions
+  nb/NbCliParms.h(137): bool ValidateOptions
   nb/ObjectPool.h(249):    bool BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const;
   nb/ObjectPool.h(254):    bool IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const;
   nb/PosixSignal.h(105):    PosixSignal(signal_t value, c_string name,
@@ -2781,7 +2780,7 @@ W082 Adjacent arguments have the same type
   nw/SysIpL3Addr.h(79):    SysIpL3Addr
   pb/PotsFeature.h(107):    PotsFeature(Id fid, bool deactivation, c_string abbr, c_string name);
   sb/Context.h(132):    void TraceMsg(ProtocolId prid, SignalId sid, NodeBase::MsgDirection dir);
-  sb/Factory.h(168):    void RecordMsg(bool incoming, bool inter, size_t size) const;
+  sb/Factory.h(167):    void RecordMsg(bool incoming, bool inter, size_t size) const;
   sb/GlobalAddress.h(51):    GlobalAddress
   sb/Initiator.h(98):    Initiator(ServiceId sid, ServiceId aid, TriggerId tid, Priority prio);
   sb/SbTrace.cpp(69): static void DisplayEvent(ostream& stream, ServiceId sid, EventId eid)
@@ -2793,19 +2792,6 @@ W082 Adjacent arguments have the same type
   sb/TlvMessage.h(104):    template<class T> T* CopyType
   st/StTestData.h(78):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
   st/TestSessions.h(354):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
-W084 Override renames argument in root base class
-  mb/MediaEndpt.cpp(131/1): bool MediaEndpt::Passes(uint32_t selector) const
-  mb/MediaEndpt.h(91/1):    bool Passes(uint32_t selector) const override;
-  sb/Message.cpp(479/1): bool Message::Passes(uint32_t selector) const
-  sb/Message.h(291/1):    bool Passes(uint32_t selector) const override;
-  sb/MsgPort.cpp(324/1): bool MsgPort::Passes(uint32_t selector) const
-  sb/MsgPort.h(127/1):    bool Passes(uint32_t selector) const override;
-  sb/ProtocolSM.cpp(445/1): bool ProtocolSM::Passes(uint32_t selector) const
-  sb/ProtocolSM.h(200/1):    bool Passes(uint32_t selector) const override;
-  sb/ServiceSM.cpp(397/1): bool ServiceSM::Passes(uint32_t selector) const
-  sb/ServiceSM.h(160/1):    bool Passes(uint32_t selector) const override;
-  sb/Timer.cpp(203/1): bool Timer::Passes(uint32_t selector) const
-  sb/Timer.h(61/1):    bool Passes(uint32_t selector) const override;
 W088 Argument could be const
   ct/Editor.h(507/4):       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
   nb/Object.h(59/2):    virtual void Patch(sel_t selector, void* arguments) { }
@@ -2818,7 +2804,7 @@ W088 Argument could be const
   nb/Registry.h(277/1):    bool Erase(T& item)
   nw/InputHandler.h(138/1):       (IpBuffer& buff, NodeBase::byte_t* src, size_t size) const;
   sb/Context.h(287/1):    bool ProcessMsg(NodeBase::Q1Way<Message>& msgq, const InvokerThread* inv);
-  sb/Factory.h(161/1):    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
+  sb/Factory.h(160/1):    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
   sb/Initiator.h(112/2):       (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const;
   sb/Message.h(132/1):    virtual InspectRc InspectMsg(NodeBase::debug64_t& errval) const;
   sb/TlvMessage.h(206/1):    virtual void DeleteParm(TlvParm& parm);
@@ -2901,8 +2887,8 @@ W090 Function could be const
   pb/PotsProfile.h(118):    bool SetObjAddr(const MsgPort& port);
   sb/Context.h(158):    bool StopTimer(const Base& owner, TimerId tid);
   sb/Context.h(192):    virtual void EndOfTransaction() { }
-  sb/Factory.h(161):    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
-  sb/Factory.h(257):    virtual Rc ReceiveMsg
+  sb/Factory.h(160):    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
+  sb/Factory.h(256):    virtual Rc ReceiveMsg
   sb/InvokerPool.h(154):    void KickThread();
   sb/InvokerPool.h(158):    Context* FindWork();
   sb/InvokerPool.h(177):    void Requeue(Context& ctx);
@@ -2999,7 +2985,6 @@ W092 Function could be free
   nb/Debug.h(106):    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
   nb/Debug.h(110):    static void ResetSwFlags(); // NtIncrement.cpp
   nb/Debug.h(114):    static Flags GetSwFlags(); // NtIncrement.cpp
-  nb/Debug.h(118):    static void noop(debug64_t info = 0); // CxxExecute.cpp
   nb/Element.h(50):    static bool IsUnnamed(); // ModuleRegistry.cpp
   nb/FileThread.h(45):    static ostringstreamPtr CreateStream(); // CliThread.cpp
   nb/FileThread.h(58):    static void Spool(const std::string& name, ostringstreamPtr& stream, // CliThread.cpp
@@ -3022,6 +3007,7 @@ W092 Function could be free
   nb/Thread.h(640):    static void EnableFactions(const FactionFlags& enabled); // ModuleRegistry.cpp
   nb/Thread.h(656):    static TraceRc LogContextSwitches(bool on); // NbIncrement.cpp
   nb/Thread.h(664):    static void DisplayContextSwitches(std::ostream& stream); // NbIncrement.cpp
+  nb/ThreadRegistry.h(118):    static size_t Size(); // NbIncrement.cpp
   nb/TraceBuffer.h(105):    void QueryTools(std::ostream& stream) const; // NbIncrement.cpp
   nw/NwDaemons.h(111):    static TcpIoDaemon* GetDaemon(const TcpIpService* service, ipport_t port); // TcpIpPort.cpp
   nw/NwDaemons.h(138):    static UdpIoDaemon* GetDaemon(const UdpIpService* service, ipport_t port); // UdpIpPort.cpp
@@ -3033,15 +3019,15 @@ W092 Function could be free
   pb/PotsCircuit.h(147):    static void ResetStateCounts(RestartLevel level); // PotsProfileRegistry.cpp
   sb/Context.h(84):    static RootServiceSM* ContextRoot(); // Event.cpp
   sb/Context.h(120):    static void Kill(NodeBase::debug64_t errval, NodeBase::debug64_t offset); // Context.cpp
-  sb/Event.h(70):    static bool AppCanHandle(Id eid) // State.cpp
-  sb/EventHandler.h(92):    static bool AppCanRegister(Id ehid) // Service.cpp
-  sb/EventHandler.h(100):    static bool AppCanUse(Id ehid) // State.cpp
+  sb/Event.h(69):    static bool AppCanHandle(Id eid) // State.cpp
+  sb/EventHandler.h(91):    static bool AppCanRegister(Id ehid) // Service.cpp
+  sb/EventHandler.h(99):    static bool AppCanUse(Id ehid) // State.cpp
   sb/MsgPort.h(172):    static MsgPort* FindPeer(const GlobalAddress& remAddr); // PsmFactory.cpp
   sb/Parameter.h(155):    static NodeBase::c_string ExplainRc(TestRc rc); // StIncrement.cpp
   sb/SbDaemons.h(43):    static InvokerDaemon* GetDaemon(NodeBase::Faction faction, size_t size); // InvokerPool.cpp
   sb/Service.h(80):    static bool IsValidPortId(PortId pid) // State.cpp
   sb/TlvParameter.h(68):    static Id ExtractPid(const TlvParm& parm); // TlvParameter.cpp
-  sb/Trigger.h(80):    static bool IsValidId(Id tid) // ServiceSM.cpp
+  sb/Trigger.h(79):    static bool IsValidId(Id tid) // ServiceSM.cpp
   st/TestSessions.h(113):    static TestPsm* Find(const MsgPort& port); // TestSessions.cpp
 W099 Line contains adjacent spaces
   cb/BcHandlers.cpp(65):    auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
@@ -3293,13 +3279,13 @@ W099 Line contains adjacent spaces
   pb/PotsProtocol.cpp(845):    auto          digits = false;
   pb/PotsProtocol.cpp(846):    auto          flash = false;
   pb/PotsProtocol.cpp(847):    auto          exists = false;
-  sb/Factory.cpp(53):    CounterPtr       icMsgsIntra_;
-  sb/Factory.cpp(54):    CounterPtr       icMsgsInter_;
-  sb/Factory.cpp(56):    CounterPtr       ogMsgsIntra_;
-  sb/Factory.cpp(57):    CounterPtr       ogMsgsInter_;
-  sb/Factory.cpp(59):    CounterPtr       contexts_;
-  sb/Factory.cpp(60):    CounterPtr       msgsDeleted_;
-  sb/Factory.cpp(61):    CounterPtr       ctxsDeleted_;
+  sb/Factory.cpp(54):    CounterPtr       icMsgsIntra_;
+  sb/Factory.cpp(55):    CounterPtr       icMsgsInter_;
+  sb/Factory.cpp(57):    CounterPtr       ogMsgsIntra_;
+  sb/Factory.cpp(58):    CounterPtr       ogMsgsInter_;
+  sb/Factory.cpp(60):    CounterPtr       contexts_;
+  sb/Factory.cpp(61):    CounterPtr       msgsDeleted_;
+  sb/Factory.cpp(62):    CounterPtr       ctxsDeleted_;
   sb/InvokerPool.cpp(120):    CounterPtr       requeues_;
   sb/InvokerPool.cpp(121):    CounterPtr       trojans_;
   sb/InvokerPool.cpp(122):    CounterPtr       lockouts_;
@@ -3339,8 +3325,8 @@ W099 Line contains adjacent spaces
   sn/PotsProxyHandlers.cpp(351):    CauseInfo*    cci;
 W102 Line length exceeds the standard maximum
   cb/BcSsm.cpp(285):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
-  nb/NbIncrement.cpp(3283): "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
-  nb/NbIncrement.cpp(3284): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+  nb/NbIncrement.cpp(3284): "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
+  nb/NbIncrement.cpp(3285): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 W106 Function does not invoke Debug::ft
   an/PotsTrafficThread.cpp(1351): void PotsTrafficThread::RecordHoldingTime(const nsecs_t& time)
   cb/BcProtocol.cpp(226): bool CipUdpService::Enabled() const
@@ -3773,17 +3759,17 @@ W106 Function does not invoke Debug::ft
   nb/ObjectPool.cpp(351): size_t ObjectPool::AllocCount() const
   nb/ObjectPool.cpp(518): size_t ObjectPool::AvailCount() const
   nb/ObjectPool.cpp(525): bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
-  nb/ObjectPool.cpp(734): void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
-  nb/ObjectPool.cpp(829): size_t ObjectPool::Expansions() const
-  nb/ObjectPool.cpp(836): size_t ObjectPool::FailCount() const
-  nb/ObjectPool.cpp(877): size_t ObjectPool::FreeCount() const
-  nb/ObjectPool.cpp(910): bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
-  nb/ObjectPool.cpp(922): size_t ObjectPool::InUseCount() const
-  nb/ObjectPool.cpp(929): size_t ObjectPool::LowAvailCount() const
-  nb/ObjectPool.cpp(936): ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
-  nb/ObjectPool.cpp(955): Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
-  nb/ObjectPool.cpp(1027): ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
-  nb/ObjectPool.cpp(1036): PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
+  nb/ObjectPool.cpp(740): void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
+  nb/ObjectPool.cpp(835): size_t ObjectPool::Expansions() const
+  nb/ObjectPool.cpp(842): size_t ObjectPool::FailCount() const
+  nb/ObjectPool.cpp(883): size_t ObjectPool::FreeCount() const
+  nb/ObjectPool.cpp(916): bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
+  nb/ObjectPool.cpp(928): size_t ObjectPool::InUseCount() const
+  nb/ObjectPool.cpp(935): size_t ObjectPool::LowAvailCount() const
+  nb/ObjectPool.cpp(942): ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
+  nb/ObjectPool.cpp(961): Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
+  nb/ObjectPool.cpp(1033): ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
+  nb/ObjectPool.cpp(1042): PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
   nb/PermanentHeap.cpp(43): PermanentHeap* PermanentHeap::Instance()
   nb/PosixSignal.cpp(124): Flags PS_Break()
   nb/PosixSignal.cpp(129): Flags PS_Delayed()
@@ -3967,13 +3953,13 @@ W106 Function does not invoke Debug::ft
   sb/Context.cpp(930): bool Context::TraceOn()
   sb/Context.cpp(940): bool Context::TraceOn(TransTrace*& trans)
   sb/Event.cpp(137): void Event::Capture
-  sb/Factory.cpp(216): size_t Factory::DiscardedContextCount() const
-  sb/Factory.cpp(223): size_t Factory::DiscardedMessageCount() const
+  sb/Factory.cpp(217): size_t Factory::DiscardedContextCount() const
+  sb/Factory.cpp(224): size_t Factory::DiscardedMessageCount() const
   sb/InitiationReqEvent.cpp(84): void InitiationReqEvent::Capture
-  sb/InvokerPool.cpp(738): void InvokerPool::RecordDelay(MsgPriority prio, const nsecs_t& delay) const
-  sb/InvokerPool.cpp(790): size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
-  sb/InvokerPool.cpp(798): nsecs_t InvokerPool::WorkQMaxDelay(MsgPriority prio) const
-  sb/InvokerPool.cpp(806): size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
+  sb/InvokerPool.cpp(737): void InvokerPool::RecordDelay(MsgPriority prio, const nsecs_t& delay) const
+  sb/InvokerPool.cpp(789): size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
+  sb/InvokerPool.cpp(797): nsecs_t InvokerPool::WorkQMaxDelay(MsgPriority prio) const
+  sb/InvokerPool.cpp(805): size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
   sb/InvokerPoolRegistry.cpp(171): InvokerPool* InvokerPoolRegistry::Pool(Faction faction) const
   sb/InvokerThread.cpp(119): TraceStatus InvokerThread::CalcStatus(bool dynamic) const
   sb/Message.cpp(237): MsgDirection Message::Dir() const
@@ -3990,7 +3976,7 @@ W106 Function does not invoke Debug::ft
   sb/Protocol.cpp(181): void Protocol::NextParm(Parameter*& parm) const
   sb/Protocol.cpp(194): void Protocol::NextSignal(Signal*& sig) const
   sb/ProtocolSM.cpp(445): bool ProtocolSM::Passes(uint32_t selector) const
-  sb/SbPools.cpp(598): void TimerPool::IncrTimeouts() const
+  sb/SbPools.cpp(605): void TimerPool::IncrTimeouts() const
   sb/Service.cpp(366): size_t Service::EventCount() const
   sb/Service.cpp(389): Trigger* Service::GetTrigger(TriggerId tid) const
   sb/ServiceSM.cpp(313): SsmContext* ServiceSM::GetContext() const
@@ -4024,7 +4010,7 @@ W107 Function does not invoke Debug::ft as first statement
   nb/Thread.cpp(2945):    Debug::ft("Thread.SignalHandler");
   nb/Thread.cpp(3020):             Debug::ft("Thread.Start(initializing)");
   nb/Thread.cpp(3567):       Debug::ft(Thread_TrapHandler);  //@
-  nt/NtIncrement.cpp(3252):       Debug::ft(RecoveryThread_Enter);
+  nt/NtIncrement.cpp(3254):       Debug::ft(RecoveryThread_Enter);
   nw/NwLogs.cpp(102):    Debug::ft("NetworkBase.NetworkIsUp");
   sb/Context.cpp(688):    Debug::ft(Context_ProcessWork);
 W110 Override of Base.Display not found
@@ -4060,7 +4046,7 @@ W110 Override of Base.Display not found
   nw/LocalAddrTest.h(110): class SendLocalIpService : public UdpIpService
   nw/NwTracer.h(40): class NwTracer : public NodeBase::Permanent
   pb/PotsProfile.h(81):    struct PotsProfileDynamic : public Persistent
-  sb/Factory.cpp(45): class FactoryStats : public Dynamic
+  sb/Factory.cpp(46): class FactoryStats : public Dynamic
   sb/InvokerPool.cpp(111): class InvokerPoolStats : public Dynamic
   sb/InvokerPool.cpp(152): class InvokerWork : public Dynamic
   sb/SbPools.h(183): class TimerPool : public NodeBase::ObjectPool
@@ -4074,7 +4060,7 @@ W111 Override of Object.Patch not found
   nw/ByteBuffer.h(85): class MediumBuffer : public ByteBuffer
   nw/ByteBuffer.h(96): class LargeBuffer : public ByteBuffer
   nw/ByteBuffer.h(107): class HugeBuffer : public ByteBuffer
-  sb/EventHandler.h(48): class EventHandler : public NodeBase::Immutable
+  sb/EventHandler.h(47): class EventHandler : public NodeBase::Immutable
   sb/TimerProtocol.h(88): class TimeoutParameter : public TlvParameter
 W117 Line can merge with the next line and be under the length limit
   cb/BcCause.cpp(102):    return (use == Mandatory ?
@@ -4087,12 +4073,12 @@ W117 Line can merge with the next line and be under the length limit
   dip/BaseBot.cpp(1707):          (press->message == contents))
   nb/CliStack.h(68):    const CliCommand* FindCommand
   nb/LogBuffer.cpp(189):       stream << fileName_ << SPACE
-  nb/NbIncrement.cpp(1159):    BindText(*new CliText
-  nb/NbIncrement.cpp(1161):    BindText(*new CliText
-  nb/NbIncrement.cpp(2696):    BindText(*new CliText
+  nb/NbIncrement.cpp(1156):    BindText(*new CliText
+  nb/NbIncrement.cpp(1158):    BindText(*new CliText
+  nb/NbIncrement.cpp(2694):    BindText(*new CliText
   nb/TraceBuffer.cpp(559):          (curr->slot_ != TraceRecord::InvalidSlot) &&
-  sb/ServiceSM.cpp(786):                   ->CurrInitiator() != nullptr)
-  sb/ServiceSM.cpp(789):                   ->CurrSsm() != nullptr)
+  sb/ServiceSM.cpp(791):                   ->CurrInitiator() != nullptr)
+  sb/ServiceSM.cpp(794):                   ->CurrSsm() != nullptr)
   sn/PotsCwmService.cpp(611):    BindEventHandler
   sn/PotsCwmService.cpp(625):    BindEventHandler
   sn/PotsCwmService.cpp(629):    BindEventHandler
@@ -4201,9 +4187,9 @@ W119 Argument passed by value is modified
   sb/Message.cpp(603/1): bool Message::Retrieve(ProtocolSM* psm)
   sb/Message.cpp(670/1): bool Message::Send(Route route)
   sb/SbTrace.cpp(387/1):    (BuffTrace* bt, FactoryId fid, SignalId sid, SkipInfo& skip)
-  sb/ServiceSM.cpp(413/1): EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
-  sb/ServiceSM.cpp(853/2):    (const Trigger* trigger, const Initiator* modifier, Event& sapEvent,
-  sb/ServiceSM.cpp(921/2):    (const Trigger* trigger, const Initiator* modifier, Event& snpEvent)
+  sb/ServiceSM.cpp(418/1): EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
+  sb/ServiceSM.cpp(858/2):    (const Trigger* trigger, const Initiator* modifier, Event& sapEvent,
+  sb/ServiceSM.cpp(926/2):    (const Trigger* trigger, const Initiator* modifier, Event& snpEvent)
   sb/TimerRegistry.cpp(76/1): Timer::QId TimerRegistry::CalcQId(uint32_t secs) const
   sb/TlvMessage.cpp(223/2): TlvParm* TlvMessage::CopyParm(const TlvParm& src, ParameterId pid)
   sb/TlvMessage.h(105/3):       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
@@ -4249,12 +4235,10 @@ W130 Redundant scope
 W131 C-style preprocessor directive
   nb/SystemTime.cpp(74): #ifdef OS_WIN
   nb/SystemTime.cpp(79): #ifdef OS_LINUX
-W138 Override not sorted in standard order
-  sb/MsgPort.h(127):    bool Passes(uint32_t selector) const override;
 W141 Function could be moved to a subclass
   nb/CfgBitParm.h(56):    virtual bool NextValue() const = 0; // CfgBoolParm
   sb/Context.h(192):    virtual void EndOfTransaction() { } // MsgContext
-  sb/Factory.h(235):    virtual Context* AllocContext() const; // PsmFactory
+  sb/Factory.h(234):    virtual Context* AllocContext() const; // PsmFactory
 ====================================================================================================================================
 WARNINGS SORTED BY FILE/TYPE/LINE (i = informational)
 an/AnIncrement.cpp
@@ -6449,7 +6433,7 @@ mb/MbModule.h
     28: using namespace NodeBase;
 mb/MbPools.cpp
   W007 Cast down the inheritance hierarchy
-    82:          auto mep = static_cast<const MediaEndpt*>(*obj);
+    77:          auto mep = static_cast<const MediaEndpt*>(*obj);
 * W022 Add using statement
     0:  // namespace NodeBase
     0:  // namespace SessionBase
@@ -6460,8 +6444,6 @@ mb/MediaEndpt.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
     0:  // namespace SessionBase
-* W084 Override renames argument in root base class
-    131/1: bool MediaEndpt::Passes(uint32_t selector) const
 * W106 Function does not invoke Debug::ft
     131: bool MediaEndpt::Passes(uint32_t selector) const
 mb/MediaEndpt.h
@@ -6485,8 +6467,6 @@ mb/MediaEndpt.h
     78:    virtual void Deallocate();
     108:    virtual void EndOfTransaction();
     113:    virtual void ProcessIcMsg(Message& msg);
-* W084 Override renames argument in root base class
-    91/1:    bool Passes(uint32_t selector) const override;
 mb/MediaFailureEvent.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
@@ -6958,7 +6938,7 @@ nb/CliParm.h
     252:    virtual Rc GetIdentifierRc(std::string& s, CliThread& cli,
 nb/CliPtrParm.cpp
   W004 C-style cast
-    91:          p = (void*) n;
+    89:          p = (void*) n;
 nb/CliStack.h
 * W042 Member could be private
     68:    const CliCommand* FindCommand
@@ -7032,7 +7012,6 @@ nb/Debug.h
     106:    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
     110:    static void ResetSwFlags(); // NtIncrement.cpp
     114:    static Flags GetSwFlags(); // NtIncrement.cpp
-    118:    static void noop(debug64_t info = 0); // CxxExecute.cpp
 nb/Deferred.cpp
   W006 reinterpret_cast
     99:    auto fake = reinterpret_cast<const Deferred*>(&local);
@@ -7325,25 +7304,25 @@ nb/NbCliParms.cpp
     132: word ExplainTraceRc(const CliThread& cli, TraceRc rc)
 nb/NbCliParms.h
   W082 Adjacent arguments have the same type
-    155: bool ValidateOptions
+    137: bool ValidateOptions
 nb/NbIncrement.cpp
   W005 Functional cast
-    641:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-    1048:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-    1236:          auto type = MemoryType(id);
-    1253:       auto type = MemoryType(memtype);
-    1285:          auto type = MemoryType(m);
-    1296:          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-    1306:          auto type = MemoryType(memtype);
-    1672:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-    3304:       auto heap = Memory::AccessHeap(MemoryType(m));
+    644:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
+    1045:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+    1234:          auto type = MemoryType(id);
+    1251:       auto type = MemoryType(memtype);
+    1283:          auto type = MemoryType(m);
+    1294:          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+    1304:          auto type = MemoryType(memtype);
+    1670:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+    3305:       auto heap = Memory::AccessHeap(MemoryType(m));
   W102 Line length exceeds the standard maximum
-    3283: "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
-    3284: "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+    3284: "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
+    3285: "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 * W117 Line can merge with the next line and be under the length limit
-    1159:    BindText(*new CliText
-    1161:    BindText(*new CliText
-    2696:    BindText(*new CliText
+    1156:    BindText(*new CliText
+    1158:    BindText(*new CliText
+    2694:    BindText(*new CliText
 nb/NbIncrement.h
 * W028 Unused data
     195:    static const id_t LastNbIndex = 3;
@@ -7362,6 +7341,9 @@ nb/NbIncrement.h
     228:    explicit SaveCommand(bool bind = true);
     245:    ClearWhatParm();
     263:    explicit ClearCommand(bool bind = true);
+nb/NbPools.cpp
+  W007 Cast down the inheritance hierarchy
+    108:          auto buff = static_cast<const MsgBuffer*>(*obj);
 nb/NbTracer.cpp
   W005 Functional cast
     228:             stream << Faction(f) << CRLF;
@@ -7420,14 +7402,14 @@ nb/ObjectPool.cpp
     335:          auto b = (ObjectBlock*) &seg[j];
     385:             auto b = (ObjectBlock*) &seg[j];
     421:             auto curr = (Pooled*) getptr1(item, diff);
-    850:       return (ObjectBlock*) &blocks_[0][0];
-    896:          auto b = (ObjectBlock*) &seg[j];
-    944:       return (ObjectBlock*) &blocks_[i][j];
-    969:             auto b = (ObjectBlock*) &seg[j];
-    1000:    auto block = (const_ptr_t) ObjToBlock(obj);
-    1001:    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
-    1005:       auto b0 = (const_ptr_t) &blocks_[i][0];
-    1068:          auto b = (ObjectBlock*) &seg[j];
+    856:       return (ObjectBlock*) &blocks_[0][0];
+    902:          auto b = (ObjectBlock*) &seg[j];
+    950:       return (ObjectBlock*) &blocks_[i][j];
+    975:             auto b = (ObjectBlock*) &seg[j];
+    1006:    auto block = (const_ptr_t) ObjToBlock(obj);
+    1007:    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
+    1011:       auto b0 = (const_ptr_t) &blocks_[i][0];
+    1074:          auto b = (ObjectBlock*) &seg[j];
   W006 reinterpret_cast
     557:    auto fake = reinterpret_cast<const ObjectPool*>(&local);
 * W099 Line contains adjacent spaces
@@ -7441,17 +7423,17 @@ nb/ObjectPool.cpp
     351: size_t ObjectPool::AllocCount() const
     518: size_t ObjectPool::AvailCount() const
     525: bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
-    734: void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
-    829: size_t ObjectPool::Expansions() const
-    836: size_t ObjectPool::FailCount() const
-    877: size_t ObjectPool::FreeCount() const
-    910: bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
-    922: size_t ObjectPool::InUseCount() const
-    929: size_t ObjectPool::LowAvailCount() const
-    936: ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
-    955: Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
-    1027: ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
-    1036: PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
+    740: void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
+    835: size_t ObjectPool::Expansions() const
+    842: size_t ObjectPool::FailCount() const
+    883: size_t ObjectPool::FreeCount() const
+    916: bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
+    928: size_t ObjectPool::InUseCount() const
+    935: size_t ObjectPool::LowAvailCount() const
+    942: ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
+    961: Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
+    1033: ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
+    1042: PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
   W110 Override of Base.Display not found
     96: class ObjectPoolSizeCfg : public CfgIntParm
     162: class ObjectPoolStats : public Dynamic
@@ -7494,7 +7476,7 @@ nb/Pooled.cpp
     115:    auto fake = reinterpret_cast<const Pooled*>(&local);
 nb/Pooled.h
   W075 Virtual function is public
-    66:    virtual bool Passes(uint32_t filter) const { return assigned_; }
+    66:    virtual bool Passes(uint32_t selector) const { return assigned_; }
 nb/PooledClass.h
   W027 Unused class
     39: class PooledClass : public Class
@@ -7982,6 +7964,9 @@ nb/ThreadRegistry.cpp
     456: bool ThreadRegistry::IsDeleted() const
     480: size_t ThreadRegistry::PreemptableCount() const
     642: size_t ThreadRegistry::Size()
+nb/ThreadRegistry.h
+* W092 Function could be free
+    118:    static size_t Size(); // NbIncrement.cpp
 nb/Tool.cpp
   W006 reinterpret_cast
     67:    auto fake = reinterpret_cast<const Tool*>(&local);
@@ -8075,7 +8060,7 @@ nt/FunctionStats.h
     91:    Q2Link link_;
 nt/NtIncrement.cpp
   W005 Functional cast
-    3594:    auto test = RecoveryThread::Test(index);
+    3596:    auto test = RecoveryThread::Test(index);
   W006 reinterpret_cast
     1612:    auto fake = reinterpret_cast<const Q1WayItem*>(&local);
     2106:    auto fake = reinterpret_cast<const Q2WayItem*>(&local);
@@ -8100,7 +8085,7 @@ nt/NtIncrement.cpp
     2607: RegistryItem::~RegistryItem()
     2635: RegistryPool::RegistryPool()
   W107 Function does not invoke Debug::ft as first statement
-    3252:       Debug::ft(RecoveryThread_Enter);
+    3254:       Debug::ft(RecoveryThread_Enter);
   W110 Override of Base.Display not found
     1357: class LbcPool : public Temporary
 nt/NtIncrement.h
@@ -8934,70 +8919,70 @@ sb/Event.cpp
     137: void Event::Capture
 sb/Event.h
 * W042 Member could be private
-    130:    virtual bool Save();
-    134:    virtual Event* Restore(EventHandler::Rc& rc);
-    138:    virtual void Free();
+    129:    virtual bool Save();
+    133:    virtual Event* Restore(EventHandler::Rc& rc);
+    137:    virtual void Free();
 * W043 Member could be protected
-    96:    enum Location
+    95:    enum Location
 * W092 Function could be free
-    70:    static bool AppCanHandle(Id eid) // State.cpp
+    69:    static bool AppCanHandle(Id eid) // State.cpp
 sb/EventHandler.h
   W075 Virtual function is public
-    123:    virtual Rc ProcessEvent
+    122:    virtual Rc ProcessEvent
 * W092 Function could be free
-    92:    static bool AppCanRegister(Id ehid) // Service.cpp
-    100:    static bool AppCanUse(Id ehid) // State.cpp
+    91:    static bool AppCanRegister(Id ehid) // Service.cpp
+    99:    static bool AppCanUse(Id ehid) // State.cpp
 * W111 Override of Object.Patch not found
-    48: class EventHandler : public NodeBase::Immutable
+    47: class EventHandler : public NodeBase::Immutable
 sb/Factory.cpp
   W006 reinterpret_cast
-    201:    auto fake = reinterpret_cast<const Factory*>(&local);
+    202:    auto fake = reinterpret_cast<const Factory*>(&local);
 * W099 Line contains adjacent spaces
-    53:    CounterPtr       icMsgsIntra_;
-    54:    CounterPtr       icMsgsInter_;
-    56:    CounterPtr       ogMsgsIntra_;
-    57:    CounterPtr       ogMsgsInter_;
-    59:    CounterPtr       contexts_;
-    60:    CounterPtr       msgsDeleted_;
-    61:    CounterPtr       ctxsDeleted_;
+    54:    CounterPtr       icMsgsIntra_;
+    55:    CounterPtr       icMsgsInter_;
+    57:    CounterPtr       ogMsgsIntra_;
+    58:    CounterPtr       ogMsgsInter_;
+    60:    CounterPtr       contexts_;
+    61:    CounterPtr       msgsDeleted_;
+    62:    CounterPtr       ctxsDeleted_;
 * W106 Function does not invoke Debug::ft
-    216: size_t Factory::DiscardedContextCount() const
-    223: size_t Factory::DiscardedMessageCount() const
+    217: size_t Factory::DiscardedContextCount() const
+    224: size_t Factory::DiscardedMessageCount() const
   W110 Override of Base.Display not found
-    45: class FactoryStats : public Dynamic
+    46: class FactoryStats : public Dynamic
 sb/Factory.h
   W005 Functional cast
-    91:    Id Fid() const { return Id(fid_.GetId()); }
+    90:    Id Fid() const { return Id(fid_.GetId()); }
   W026 Unused argument
-    131/1:    virtual Message* AllocOgMsg(SignalId sid) const;
-    151/1:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
-    151/2:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+    130/1:    virtual Message* AllocOgMsg(SignalId sid) const;
+    150/1:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+    150/2:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
 * W030 Unused enumerator
-    85:       PortAllocFailed,      // failed to create PSM for context
+    84:       PortAllocFailed,      // failed to create PSM for context
 * W032 Unused function
-    231:    void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
+    230:    void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
 * W042 Member could be private
-    151:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
-    235:    virtual Context* AllocContext() const;
+    150:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+    234:    virtual Context* AllocContext() const;
   W075 Virtual function is public
-    125:    virtual NodeBase::CliText* CreateText() const;
-    131:    virtual Message* AllocOgMsg(SignalId sid) const;
-    138:    virtual bool InjectMsg(Message& msg) const;
-    144:    virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const;
-    151:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
-    161:    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
-    183:    virtual void DisplayStats
+    124:    virtual NodeBase::CliText* CreateText() const;
+    130:    virtual Message* AllocOgMsg(SignalId sid) const;
+    137:    virtual bool InjectMsg(Message& msg) const;
+    143:    virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const;
+    150:    virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+    160:    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
+    182:    virtual void DisplayStats
 * W077 Virtual function has no overrides
-    183:    virtual void DisplayStats
+    182:    virtual void DisplayStats
   W082 Adjacent arguments have the same type
-    168:    void RecordMsg(bool incoming, bool inter, size_t size) const;
+    167:    void RecordMsg(bool incoming, bool inter, size_t size) const;
 * W088 Argument could be const
-    161/1:    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
+    160/1:    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
 * W090 Function could be const
-    161:    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
-    257:    virtual Rc ReceiveMsg
+    160:    virtual bool ScreenIcMsgs(NodeBase::Q1Way<Message>& msgq);
+    256:    virtual Rc ReceiveMsg
   W141 Function could be moved to a subclass
-    235:    virtual Context* AllocContext() const; // PsmFactory
+    234:    virtual Context* AllocContext() const; // PsmFactory
 sb/GlobalAddress.h
 * W032 Unused function
     47:    GlobalAddress(const NetworkBase::SysIpL3Addr& l3Addr, FactoryId fid);
@@ -9024,16 +9009,16 @@ sb/InvokerPool.cpp
     283:    auto fake = reinterpret_cast<const InvokerPool*>(&local);
   W007 Cast down the inheritance hierarchy
     240:    invokersCfg_.reset(static_cast<CfgIntParm*>(reg->FindParm(parmKey)));
-    567:       auto inv = static_cast<InvokerThread*>(Thread::RunningThread());
+    566:       auto inv = static_cast<InvokerThread*>(Thread::RunningThread());
 * W099 Line contains adjacent spaces
     120:    CounterPtr       requeues_;
     121:    CounterPtr       trojans_;
     122:    CounterPtr       lockouts_;
 * W106 Function does not invoke Debug::ft
-    738: void InvokerPool::RecordDelay(MsgPriority prio, const nsecs_t& delay) const
-    790: size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
-    798: nsecs_t InvokerPool::WorkQMaxDelay(MsgPriority prio) const
-    806: size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
+    737: void InvokerPool::RecordDelay(MsgPriority prio, const nsecs_t& delay) const
+    789: size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
+    797: nsecs_t InvokerPool::WorkQMaxDelay(MsgPriority prio) const
+    805: size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
   W110 Override of Base.Display not found
     111: class InvokerPoolStats : public Dynamic
     152: class InvokerWork : public Dynamic
@@ -9071,8 +9056,6 @@ sb/LocalAddress.h
 * W032 Unused function
     55:    LocalAddress(LocalAddress&& that) = default;
 sb/Message.cpp
-* W084 Override renames argument in root base class
-    479/1: bool Message::Passes(uint32_t selector) const
 * W106 Function does not invoke Debug::ft
     237: MsgDirection Message::Dir() const
     324: ProtocolId Message::GetProtocol() const
@@ -9126,8 +9109,6 @@ sb/Message.h
     333:    virtual void Handled(bool retain);
     337:    virtual bool SendFailure(NodeBase::debug64_t errval);
     345:    virtual void ClearContext() const;
-* W084 Override renames argument in root base class
-    291/1:    bool Passes(uint32_t selector) const override;
 * W088 Argument could be const
     132/1:    virtual InspectRc InspectMsg(NodeBase::debug64_t& errval) const;
 * W090 Function could be const
@@ -9164,20 +9145,14 @@ sb/MsgPort.cpp
     205:    auto port = static_cast<MsgPort*>(pool->BidToObj(locAddr.bid));
     260:       static_cast<PsmFactory*>(fac)->PortAllocated(*this, msg);
   W008 Cast removes const qualification
-    342:    return const_cast<MsgPort*>(this);
-* W084 Override renames argument in root base class
-    324/1: bool MsgPort::Passes(uint32_t selector) const
+    344:    return const_cast<MsgPort*>(this);
 * W106 Function does not invoke Debug::ft
     324: bool MsgPort::Passes(uint32_t selector) const
 sb/MsgPort.h
 * W042 Member could be private
     53:    MsgPort(const Message& msg, Context& ctx);
-* W084 Override renames argument in root base class
-    127/1:    bool Passes(uint32_t selector) const override;
 * W092 Function could be free
     172:    static MsgPort* FindPeer(const GlobalAddress& remAddr); // PsmFactory.cpp
-* W138 Override not sorted in standard order
-    127:    bool Passes(uint32_t selector) const override;
 sb/Parameter.cpp
   W006 reinterpret_cast
     109:    auto fake = reinterpret_cast<const Parameter*>(&local);
@@ -9235,9 +9210,7 @@ sb/ProtocolSM.cpp
   W007 Cast down the inheritance hierarchy
     405:       auto psm = static_cast<ProtocolSM*>(layer);
   W008 Cast removes const qualification
-    645:    if(upper == nullptr) return const_cast<ProtocolSM*>(this);
-* W084 Override renames argument in root base class
-    445/1: bool ProtocolSM::Passes(uint32_t selector) const
+    650:    if(upper == nullptr) return const_cast<ProtocolSM*>(this);
 * W106 Function does not invoke Debug::ft
     445: bool ProtocolSM::Passes(uint32_t selector) const
 sb/ProtocolSM.h
@@ -9265,8 +9238,6 @@ sb/ProtocolSM.h
     290:    virtual void MsgHandled(Message& msg) { }
     296:    virtual void RestoreIcMsg(Message& msg) { }
     302:    virtual void RefreshMsg(Message& msg) { }
-* W084 Override renames argument in root base class
-    200/1:    bool Passes(uint32_t selector) const override;
 * W090 Function could be const
     116:    void StopTimer(const Base& owner, TimerId tid);
 sb/RootServiceSM.cpp
@@ -9298,9 +9269,9 @@ sb/SbHandlers.cpp
     135:    auto& ire = static_cast<InitiationReqEvent&>(currEvent);
 sb/SbIncrement.cpp
   W004 C-style cast
-    772:    ((ProtocolSM*) p)->Kill();
+    767:    ((ProtocolSM*) p)->Kill();
   W005 Functional cast
-    729:       auto pool = reg->Pool(Faction(sf));
+    724:       auto pool = reg->Pool(Faction(sf));
 sb/SbIncrement.h
 * W028 Unused data
     55:    static const NodeBase::id_t LastSbIndex    = LastNwIndex + 9;
@@ -9323,17 +9294,17 @@ sb/SbIpBuffer.h
     62:       { return reinterpret_cast<MsgHeader*>(HeaderPtr()); }
 sb/SbPools.cpp
   W007 Cast down the inheritance hierarchy
-    189:          auto ctx = static_cast<const Context*>(*obj);
-    274:          auto msg = static_cast<const Message*>(*obj);
-    339:       auto port = static_cast<MsgPort*>(obj);
-    378:          auto port = static_cast<const MsgPort*>(*obj);
-    427:    auto psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
-    444:       psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
+    185:          auto ctx = static_cast<const Context*>(*obj);
+    272:          auto msg = static_cast<const Message*>(*obj);
+    343:       auto port = static_cast<MsgPort*>(obj);
+    377:          auto port = static_cast<const MsgPort*>(*obj);
+    432:    auto psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
+    449:       psm = static_cast<ProtocolSM*>(NextUsed(PsmToAudit_));
     488:          auto psm = static_cast<const ProtocolSM*>(*obj);
-    545:          auto ssm = static_cast<const ServiceSM*>(*obj);
-    658:          auto tmr = static_cast<const Timer*>(*obj);
+    546:          auto ssm = static_cast<const ServiceSM*>(*obj);
+    661:          auto tmr = static_cast<const Timer*>(*obj);
 * W106 Function does not invoke Debug::ft
-    598: void TimerPool::IncrTimeouts() const
+    605: void TimerPool::IncrTimeouts() const
 sb/SbPools.h
   W110 Override of Base.Display not found
     183: class TimerPool : public NodeBase::ObjectPool
@@ -9399,31 +9370,29 @@ sb/Service.h
     80:    static bool IsValidPortId(PortId pid) // State.cpp
 sb/ServiceSM.cpp
   W007 Cast down the inheritance hierarchy
-    469:             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
-    473:          modifierSsm = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrSsm();
-    474:          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
-    525:             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
-    531:          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
-    532:          modifierInit = static_cast<AnalyzeSapEvent*>
-    785:             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
-    788:             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
-    886:          initEvent = static_cast<InitiationReqEvent*>(nextEvent);
-    890:             initEvent->SetSapEvent(static_cast<AnalyzeSapEvent&>(sapEvent));
-    952:             auto sibling = static_cast<InitiationReqEvent*>
-    993:    auto& initEvent = static_cast<InitiationReqEvent&>(currEvent);
-* W084 Override renames argument in root base class
-    397/1: bool ServiceSM::Passes(uint32_t selector) const
+    474:             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
+    478:          modifierSsm = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrSsm();
+    479:          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
+    530:             tid = static_cast<AnalyzeSapEvent*>(sapEvent)->GetTrigger();
+    536:          currEvent = static_cast<AnalyzeSapEvent*>(sapEvent)->CurrEvent();
+    537:          modifierInit = static_cast<AnalyzeSapEvent*>
+    790:             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
+    793:             else if(static_cast<AnalyzeSapEvent*>(nextEvent)
+    891:          initEvent = static_cast<InitiationReqEvent*>(nextEvent);
+    895:             initEvent->SetSapEvent(static_cast<AnalyzeSapEvent&>(sapEvent));
+    957:             auto sibling = static_cast<InitiationReqEvent*>
+    998:    auto& initEvent = static_cast<InitiationReqEvent&>(currEvent);
 * W106 Function does not invoke Debug::ft
     313: SsmContext* ServiceSM::GetContext() const
     327: Service* ServiceSM::GetService() const
     397: bool ServiceSM::Passes(uint32_t selector) const
 * W117 Line can merge with the next line and be under the length limit
-    786:                   ->CurrInitiator() != nullptr)
-    789:                   ->CurrSsm() != nullptr)
+    791:                   ->CurrInitiator() != nullptr)
+    794:                   ->CurrSsm() != nullptr)
   W119 Argument passed by value is modified
-    413/1: EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
-    853/2:    (const Trigger* trigger, const Initiator* modifier, Event& sapEvent,
-    921/2:    (const Trigger* trigger, const Initiator* modifier, Event& snpEvent)
+    418/1: EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
+    858/2:    (const Trigger* trigger, const Initiator* modifier, Event& sapEvent,
+    926/2:    (const Trigger* trigger, const Initiator* modifier, Event& snpEvent)
 sb/ServiceSM.h
   W026 Unused argument
     83/2:    virtual EventHandler::Rc ProcessSnp(Event& currEvent, Event*& nextEvent);
@@ -9447,8 +9416,6 @@ sb/ServiceSM.h
     143:    virtual void MorphToService(ServiceId sid);
 * W077 Virtual function has no overrides
     143:    virtual void MorphToService(ServiceId sid);
-* W084 Override renames argument in root base class
-    160/1:    bool Passes(uint32_t selector) const override;
 * W090 Function could be const
     194:    virtual EventHandler::Rc ProcessInitNack
     243:    EventHandler::Rc ProcessSsmqSap
@@ -9503,8 +9470,6 @@ sb/TextTlvMessage.h
 sb/Timer.cpp
   W006 reinterpret_cast
     188:    auto fake = reinterpret_cast<const Timer*>(&local);
-* W084 Override renames argument in root base class
-    203/1: bool Timer::Passes(uint32_t selector) const
 * W106 Function does not invoke Debug::ft
     203: bool Timer::Passes(uint32_t selector) const
 sb/Timer.h
@@ -9513,8 +9478,6 @@ sb/Timer.h
 * W053 Data could be const
     137:    TimerId tid_;
     149:    NodeBase::Q2Link link_;
-* W084 Override renames argument in root base class
-    61/1:    bool Passes(uint32_t selector) const override;
 sb/TimerProtocol.cpp
   W006 reinterpret_cast
     106:    auto toi = reinterpret_cast<const TimeoutInfo*>(bytes);
@@ -9604,9 +9567,9 @@ sb/TlvProtocol.cpp
     67:       auto pptr = reinterpret_cast<TlvParm*>(&bytes[index]);
 sb/Trigger.h
 * W042 Member could be private
-    80:    static bool IsValidId(Id tid)
+    79:    static bool IsValidId(Id tid)
 * W092 Function could be free
-    80:    static bool IsValidId(Id tid) // ServiceSM.cpp
+    79:    static bool IsValidId(Id tid) // ServiceSM.cpp
 sn/PotsBcHandlers.cpp
   W007 Cast down the inheritance hierarchy
     58:    auto& pssm = static_cast<PotsBcSsm&>(ssm);

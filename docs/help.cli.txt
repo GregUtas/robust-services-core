@@ -134,20 +134,7 @@ stats             : Supports performance statistics.
     [t|f]         : clear history prior to this interval? (default=f)
 )
 
-modules           : Counts or displays modules.
-  [0:255]         : ModuleId (default=all)
-  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
-
-pools             : Counts or displays object pools.
-  [0:255]         : ObjectPoolId (default=all)
-  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
-
-audit             : Controls the object pool audit.
-(                 : subcommand...
-  interval        : sets the audit's frequency
-    (0:60)        : seconds between audits (0 = disabled)
-  force           : forces the audit to run immediately
-)
+status            : Displays system statistics.
 
 sched             : Provides scheduler information.
 (                 : subcommand...
@@ -187,12 +174,9 @@ buffers           : Counts or displays message buffers.
 deferred          : Displays deferred work items.
   [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
-psignals          : Counts or displays POSIX signals.
-  [0:127]         : signal_t (default=all)
+modules           : Counts or displays modules.
+  [0:255]         : ModuleId (default=all)
   [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
-
-singletons        : Displays the singletons registry.
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 heaps             : Interface to heaps.
 (                 : subcommand...
@@ -214,7 +198,23 @@ heaps             : Interface to heaps.
   )
 )
 
-status            : Displays system statistics.
+pools             : Counts or displays object pools.
+  [0:255]         : ObjectPoolId (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
+
+audit             : Controls the object pool audit.
+(                 : subcommand...
+  interval        : sets the audit's frequency
+    (0:60)        : seconds between audits (0 = disabled)
+  force           : forces the audit to run immediately
+)
+
+psignals          : Counts or displays POSIX signals.
+  [0:127]         : signal_t (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
+
+singletons        : Displays the singletons registry.
+  [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 tools             : Counts or displays debugging tools.
   [0:65535]       : index (location in registry)
@@ -633,12 +633,12 @@ No additional help is available.
 nw>quit
 nb>sb
 sb>help full
-services          : Displays services.
-  [0:511]         : ServiceId (default=all)
-  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
-
 factories         : Displays factories.
   [0:255]         : FactoryId (default=all)
+  [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
+
+services          : Displays services.
+  [0:511]         : ServiceId (default=all)
   [c|s|b|v]       : 'c'=count 's'=summary 'b'=brief 'v'=verbose (default='s')
 
 states            : Displays a service's states.
@@ -688,13 +688,13 @@ ssms              : Counts or displays service state machines.
   [0:63]          : State::Id (default=all)
   [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
+msgports          : Counts or displays message ports.
+  [0:255]         : FactoryId (default=all)
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
+
 psms              : Counts or displays protocol state machines.
   [0:255]         : FactoryId (default=all)
   [0:63]          : State::Id (default=all)
-  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
-
-msgports          : Counts or displays message ports.
-  [0:255]         : FactoryId (default=all)
   [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 messages          : Counts or displays messages.
@@ -1126,23 +1126,11 @@ No additional help is available.
 st>quit
 nb>pots
 pots>help full
-tsports           : Displays the circuit(s) in a range of timeswitch ports.
-  (0:100000)      : Switch::PortId
-  [0:100000]      : Switch::PortId
-
-tones             : Displays tones.
-  [0:15]          : Tone::Id (default=all)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
-
-meps              : Counts or displays media endpoints.
-  [0:255]         : FactoryId (default=all)
-  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
-
-codes             : Displays service codes.
-
 dns               : Displays the profile(s) in a range of DNs.
   (20000:99999)   : DN
   [20000:99999]   : DN
+
+codes             : Displays service codes.
 
 features          : Displays features that can be assigned to a DN.
   [0:63]          : PotsFeature::Id
@@ -1219,6 +1207,18 @@ unsubscribe       : Removes a feature from a DN.
 
 reset             : Resets a DN to its initial state.
   (20000:99999)   : DN
+
+tsports           : Displays the circuit(s) in a range of timeswitch ports.
+  (0:100000)      : Switch::PortId
+  [0:100000]      : Switch::PortId
+
+tones             : Displays tones.
+  [0:15]          : Tone::Id (default=all)
+  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+
+meps              : Counts or displays media endpoints.
+  [0:255]         : FactoryId (default=all)
+  [c|s|v]         : 'c'=count 's'=summary 'v'=verbose (default='s')
 
 No additional help is available.
 pots>quit

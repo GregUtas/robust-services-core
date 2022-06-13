@@ -1,63 +1,63 @@
-FUNCTION PROFILE: May-25-2022 17:36:18.072 on Reigi
+FUNCTION PROFILE: Jun-13-2022 17:37:14.911 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-        9          13   SysMutex.Acquire
-        9          11   SysMutex.Release
-        6          23   MutexGuard.ctor
-        6          15   Gate.Notify
-        6          14   Log.Find
-        6          10   LogGroupRegistry.FindGroup
-        6          10   SysThread.Interrupt
-        6           9   Thread.Interrupt
-        6           8   LogGroup.FindLog
+        9          14   Mutex.Acquire
+        9          11   Mutex.Release
+        7          20   Gate.Notify
+        7          11   SysThread.Interrupt
+        7          11   Thread.Interrupt
+        6          13   Log.Find
+        6          11   LogGroupRegistry.FindGroup
+        6           8   MutexGuard.ctor
+        6           7   LogGroup.FindLog
+        6           7   MutexGuard.Release
         6           6   LogBuffer.First
-        6           6   MutexGuard.Release
         6           6   MutexGuard.dtor
         4           5   Thread.Pause
-        3         707   Gate.WaitFor
-        3         206   Log.Format
-        3          11   LogBuffer.Push
-        3          10   Log.Submit
-        3           6   Log.Create
+        3         628   Gate.WaitFor
+        3         268   Log.Format
+        3          12   SysThread.Suspend
+        3          10   LogBuffer.Push
+        3           9   Log.Submit
         3           5   Log.Find(log)
         3           5   LogBuffer.InsertionPoint
-        3           5   SysThread.Suspend
-        3           4   Thread.ExitSwLog
+        3           4   Log.Create
         3           3   LogBuffer.SetNext
         3           3   LogBufferRegistry.Active
         3           3   Memory.Copy
+        3           3   Thread.ExitSwLog
         3           2   Debug.SwFlagOn
-        2          21   Thread.LogContextSwitch
-        2           7   Thread.ExitBlockingOperation
-        2           6   Debug.SwLog
-        2           5   Thread.Resume
-        2           4   Heap.SetPermissions
+        2          26   Thread.LogContextSwitch
+        2           6   Thread.ExitBlockingOperation
+        2           6   Thread.Resume
+        2           4   Debug.SwLog
         2           4   RecoveryThread.Enter
         2           4   SysThread.Wait
+        2           4   Thread.EnterBlockingOperation
         2           4   Thread.Ready
-        2           3   Thread.EnterBlockingOperation
-        2           3   Thread.InitialTime
-        2           3   ThreadAdmin.WarpFactor
-        2           2   Thread.Schedule
+        2           4   Thread.Schedule
+        2           3   BuddyHeap.SetPermissions
+        2           3   Thread.Suspend
+        2           2   Thread.InitialTime
         2           2   Thread.SetSignal
-        2           2   Thread.Suspend
-        1        1676   Thread.CauseTrap
-        1         762   Thread.ExtendTime
-        1          10   Thread.TrapHandler
-        1           5   Thread.HandleSignal
-        1           4   Thread.LogTrap
-        1           3   LeakyBucketCounter.HasReachedLimit
-        1           3   MutexRegistry.Abandon
-        1           3   RecoveryThread.AcquireMutex
-        1           3   Thread.Start
+        2           2   ThreadAdmin.WarpFactor
+        1        1581   Thread.CauseTrap
+        1         658   Thread.ExtendTime
+        1           8   Thread.TrapHandler
+        1           6   LeakyBucketCounter.HasReachedLimit
+        1           4   MutexRegistry.Abandon
+        1           4   Thread.HandleSignal
+        1           4   Thread.Start
         1           2   Exception.ctor
+        1           2   Exception.dtor
         1           2   NodeBase.SE_Handler
+        1           2   RecoveryThread.AcquireMutex
         1           2   RecoveryThread.Recover
-        1           2   SignalException.dtor
+        1           2   RecoveryThread.UseBadPointer
+        1           2   Thread.LogTrap
         1           2   ThreadRegistry.GetState
-        1           1   Exception.dtor
-        1           1   RecoveryThread.UseBadPointer
+        1           1   SignalException.dtor
         1           1   SysThread.Delay
         1           1   SysThread.Start
         1           1   Thread.EnterSwLog

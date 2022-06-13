@@ -1,46 +1,46 @@
-FUNCTION PROFILE: May-25-2022 17:36:11.831 on Reigi
+FUNCTION PROFILE: Jun-13-2022 17:37:08.672 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-        7          11   SysMutex.Acquire
-        7           7   SysMutex.Release
-        5          30   Gate.Notify
-        5           8   SysThread.Interrupt
-        5           7   Thread.Interrupt
-        4      100777   Gate.WaitFor
-        4           8   LogGroupRegistry.FindGroup
-        4           7   Debug.SwLog
-        4           7   Log.Find
-        4           7   SysThread.Suspend
-        4           7   Thread.Pause
-        4           6   MutexGuard.ctor
-        4           5   MutexGuard.dtor
+        7          28   Mutex.Acquire
+        7          27   Mutex.Release
+        6          39   Gate.Notify
+        6          22   Thread.Interrupt
+        6          21   SysThread.Interrupt
+        4      111343   Gate.WaitFor
+        4          19   SysThread.Suspend
+        4          16   Thread.Pause
+        4          12   MutexGuard.ctor
+        4           9   MutexGuard.dtor
+        4           8   Log.Find
+        4           8   MutexGuard.Release
+        4           5   LogGroupRegistry.FindGroup
+        4           4   Debug.SwLog
         4           4   LogBuffer.First
         4           4   LogGroup.FindLog
-        4           4   MutexGuard.Release
-        2         387   Log.Format
-        2          22   Thread.LogContextSwitch
-        2           8   Log.Submit
-        2           8   Thread.ExitBlockingOperation
-        2           7   Thread.Resume
-        2           6   LogBuffer.Push
-        2           5   Thread.EnterBlockingOperation
-        2           5   Thread.InitialTime
+        2         383   Log.Format
+        2          79   Thread.LogContextSwitch
+        2          40   SysThread.Wait
+        2          21   Thread.ExitBlockingOperation
+        2          12   Thread.InitialTime
+        2          10   Thread.EnterBlockingOperation
+        2           9   Thread.Ready
+        2           9   Thread.Resume
+        2           9   Thread.Schedule
+        2           8   SysThread.Delay
+        2           8   Thread.Suspend
+        2           7   LogBuffer.Push
+        2           7   ThreadAdmin.WarpFactor
+        2           6   Log.Submit
         2           4   Log.Create
         2           4   Log.Find(log)
-        2           4   SysThread.Wait
-        2           4   Thread.Ready
-        2           3   LogBuffer.InsertionPoint
-        2           3   SysThread.Delay
-        2           3   Thread.ExitSwLog
-        2           3   Thread.Schedule
-        2           3   Thread.Suspend
-        2           3   ThreadAdmin.WarpFactor
-        2           2   LogBuffer.SetNext
-        2           2   LogBufferRegistry.Active
+        2           3   LogBuffer.SetNext
+        2           3   LogBufferRegistry.Active
+        2           2   LogBuffer.InsertionPoint
         2           2   Memory.Copy
         2           2   Thread.EnterSwLog
-        1           3   RecoveryThread.AcquireMutex
+        2           2   Thread.ExitSwLog
+        1           4   RecoveryThread.AcquireMutex
         1           3   RecoveryThread.Enter
 
 Total functions: 40

@@ -1,8 +1,8 @@
-FUNCTION PROFILE: May-25-2022 18:11:03.644 on Reigi
+FUNCTION PROFILE: Jun-13-2022 17:08:36.957 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-    10945           0   CodeTools.SetDifference(-=)
+    10977           0   CodeTools.SetDifference(-=)
     10230           0   LibrarySet.Release
     10223           0   CodeFileSet.dtor
     10223           0   CodeSet.dtor
@@ -10,14 +10,14 @@ FUNCTION PROFILE: May-25-2022 18:11:03.644 on Reigi
     10223           0   LibraryItem.dtor
     10223           0   LibrarySet.dtor
       113           0   CliBuffer.CalcType
-       93           0   Gate.Notify
-       93           0   SysThread.Interrupt
-       93           0   Thread.Interrupt
-       82           0   MutexGuard.Release
-       82           0   MutexGuard.ctor
-       82           0   MutexGuard.dtor
-       82           0   SysMutex.Acquire
-       82           0   SysMutex.Release
+       91           0   Gate.Notify
+       91           0   SysThread.Interrupt
+       91           0   Thread.Interrupt
+       81           0   Mutex.Acquire
+       81           0   Mutex.Release
+       81           0   MutexGuard.Release
+       81           0   MutexGuard.ctor
+       81           0   MutexGuard.dtor
        61           0   Base.operator new
        60           0   CodeFileSet.ctor
        60           0   CodeSet.ctor
@@ -39,19 +39,19 @@ FUNCTION PROFILE: May-25-2022 18:11:03.644 on Reigi
        42           0   CodeFile.Implementers
        31           0   FileRequest.ctor
        31           0   FileThread.Spool(written)
-       27           0   Gate.WaitFor
-       27           0   SysThread.Suspend
        26           0   FileThread.Spool(string)
-       25           0   SysThread.Wait
-       25           0   Thread.EnterBlockingOperation
-       25           0   Thread.ExitBlockingOperation
-       25           0   Thread.InitialTime
-       25           0   Thread.LogContextSwitch
-       25           0   Thread.Ready
-       25           0   Thread.Resume
-       25           0   Thread.Schedule
-       25           0   Thread.Suspend
-       25           0   ThreadAdmin.WarpFactor
+       26           0   Gate.WaitFor
+       26           0   SysThread.Suspend
+       24           0   SysThread.Wait
+       24           0   Thread.EnterBlockingOperation
+       24           0   Thread.ExitBlockingOperation
+       24           0   Thread.InitialTime
+       24           0   Thread.LogContextSwitch
+       24           0   Thread.Ready
+       24           0   Thread.Resume
+       24           0   Thread.Schedule
+       24           0   Thread.Suspend
+       24           0   ThreadAdmin.WarpFactor
        23           0   CliBuffer.FindNextNonBlank
        18           0   CliIncrement.FindCommand
        14           0   CliBuffer.GetNextInput
@@ -82,16 +82,16 @@ FUNCTION PROFILE: May-25-2022 18:11:03.644 on Reigi
         5           0   Interpreter.SkipBlanks
         4           0   CliThread.Report
         4           0   CliThread.Report1
-        4           0   FunctionGuard.ctor
         4           0   Interpreter.GetToken
-        4           0   Thread.MakePreemptable
         3           0   CliBuffer.GetInt
         3           0   CliCommand.GetIntParmRc
         3           0   CliIntParm.GetIntParmRc
         3           0   CliParm.GetIntParm
         3           0   CodeFileSet.Affecters
         3           0   CodeFileSet.Users
+        3           0   FunctionGuard.ctor
         3           0   Interpreter.HandleToken
+        3           0   Thread.MakePreemptable
         2           0   CliBuffer.OpenInputFile
         2           0   CliBuffer.Read
         2           0   CliCommand.GetStringRc
@@ -164,7 +164,6 @@ FUNCTION PROFILE: May-25-2022 18:11:03.644 on Reigi
         1           0   SysTcpSocket.Poll
         1           0   TcpIoThread.AcceptConn
         1           0   TcpIoThread.PollSockets
-        1           0   TestDatabase.Commit
         1           0   TestDatabase.SetState
         1           0   TestsCommand.ProcessCommand
         1           0   TestsCommand.ProcessSubcommand
@@ -173,4 +172,4 @@ FUNCTION PROFILE: May-25-2022 18:11:03.644 on Reigi
         1           0   TraceBuffer.StopTracing
         1           0   TypeCommand.ProcessCommand
 
-Total functions: 170
+Total functions: 169

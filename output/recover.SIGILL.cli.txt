@@ -2,18 +2,26 @@ nt>sched start
   OK.
 nt>start
   OK.
-nt>read trap.0
-  File does not exist or is empty.
+nt>read trap.06
 nt>
-nt>
-nt>
-nt>
-nt>
-nt>tests begin recover.SIGBREAK
+nt>recover raise SIGILL
+  OK.
+nt>tests end
   OK.
 read test.trap.epilog
-symbols set test.name recover.SIGBREAK
+nt>delay 1
   OK.
-read test.trap.prolog
-nt>send &test.name
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &test.name
+  OK.
+nt>save funcs &test.name
+  OK.
+nt>save trace &test.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
   OK.

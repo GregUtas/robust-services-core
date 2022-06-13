@@ -1,0 +1,2278 @@
+
+MODULE INITIALIZATION          msecs      invoked at
+pre-Module.Startup               134    17:36:23.753
+NodeBase.NbModule...                    17:36:23.887
+...initialized                    22
+NodeTools.NtModule...                   17:36:23.910
+...initialized                     6
+CodeTools.CtModule...                   17:36:23.917
+...initialized                     3
+NetworkBase.NwModule...                 17:36:23.922
+...initialized                    13
+SessionBase.SbModule...                 17:36:23.936
+...initialized                    17
+ControlNode.CnModule...                 17:36:23.955
+...initialized                     1
+SessionTools.StModule...                17:36:23.958
+...initialized                     2
+MediaBase.MbModule...                   17:36:23.962
+...initialized                     2
+CallBase.CbModule...                    17:36:23.965
+...initialized                     6
+PotsBase.PbModule...                    17:36:23.972
+...initialized                     4
+OperationsNode.OnModule...              17:36:23.977
+...initialized                     0
+RoutingNode.RnModule...                 17:36:23.979
+...initialized                     1
+ServiceNode.SnModule...                 17:36:23.981
+...initialized                    10
+AccessNode.AnModule...                  17:36:23.993
+...initialized                     3
+                               -----
+total initialization time        245
+
+    NODE500 Jun-13-2022 17:36:23.999 on Reigi {1}
+nb>read test.trap.all
+
+nb>read test.trap.setup
+nb>quit all
+  Nothing to quit.
+nb>nt
+nt>swflags set &flag.reenterthread on
+  OK.
+nt>read test.tools.setup
+nt>stop
+  OK.
+nt>clear buffer
+  OK.
+nt>clear selections
+  OK.
+nt>clear tools
+  OK.
+nt>set tools f on
+  f: OK.
+  OK.
+nt>/ set scope counts  / enables full function trace if commented out
+nt>include all on
+  OK.
+nt>read test.trap.tools.setup
+nt>/ This only leaves LoadTestFaction, to which RecoveryThread belongs,
+nt>/ traced. Including SystemFaction (InitThread) would show Daemon work
+nt>/ but would also make the traces much longer, because InitThread runs
+nt>/ well before, and after, RecoveryThread.
+nt>/
+nt>exclude faction &faction.audit
+  OK.
+nt>exclude faction &faction.bkgd
+  OK.
+nt>exclude faction &faction.oper
+  OK.
+nt>exclude faction &faction.mtce
+  OK.
+nt>exclude faction &faction.payload
+  OK.
+nt>exclude faction &faction.system
+  OK.
+nt>exclude faction &faction.watchdog
+  OK.
+nt>tests prolog test.trap.prolog
+  OK.
+nt>tests epilog test.trap.epilog
+  OK.
+nt>recover create
+  OK.
+nt>tests begin recover.Return
+symbols set test.name recover.Return
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.01
+nt>/ RECOVER return
+nt>recover return
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.Return completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.Exception
+symbols set test.name recover.Exception
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.02
+nt>/ RECOVER exception
+nt>recover exception
+
+    THR902 Jun-13-2022 17:36:31.590 on Reigi {2}
+    in NodeTools.RecoveryThread (tid=20, nid=0x0000000000007fc4): trap number 1
+    type=Software Error
+    errstr : software exception test
+    offset : 0x1
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SoftwareException.SoftwareException @ SoftwareException.cpp + 46[12]
+      NodeTools.RecoveryThread.DoException @ NtIncrement.cpp + 3217[39]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3286[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.Exception completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.BadPtrExit
+symbols set test.name recover.BadPtrExit
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.24
+nt>/ RECOVER dereference bad pointer and exit thread
+nt>swflags set &flag.reenterthread off
+nt>delay 1
+nt>recover badptr
+
+    THR902 Jun-13-2022 17:36:34.649 on Reigi {3}
+    in NodeTools.RecoveryThread (tid=20, nid=0x0000000000007fc4): trap number 2
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3277[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR901 Jun-13-2022 17:36:34.649 on Reigi {4}
+    thread=NodeTools.RecoveryThread (tid=20, nid=0x0000000000007fc4)
+    signal=11 (SIGSEGV: Illegal Memory Access)
+nt>delay 1
+nt>swflags set &flag.reenterthread on
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.BadPtrExit completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.BadPtr
+symbols set test.name recover.BadPtr
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.03
+nt>/ RECOVER dereference bad pointer
+nt>recover badptr
+nt>
+    THR902 Jun-13-2022 17:36:37.725 on Reigi {5}
+    in NodeTools.RecoveryThread (tid=21, nid=0x0000000000007ab0): trap number 3
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3277[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.BadPtr completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.DivZero
+symbols set test.name recover.DivZero
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.04
+nt>/ RECOVER divide by zero
+nt>recover divide
+nt>
+    THR902 Jun-13-2022 17:36:39.777 on Reigi {6}
+    in NodeTools.RecoveryThread (tid=21, nid=0x0000000000007ab0): trap number 4
+    type=Signal
+    signal : 8 (SIGFPE: Erroneous Arithmetic Operation)
+    errval : 0xc0000094
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeTools.RecoveryThread.DoDivide @ NtIncrement.cpp + 3208[5]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3280[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.DivZero completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.SIGINT
+symbols set test.name recover.SIGINT
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.05
+nt>/ RECOVER raise interrupt
+nt>recover raise SIGINT
+nt>
+    THR902 Jun-13-2022 17:36:41.820 on Reigi {7}
+    in NodeTools.RecoveryThread (tid=21, nid=0x0000000000007ab0): trap number 5
+    type=Signal
+    signal : 2 (SIGINT: Terminal Interrupt)
+    errval : 0x0
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.Thread.SignalHandler @ Thread.cpp + 2955[14]
+      raise @ <unknown file> (err=487)
+      NodeTools.RecoveryThread.DoRaise @ NtIncrement.cpp + 3227[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3307[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.SIGINT completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.SIGILL
+symbols set test.name recover.SIGILL
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.06
+nt>/ RECOVER raise illegal instruction
+nt>recover raise SIGILL
+nt>
+    THR902 Jun-13-2022 17:36:43.885 on Reigi {8}
+    in NodeTools.RecoveryThread (tid=21, nid=0x0000000000007ab0): trap number 6
+    type=Signal
+    signal : 4 (SIGILL: Illegal Instruction)
+    errval : 0x0
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.Thread.SignalHandler @ Thread.cpp + 2955[14]
+      raise @ <unknown file> (err=487)
+      NodeTools.RecoveryThread.DoRaise @ NtIncrement.cpp + 3227[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3307[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.SIGILL completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.SIGTERM
+symbols set test.name recover.SIGTERM
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.07
+nt>/ RECOVER raise termination from kill
+nt>recover raise SIGTERM
+nt>
+    THR902 Jun-13-2022 17:36:45.934 on Reigi {9}
+    in NodeTools.RecoveryThread (tid=21, nid=0x0000000000007ab0): trap number 7
+    type=Signal
+    signal : 15 (SIGTERM: Termination Request)
+    errval : 0x0
+    TRAP LIMIT EXCEEDED.
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.Thread.SignalHandler @ Thread.cpp + 2955[14]
+      raise @ <unknown file> (err=487)
+      NodeTools.RecoveryThread.DoRaise @ NtIncrement.cpp + 3227[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3307[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR906 Jun-13-2022 17:36:45.934 on Reigi {10}
+    thread=NodeTools.RecoveryThread (tid=21, nid=0x0000000000007ab0)
+    signal=15 (SIGTERM: Termination Request)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.SIGTERM completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.SIGBREAK
+symbols set test.name recover.SIGBREAK
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.08
+nt>/ RECOVER raise ctrl-break
+nt>recover raise SIGBREAK
+nt>
+    THR902 Jun-13-2022 17:36:47.996 on Reigi {11}
+    in NodeTools.RecoveryThread (tid=22, nid=0x0000000000007ad0): trap number 8
+    type=Signal
+    signal : 21 (SIGBREAK: Ctrl-Break)
+    errval : 0x0
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.Thread.SignalHandler @ Thread.cpp + 2955[14]
+      raise @ <unknown file> (err=487)
+      NodeTools.RecoveryThread.DoRaise @ NtIncrement.cpp + 3227[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3307[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.SIGBREAK completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.SIGBUS
+symbols set test.name recover.SIGBUS
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.28
+nt>/ RECOVER raise bus error
+nt>recover raise SIGBUS
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.SIGBUS completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.abort
+symbols set test.name recover.abort
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.09
+nt>/ ============== PREPARE TO CLICK RETRY, THEN CONTINUE (F5) ==============
+nt>/ RECOVER abort
+nt>/ Enable breakpoints because of pop-up dialog.
+nt>symbols assign save.breakenabled breakenabled
+nt>cfgparms set breakenabled t
+nt>delay 1
+nt>recover abort
+nt>
+    THR902 Jun-13-2022 17:36:53.140 on Reigi {12}
+    in NodeTools.RecoveryThread (tid=22, nid=0x0000000000007ad0): trap number 9
+    type=Signal
+    signal : 22 (SIGABRT: Abort Request)
+    errval : 0x0
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.Thread.SignalHandler @ Thread.cpp + 2955[14]
+      raise @ <unknown file> (err=487)
+      abort @ <unknown file> (err=487)
+      NodeTools.RecoveryThread.DoAbort @ NtIncrement.cpp + 3190[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3268[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+delay 1
+nt>cfgparms set breakenabled &save.breakenabled
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.abort completed.
+nt>delay 1
+  OK.
+nt>/ tests begin recover.terminate
+nt>/ read trap.10
+nt>tests begin recover.KillLocal
+symbols set test.name recover.KillLocal
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.11
+nt>/ RECOVER kill this
+nt>recover trap t SIGPURGE
+nt>
+    THR902 Jun-13-2022 17:36:56.211 on Reigi {13}
+    in NodeTools.RecoveryThread (tid=22, nid=0x0000000000007ad0): trap number 10
+    type=Signal
+    signal : 126 (SIGPURGE: Suicided or Killed)
+    errval : 0x0
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.Raise @ Thread.cpp + 2531[23]
+      NodeTools.RecoveryThread.DoTrap @ NtIncrement.cpp + 3244[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3317[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeTools.RecoveryThread
+      this : 000001D6C6998390
+      patchArea : 0x0
+      systhrd  : 000001D6C6932550
+        NodeBase.SysThread
+        this : 000001D6C6932550
+        patchArea : 0x0
+        nid      : 00007ad0
+        nthread  : 452
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 22
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9980
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : true
+        waiting    : false
+        locked     : true
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 1
+        recovering : false
+        logged     : true
+        exiting    : false
+        action     : 0
+        blocked    : ready
+        status     : unspecified
+        signal     : 126
+        stackBase  : 00000053B1EFF814
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99C0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99F0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 3
+        vector     : 0
+      test   : 0
+      signal : 126
+tests end
+
+    THR901 Jun-13-2022 17:36:56.211 on Reigi {14}
+    thread=NodeTools.RecoveryThread (tid=22, nid=0x0000000000007ad0)
+    signal=126 (SIGPURGE: Suicided or Killed)
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.KillLocal completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.KillRemote
+symbols set test.name recover.KillRemote
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.12
+nt>/ RECOVER kill remotely
+nt>recover trap f SIGPURGE
+
+    THR903 Jun-13-2022 17:36:58.260 on Reigi {15}
+    by NodeBase.CliThread (tid=10, nid=0x0000000000007bc0)
+    for NodeTools.RecoveryThread (tid=23, nid=0x00000000000051d4)
+    signal=126 (SIGPURGE: Suicided or Killed)
+nt>tests end
+
+    THR902 Jun-13-2022 17:36:58.262 on Reigi {16}
+    in NodeTools.RecoveryThread (tid=23, nid=0x00000000000051d4): trap number 11
+    type=Signal
+    signal : 126 (SIGPURGE: Suicided or Killed)
+    errval : 0x3
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.ExitIfSafe @ Thread.cpp + 1710[41]
+      NodeBase.Thread.TrapCheck @ Thread.cpp + 3556[0]
+      NodeBase.Thread.FunctionInvoked @ Thread.cpp + 1816[0]
+      NodeBase.Debug.ft @ Debug.cpp + 100[0]
+      NodeBase.Thread.ExitBlockingOperation @ Thread.cpp + 1652[0]
+      NodeBase.Thread.Pause @ Thread.cpp + 2385[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3327[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeTools.RecoveryThread
+      this : 000001D6C6998150
+      patchArea : 0x0
+      systhrd  : 000001D6C69338D0
+        NodeBase.SysThread
+        this : 000001D6C69338D0
+        patchArea : 0x0
+        nid      : 000051d4
+        nthread  : 488
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 23
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9B40
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : true
+        waiting    : false
+        locked     : false
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 1
+        recovering : false
+        logged     : true
+        exiting    : false
+        action     : 0
+        blocked    : clock
+        status     : unspecified
+        signal     : 126
+        stackBase  : 00000053B17FF494
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C9B80
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C9BB0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 1
+        vector     : 0
+      test   : 0
+      signal : 0
+read test.trap.epilog
+
+    THR901 Jun-13-2022 17:36:58.262 on Reigi {17}
+    thread=NodeTools.RecoveryThread (tid=23, nid=0x00000000000051d4)
+    signal=126 (SIGPURGE: Suicided or Killed)
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.KillRemote completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.InfiniteLoop
+symbols set test.name recover.InfiniteLoop
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.13
+nt>/ RECOVER infinite loop
+nt>/ Enable use of SIGYIELD to kill thread that runs too long.
+nt>symbols assign save.breakenabled breakenabled
+nt>cfgparms set breakenabled f
+nt>symbols assign save.traponrtctimeout traponrtctimeout
+nt>cfgparms set traponrtctimeout t
+nt>delay 1
+nt>recover loop
+nt>
+    THR903 Jun-13-2022 17:37:01.481 on Reigi {18}
+    by NodeBase.InitThread (tid=2, nid=0x00000000000017b8)
+    for NodeTools.RecoveryThread (tid=24, nid=0x00000000000057cc)
+    signal=123 (SIGYIELD: Running Unpreemptably Too Long)
+
+    THR902 Jun-13-2022 17:37:01.488 on Reigi {19}
+    in NodeTools.RecoveryThread (tid=24, nid=0x00000000000057cc): trap number 12
+    type=Signal
+    signal : 123 (SIGYIELD: Running Unpreemptably Too Long)
+    errval : 0x3
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.ExitIfSafe @ Thread.cpp + 1710[41]
+      NodeBase.Thread.TrapCheck @ Thread.cpp + 3556[0]
+      NodeBase.Thread.FunctionInvoked @ Thread.cpp + 1816[0]
+      NodeBase.Debug.ft @ Debug.cpp + 100[0]
+      NodeTools.RecoveryThread.LoopForever @ NtIncrement.cpp + 3346[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3289[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+delay 1
+nt>cfgparms set traponrtctimeout &save.traponrtctimeout
+nt>cfgparms set breakenabled &save.breakenabled
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.InfiniteLoop completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.StackOverflow
+symbols set test.name recover.StackOverflow
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.14
+nt>/ RECOVER stack overflow
+nt>/ Enable breakpoints to provide time for overflow.
+nt>symbols assign save.breakenabled breakenabled
+nt>cfgparms set breakenabled t
+nt>delay 1
+nt>recover stack
+nt>
+    THR902 Jun-13-2022 17:37:05.588 on Reigi {20}
+    in NodeTools.RecoveryThread (tid=24, nid=0x00000000000057cc): trap number 13
+    type=Signal
+    signal : 124 (SIGSTACK1: Stack Overflow: Attempt Recovery)
+    errval : 0x1f4c
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.StackCheck @ Thread.cpp + 3000[20]
+      NodeBase.Thread.FunctionInvoked @ Thread.cpp + 1823[0]
+      NodeBase.Debug.ft @ Debug.cpp + 100[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3365[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      ...621 functions omitted.
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.RecurseForever @ NtIncrement.cpp + 3366[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3304[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+delay 1
+nt>cfgparms set breakenabled &save.breakenabled
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.StackOverflow completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.MutexBlock
+symbols set test.name recover.MutexBlock
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.19
+nt>/ RECOVER block while holding mutex
+nt>recover mutexblock
+nt>
+    SW900 Jun-13-2022 17:37:08.676 on Reigi {21}
+    in RecoveryThread.AcquireMutex
+    expl=acquire failed  errval=0x0
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeTools.RecoveryThread.AcquireMutex @ NtIncrement.cpp + 3159[41]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3292[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    SW900 Jun-13-2022 17:37:08.676 on Reigi {22}
+    in Thread.EnterBlockingOperation
+    expl=mutex holder  errval=0x1
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeBase.Thread.EnterBlockingOperation @ Thread.cpp + 1580[79]
+      NodeBase.Thread.Pause @ Thread.cpp + 2377[16]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3293[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.MutexBlock completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.ThreadCtorTrap
+symbols set test.name recover.ThreadCtorTrap
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.20
+nt>/ RECOVER thread constructor trap
+nt>/ InitThread will trap when it invokes RecoveryDaemon.CreateThread
+nt>/ to recreate the recovery thread.
+nt>recover ctortrap
+nt>
+    THR900 Jun-13-2022 17:37:10.755 on Reigi {23}
+    thread=NodeBase.Thread (tid=25, nid=0x0000000000000b74)
+    Function Traceback:
+      NodeBase.Thread.~Thread @ Thread.cpp + 1184[0]
+      `NodeTools.RecoveryThread.RecoveryThread'.`1'.dtor$0 @ <unknown file> (err=487)
+      <unknown function> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      _chkstk @ <unknown file> (err=487)
+      RtlUnwindEx @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      _C_specific_handler @ <unknown file> (err=487)
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      RaiseException @ <unknown file> (err=487)
+      CxxThrowException @ <unknown file> (err=487)
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1901[0]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.RecoveryThread @ NtIncrement.cpp + 3120[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ Singleton.h + 82[48]
+      NodeTools.RecoveryDaemon.CreateThread @ NtIncrement.cpp + 3089[0]
+      NodeBase.Daemon.CreateThreads @ Daemon.cpp + 126[22]
+      NodeBase.InitThread.RecreateThreads @ InitThread.cpp + 406[0]
+      NodeBase.InitThread.HandleInterrupt @ InitThread.cpp + 298[0]
+      NodeBase.InitThread.Enter @ InitThread.cpp + 249[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeBase.Thread
+      this : 000001D6C6997A30
+      patchArea : 0x0
+      systhrd  : 000001D6C69323D0
+        NodeBase.SysThread
+        this : 000001D6C69323D0
+        patchArea : 0x0
+        nid      : 00000b74
+        nthread  : 516
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 25
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9980
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : false
+        waiting    : false
+        locked     : false
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 0
+        recovering : false
+        logged     : false
+        exiting    : false
+        action     : 0
+        blocked    : ready
+        status     : unspecified
+        signal     : 0
+        stackBase  : 0000000000000000
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99C0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99F0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 0
+        vector     : 0
+tests end
+
+    THR902 Jun-13-2022 17:37:10.759 on Reigi {24}
+    in NodeBase.InitThread (tid=2, nid=0x00000000000017b8): trap number 14
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.RecoveryThread @ NtIncrement.cpp + 3120[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ Singleton.h + 82[48]
+      NodeTools.RecoveryDaemon.CreateThread @ NtIncrement.cpp + 3089[0]
+      NodeBase.Daemon.CreateThreads @ Daemon.cpp + 126[22]
+      NodeBase.InitThread.RecreateThreads @ InitThread.cpp + 406[0]
+      NodeBase.InitThread.HandleInterrupt @ InitThread.cpp + 298[0]
+      NodeBase.InitThread.Enter @ InitThread.cpp + 249[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+read test.trap.epilog
+
+    SW900 Jun-13-2022 17:37:10.760 on Reigi {25}
+    in ThreadRegistry.GetState
+    expl=orphan exited  errval=0xb74
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeBase.ThreadRegistry.GetState @ ThreadRegistry.cpp + 379[59]
+      NodeBase.Thread.WaitUntilConstructed @ Thread.cpp + 3798[10]
+      NodeBase.Thread.Start @ Thread.cpp + 3030[5]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.ThreadCtorTrap completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.MutexExit
+symbols set test.name recover.MutexExit
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.21
+nt>/ RECOVER exit while holding mutex
+nt>recover mutexexit
+
+    SW900 Jun-13-2022 17:37:12.837 on Reigi {26}
+    in RecoveryThread.AcquireMutex
+    expl=acquire failed  errval=0x0
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeTools.RecoveryThread.AcquireMutex @ NtIncrement.cpp + 3159[41]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3297[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR907 Jun-13-2022 17:37:12.838 on Reigi {27}
+    thread=NodeTools.RecoveryThread (tid=26, nid=0x0000000000002dc0)
+    mutexes=1
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.MutexExit completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.MutexTrap
+symbols set test.name recover.MutexTrap
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.22
+nt>/ RECOVER trap while holding mutex
+nt>recover mutextrap
+nt>
+    SW900 Jun-13-2022 17:37:14.915 on Reigi {28}
+    in RecoveryThread.AcquireMutex
+    expl=acquire failed  errval=0x0
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeTools.RecoveryThread.AcquireMutex @ NtIncrement.cpp + 3159[41]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3300[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR907 Jun-13-2022 17:37:14.917 on Reigi {29}
+    thread=NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188)
+    mutexes=1
+
+    THR902 Jun-13-2022 17:37:14.917 on Reigi {30}
+    in NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188): trap number 15
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3301[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.MutexTrap completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.TrapInRecover
+symbols set test.name recover.TrapInRecover
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.15
+nt>/ RECOVER trap during recovery
+nt>swflags set &flag.recovertrap on
+nt>delay 1
+nt>recover exception
+nt>
+    THR902 Jun-13-2022 17:37:17.990 on Reigi {31}
+    in NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188): trap number 16
+    type=Software Error
+    errstr : software exception test
+    offset : 0x1
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SoftwareException.SoftwareException @ SoftwareException.cpp + 46[12]
+      NodeTools.RecoveryThread.DoException @ NtIncrement.cpp + 3217[39]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3286[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR902 Jun-13-2022 17:37:17.991 on Reigi {32}
+    in NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188): trap number 17
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    TRAP DURING RECOVERY.
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.Recover @ NtIncrement.cpp + 3356[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3091[25]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+delay 1
+nt>swflags set &flag.recovertrap off
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.TrapInRecover completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.DaemonReenable
+symbols set test.name recover.DaemonReenable
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.25
+nt>/ RECOVER disable daemon; kill thread; enable daemon; thread recreated
+nt>daemons set &recovery.daemon off
+nt>delay 1
+nt>sched kill &recovery.thread
+
+    THR903 Jun-13-2022 17:37:22.102 on Reigi {33}
+    by NodeBase.CliThread (tid=10, nid=0x0000000000007bc0)
+    for NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188)
+    signal=126 (SIGPURGE: Suicided or Killed)
+nt>
+    THR902 Jun-13-2022 17:37:22.103 on Reigi {34}
+    in NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188): trap number 18
+    type=Signal
+    signal : 126 (SIGPURGE: Suicided or Killed)
+    errval : 0x3
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.ExitIfSafe @ Thread.cpp + 1710[41]
+      NodeBase.Thread.TrapCheck @ Thread.cpp + 3556[0]
+      NodeBase.Thread.FunctionInvoked @ Thread.cpp + 1816[0]
+      NodeBase.Debug.ft @ Debug.cpp + 100[0]
+      NodeBase.Thread.ExitBlockingOperation @ Thread.cpp + 1652[0]
+      NodeBase.Thread.Pause @ Thread.cpp + 2385[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3327[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeTools.RecoveryThread
+      this : 000001D6CA83FF50
+      patchArea : 0x0
+      systhrd  : 000001D6C6933750
+        NodeBase.SysThread
+        this : 000001D6C6933750
+        patchArea : 0x0
+        nid      : 00006188
+        nthread  : 572
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 27
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9C20
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : true
+        waiting    : false
+        locked     : false
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 1
+        recovering : false
+        logged     : true
+        exiting    : false
+        action     : 0
+        blocked    : clock
+        status     : unspecified
+        signal     : 126
+        stackBase  : 00000053B17FF904
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C9C60
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C9C90
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 4
+        vector     : 0
+      test   : 0
+      signal : 0
+delay 2
+
+    THR901 Jun-13-2022 17:37:22.103 on Reigi {35}
+    thread=NodeTools.RecoveryThread (tid=27, nid=0x0000000000006188)
+    signal=126 (SIGPURGE: Suicided or Killed)
+
+  * THR300 Jun-13-2022 17:37:22.103 on Reigi {36}
+    Alarm ON: DAEMON13 (Thread(s) unavailable: recover)
+    daemon=recover target=1 actual=0
+nt>daemons set &recovery.daemon on
+
+    THR300 Jun-13-2022 17:37:24.126 on Reigi {37}
+    Alarm OFF: DAEMON13 (Thread(s) unavailable: recover)
+    daemon=recover target=1 actual=1
+nt>delay 1
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.DaemonReenable completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.DaemonTrap
+symbols set test.name recover.DaemonTrap
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.26
+nt>/ RECOVER daemon retraps trying to recreate thread; reenable to create thread
+nt>swflags set &flag.threadctorretrap on
+nt>delay 1
+nt>recover ctortrap
+nt>
+    THR900 Jun-13-2022 17:37:28.246 on Reigi {38}
+    thread=NodeBase.Thread (tid=29, nid=0x00000000000069ec)
+    Function Traceback:
+      NodeBase.Thread.~Thread @ Thread.cpp + 1184[0]
+      `NodeTools.RecoveryThread.RecoveryThread'.`1'.dtor$0 @ <unknown file> (err=487)
+      <unknown function> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      _chkstk @ <unknown file> (err=487)
+      RtlUnwindEx @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      _C_specific_handler @ <unknown file> (err=487)
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      RaiseException @ <unknown file> (err=487)
+      CxxThrowException @ <unknown file> (err=487)
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1901[0]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.RecoveryThread @ NtIncrement.cpp + 3120[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ Singleton.h + 82[48]
+      NodeTools.RecoveryDaemon.CreateThread @ NtIncrement.cpp + 3089[0]
+      NodeBase.Daemon.CreateThreads @ Daemon.cpp + 126[22]
+      NodeBase.InitThread.RecreateThreads @ InitThread.cpp + 406[0]
+      NodeBase.InitThread.HandleInterrupt @ InitThread.cpp + 298[0]
+      NodeBase.InitThread.Enter @ InitThread.cpp + 249[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeBase.Thread
+      this : 000001D6CA8409D0
+      patchArea : 0x0
+      systhrd  : 000001D6C69323D0
+        NodeBase.SysThread
+        this : 000001D6C69323D0
+        patchArea : 0x0
+        nid      : 000069ec
+        nthread  : 500
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 29
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C8FE0
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : false
+        waiting    : false
+        locked     : false
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 0
+        recovering : false
+        logged     : false
+        exiting    : false
+        action     : 0
+        blocked    : ready
+        status     : unspecified
+        signal     : 0
+        stackBase  : 0000000000000000
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C9020
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C9050
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 0
+        vector     : 0
+delay 1
+
+    THR902 Jun-13-2022 17:37:28.247 on Reigi {39}
+    in NodeBase.InitThread (tid=2, nid=0x00000000000017b8): trap number 19
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.RecoveryThread @ NtIncrement.cpp + 3120[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ Singleton.h + 82[48]
+      NodeTools.RecoveryDaemon.CreateThread @ NtIncrement.cpp + 3089[0]
+      NodeBase.Daemon.CreateThreads @ Daemon.cpp + 126[22]
+      NodeBase.InitThread.RecreateThreads @ InitThread.cpp + 406[0]
+      NodeBase.InitThread.HandleInterrupt @ InitThread.cpp + 298[0]
+      NodeBase.InitThread.Enter @ InitThread.cpp + 249[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR900 Jun-13-2022 17:37:28.248 on Reigi {40}
+    thread=NodeBase.Thread (tid=30, nid=0x0000000000005f74)
+    Function Traceback:
+      NodeBase.Thread.~Thread @ Thread.cpp + 1184[0]
+      `NodeTools.RecoveryThread.RecoveryThread'.`1'.dtor$0 @ <unknown file> (err=487)
+      <unknown function> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      _chkstk @ <unknown file> (err=487)
+      RtlUnwindEx @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      _C_specific_handler @ <unknown file> (err=487)
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      RaiseException @ <unknown file> (err=487)
+      CxxThrowException @ <unknown file> (err=487)
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1901[0]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.RecoveryThread @ NtIncrement.cpp + 3126[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ Singleton.h + 82[48]
+      NodeTools.RecoveryDaemon.CreateThread @ NtIncrement.cpp + 3089[0]
+      NodeBase.Daemon.CreateThreads @ Daemon.cpp + 126[22]
+      NodeBase.InitThread.RecreateThreads @ InitThread.cpp + 406[0]
+      NodeBase.InitThread.HandleInterrupt @ InitThread.cpp + 298[0]
+      NodeBase.InitThread.Enter @ InitThread.cpp + 226[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeBase.Thread
+      this : 000001D6CA840850
+      patchArea : 0x0
+      systhrd  : 000001D6C69335D0
+        NodeBase.SysThread
+        this : 000001D6C69335D0
+        patchArea : 0x0
+        nid      : 00005f74
+        nthread  : 516
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 30
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9980
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : false
+        waiting    : false
+        locked     : false
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 0
+        recovering : false
+        logged     : false
+        exiting    : false
+        action     : 0
+        blocked    : ready
+        status     : unspecified
+        signal     : 0
+        stackBase  : 0000000000000000
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99C0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99F0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 0
+        vector     : 0
+
+    THR902 Jun-13-2022 17:37:28.248 on Reigi {41}
+    in NodeBase.InitThread (tid=2, nid=0x00000000000017b8): trap number 20
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.RecoveryThread @ NtIncrement.cpp + 3126[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ Singleton.h + 82[48]
+      NodeTools.RecoveryDaemon.CreateThread @ NtIncrement.cpp + 3089[0]
+      NodeBase.Daemon.CreateThreads @ Daemon.cpp + 126[22]
+      NodeBase.InitThread.RecreateThreads @ InitThread.cpp + 406[0]
+      NodeBase.InitThread.HandleInterrupt @ InitThread.cpp + 298[0]
+      NodeBase.InitThread.Enter @ InitThread.cpp + 226[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+  * THR300 Jun-13-2022 17:37:28.248 on Reigi {42}
+    Alarm ON: DAEMON13 (Thread(s) unavailable: recover)
+    daemon=recover target=1 actual=0
+
+    SW900 Jun-13-2022 17:37:28.253 on Reigi {43}
+    in ThreadRegistry.GetState
+    expl=orphan exited  errval=0x5f74
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeBase.ThreadRegistry.GetState @ ThreadRegistry.cpp + 379[59]
+      NodeBase.Thread.WaitUntilConstructed @ Thread.cpp + 3798[10]
+      NodeBase.Thread.Start @ Thread.cpp + 3030[5]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    SW900 Jun-13-2022 17:37:28.253 on Reigi {44}
+    in ThreadRegistry.GetState
+    expl=orphan exited  errval=0x69ec
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeBase.Thread.WaitUntilConstructed @ ThreadRegistry.cpp + 379[59]
+      NodeBase.Thread.Start @ Thread.cpp + 3798[10]
+      NodeBase.Thread.Start @ Thread.cpp + 3030[5]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+nt>daemons set &recovery.daemon on
+
+    THR300 Jun-13-2022 17:37:29.253 on Reigi {45}
+    Alarm OFF: DAEMON13 (Thread(s) unavailable: recover)
+    daemon=recover target=1 actual=1
+nt>delay 1
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.DaemonTrap completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.DeleteRemote
+symbols set test.name recover.DeleteRemote
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.16
+nt>/ RECOVER destroy remotely
+nt>/ After deleting the thread, give it time to wake up and exit.
+nt>recover delete f
+
+    THR900 Jun-13-2022 17:37:32.342 on Reigi {46}
+    thread=NodeBase.Thread (tid=31, nid=0x000000000000304c)
+    Function Traceback:
+      NodeBase.Thread.~Thread @ Thread.cpp + 1184[0]
+      NodeTools.RecoveryThread.~RecoveryThread @ NtIncrement.cpp + 3140[10]
+      NodeTools.RecoveryThread.`scalar deleting destructor' @ <unknown file> (err=487)
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Destroy @ Singleton.h + 106[48]
+      NodeTools.RecoverCommand.ProcessCommand @ NtIncrement.cpp + 3634[0]
+      NodeBase.CliThread.InvokeCommand @ CliThread.cpp + 466[34]
+      NodeBase.CliThread.ReadCommands @ CliThread.cpp + 650[0]
+      NodeBase.CliThread.Enter @ CliThread.cpp + 295[17]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeBase.Thread
+      this : 000001D6CA8409D0
+      patchArea : 0x0
+      systhrd  : 000001D6C6933BD0
+        NodeBase.SysThread
+        this : 000001D6C6933BD0
+        patchArea : 0x0
+        nid      : 0000304c
+        nthread  : 396
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 31
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9980
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : true
+        waiting    : false
+        locked     : false
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 0
+        recovering : false
+        logged     : false
+        exiting    : false
+        action     : 0
+        blocked    : clock
+        status     : unspecified
+        signal     : 0
+        stackBase  : 00000053B17FF844
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99C0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99F0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 0
+        vector     : 0
+nt>delay 5
+
+    SW900 Jun-13-2022 17:37:34.255 on Reigi {47}
+    in ThreadRegistry.GetState
+    expl=orphan exited  errval=0x304c
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeBase.ThreadRegistry.GetState @ ThreadRegistry.cpp + 379[59]
+      NodeBase.Thread.RunningThread @ Thread.cpp + 2811[13]
+      NodeBase.Thread.ExitBlockingOperation @ Thread.cpp + 1652[5]
+      NodeBase.Thread.Pause @ Thread.cpp + 2385[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3327[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.DeleteRemote completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.DeleteLocal
+symbols set test.name recover.DeleteLocal
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.17
+nt>/ RECOVER destroy this
+nt>recover delete t
+nt>
+    THR900 Jun-13-2022 17:37:39.464 on Reigi {48}
+    thread=NodeBase.Thread (tid=32, nid=0x0000000000002514)
+    Function Traceback:
+      NodeBase.Thread.~Thread @ Thread.cpp + 1184[0]
+      NodeTools.RecoveryThread.~RecoveryThread @ NtIncrement.cpp + 3140[10]
+      NodeTools.RecoveryThread.`scalar deleting destructor' @ <unknown file> (err=487)
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Destroy @ Singleton.h + 106[48]
+      NodeTools.RecoveryThread.DoDelete @ NtIncrement.cpp + 3199[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3274[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+    Thread Data:
+      NodeBase.Thread
+      this : 000001D6CA8409D0
+      patchArea : 0x0
+      systhrd  : 000001D6C6932550
+        NodeBase.SysThread
+        this : 000001D6C6932550
+        patchArea : 0x0
+        nid      : 00002514
+        nthread  : 548
+        status   : 00
+        priority : 1
+        signal   : 0
+      daemon   : 000001D6C6911EA0 NodeTools.RecoveryDaemon
+      tid      : 32
+      faction  : 6
+      deleting : false
+      msgq     : 
+        tail : 0000000000000000
+        diff : 16
+      priv     : 
+        NodeBase.ThreadPriv
+        this : 000001D6C60C9980
+        patchArea : 0x0
+        unpreempts : 1
+        immUnprots : 0
+        memUnprots : 0
+        mutexes    : 0
+        swlogs     : 0
+        entered    : true
+        waiting    : false
+        locked     : true
+        traceMsg   : false
+        tracing    : false
+        autostop   : false
+        warned     : false
+        trap       : false
+        traps      : 0
+        recovering : false
+        logged     : false
+        exiting    : false
+        action     : 0
+        blocked    : ready
+        status     : unspecified
+        signal     : 0
+        stackBase  : 00000053B1EFF9F4
+        acquiring  : 0000000000000000
+        rtcLbc     : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99C0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 6
+          count    : 0
+        trapLbc    : 
+          NodeBase.LeakyBucketCounter
+          this : 000001D6C60C99F0
+          patchArea : 0x0
+          interval : 60000ms
+          limit    : 4
+          count    : 0
+        vector     : 0
+tests end
+
+    SW900 Jun-13-2022 17:37:39.465 on Reigi {49}
+    in ThreadRegistry.GetState
+    expl=orphan exited  errval=0x2514
+    Function Traceback:
+      NodeBase.Debug.SwLog @ Debug.cpp + 214[0]
+      NodeBase.ThreadRegistry.GetState @ ThreadRegistry.cpp + 379[59]
+      NodeBase.Thread.RunningThread @ Thread.cpp + 2811[13]
+      NodeBase.Thread.Pause @ Thread.cpp + 2365[5]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3327[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.DeleteLocal completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.Ctrl-C
+symbols set test.name recover.Ctrl-C
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.18
+nt>/ =============== PREPARE TO ENTER CTRL-C, POSSIBLY TWICE ================
+nt>/ RECOVER infinite loop
+nt>delay 1
+nt>symbols assign save.traponrtctimeout traponrtctimeout
+nt>cfgparms set traponrtctimeout f
+nt>delay 1
+nt>recover loop
+
+    THR903 Jun-13-2022 17:37:43.697 on Reigi {50}
+    by NodeBase.InitThread (tid=2, nid=0x00000000000017b8)
+    for NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c)
+    signal=123 (SIGYIELD: Running Unpreemptably Too Long)
+
+    THR903 Jun-13-2022 17:37:45.005 on Reigi {51}
+    for NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c)
+    signal=2 (SIGINT: Terminal Interrupt)
+
+    THR902 Jun-13-2022 17:37:45.011 on Reigi {52}
+    in NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c): trap number 21
+    type=Signal
+    signal : 2 (SIGINT: Terminal Interrupt)
+    errval : 0x3
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.ExitIfSafe @ Thread.cpp + 1710[41]
+      NodeBase.Thread.TrapCheck @ Thread.cpp + 3556[0]
+      NodeBase.Thread.FunctionInvoked @ Thread.cpp + 1816[0]
+      NodeBase.Debug.ft @ Debug.cpp + 100[0]
+      NodeTools.RecoveryThread.LoopForever @ NtIncrement.cpp + 3346[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3289[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR905 Jun-13-2022 17:37:45.011 on Reigi {53}
+    thread=NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c) overrun=1395ms
+nt>delay 1
+nt>cfgparms set traponrtctimeout &save.traponrtctimeout
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.Ctrl-C completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.Retrap
+symbols set test.name recover.Retrap
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.23
+nt>/ RECOVER trap during trap recovery
+nt>swflags set &flag.threadretrap on
+nt>delay 1
+nt>recover badptr
+
+    THR902 Jun-13-2022 17:37:49.146 on Reigi {54}
+    in NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c): trap number 22
+    type=Signal
+    signal : 11 (SIGSEGV: Illegal Memory Access)
+    errval : 0xc0000005
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.HandleSignal @ Thread.cpp + 1892[27]
+      NodeBase.SE_Handler @ SysThread.win.cpp + 147[0]
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      _CxxFrameHandler4 @ <unknown file> (err=487)
+      __GSHandlerCheck_EH4 @ gshandlereh4.cpp + 86[0]
+      _chkstk @ <unknown file> (err=487)
+      RtlRestoreContext @ <unknown file> (err=487)
+      KiUserExceptionDispatcher @ <unknown file> (err=487)
+      NodeBase.Thread.CauseTrap @ Thread.cpp + 1264[5]
+      NodeTools.RecoveryThread.UseBadPointer @ NtIncrement.cpp + 3375[0]
+      NodeTools.RecoveryThread.Enter @ NtIncrement.cpp + 3277[0]
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+
+    THR902 Jun-13-2022 17:37:49.154 on Reigi {55}
+    in NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c): trap number 23
+    type=Signal
+    signal : 124 (SIGSTACK1: Stack Overflow: Attempt Recovery)
+    errval : 0x239c
+    Function Traceback:
+      NodeBase.Exception.Exception @ Exception.cpp + 53[28]
+      NodeBase.SignalException.SignalException @ SignalException.cpp + 38[12]
+      NodeBase.Thread.StackCheck @ Thread.cpp + 3000[20]
+      NodeBase.Thread.FunctionInvoked @ Thread.cpp + 1823[0]
+      NodeBase.Debug.ft @ Debug.cpp + 100[0]
+      NodeBase.Thread.TrapHandler @ Thread.cpp + 3571[0]
+      `NodeBase.Thread.TrapHandler'.`1'.catch$6 @ Thread.cpp + 3671[70]
+      <unknown function> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      RtlCaptureContext2 @ <unknown file> (err=487)
+      NodeBase.Thread.TrapHandler @ Thread.cpp + 3648[0]
+      `NodeBase.Thread.Start'.`1'.catch$8 @ Thread.cpp + 3184[82]
+      <unknown function> (err=487)
+      _NLG_Return2 @ <unknown file> (err=487)
+      RtlCaptureContext2 @ <unknown file> (err=487)
+      NodeBase.Thread.Start @ Thread.cpp + 3130[0]
+      NodeBase.EnterThread @ SysThread.win.cpp + 159[0]
+      recalloc @ <unknown file> (err=487)
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlUserThreadStart @ <unknown file> (err=487)
+nt>
+    THR906 Jun-13-2022 17:37:49.159 on Reigi {56}
+    thread=NodeTools.RecoveryThread (tid=33, nid=0x0000000000007c9c)
+    signal=11 (SIGSEGV: Illegal Memory Access)
+delay 1
+nt>swflags set &flag.threadretrap off
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.Retrap completed.
+nt>delay 1
+  OK.
+nt>tests begin recover.ThreadDtorTrap
+symbols set test.name recover.ThreadDtorTrap
+  OK.
+read test.trap.prolog
+nt>send &test.name
+  OK.
+nt>sched start
+nt>start
+nt>read trap.27
+nt>/ RECOVER recovery thread exits and its destructor traps
+nt>recover dtortrap
+nt>delay 1
+nt>tests end
+read test.trap.epilog
+nt>delay 1
+nt>stop
+nt>sched stop
+nt>sched show &test.name
+nt>save funcs &test.name
+nt>save trace &test.name
+nt>clear buffer
+nt>send cout
+nt>echo Test &test.name completed.
+Test recover.ThreadDtorTrap completed.
+nt>delay 1
+  OK.
+nt>

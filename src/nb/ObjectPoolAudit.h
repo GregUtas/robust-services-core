@@ -90,7 +90,7 @@ private:
 
    //  The pool currently being audited.
    //
-   ObjectPoolId pid_;
+   id_t pid_;
 };
 }
 #endif

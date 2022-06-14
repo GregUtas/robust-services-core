@@ -76,7 +76,7 @@ template<typename T> struct DynamicAllocator
 
    ~DynamicAllocator() = default;
 
-   DynamicAllocator(const DynamicAllocator<T>& that) noexcept = default;
+   DynamicAllocator(const DynamicAllocator<T>& that) noexcept { }
 
    template<typename U> DynamicAllocator
       (const DynamicAllocator<U>& that) noexcept { }
@@ -111,7 +111,7 @@ template<typename T> struct ImmutableAllocator
 
    ~ImmutableAllocator() = default;
 
-   ImmutableAllocator(const ImmutableAllocator<T>& that) noexcept = default;
+   ImmutableAllocator(const ImmutableAllocator<T>& that) noexcept { }
 
    template<typename U> ImmutableAllocator
       (const ImmutableAllocator<U>& that) noexcept { }
@@ -146,7 +146,7 @@ template<typename T> struct PermanentAllocator
 
    ~PermanentAllocator() = default;
 
-   PermanentAllocator(const PermanentAllocator<T>& that) noexcept = default;
+   PermanentAllocator(const PermanentAllocator<T>& that) noexcept { }
 
    template<typename U> PermanentAllocator
       (const PermanentAllocator<U>& that) noexcept { }
@@ -181,7 +181,7 @@ template<typename T> struct PersistentAllocator
 
    ~PersistentAllocator() = default;
 
-   PersistentAllocator(const PermanentAllocator<T>& that) noexcept = default;
+   PersistentAllocator(const PermanentAllocator<T>& that) noexcept { }
 
    template<typename U> PersistentAllocator
       (const PersistentAllocator<U>& that) noexcept { }
@@ -216,7 +216,7 @@ template<typename T> struct ProtectedAllocator
 
    ~ProtectedAllocator() = default;
 
-   ProtectedAllocator(const ProtectedAllocator<T>& that) noexcept = default;
+   ProtectedAllocator(const ProtectedAllocator<T>& that) noexcept { }
 
    template<typename U> ProtectedAllocator
       (const ProtectedAllocator<U>& that) noexcept { }
@@ -251,7 +251,7 @@ template<typename T> struct TemporaryAllocator
 
    ~TemporaryAllocator() = default;
 
-   TemporaryAllocator(const TemporaryAllocator<T>& that) noexcept = default;
+   TemporaryAllocator(const TemporaryAllocator<T>& that) noexcept { }
 
    template<typename U> TemporaryAllocator
       (const TemporaryAllocator<U>& that) noexcept { }

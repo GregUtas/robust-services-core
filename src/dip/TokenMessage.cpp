@@ -597,7 +597,7 @@ size_t TokenMessage::set_from(const Token* stream, size_t length)
 {
    Debug::ft("TokenMessage.set_from(stream, length)");
 
-   word location = NO_ERROR;
+   size_t location = NO_ERROR;
    int nesting = 0;
 
    clear();

@@ -64,7 +64,7 @@ void ServiceCodeRegistry::Display(ostream& stream,
 
    stream << prefix << "codeToService [Address::SC]" << CRLF;
 
-   for(auto i = 0; i <= Address::LastSC; ++i)
+   for(size_t i = 0; i <= Address::LastSC; ++i)
    {
       auto lead = prefix + spaces(2);
       auto sid = codeToService_[i];

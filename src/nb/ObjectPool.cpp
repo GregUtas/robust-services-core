@@ -1155,7 +1155,7 @@ void ObjectPool::Shutdown(RestartLevel level)
 
    if(Restart::ClearsMemory(mem_))
    {
-      for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
+      for(size_t i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
       currSegments_ = 0;
       new (dyn_.get()) ObjectPoolDynamic();
    }

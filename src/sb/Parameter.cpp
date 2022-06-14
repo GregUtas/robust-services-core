@@ -135,7 +135,7 @@ void Parameter::Display(ostream& stream,
 
    auto lead = prefix + spaces(2);
 
-   for(auto i = 0; i <= Signal::MaxId; ++i)
+   for(size_t i = 0; i <= Signal::MaxId; ++i)
    {
       char c;
 

@@ -40,10 +40,10 @@ typedef uint8_t subtoken_t;  // token's value (LSB)
 
 //  Constants.
 //
-constexpr size_t POWER_MAX = 256;
+constexpr int16_t POWER_MAX = 256;
 constexpr int16_t NIL_POWER = -1;
 
-constexpr size_t PROVINCE_MAX = 256;
+constexpr int16_t PROVINCE_MAX = 256;
 constexpr int16_t NIL_PROVINCE = -1;
 
 constexpr token_t INVALID_TOKEN = 0xFFFF;

@@ -328,7 +328,7 @@ void Service::Display(ostream& stream,
    auto lead = prefix + spaces(2);
    stream << prefix << "eventNames [EventId]" << CRLF;
 
-   for(auto i = 0; i <= Event::MaxId; ++i)
+   for(size_t i = 0; i <= Event::MaxId; ++i)
    {
       if(eventNames_[i] != nullptr)
       {
@@ -367,7 +367,7 @@ size_t Service::EventCount() const
 {
    size_t count = 0;
 
-   for(auto i = 0; i <= Event::MaxId; ++i)
+   for(size_t i = 0; i <= Event::MaxId; ++i)
    {
       if(EventName(i) != nullptr) ++count;
    }
@@ -456,7 +456,7 @@ size_t Service::Summarize(ostream& stream, uint32_t selector) const
 
       stream << ItemHeader << CRLF;
 
-      for(auto i = 0; i <= Event::MaxId; ++i)
+      for(size_t i = 0; i <= Event::MaxId; ++i)
       {
          auto name = EventName(i);
 

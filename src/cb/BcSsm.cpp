@@ -804,7 +804,7 @@ void BcSsm::ResetStateCounts(RestartLevel level)
 
    if(level < RestartCold) return;
 
-   for(auto i = 0; i <= BcState::MaxBcId; ++i) StateCount_[i] = 0;
+   for(size_t i = 0; i <= BcState::MaxBcId; ++i) StateCount_[i] = 0;
 }
 
 //------------------------------------------------------------------------------

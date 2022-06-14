@@ -53,12 +53,12 @@ PotsStatistics::PotsStatistics() : StatisticsGroup("POTS Calls")
 {
    Debug::ft("PotsStatistics.ctor");
 
-   for(auto i = 0; i <= MaxId; ++i)
+   for(size_t i = 0; i <= MaxId; ++i)
    {
       basicCalls_[i].reset(new Counter(StatExplStrings[i]));
    }
 
-   for(auto i = 0; i <= Cause::MaxInd; ++i)
+   for(size_t i = 0; i <= Cause::MaxInd; ++i)
    {
       treatments_[i].reset(new Counter(Cause::strInd(i)));
    }
@@ -82,14 +82,14 @@ void PotsStatistics::DisplayStats
 
    stream << spaces(2) << "Basic Calls" << CRLF;
 
-   for(auto i = 0; i <= MaxId; ++i)
+   for(size_t i = 0; i <= MaxId; ++i)
    {
       basicCalls_[i]->DisplayStat(stream, options);
    }
 
    stream << spaces(2) << "Treatments (by Cause)" << CRLF;
 
-   for(auto i = 0; i <= Cause::MaxInd; ++i)
+   for(size_t i = 0; i <= Cause::MaxInd; ++i)
    {
       treatments_[i]->DisplayStat(stream, options);
    }

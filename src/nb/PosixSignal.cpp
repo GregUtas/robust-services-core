@@ -98,7 +98,7 @@ void PosixSignal::Display(ostream& stream,
 
    bool found = false;
 
-   for(auto i = 0; i < Attribute_N; ++i)
+   for(size_t i = 0; i < Attribute_N; ++i)
    {
       if(attrs_.test(i))
       {

@@ -899,7 +899,7 @@ bool Interpreter::IsOperator(const string& s)
 {
    Debug::ft("Interpreter.IsOperator");
 
-   for(auto i = 0; i < Operator_N; ++i)
+   for(size_t i = 0; i < Operator_N; ++i)
    {
       if(OperatorInfo::Attrs[i].sym == s) return true;
    }

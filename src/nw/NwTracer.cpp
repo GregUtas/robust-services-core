@@ -134,12 +134,12 @@ TraceRc NwTracer::ClearSelections(FlagId filter)
    switch(filter)
    {
    case TracePeer:
-      for(auto i = 0; i < MaxPeerEntries; ++i) peers_[i] = PeerFilter();
+      for(size_t i = 0; i < MaxPeerEntries; ++i) peers_[i] = PeerFilter();
       buff->ClearFilter(TracePeer);
       break;
 
    case TracePort:
-      for(auto i = 0; i < MaxPortEntries; ++i) ports_[i] = PortFilter();
+      for(size_t i = 0; i < MaxPortEntries; ++i) ports_[i] = PortFilter();
       buff->ClearFilter(TracePort);
       break;
 
@@ -162,7 +162,7 @@ int NwTracer::FindPeer(const SysIpL3Addr& peer) const
 {
    Debug::ft("NwTracer.FindPeer");
 
-   for(auto i = 0; i < MaxPeerEntries; ++i)
+   for(size_t i = 0; i < MaxPeerEntries; ++i)
    {
       if(peers_[i].peer.L2AddrMatches(peer))
       {
@@ -180,7 +180,7 @@ int NwTracer::FindPort(ipport_t port) const
 {
    Debug::ft("NwTracer.FindPort");
 
-   for(auto i = 0; i < MaxPortEntries; ++i)
+   for(size_t i = 0; i < MaxPortEntries; ++i)
    {
       if(ports_[i].port == port) return i;
    }
@@ -201,7 +201,7 @@ bool NwTracer::PeersEmpty() const
 {
    Debug::ft("NwTracer.PeersEmpty");
 
-   for(auto i = 0; i < MaxPeerEntries; ++i)
+   for(size_t i = 0; i < MaxPeerEntries; ++i)
    {
       if(peers_[i].status != TraceDefault) return false;
    }
@@ -226,7 +226,7 @@ bool NwTracer::PortsEmpty() const
 {
    Debug::ft("NwTracer.PortsEmpty");
 
-   for(auto i = 0; i < MaxPortEntries; ++i)
+   for(size_t i = 0; i < MaxPortEntries; ++i)
    {
       if(ports_[i].status != TraceDefault) return false;
    }
@@ -268,7 +268,7 @@ void NwTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      for(auto i = 0; i < MaxPeerEntries; ++i)
+      for(size_t i = 0; i < MaxPeerEntries; ++i)
       {
          if(peers_[i].status != TraceDefault)
          {
@@ -286,7 +286,7 @@ void NwTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      for(auto i = 0; i < MaxPortEntries; ++i)
+      for(size_t i = 0; i < MaxPortEntries; ++i)
       {
          if(ports_[i].status != TraceDefault)
          {

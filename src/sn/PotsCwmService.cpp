@@ -1072,7 +1072,7 @@ PotsMuxPsm* PotsCwmSsm::OtherNPsm(const ProtocolSM* npsm) const
       return nullptr;
    }
 
-   for(auto i = 0; i <= PotsMuxSsm::MaxCallId; ++i)
+   for(size_t i = 0; i <= PotsMuxSsm::MaxCallId; ++i)
    {
       if(NPsm(i) == npsm)
       {

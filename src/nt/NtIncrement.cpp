@@ -622,7 +622,7 @@ word SwFlagsCommand::ProcessCommand(CliThread& cli) const
       }
       else
       {
-         for(auto i = 0; i <= MaxFlagId; ++i)
+         for(size_t i = 0; i <= MaxFlagId; ++i)
          {
             if(flags.test(i)) *cli.obuf << SPACE << i;
          }
@@ -1625,7 +1625,7 @@ Q1WayPool::Q1WayPool()
 
    items_[0] = nullptr;
 
-   for(auto i = 1; i <= MaxItems; ++i)
+   for(size_t i = 1; i <= MaxItems; ++i)
    {
       items_[i].reset(new Q1WayItem(i));
    }
@@ -1650,7 +1650,7 @@ void Q1WayPool::Display(ostream& stream,
 
 void Q1WayPool::Reallocate()
 {
-   for(auto i = 1; i <= MaxItems; ++i)
+   for(size_t i = 1; i <= MaxItems; ++i)
    {
       if(items_[i] == nullptr)
       {
@@ -2119,7 +2119,7 @@ Q2WayPool::Q2WayPool()
 
    items_[0] = nullptr;
 
-   for(auto i = 1; i <= MaxItems; ++i)
+   for(size_t i = 1; i <= MaxItems; ++i)
    {
       items_[i].reset(new Q2WayItem(i));
    }
@@ -2144,7 +2144,7 @@ void Q2WayPool::Display(ostream& stream,
 
 void Q2WayPool::Reallocate()
 {
-   for(auto i = 1; i <= MaxItems; ++i)
+   for(size_t i = 1; i <= MaxItems; ++i)
    {
       if(items_[i] == nullptr)
       {
@@ -2636,7 +2636,7 @@ RegistryPool::RegistryPool()
 {
    items_[0] = nullptr;
 
-   for(auto i = 1; i <= MaxItems; ++i)
+   for(size_t i = 1; i <= MaxItems; ++i)
    {
       items_[i].reset(new RegistryItem(i));
    }

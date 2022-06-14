@@ -55,7 +55,7 @@ DigitString::DigitString(Address::DN dn) :
 
    if(Address::IsValidDN(dn))
    {
-      for(auto i = 1; i <= Address::DN_Length; ++i)
+      for(size_t i = 1; i <= Address::DN_Length; ++i)
       {
          auto d = dn % 10;
          if(d == 0) d = Digit_0;
@@ -132,7 +132,7 @@ DigitString::Rc DigitString::AddDigits(const DigitString& ds)
 {
    Debug::ft("DigitString.AddDigits(digits)");
 
-   for(auto i = 0; i < ds.size_; ++i)
+   for(size_t i = 0; i < ds.size_; ++i)
    {
       auto rc = AddDigit(Digit(ds.digits_[i]));
       if(rc != Ok) return rc;
@@ -164,7 +164,7 @@ void DigitString::Display(ostream& stream, const string& prefix) const
 {
    stream << prefix << "count  : " << int(size_) << CRLF;
    stream << prefix << "digits : ";
-   for(auto i = 0; i < size_; ++i) stream << DigitToChar[digits_[i]];
+   for(size_t i = 0; i < size_; ++i) stream << DigitToChar[digits_[i]];
    stream << CRLF;
 }
 
@@ -203,7 +203,7 @@ bool DigitString::operator==(const DigitString& that) const
 {
    if(size_ != that.size_) return false;
 
-   for(auto i = 0; i < size_; ++i)
+   for(size_t i = 0; i < size_; ++i)
    {
       if(digits_[i] != that.digits_[i]) return false;
    }
@@ -239,7 +239,7 @@ Address::DN DigitString::ToDN() const
    {
       Address::DN dn = 0;
 
-      for(auto i = 0; i < Address::DN_Length; ++i)
+      for(size_t i = 0; i < Address::DN_Length; ++i)
       {
          auto d = digits_[i];
          if((d < Digit_1) || (d > Digit_0)) return Address::NilDN;
@@ -266,7 +266,7 @@ Address::SC DigitString::ToSC() const
 
       if(digits_[0] != Digit_Star) return Address::NilSC;
 
-      for(auto i = 1; i < Address::SC_Length; ++i)
+      for(size_t i = 1; i < Address::SC_Length; ++i)
       {
          auto d = digits_[i];
          if((d < Digit_1) || (d > Digit_0)) return Address::NilSC;

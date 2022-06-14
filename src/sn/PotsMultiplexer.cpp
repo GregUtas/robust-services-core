@@ -792,7 +792,7 @@ void PotsMuxSsm::PsmDeleted(const ProtocolSM& exPsm)
    }
    else
    {
-      for(auto i = 0; i <= MaxCallId; ++i)
+      for(size_t i = 0; i <= MaxCallId; ++i)
       {
          if(nPsm_[i] == &exPsm)
          {

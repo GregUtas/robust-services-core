@@ -31,6 +31,7 @@
 #include "SbCliParms.h"
 #include "SbPools.h"
 #include "Singleton.h"
+#include "SoftwareException.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -130,8 +131,7 @@ void* SbIpBuffer::operator new(size_t size, SbPoolUser user)
       return Singleton<BtIpBufferPool>::Instance()->DeqBlock(size);
    }
 
-   Debug::SwLog(SbIpBuffer_opnew, "invalid user", user);
-   return nullptr;
+   throw SoftwareException("invalid user", user);
 }
 
 //------------------------------------------------------------------------------

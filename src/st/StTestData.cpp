@@ -41,8 +41,8 @@ StTestData::StTestData(CliThread& cli) : CliAppData(cli, TestSessionAppId),
 {
    Debug::ft("StTestData.ctor");
 
-   for(auto i = 0; i <= Factory::MaxId; ++i) lastMsg_[i] = nullptr;
-   for(auto i = 0; i <= TestSession::MaxId; ++i) session_[i] = nullptr;
+   for(size_t i = 0; i <= Factory::MaxId; ++i) lastMsg_[i] = nullptr;
+   for(size_t i = 0; i <= TestSession::MaxId; ++i) session_[i] = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ void StTestData::Display(ostream& stream,
    auto lead1 = prefix + spaces(2);
    auto lead2 = prefix + spaces(4);
 
-   for(auto i = 0; i <= Factory::MaxId; ++i)
+   for(size_t i = 0; i <= Factory::MaxId; ++i)
    {
       if(lastMsg_[i] != nullptr)
       {
@@ -108,7 +108,7 @@ void StTestData::Display(ostream& stream,
 
    stream << prefix << "session : " << CRLF;
 
-   for(auto i = 0; i <= TestSession::MaxId; ++i)
+   for(size_t i = 0; i <= TestSession::MaxId; ++i)
    {
       if(session_[i] != nullptr)
       {
@@ -126,9 +126,9 @@ void StTestData::EventOccurred(Event event)
 
    if(event == EndOfTest)
    {
-      for(auto i = 0; i <= Factory::MaxId; ++i) lastMsg_[i] = nullptr;
+      for(size_t i = 0; i <= Factory::MaxId; ++i) lastMsg_[i] = nullptr;
 
-      for(auto i = 0; i <= TestSession::MaxId; ++i)
+      for(size_t i = 0; i <= TestSession::MaxId; ++i)
       {
          session_[i].reset();
       }

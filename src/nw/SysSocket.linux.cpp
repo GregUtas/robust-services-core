@@ -22,7 +22,6 @@
 #ifdef OS_LINUX
 
 #include "SysSocket.h"
-#include <endian.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>

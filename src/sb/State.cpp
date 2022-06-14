@@ -219,7 +219,7 @@ void State::Display(ostream& stream,
 
    stream << prefix << "handlers [EventId]" << CRLF;
 
-   for(auto i = 0; i <= Event::MaxId; ++i)
+   for(size_t i = 0; i <= Event::MaxId; ++i)
    {
       if(handlers_[i] != NIL_ID)
       {
@@ -230,7 +230,7 @@ void State::Display(ostream& stream,
 
    stream << prefix << "msgAnalyzers [ServicePortId]" << CRLF;
 
-   for(auto i = 0; i <= MaxServicePortId; ++i)
+   for(size_t i = 0; i <= MaxServicePortId; ++i)
    {
       if(msgAnalyzers_[i] != NIL_ID)
       {

@@ -46,6 +46,6 @@ namespace NodeBase
 typedef void* SysHeap_t;
 typedef uintptr_t SysThread_t;
 typedef uintptr_t SysThreadId;
-typedef uintptr_t SysSocket_t;
+typedef intptr_t SysSocket_t;
 }
 #endif

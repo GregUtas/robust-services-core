@@ -180,6 +180,13 @@ if(MSVC)
     )
 endif()
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+     source_file_compile_options(Cxx.cpp -Wno-char-subscripts)
+     source_file_compile_options(CxxArea.cpp -Wno-char-subscripts)
+     source_file_compile_options(CxxString.cpp -Wno-char-subscripts)
+     source_file_compile_options(Lexer.cpp -Wno-char-subscripts)
+endif()
+
 ################################################################################
 # Dependencies
 ################################################################################

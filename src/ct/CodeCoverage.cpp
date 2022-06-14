@@ -531,14 +531,14 @@ word CodeCoverage::Query(string& expl)
          histogram[f->second.tests.size()]++;
    }
 
-   for(auto i = 0; i < MAX_TESTS; ++i)
+   for(size_t i = 0; i < MAX_TESTS; ++i)
    {
       stats << setw(6) << i;
    }
 
    stats << setw(5) << MAX_TESTS << '+' << CRLF;
 
-   for(auto i = 0; i <= MAX_TESTS; ++i)
+   for(size_t i = 0; i <= MAX_TESTS; ++i)
    {
       stats << setw(6) << histogram[i];
    }

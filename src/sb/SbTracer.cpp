@@ -143,22 +143,22 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
    switch(filter)
    {
    case TraceFactory:
-      for(auto i = 0; i <= Factory::MaxId; ++i) factories_[i] = TraceDefault;
+      for(size_t i = 0; i <= Factory::MaxId; ++i) factories_[i] = TraceDefault;
       buff->ClearFilter(TraceFactory);
       break;
 
    case TraceProtocol:
-      for(auto i = 0; i <= Protocol::MaxId; ++i) protocols_[i] = TraceDefault;
+      for(size_t i = 0; i <= Protocol::MaxId; ++i) protocols_[i] = TraceDefault;
       buff->ClearFilter(TraceProtocol);
       break;
 
    case TraceSignal:
-      for(auto i = 0; i < MaxSignalEntries; ++i) signals_[i] = SignalFilter();
+      for(size_t i = 0; i < MaxSignalEntries; ++i) signals_[i] = SignalFilter();
       buff->ClearFilter(TraceSignal);
       break;
 
    case TraceService:
-      for(auto i = 0; i <= Service::MaxId; ++i) services_[i] = TraceDefault;
+      for(size_t i = 0; i <= Service::MaxId; ++i) services_[i] = TraceDefault;
       buff->ClearFilter(TraceService);
       break;
 
@@ -189,7 +189,7 @@ bool SbTracer::FactoriesEmpty() const
 {
    Debug::ft("SbTracer.FactoriesEmpty");
 
-   for(auto i = 0; i <= Factory::MaxId; ++i)
+   for(size_t i = 0; i <= Factory::MaxId; ++i)
    {
       if(factories_[i] != TraceDefault) return false;
    }
@@ -203,7 +203,7 @@ int SbTracer::FindSignal(ProtocolId prid, SignalId sid) const
 {
    Debug::ft("SbTracer.FindSignal");
 
-   for(auto i = 0; i < MaxSignalEntries; ++i)
+   for(size_t i = 0; i < MaxSignalEntries; ++i)
    {
       if((signals_[i].prid == prid) && (signals_[i].sid == sid)) return i;
    }
@@ -252,7 +252,7 @@ bool SbTracer::ProtocolsEmpty() const
 {
    Debug::ft("SbTracer.ProtocolsEmpty");
 
-   for(auto i = 0; i <= Protocol::MaxId; ++i)
+   for(size_t i = 0; i <= Protocol::MaxId; ++i)
    {
       if(protocols_[i] != TraceDefault) return false;
    }
@@ -282,7 +282,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    {
       auto reg = Singleton<FactoryRegistry>::Instance();
 
-      for(auto i = 0; i <= Factory::MaxId; ++i)
+      for(size_t i = 0; i <= Factory::MaxId; ++i)
       {
          if(factories_[i] != TraceDefault)
          {
@@ -302,7 +302,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    {
       auto reg = Singleton<ProtocolRegistry>::Instance();
 
-      for(auto i = 0; i <= Protocol::MaxId; ++i)
+      for(size_t i = 0; i <= Protocol::MaxId; ++i)
       {
          if(protocols_[i] != TraceDefault)
          {
@@ -322,7 +322,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    {
       auto reg = Singleton<ProtocolRegistry>::Instance();
 
-      for(auto i = 0; i < MaxSignalEntries; ++i)
+      for(size_t i = 0; i < MaxSignalEntries; ++i)
       {
          if(signals_[i].status != TraceDefault)
          {
@@ -344,7 +344,7 @@ void SbTracer::QuerySelections(ostream& stream) const
    {
       auto reg = Singleton<ServiceRegistry>::Instance();
 
-      for(auto i = 0; i <= Service::MaxId; ++i)
+      for(size_t i = 0; i <= Service::MaxId; ++i)
       {
          if(services_[i] != TraceDefault)
          {
@@ -514,7 +514,7 @@ bool SbTracer::ServicesEmpty() const
 {
    Debug::ft("SbTracer.ServicesEmpty");
 
-   for(auto i = 0; i <= Service::MaxId; ++i)
+   for(size_t i = 0; i <= Service::MaxId; ++i)
    {
       if(services_[i] != TraceDefault) return false;
    }
@@ -528,7 +528,7 @@ bool SbTracer::SignalsEmpty() const
 {
    Debug::ft("SbTracer.SignalsEmpty");
 
-   for(auto i = 0; i < MaxSignalEntries; ++i)
+   for(size_t i = 0; i < MaxSignalEntries; ++i)
    {
       if(signals_[i].status != TraceDefault) return false;
    }

@@ -63,7 +63,7 @@ ServiceSM::ServiceSM(ServiceId sid) :
 
    ssmq_.Init(Pooled::LinkDiff());
 
-   for(auto i = 0; i < Event::Location_N; ++i)
+   for(size_t i = 0; i < Event::Location_N; ++i)
    {
       eventq_[i].Init(Pooled::LinkDiff());
    }
@@ -125,7 +125,7 @@ ServiceSM::~ServiceSM()
 
    //  Delete all events and any modifiers in the SSMQ.
    //
-   for(auto i = 0; i < Event::Location_N; ++i)
+   for(size_t i = 0; i < Event::Location_N; ++i)
    {
       eventq_[i].Purge();
    }
@@ -188,7 +188,7 @@ void ServiceSM::Display(ostream& stream,
 
    auto found = false;
 
-   for(auto i = 0; i <= Trigger::MaxId; ++i)
+   for(size_t i = 0; i <= Trigger::MaxId; ++i)
    {
       if(triggered_[i])
       {
@@ -337,7 +337,7 @@ void ServiceSM::GetSubtended(std::vector<Base*>& objects) const
 
    Pooled::GetSubtended(objects);
 
-   for(auto i = 0; i < Event::Location_N; ++i)
+   for(size_t i = 0; i < Event::Location_N; ++i)
    {
       for(auto evt = eventq_[i].First(); evt != nullptr; eventq_[i].Next(evt))
       {

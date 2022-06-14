@@ -439,11 +439,11 @@ fixed_string TrafficStateStr[TrafficCall::State_N + 1] =
 void TrafficCall::DisplayStateCounts(ostream& stream, const string& prefix)
 {
    stream << prefix;
-   for(auto i = 0; i < State_N; ++i) stream << setw(6) << TrafficStateStr[i];
+   for(size_t i = 0; i < State_N; ++i) stream << setw(6) << TrafficStateStr[i];
    stream << CRLF;
 
    stream << prefix;
-   for(auto i = 0; i < State_N; ++i) stream << setw(6) << StateCount_[i];
+   for(size_t i = 0; i < State_N; ++i) stream << setw(6) << StateCount_[i];
    stream << CRLF;
 }
 
@@ -969,7 +969,7 @@ void TrafficCall::ResetStateCounts()
 {
    Debug::ft("TrafficCall.ResetStateCounts");
 
-   for(auto i = 0; i < State_N; ++i) StateCount_[i] = 0;
+   for(size_t i = 0; i < State_N; ++i) StateCount_[i] = 0;
    CallId_ = 1;
 }
 
@@ -1052,7 +1052,7 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
    auto size = sizeof(Q1Way<TrafficCall>) * NumOfSlots;
    timewheel_ = (Q1Way<TrafficCall>*) Memory::Alloc(size, MemDynamic);
 
-   for(auto i = 0; i < NumOfSlots; ++i)
+   for(size_t i = 0; i < NumOfSlots; ++i)
    {
       new (&timewheel_[i]) Q1Way<TrafficCall>();
       timewheel_[i].Init(TrafficCall::LinkDiff());

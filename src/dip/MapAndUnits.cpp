@@ -1080,7 +1080,7 @@ std::vector<PowerCentres> MapAndUnits::get_centres() const
 
       if(province.is_supply_centre)
       {
-         auto owner = province.owner;
+         auto& owner = province.owner;
          auto index = (owner == TOKEN_PARAMETER_UNO ?
             number_of_powers : owner.power_id());
          owners.at(index).centres.push_back(p);

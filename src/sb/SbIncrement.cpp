@@ -330,7 +330,7 @@ word EventsCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << spaces(4) << "eventNames [EventId]" << CRLF;
       if(size == 0) return cli.Report(0, NoEventsExpl, 6);
 
-      for(auto i = 0; i <= Event::MaxId; ++i)
+      for(size_t i = 0; i <= Event::MaxId; ++i)
       {
          auto name = svc->EventName(i);
          if(name != nullptr)

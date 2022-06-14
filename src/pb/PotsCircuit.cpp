@@ -132,11 +132,11 @@ fixed_string CircuitStateStr[PotsCircuit::State_N] =
 void PotsCircuit::DisplayStateCounts(ostream& stream, const string& prefix)
 {
    stream << prefix;
-   for(auto i = 0; i < State_N; ++i) stream << setw(6) << CircuitStateStr[i];
+   for(size_t i = 0; i < State_N; ++i) stream << setw(6) << CircuitStateStr[i];
    stream << CRLF;
 
    stream << prefix;
-   for(auto i = 0; i < State_N; ++i) stream << setw(6) << StateCount_[i];
+   for(size_t i = 0; i < State_N; ++i) stream << setw(6) << StateCount_[i];
    stream << CRLF;
 }
 
@@ -318,7 +318,7 @@ void PotsCircuit::ResetStateCounts(RestartLevel level)
 
    if(level < RestartCold) return;
 
-   for(auto i = 0; i < State_N; ++i) StateCount_[i] = 0;
+   for(size_t i = 0; i < State_N; ++i) StateCount_[i] = 0;
 }
 
 //------------------------------------------------------------------------------

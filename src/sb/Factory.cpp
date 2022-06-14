@@ -240,7 +240,7 @@ void Factory::Display(ostream& stream,
    stream << prefix << "name    : " << name_ << CRLF;
    stream << prefix << "icSignals : ";
 
-   for(auto i = 0; i <= Signal::MaxId; ++i)
+   for(size_t i = 0; i <= Signal::MaxId; ++i)
    {
       if(icSignals_[i]) stream << int(i) << SPACE;
    }
@@ -248,7 +248,7 @@ void Factory::Display(ostream& stream,
    stream << CRLF;
    stream << prefix << "ogSignals : ";
 
-   for(auto i = 0; i <= Signal::MaxId; ++i)
+   for(size_t i = 0; i <= Signal::MaxId; ++i)
    {
       if(ogSignals_[i]) stream << int(i) << SPACE;
    }

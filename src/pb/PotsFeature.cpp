@@ -98,7 +98,7 @@ void PotsFeature::Display(ostream& stream,
    stream << prefix << "name         : " << name_ << CRLF;
    stream << prefix << "incompatible : ";
 
-   for(auto i = 0; i <= MaxId; ++i)
+   for(size_t i = 0; i <= MaxId; ++i)
    {
       if(incompatible_[i] && (i != Fid()))
       {

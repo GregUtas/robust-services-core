@@ -129,7 +129,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Generate debugging information
     add_compile_options(-g)
 
-    # Disable all optimizations
+    # Disable optimizations
     add_compile_options(-O0)
 
     # Enable POSIX threads
@@ -143,12 +143,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
     # Disable specific compiler warnings
     add_compile_options(-Wno-address)
-    add_compile_options(-Wno-char-subscripts)
-    add_compile_options(-Wno-comment)
     add_compile_options(-Wno-nonnull-compare)
-    add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-switch)
-    add_compile_options(-Wno-trigraphs)
 
     # Support function names in stack traces
     add_link_options(-ldl)

@@ -43,9 +43,9 @@ constexpr size_t MaxExplSize = 44;
 //
 static fixed_string ReportHeader = "      Curr      Prev         All";
 
-//<----------------group name---------------->      Curr      Prev         All
-//  <-------------member name---------------->
-//    <---individual statistic explanation---> nnnnnnnnn nnnnnnnnn nnnnnnnnnnn
+//-----------------group name-----------------      Curr      Prev         All
+//  --------------member name-----------------
+//    ----individual statistic explanation---- nnnnnnnnn nnnnnnnnn nnnnnnnnnnn
 //         1         2         3         4         5         6         7
 // 2 2                                      40.        9.        9.         11
 

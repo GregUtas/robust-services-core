@@ -343,6 +343,14 @@ private:
    //
    ~MapAndUnits() = default;
 
+   //  Copy constructor.
+   //
+   MapAndUnits(const MapAndUnits& that) = default;
+
+   //  Copy operator.
+   //
+   MapAndUnits& operator=(const MapAndUnits& that) = default;
+
    //  Used to implement process_mdf.
    //
    size_t process_powers(const TokenMessage& powers);

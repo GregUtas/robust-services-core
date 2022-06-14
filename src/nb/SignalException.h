@@ -42,6 +42,10 @@ public:
    //
    ~SignalException();
 
+   //  Copy constructor.
+   //
+   SignalException(const SignalException& that) = default;
+
    //  Returns the signal that occurred.
    //
    signal_t GetSignal() const { return signal_; }

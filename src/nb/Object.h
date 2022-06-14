@@ -45,6 +45,14 @@ public:
    //
    virtual ~Object() = default;
 
+   //  Copy constructor.
+   //
+   Object(const Object& that) = default;
+
+   //  Copy operator.
+   //
+   Object& operator=(const Object& that) = default;
+
    //  Selector for the Patch function.
    //
    typedef uint8_t sel_t;

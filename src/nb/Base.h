@@ -60,6 +60,14 @@ public:
    //
    virtual ~Base() = default;
 
+   //  Copy constructor.
+   //
+   Base(const Base& that) = default;
+
+   //  Copy operator.
+   //
+   Base& operator=(const Base& that) = default;
+
    //  Displays the object in STREAM.  The default version displays the
    //  object's class name and its "this" pointer, using the typical form
    //  for each member:

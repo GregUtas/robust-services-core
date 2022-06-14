@@ -43,6 +43,10 @@ public:
    //
    ~AssertionException();
 
+   //  Copy constructor.
+   //
+   AssertionException(const AssertionException& that) = default;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream, const std::string& prefix) const override;

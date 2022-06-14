@@ -51,7 +51,7 @@ enum ObjectPoolIds
    EventObjPoolId = 15,
    ServiceSMObjPoolId = 16,
    MediaEndptObjPoolId = 17,
-   DipIpBufferObjPoolId = 18,
+   DipIpBufferObjPoolId = 18
 };
 
 //------------------------------------------------------------------------------

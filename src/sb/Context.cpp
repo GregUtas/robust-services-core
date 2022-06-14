@@ -82,6 +82,10 @@ public:
    //
    ~SbException();
 
+   //  Copy constructor.
+   //
+   SbException(const SbException& that) = default;
+
    //  Overridden to display member variables.
    //
    void Display(ostream& stream, const string& prefix) const override;

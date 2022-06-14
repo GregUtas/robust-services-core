@@ -341,7 +341,7 @@ enum TypeSpecUser : unsigned int
 {
    TS_Unspecified,  // default value
    TS_Definition,   // data or function definition, distinct from declaration
-   TS_Function,     // function declaration
+   TS_Function      // function declaration
 };
 
 //------------------------------------------------------------------------------

@@ -44,6 +44,10 @@ public:
    //
    ~ElementException();
 
+   //  Copy constructor.
+   //
+   ElementException(const ElementException& that) = default;
+
    //  Returns the severity of the restart.
    //
    RestartLevel Level() const { return level_; }

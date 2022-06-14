@@ -45,6 +45,10 @@ public:
    //
    virtual ~SoftwareException();
 
+   //  Copy constructor.
+   //
+   SoftwareException(const SoftwareException& that) = default;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream, const std::string& prefix) const override;

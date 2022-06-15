@@ -181,7 +181,7 @@ template<typename T> struct PersistentAllocator
 
    ~PersistentAllocator() = default;
 
-   PersistentAllocator(const PermanentAllocator<T>& that) noexcept { }
+   PersistentAllocator(const PersistentAllocator<T>& that) noexcept { }
 
    template<typename U> PersistentAllocator
       (const PersistentAllocator<U>& that) noexcept { }

@@ -18,6 +18,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "ConvoySubversion.h"
 #include "DipTypes.h"
 #include "Location.h"
 #include "Province.h"
@@ -26,11 +27,6 @@
 #include "TokenMessage.h"
 #include "UnitOrder.h"
 #include "WinterOrders.h"
-
-namespace Diplomacy
-{
-   struct ConvoySubversion;
-}
 
 using namespace NodeBase;
 

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StTestData.h"
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include "CliThread.h"

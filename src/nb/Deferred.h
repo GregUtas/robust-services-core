@@ -100,7 +100,7 @@ private:
    //
    Q2Link link_;
 
-   //  The items's owner.
+   //  The item's owner.
    //
    Base* const owner_;
 

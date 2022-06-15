@@ -117,11 +117,9 @@ void SbIpBuffer::operator delete(void* addr, SbPoolUser user)
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBuffer_opnew = "SbIpBuffer.operator new";
-
 void* SbIpBuffer::operator new(size_t size, SbPoolUser user)
 {
-   Debug::ft(SbIpBuffer_opnew);
+   Debug::ft("SbIpBuffer.operator new");
 
    switch(user)
    {

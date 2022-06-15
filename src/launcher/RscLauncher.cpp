@@ -74,7 +74,7 @@ static string GetInput()
 {
    string input;
    cin.clear();
-   getline(cin, input);
+   std::getline(cin, input);
    RemoveBlanks(input);
    return input;
 }

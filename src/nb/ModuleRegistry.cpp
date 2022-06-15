@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ModuleRegistry.h"
+#include "Deferred.h"
 #include <chrono>
 #include <cstddef>
 #include <cstring>
@@ -31,7 +32,6 @@
 #include <sstream>
 #include <string>
 #include "Debug.h"
-#include "Deferred.h"
 #include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
@@ -147,13 +147,13 @@ static std::ostringstream* Stream()
 
 //==============================================================================
 //
-//  If initialization was being traced, stops it shortly after the system has
+//  If initialization is being traced, stops it shortly after the system has
 //  booted.
 //
 class StopInitTracing : public Deferred
 {
 public:
-   //  Recreates SendLocalThread after TIMEOUT seconds.
+   //  Stops tracing after 1 second.
    //
    StopInitTracing();
 

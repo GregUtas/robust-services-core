@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "BcSessions.h"
+#include <cstddef>
 #include <iomanip>
 #include <ostream>
 #include "Algorithms.h"

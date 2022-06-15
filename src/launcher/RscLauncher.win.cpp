@@ -59,7 +59,7 @@ int LaunchRsc(const std::string& exe, const std::string& parms)
       &pi))     // pointer to PROCESS_INFORMATION structure
    {
       std::cout << "CreateProcessA failed: error=" << GetLastError() << '\n';
-      return -1;
+      return Reprompt;
    }
 
    //  Set the console title so that it identifies EXE.  When EXE
@@ -74,6 +74,6 @@ int LaunchRsc(const std::string& exe, const std::string& parms)
 
    CloseHandle(pi.hProcess);
    CloseHandle(pi.hThread);
-   return code;
+   return (code == 0 ? Reprompt : Relaunch);
 }
 #endif

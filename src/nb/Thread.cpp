@@ -1024,7 +1024,7 @@ fixed_string UnknownExceptionStr = "unknown exception";
 fixed_string ThreadDataStr = "Thread Data:";
 fixed_string TrapDuringRecoveryStr = "TRAP DURING RECOVERY.";
 fixed_string TrapLimitReachedStr = "TRAP LIMIT EXCEEDED.";
-fixed_string ExitingStr = "========== Exiting in 5 seconds... ==========";
+fixed_string ExitingStr = "\n========== Exiting in 5 seconds... ==========";
 
 //------------------------------------------------------------------------------
 //

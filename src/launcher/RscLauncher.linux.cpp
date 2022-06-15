@@ -49,7 +49,7 @@ int LaunchRsc(const std::string& exe, const std::string& parms)
    if(!parms.empty())
    {
       std::unique_ptr<char[]> buff1(new char[parms.size() + 1]);
-      strcpy(buff0.get(), parms.c_str());
+      strcpy(buff1.get(), parms.c_str());
       args[1] = buff1.get();
    }
 
@@ -60,13 +60,15 @@ int LaunchRsc(const std::string& exe, const std::string& parms)
       if(waitpid(pid, &code, 0) == -1)
       {
          perror("Error from waitpid");
+         return Reprompt;
       }
    }
    else
    {
-      std::cout << "Error launching rsc.exe:" << strerror(code) << std::endl;
+      std::cout << "Error launching RSC: " << strerror(code) << '\n';
+      return Reprompt;
    }
 
-   return code;
+   return (code == 0 ? Reprompt : Relaunch);
 }
 #endif

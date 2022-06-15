@@ -32,4 +32,9 @@
 //
 int LaunchRsc(const std::string& exe, const std::string& parms);
 
+//  Outcomes from LaunchRsc.
+//
+constexpr int Reprompt = 0;  // prompt for another executable or to quit
+constexpr int Relaunch = 1;  // launch same executable immediately
+
 #endif

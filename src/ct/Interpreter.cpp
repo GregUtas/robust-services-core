@@ -917,7 +917,7 @@ LibExprErr Interpreter::SkipBlanks()
    //
    auto size = expr_.size();
 
-   while((curr_ <= size) && isspace(expr_[curr_])) ++curr_;
+   while((curr_ <= size) && isblank(expr_[curr_])) ++curr_;
 
    if(curr_ >= size) return EndOfExpression;
    return ExpressionOk;

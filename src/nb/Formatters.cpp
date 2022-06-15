@@ -311,7 +311,7 @@ string strPtr(const void* p)
 
 size_t strSkipSpaces(const std::string& str, size_t index)
 {
-   while((index < str.size()) && isspace(str[index])) ++index;
+   while((index < str.size()) && isblank(str[index])) ++index;
    return (index < str.size() ? index : string::npos);
 }
 

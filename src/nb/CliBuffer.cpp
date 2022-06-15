@@ -147,7 +147,7 @@ CliBuffer::CharType CliBuffer::CalcType(bool quoted)
          return Symbol;
       }
 
-      if(isspace(buff_[pos_]) && !quoted) return Blank;
+      if(isblank(buff_[pos_]) && !quoted) return Blank;
       return Regular;
    }
 
@@ -228,7 +228,7 @@ void CliBuffer::ErrorAtPos
    //
    for(auto i = 0; i < p; ++i)
    {
-      if(isspace(buff_[i]))
+      if(isblank(buff_[i]))
          *cli.obuf << buff_[i];
       else
          *cli.obuf << SPACE;
@@ -243,7 +243,7 @@ void CliBuffer::ErrorAtPos
    //
    if(buff_[p] != TAB)
    {
-      for(size_t i = p; (i < buff_.size()) && isspace(buff_[i]); ++i)
+      for(size_t i = p; (i < buff_.size()) && isblank(buff_[i]); ++i)
       {
          *cli.obuf << buff_[i];
       }

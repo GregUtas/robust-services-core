@@ -40,7 +40,7 @@ namespace InitFlags
 
    //  Return true to allow breakpoints during initialization.  If this
    //  returns false and a breakpoint is hit, RootThread will time out
-   //  and try to restart initialization.
+   //  and generate logs or try to restart initialization.
    //
    bool AllowBreak();  // default=true (false if FIELD_LOAD #defined)
 
@@ -49,7 +49,10 @@ namespace InitFlags
    //
    bool CauseTimeout();  // default=false
 
-   //  Return true to trace initialization.
+   //  Return true to trace initialization.  This traces the initial
+   //  boot, not a restart.  If set, ModuleRegistry::Startup creates
+   //  a Deferred work item that stops tracing soon after the system
+   //  has booted.
    //
    bool TraceInit();  // default=true (false if FIELD_LOAD #defined)
 }

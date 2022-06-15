@@ -31,9 +31,11 @@
 #include <sstream>
 #include <string>
 #include "Debug.h"
+#include "Deferred.h"
 #include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "InitFlags.h"
 #include "Log.h"
 #include "MainArgs.h"
 #include "Memory.h"
@@ -47,6 +49,7 @@
 #include "ThisThread.h"
 #include "Thread.h"
 #include "ThreadRegistry.h"
+#include "TraceBuffer.h"
 
 using std::ostream;
 using std::setw;
@@ -140,6 +143,51 @@ static std::ostringstream* Stream()
    }
 
    return stream_.get();
+}
+
+//==============================================================================
+//
+//  If initialization was being traced, stops it shortly after the system has
+//  booted.
+//
+class StopInitTracing : public Deferred
+{
+public:
+   //  Recreates SendLocalThread after TIMEOUT seconds.
+   //
+   StopInitTracing();
+
+   //  Not subclassed.
+   //
+   ~StopInitTracing();
+private:
+   //  Stops tracing.
+   //
+   void EventHasOccurred(Event event) override;
+};
+
+//------------------------------------------------------------------------------
+
+StopInitTracing::StopInitTracing() :
+   Deferred(*Singleton<ModuleRegistry>::Instance(), 1, false)
+{
+   Debug::ft("StopInitTracing.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+StopInitTracing::~StopInitTracing()
+{
+   Debug::ftnt("StopInitTracing.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void StopInitTracing::EventHasOccurred(Event event)
+{
+   Debug::ft("StopInitTracing.EventHasOccurred");
+
+   Singleton<TraceBuffer>::Instance()->StopTracing();
 }
 
 //==============================================================================
@@ -469,6 +517,14 @@ void ModuleRegistry::Startup(RestartLevel level)
    //
    Memory::Protect(MemImmutable);
    Memory::Protect(MemProtected);
+
+   //  If initialization is being traced, create a work item to stop
+   //  tracing momentarily.
+   //
+   if((Restart::Level_ == RestartReboot) && InitFlags::TraceInit())
+   {
+      new StopInitTracing;
+   }
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(StartupTotalStr);

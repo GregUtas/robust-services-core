@@ -135,8 +135,6 @@ static bool GetParameters(string& parms)
 //
 static bool Proceed(const string& exe, const string& parms)
 {
-   string input;
-
    cout << "Launching " << exe << '\n';
 
    if(!parms.empty())

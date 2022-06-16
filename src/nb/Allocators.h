@@ -78,6 +78,8 @@ template<typename T> struct DynamicAllocator
 
    DynamicAllocator(const DynamicAllocator<T>& that) noexcept { }
 
+   DynamicAllocator& operator=(const DynamicAllocator& that) = default;
+
    template<typename U> DynamicAllocator
       (const DynamicAllocator<U>& that) noexcept { }
 
@@ -112,6 +114,8 @@ template<typename T> struct ImmutableAllocator
    ~ImmutableAllocator() = default;
 
    ImmutableAllocator(const ImmutableAllocator<T>& that) noexcept { }
+
+   ImmutableAllocator& operator=(const ImmutableAllocator& that) = default;
 
    template<typename U> ImmutableAllocator
       (const ImmutableAllocator<U>& that) noexcept { }
@@ -148,6 +152,8 @@ template<typename T> struct PermanentAllocator
 
    PermanentAllocator(const PermanentAllocator<T>& that) noexcept { }
 
+   PermanentAllocator& operator=(const PermanentAllocator& that) = default;
+
    template<typename U> PermanentAllocator
       (const PermanentAllocator<U>& that) noexcept { }
 
@@ -182,6 +188,8 @@ template<typename T> struct PersistentAllocator
    ~PersistentAllocator() = default;
 
    PersistentAllocator(const PersistentAllocator<T>& that) noexcept { }
+
+   PersistentAllocator& operator=(const PersistentAllocator& that) = default;
 
    template<typename U> PersistentAllocator
       (const PersistentAllocator<U>& that) noexcept { }
@@ -218,6 +226,8 @@ template<typename T> struct ProtectedAllocator
 
    ProtectedAllocator(const ProtectedAllocator<T>& that) noexcept { }
 
+   ProtectedAllocator& operator=(const ProtectedAllocator& that) = default;
+
    template<typename U> ProtectedAllocator
       (const ProtectedAllocator<U>& that) noexcept { }
 
@@ -252,6 +262,8 @@ template<typename T> struct TemporaryAllocator
    ~TemporaryAllocator() = default;
 
    TemporaryAllocator(const TemporaryAllocator<T>& that) noexcept { }
+
+   TemporaryAllocator& operator=(const TemporaryAllocator& that) = default;
 
    template<typename U> TemporaryAllocator
       (const TemporaryAllocator<U>& that) noexcept { }

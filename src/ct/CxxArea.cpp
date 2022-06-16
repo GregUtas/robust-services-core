@@ -2691,6 +2691,7 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
       auto func = static_cast<const Function*>(item);
       if(!tmplt_->FuncToIndex(func, idx)) return nullptr;
       auto list = FuncVector(item->Name());
+      if(idx >= list->size()) return nullptr;
       return list->at(idx).get();
    }
 

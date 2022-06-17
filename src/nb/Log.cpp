@@ -42,6 +42,7 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
+#include "SysConsole.h"
 
 using std::ostream;
 using std::string;
@@ -50,6 +51,53 @@ using std::string;
 
 namespace NodeBase
 {
+//  For logging errors that occur before the log system has been initialized.
+//
+static std::ostringstream StartupLog_;
+
+//------------------------------------------------------------------------------
+//
+//  Returns StartupLog_ so that a log can be generated before the log system
+//  has been initialized.
+//
+static ostringstreamPtr CreateStartupLog()
+{
+   auto reg = Singleton<LogGroupRegistry>::Extant();
+   if(reg != nullptr) return nullptr;
+   return ostringstreamPtr(&StartupLog_);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Generates LOG if it was created before the log system was initialized.
+//  Returns true if LOG was nullptr or if LOG was displayed.
+//
+static bool DisplayStartupLog(ostringstreamPtr& log)
+{
+   //  LOG is nullptr when no log should be generated.
+   //
+   if(log == nullptr) return true;
+
+   //  This is a startup log if it references StartupLog_: that's a global,
+   //  so release LOG to prevent any attempt to return it to the heap.
+   //
+   if(log.get() != &StartupLog_) return false;
+   log.release();
+
+   //  Display the log.
+   //
+   auto str = StartupLog_.str();
+   StartupLog_.str(EMPTY_STR);
+   if(str.back() != CRLF) str.push_back(CRLF);
+
+   auto& console = SysConsole::Out();
+   console << CRLF << "LOG during bootup:" << CRLF;
+   console << str;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Data that changes too frequently to unprotect and reprotect memory
 //  when it needs to be modified.
 //
@@ -154,7 +202,7 @@ ostringstreamPtr Log::Create(c_string groupName, LogId id)
    //
    LogGroup* group = nullptr;
    auto log = Find(groupName, id, group);
-   if(log == nullptr) return nullptr;
+   if(log == nullptr) return CreateStartupLog();
 
    //  Check if the log is to be suppressed or throttled.
    //
@@ -185,7 +233,7 @@ ostringstreamPtr Log::Create
    //
    LogGroup* group = nullptr;
    auto log = Find(groupName, id, group);
-   if(log == nullptr) return nullptr;
+   if(log == nullptr) return CreateStartupLog();
 
    auto reg = Singleton<AlarmRegistry>::Extant();
    if(reg == nullptr) return nullptr;
@@ -369,7 +417,7 @@ void Log::Submit(ostringstreamPtr& stream)
 {
    Debug::ftnt(Log_Submit);
 
-   if(stream == nullptr) return;
+   if(DisplayStartupLog(stream)) return;
 
    auto str = stream->str();
    stream.reset();

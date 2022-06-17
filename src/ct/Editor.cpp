@@ -1393,6 +1393,29 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+word Editor::ChangeAuto(const CodeWarning& log)
+{
+   Debug::ft("Editor.ChangeAuto");
+
+   //  Add a & tag to the auto variable.  It may also need to be const.
+   //
+   auto begin = CurrBegin(log.Pos());
+   auto cpos = FindWord(begin, CONST_STR);
+   auto apos = FindWord(begin, AUTO_STR);
+
+   if(apos == string::npos) return NotFound("auto");
+   Insert(apos + strlen(AUTO_STR), "&");
+
+   if((log.warning_ == AutoCopiesConstReference) && (cpos > apos))
+   {
+      Insert(apos, "const ");
+   }
+
+   return Changed(apos);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ChangeCast(const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeCast");
@@ -3183,7 +3206,13 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
          fixed = true;
          continue;
 
-      case Nullified:
+      case Revoked:
+         //
+         //  This log wasn't even reported, so ignore it.
+         //
+         continue;
+
+      case Deleted:
          if(opts.warning == AllWarnings) continue;
          *Cli_->obuf << ItemDeleted << CRLF;
          return EditAbort;
@@ -3810,6 +3839,9 @@ word Editor::FixWarning(const CodeWarning& log)
       return FixFunctions(log);
    case NoEndlineAtEndOfFile:
       return AppendEndline();
+   case AutoCopiesReference:
+   case AutoCopiesConstReference:
+      return ChangeAuto(log);
    }
 
    return Report(NotImplemented);
@@ -5278,7 +5310,7 @@ void Editor::QualifyClassItems
 {
    Debug::ft("Editor.QualifyClassItems(cls)");
 
-   auto clsName = cls->Name();
+   auto className = cls->Name();
    Lexer lexer;
    lexer.Initialize(code);
    string id;
@@ -5297,7 +5329,7 @@ void Editor::QualifyClassItems
          //  in types and constructor invocations.
          //
          auto& name = (*i)->Name();
-         if((name == clsName) || (name == icls->Name())) continue;
+         if((name == className) || (name == icls->Name())) continue;
 
          auto pos = lexer.Find(0, STATIC_STR) + strlen(STATIC_STR) + 1;
 

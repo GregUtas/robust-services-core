@@ -383,6 +383,10 @@ public:
    //
    virtual bool IsUnionMember() const { return false; }
 
+   //  Returns true if the data cannot be const.
+   //
+   bool CannotBeConst() const { return nonconst_; }
+
    //  Returns the number of times that the data was read.
    //
    size_t Readers() const { return reads_; }

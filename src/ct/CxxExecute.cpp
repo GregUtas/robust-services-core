@@ -1935,7 +1935,9 @@ void StackArg::SetAsAutoType() const
    {
       AutoType_.item_ = this->item_->AutoType();
       AutoType_.ptrs_ = this->ptrs_;
+      AutoType_.refs_ = this->refs_;
       AutoType_.const_ = this->const_;
+      AutoType_.constptr_ = this->constptr_;
       if(AutoType_.item_ != nullptr) return;
    }
 
@@ -2069,6 +2071,14 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    //
    auto ptrs = Ptrs(true);
    auto refs = spec->Tags()->RefCount();
+
+   if((refs_ == 1) && (ptrs_ == 0) && (refs == 0))
+   {
+      if(item_->Root()->Type() == Cxx::Class)
+      {
+         data.Log(const_ ? AutoCopiesConstReference : AutoCopiesReference);
+      }
+   }
 
    //  If "const/volatile auto" was used, it applies to the pointer, not the
    //  type, if the variable is a pointer.  Same for const/volatile* auto.

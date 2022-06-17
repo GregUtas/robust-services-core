@@ -167,6 +167,7 @@ private:
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
    word ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs);
    word ChangeAssignmentToCtorCall(const CodeWarning& log);
+   word ChangeAuto(const CodeWarning& log);
    word ChangeCast(const CodeWarning& log);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);

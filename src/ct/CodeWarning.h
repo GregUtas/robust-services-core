@@ -75,7 +75,8 @@ std::ostream& operator<<(std::ostream& stream, Warning warning);
 enum WarningStatus
 {
    NotSupported,  // editor does not support fixing this warning
-   Nullified,     // item associated with warning was deleted
+   Revoked,       // warning was cancelled because of subsequent findings
+   Deleted,       // item associated with warning was deleted
    NotFixed,      // code not changed
    Pending,       // code changed but not written to file
    Fixed          // code changed and written to file
@@ -168,9 +169,15 @@ private:
    static const CodeWarning* FindWarning(const CodeFile* file,
       Warning warning, const CxxToken* item, NodeBase::word offset);
 
-   //  Returns true if the log should be suppressed.
+   //  Returns true if the log should be suppressed.  Invoked when
+   //  the log is generated.
    //
    bool Suppress() const;
+
+   //  Returns true if the log should be revoked.  Invoked before
+   //  the log is included by GenerateReport.
+   //
+   bool Revoke() const;
 
    //  Returns true if the log has code to display.
    //

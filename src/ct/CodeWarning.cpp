@@ -210,6 +210,13 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       {
          auto& log = logs[i];
          if(log.WasResolved()) continue;
+
+         if(log.Revoke())
+         {
+            log.status_ = Revoked;
+            continue;
+         }
+
          if(!log.IsInformational()) ++WarningCounts_[log.warning_];
          warnings.push_back(&log);
       }
@@ -787,6 +794,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(NoEndlineAtEndOfFile,
       WarningAttrs(true, true,
       "File does not end with an endline")));
+   Attrs_.insert(WarningPair(AutoCopiesReference,
+      WarningAttrs(true, true,
+      "Auto variable copies an item returned by reference")));
+   Attrs_.insert(WarningPair(AutoCopiesConstReference,
+      WarningAttrs(true, true,
+      "Auto variable copies an item returned by const reference")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(false, false,
       ERROR_STR)));
@@ -874,7 +887,7 @@ void CodeWarning::ItemDeleted(const CxxToken* item) const
 {
    if(item_ == item)
    {
-      status_ = Nullified;
+      status_ = Deleted;
    }
 }
 
@@ -952,7 +965,7 @@ bool CodeWarning::Preserve() const
 {
    switch(status_)
    {
-   case Nullified:
+   case Deleted:
       //
       //  The code associated with this warning was deleted, so discard it.
       //
@@ -971,6 +984,20 @@ bool CodeWarning::Preserve() const
    }
 
    return Attrs_.at(warning_).preserve_;
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::Revoke() const
+{
+   switch(warning_)
+   {
+   case AutoCopiesConstReference:
+      if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
+      break;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1192,6 +1219,10 @@ bool CodeWarning::Suppress() const
       break;
    }
 
+   case FunctionCouldBeDefaulted:
+      if(fn == "Allocators.h") return true;
+      break;
+
    case ShouldNotBeNoexcept:
       if(fn == "Allocators.h") return true;
 
@@ -1240,6 +1271,6 @@ void CodeWarning::UpdatePos
 
 bool CodeWarning::WasResolved() const
 {
-   return (status_ == Fixed) || (status_ == Nullified);
+   return (status_ == Fixed) || (status_ == Deleted) || (status_ == Revoked);
 }
 }

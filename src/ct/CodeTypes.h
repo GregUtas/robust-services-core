@@ -545,6 +545,8 @@ enum Warning
    FunctionShouldBeStatic,   // non-extern func at .cpp file scope is not static
    FunctionCouldBeDemoted,   // only invoked in one subtree of class hierarchy
    NoEndlineAtEndOfFile,     // file does not have CRLF as its last character
+   AutoCopiesReference,      // auto variable copies item returned as &
+   AutoCopiesConstReference, // auto variable copies item returned as const&
    Warning_N                 // number of warnings
 };
 

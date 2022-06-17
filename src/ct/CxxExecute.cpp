@@ -2367,8 +2367,8 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, Phase phase) const
 
 bool Tracepoint::operator<(const Tracepoint& that) const
 {
-   auto name1 = this->file_->Name();
-   auto name2 = that.file_->Name();
+   const auto& name1 = this->file_->Name();
+   const auto& name2 = that.file_->Name();
    if(name1 < name2) return true;
    if(name1 > name2) return false;
    if(this->line_ < that.line_) return true;

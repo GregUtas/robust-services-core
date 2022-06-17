@@ -530,7 +530,7 @@ EventHandler::Rc PotsCfxSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
    auto tid = sap.GetTrigger();
    auto cfup = Profile();
    auto& pssm = static_cast<PotsBcSsm&>(*Parent());
-   auto result = pssm.GetAnalysis();
+   const auto& result = pssm.GetAnalysis();
 
    if(stid == PotsCfxState::Activating)
    {

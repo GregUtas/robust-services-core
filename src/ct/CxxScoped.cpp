@@ -1159,7 +1159,7 @@ void CxxScoped::UpdateReference(CxxToken* item, bool insert) const
       //  often invoke an override in a derived class.  This should be aliased
       //  back to the base class declaration of the function.
       //
-      auto name = item->Name();
+      const auto& name = item->Name();
       if(name.empty()) return;
 
       auto prev = Context::FindXrefItem(name);

@@ -674,9 +674,9 @@ void For::Display(ostream& stream,
    //
    if(initial_ != nullptr)
    {
-      std::ostringstream buffer;
-      initial_->Print(buffer, options);
-      auto init = buffer.str();
+      std::ostringstream buff;
+      initial_->Print(buff, options);
+      auto init = buff.str();
       auto pos = init.find(COMMENT_STR);
       if(pos != string::npos)
       {

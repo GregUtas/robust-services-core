@@ -1119,7 +1119,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
       }
 
       auto prof = mux->Profile();
-      auto peer = prof->ObjAddr();
+      const auto& peer = prof->ObjAddr();
       GlobalAddress peerPrevRemAddr;
       auto psm = actNPsm->JoinPeer(peer, peerPrevRemAddr);
 

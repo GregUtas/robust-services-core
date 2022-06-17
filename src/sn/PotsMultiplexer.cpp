@@ -231,7 +231,7 @@ SsmContext* PotsMuxFactory::FindContext(const Message& msg) const
    auto tsw = Singleton<Switch>::Instance();
    auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(phi->port));
    auto prof = cct->Profile();
-   auto addr = prof->ObjAddr();
+   const auto& addr = prof->ObjAddr();
 
    auto port = MsgPort::Find(addr);
    if(port == nullptr) return nullptr;

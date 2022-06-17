@@ -125,7 +125,7 @@ void PotsCallHandler::ReceiveBuff
    header->injected = true;
    header->txAddr.fid = PotsShelfFactoryId;
 
-   auto addr = prof->ObjAddr();
+   const auto& addr = prof->ObjAddr();
 
    if(MsgPort::Find(addr) == nullptr)
    {

@@ -763,7 +763,7 @@ EventHandler::Rc PotsCwbSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
    //  in the CWT subscriber's profile.
    //
    auto prof = pssm->Profile();
-   auto addr = prof->ObjAddr();
+   const auto& addr = prof->ObjAddr();
    auto sid = MsgPort::Find(addr)->RootSsm()->Sid();
    auto port = prof->GetCircuit()->TsPort();
    auto upsm = new PotsCallPsm(port);

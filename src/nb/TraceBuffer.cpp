@@ -724,7 +724,7 @@ void TraceBuffer::Shutdown(RestartLevel level)
    Debug::ft("TraceBuffer.Shutdown");
 
    TraceRecord* rec = nullptr;
-   auto mask = Flags().set();
+   auto& mask = Flags().set();
 
    Lock();
    {

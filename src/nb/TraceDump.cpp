@@ -61,7 +61,7 @@ TraceRc TraceDump::Generate(ostream& stream, const string& opts)
    buff->Lock();
    {
       TraceRecord* rec = nullptr;
-      auto mask = Flags().set();
+      auto& mask = Flags().set();
 
       for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
       {

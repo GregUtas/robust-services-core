@@ -473,7 +473,7 @@ void MscBuilder::EnsureFactories()
 
    for(auto addr = addressq_.First(); addr != nullptr; addressq_.Next(addr))
    {
-      auto peer = addr->RemAddr();
+      const auto& peer = addr->RemAddr();
 
       if(peer.fid != NIL_ID)
       {

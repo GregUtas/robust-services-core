@@ -582,7 +582,7 @@ static void DebugFtNames(const Function* func, string& flit, string& fvar)
 
    //  Get the function's name and the area in which it appears.
    //
-   auto sname = func->GetArea()->Name();
+   const auto& sname = func->GetArea()->Name();
    auto fname = func->DebugName();
 
    flit = sname;
@@ -1602,7 +1602,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
       return Report("This item uses non-public data, so it cannot be changed.");
    }
 
-   auto oldName = decl->Name();
+   const auto& oldName = decl->Name();
    auto newName = GetItemName(decl, file_);
 
    if(newName.empty())
@@ -2967,7 +2967,7 @@ word Editor::FindFuncDefnLoc(const CodeFile* file, const CxxArea* area,
          continue;
       }
 
-      auto currName = (*f)->Name();
+      const auto& currName = (*f)->Name();
       auto sort = currName.compare(name);
 
       if(sort > 0)
@@ -4776,7 +4776,7 @@ word Editor::InsertSpecialFuncDecl(Class* cls, FunctionRole role)
    if(rc != EditContinue) return rc;
 
    auto code = spaces(declAttrs.indent_);
-   auto className = cls->Name();
+   const auto& className = cls->Name();
 
    string defn;
 
@@ -4856,7 +4856,7 @@ void Editor::InsertSpecialFuncDefn(const Class* cls, const ItemDefnAttrs& attrs)
    InsertLine(attrs.pos_, code);
    InsertLine(attrs.pos_, "{");
 
-   auto className = cls->Name();
+   const auto& className = cls->Name();
    code.clear();
 
    if(attrs.role_ == CopyOper)
@@ -5310,7 +5310,7 @@ void Editor::QualifyClassItems
 {
    Debug::ft("Editor.QualifyClassItems(cls)");
 
-   auto className = cls->Name();
+   const auto& className = cls->Name();
    Lexer lexer;
    lexer.Initialize(code);
    string id;
@@ -5475,7 +5475,7 @@ word Editor::RenameArgument(const CodeWarning& log)
    //
    string argName;
    string defnName;
-   auto declName = decl->GetArgs().at(index)->Name();
+   const auto& declName = decl->GetArgs().at(index)->Name();
    if(defn != nullptr) defnName = defn->GetArgs().at(index)->Name();
    if(root != nullptr) argName = root->GetArgs().at(index)->Name();
    if(argName.empty()) argName = declName;

@@ -1417,12 +1417,12 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
    //  The source code only contains the assignment operator and the
    //  initialization expression.
    //
-   std::ostringstream buffer;
+   std::ostringstream buff;
 
    stream << " = ";
-   init->Back()->Print(buffer, options);
+   init->Back()->Print(buff, options);
 
-   auto expr = buffer.str();
+   auto expr = buff.str();
 
    if(expr.size() <= LineLengthMax())
       stream << expr;

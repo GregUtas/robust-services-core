@@ -490,7 +490,7 @@ EventHandler::Rc PotsWmlSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
    auto tid = sap.GetTrigger();
    auto stid = CurrState();
    auto& pssm = static_cast<PotsBcSsm&>(*Parent());
-   auto result = pssm.GetAnalysis();
+   const auto& result = pssm.GetAnalysis();
 
    switch(stid)
    {

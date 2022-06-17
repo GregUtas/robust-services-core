@@ -587,3 +587,11 @@ so it could be moved down to that class.
 File does not end with an endline
   This file does not end with a '\n' character, the absence of which can
 cause problems on Unix-based systems.
+? W143
+Auto variable copies an item returned by reference
+  An auto variable copies an object returned by reference. Perhaps the
+variable should be declared as auto&.
+? W144
+Auto variable copies an item returned by const reference
+  An auto variable copies an object returned by const reference. Perhaps
+the variable should be declared as const auto&.

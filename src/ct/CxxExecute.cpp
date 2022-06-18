@@ -815,7 +815,7 @@ void Context::WasCalled(Function* func)
 
    if(func == nullptr) return;
    func->WasCalled();
-   StackArg arg(func, 0, false);
+   StackArg arg(func, 0, false, false);
    Trace(CxxTrace::INCR_CALLS, arg);
 }
 
@@ -1310,7 +1310,7 @@ const Operation* ParseFrame::TopOp() const
 
 //==============================================================================
 
-const StackArg NilStackArg = StackArg(nullptr, 0, false);
+const StackArg NilStackArg = StackArg(nullptr, 0, false, false);
 
 //  The result of an expression that can be used to resolve the type "auto".
 //
@@ -1318,7 +1318,7 @@ static StackArg AutoType_ = NilStackArg;
 
 //------------------------------------------------------------------------------
 
-StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
+StackArg::StackArg(CxxToken* t, TagCount p, bool lvalue, bool ctor) :
    item_(t),
    name_(nullptr),
    via_(nullptr),
@@ -1328,6 +1328,7 @@ StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
    member_(false),
    const_(t != nullptr ? t->IsConst() : false),
    constptr_(t != nullptr ? t->IsConstPtr() : false),
+   lvalue_(lvalue),
    mutable_(false),
    invoke_(false),
    this_(false),
@@ -1350,6 +1351,7 @@ StackArg::StackArg(Function* f, TypeName* name) :
    member_(false),
    const_(f != nullptr ? f->IsConst() : false),
    constptr_(false),
+   lvalue_(true),
    mutable_(false),
    invoke_(true),
    this_(false),
@@ -1372,6 +1374,7 @@ StackArg::StackArg(Function* f, TypeName* name, const StackArg& via) :
    member_(false),
    const_(f != nullptr ? f->IsConst() : false),
    constptr_(false),
+   lvalue_(true),
    mutable_(false),
    invoke_(true),
    this_(false),
@@ -1395,6 +1398,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
    member_(false),
    const_(t != nullptr ? t->IsConst() : false),
    constptr_(t != nullptr ? t->IsConstPtr() : false),
+   lvalue_(true),
    mutable_(via.mutable_),
    invoke_(false),
    this_(false),
@@ -1436,6 +1440,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name) :
    member_(false),
    const_(t != nullptr ? t->IsConst() : false),
    constptr_(t != nullptr ? t->IsConstPtr() : false),
+   lvalue_(true),
    mutable_(false),
    invoke_(false),
    this_(false),
@@ -2072,11 +2077,22 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    auto ptrs = Ptrs(true);
    auto refs = spec->Tags()->RefCount();
 
-   if((refs_ == 1) && (ptrs_ == 0) && (refs == 0))
+   if((ptrs == 0) && (refs == 0))
    {
       if(item_->Root()->Type() == Cxx::Class)
       {
-         data.Log(const_ ? AutoCopiesConstReference : AutoCopiesReference);
+         switch(refs_)
+         {
+         case 0:
+            if(IsLvalue())
+            {
+               data.Log(const_ ? AutoCopiesConstObject : AutoCopiesObject);
+            }
+            break;
+         case 1:
+            data.Log(const_ ? AutoCopiesConstReference : AutoCopiesReference);
+            break;
+         }
       }
    }
 

@@ -102,7 +102,7 @@ fn_name CodeTools_PushType = "CodeTools.PushType";
 
 //  Pushes a TypeSpec that references NAME onto the argument stack.
 //
-static void PushType(const string& name)
+static void PushType(const string& name, bool lvalue = false)
 {
    Debug::ft(CodeTools_PushType);
 
@@ -116,7 +116,7 @@ static void PushType(const string& name)
 
    if(item != nullptr)
    {
-      Context::PushArg(StackArg(item, 0, false));
+      Context::PushArg(StackArg(item, 0, lvalue, false));
       return;
    }
 
@@ -130,7 +130,7 @@ fn_name CodeTools_Record = "CodeTools.Record";
 
 //  Registers reads and writes on ARG1 and ARG2 based on OP.
 //
-static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
+static void Record(Cxx::Operator op, const StackArg& arg1, const StackArg* arg2)
 {
    Debug::ft(CodeTools_Record);
 
@@ -149,12 +149,6 @@ static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
    case Cxx::ADDRESS_OF:
    case Cxx::INDIRECTION:
       arg1.WasRead();
-      return;
-
-   case Cxx::ARRAY_SUBSCRIPT:
-      arg1.WasRead();
-      arg2->WasRead();
-      arg1.WasIndexed();
       return;
 
    case Cxx::FUNCTION_CALL:
@@ -182,6 +176,7 @@ static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
       arg2->WasRead();
       return;
 
+   case Cxx::ARRAY_SUBSCRIPT:
    case Cxx::REFERENCE_SELECT_MEMBER:
    case Cxx::POINTER_SELECT_MEMBER:
    case Cxx::MULTIPLY:
@@ -466,7 +461,7 @@ void BraceInit::EnterBlock()
    //  type of structure being initialized, but we'll just return "auto",
    //  which acts as a wildcard when checking LHS and RHS compatibility.
    //
-   StackArg arg(Singleton<CxxRoot>::Instance()->AutoTerm(), 0, false);
+   StackArg arg(Singleton<CxxRoot>::Instance()->AutoTerm(), 0, false, false);
    Context::PushArg(arg);
 }
 
@@ -1310,10 +1305,10 @@ StackArg Expression::ResultType() const
 
       if(ref != nullptr)
       {
-         return StackArg(ref, 0, false);
+         return StackArg(ref, 0, false, false);
       }
 
-      Context::SwLog(Expression_ResultType, "nil referent", item->Type());
+      Context::SwLog(Expression_ResultType, "null referent", item->Type());
    }
    else
    {
@@ -1595,7 +1590,7 @@ void Literal::EnterBlock()
 {
    Debug::ft("Literal.EnterBlock");
 
-   Context::PushArg(StackArg(this, 0, false));
+   Context::PushArg(StackArg(this, 0, false, false));
 }
 
 //------------------------------------------------------------------------------
@@ -2048,6 +2043,7 @@ void Operation::Execute() const
       //
       if(IsOverloaded(arg1, arg2)) return;
       Record(op_, arg1, &arg2);
+      arg1.WasIndexed();
       Context::PushArg(arg1.EraseName());
       return;
 
@@ -2063,6 +2059,13 @@ void Operation::Execute() const
       //  Push ARG1 again.
       //
       if(IsOverloaded(arg1)) return;
+
+      if(!arg1.IsLvalue())
+      {
+         auto expl = arg1.Trace() + " was not an lvalue";
+         Context::SwLog(Operation_Execute, expl, op_);
+      }
+
       Record(op_, arg1, &arg2);
       Context::PushArg(arg1.EraseName());
       return;
@@ -2072,7 +2075,7 @@ void Operation::Execute() const
       //  Push a typeid result.
       //
       Record(op_, arg1, &arg2);
-      PushType("type_info");
+      PushType("type_info", true);
       return;
 
    case Cxx::CONST_CAST:
@@ -2102,7 +2105,7 @@ void Operation::Execute() const
       //  Push a bool result.
       //
       Record(op_, arg1, &arg2);
-      PushType("bool");
+      PushType(BOOL_STR);
       return;
 
    case Cxx::ONES_COMPLEMENT:
@@ -2131,6 +2134,13 @@ void Operation::Execute() const
       //  Push ARG1 after incrementing its indirection level.
       //
       if(IsOverloaded(arg1)) return;
+
+      if(!arg1.IsLvalue())
+      {
+         auto expl = arg1.Trace() + " was not an lvalue";
+         Context::SwLog(Operation_Execute, expl, op_);
+      }
+
       Record(op_, arg1, &arg2);
       arg1.IncrPtrs();
       Context::PushArg(arg1.EraseName());
@@ -2244,6 +2254,13 @@ void Operation::Execute() const
    case Cxx::BITWISE_OR_ASSIGN:
       CheckBitwiseOp(arg1, arg2);
       if(IsOverloaded(arg1, arg2)) return;
+
+      if(!arg1.IsLvalue())
+      {
+         auto expl = arg1.Trace() + " was not an lvalue";
+         Context::SwLog(Operation_Execute, expl, op_);
+      }
+
       Record(op_, arg1, &arg2);
       PushResult(arg1, arg2);
       return;
@@ -2372,7 +2389,7 @@ void Operation::ExecuteCall() const
       }
 
       args.front().WasRead();
-      Context::PushArg(StackArg(proc.item_->Referent(), 0, false));
+      Context::PushArg(StackArg(proc.item_->Referent(), 0, false, false));
       return;
    }
 
@@ -2400,7 +2417,7 @@ void Operation::ExecuteCall() const
       cls = proc.item_->GetClass();
       cls->WasCalled(role, nullptr);
       if(size > 1) args[1].WasRead();
-      Context::PushArg(StackArg(cls, 0, true));
+      Context::PushArg(StackArg(cls, 0, false, true));
       return;
    }
 
@@ -2466,7 +2483,7 @@ void Operation::ExecuteNew() const
    //  The second argument is the type for which to allocate memory.
    //  Look for its operator new.
    //
-   StackArg spec(args_[1].get(), 0, false);
+   StackArg spec(args_[1].get(), 0, false, false);
    auto pod = false;
    auto opNew = FindNewOrDelete(spec, false, pod);
 
@@ -2481,7 +2498,7 @@ void Operation::ExecuteNew() const
       auto newArg = Singleton<CxxRoot>::Instance()->IntTerm();
       auto newCall = static_cast<Operation*>(args_.front().get());
       Context::PushArg(StackArg(opNew, nullptr));
-      Context::PushArg(StackArg(newArg, 0, false));
+      Context::PushArg(StackArg(newArg, 0, false, false));
       newCall->PushArgs();
 
       //  Compile the call to the operator new function and pop the result,
@@ -2516,7 +2533,7 @@ void Operation::ExecuteNew() const
    //
    Context::PopArg(false);
    Context::PushArg(StackArg(ctor, nullptr));
-   Context::PushArg(StackArg(cls, 1, false));
+   Context::PushArg(StackArg(cls, 1, false, false));
    Context::TopArg()->SetAsThis(true);
 
    if((op_ == Cxx::OBJECT_CREATE) && (args_.size() >= 3))
@@ -2585,7 +2602,7 @@ bool Operation::ExecuteOverload
    case Cxx::POSTFIX_DECREMENT:
    {
       auto dummyArg = Singleton<CxxRoot>::Instance()->IntTerm();
-      args.push_back(StackArg(dummyArg, 0, false));
+      args.push_back(StackArg(dummyArg, 0, false, false));
       break;
    }
 
@@ -2719,7 +2736,7 @@ bool Operation::ExecuteOverload
    {
       cls->WasCalled(CopyOper, nullptr);
       Context::PopArg(false);
-      Context::PushArg(StackArg(cls, 0, false));
+      Context::PushArg(StackArg(cls, 0, false, false));
    }
 
    return true;

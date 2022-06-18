@@ -66,7 +66,7 @@ public:
    static const size_t ArraySize = 48 - ByteBufferSize;
    static void* operator new(size_t size);
 private:
-   NodeBase::byte_t* Bytes() override { return &bytes_[0]; }
+   NodeBase::byte_t* Bytes() override { return bytes_; }
    size_t Size() const override { return ArraySize; }
    NodeBase::byte_t bytes_[ArraySize];
 };
@@ -77,7 +77,7 @@ public:
    static const size_t ArraySize = 128 - ByteBufferSize;
    static void* operator new(size_t size);
 private:
-   NodeBase::byte_t* Bytes() override { return &bytes_[0]; }
+   NodeBase::byte_t* Bytes() override { return bytes_; }
    size_t Size() const override { return ArraySize; }
    NodeBase::byte_t bytes_[ArraySize];
 };
@@ -88,7 +88,7 @@ public:
    static const size_t ArraySize = 512 - ByteBufferSize;
    static void* operator new(size_t size);
 private:
-   NodeBase::byte_t* Bytes() override { return &bytes_[0]; }
+   NodeBase::byte_t* Bytes() override { return bytes_; }
    size_t Size() const override { return ArraySize; }
    NodeBase::byte_t bytes_[ArraySize];
 };
@@ -99,7 +99,7 @@ public:
    static const size_t ArraySize = 2048 - ByteBufferSize;
    static void* operator new(size_t size);
 private:
-   NodeBase::byte_t* Bytes() override { return &bytes_[0]; }
+   NodeBase::byte_t* Bytes() override { return bytes_; }
    size_t Size() const override { return ArraySize; }
    NodeBase::byte_t bytes_[ArraySize];
 };
@@ -113,7 +113,7 @@ public:
    static const size_t ArraySize = 8184 - ByteBufferSize;
    static void* operator new(size_t size);
 private:
-   NodeBase::byte_t* Bytes() override { return &bytes_[0]; }
+   NodeBase::byte_t* Bytes() override { return bytes_; }
    size_t Size() const override { return ArraySize; }
    NodeBase::byte_t bytes_[ArraySize];
 };

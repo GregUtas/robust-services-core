@@ -1776,7 +1776,7 @@ StackArg DataSpec::ResultType() const
 
    if(ref != nullptr)
    {
-      StackArg arg(ref, tags_.PtrCount(true), false);
+      StackArg arg(ref, tags_.PtrCount(true), tags_.IsLvalue(), false);
       arg.SetRefs(tags_.RefCount());
       if(tags_.IsConst()) arg.SetAsConst();
       if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
@@ -4373,6 +4373,16 @@ bool TypeTags::IsConstPtr(size_t n) const
    if(TagCount(n) >= ptrs_) return false;
    auto mask = 1 << n;
    return ((constPtr_ & mask) != 0);
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeTags::IsLvalue() const
+{
+   if(refs_ != 1) return false;
+   auto count = ptrs_ + arrays_;
+   if(array_) ++count;
+   return (count == 0);
 }
 
 //------------------------------------------------------------------------------

@@ -886,6 +886,10 @@ public:
    //
    bool IsVolatile() const { return volatile_; }
 
+   //  Returns true if the tags are compatible with an lvalue.
+   //
+   bool IsLvalue() const;
+
    //  Sets the Nth pointer (0<=n<=2) as const if READONLY is set, and as
    //  volatile if UNSTABLE is set.  Sets the number of pointers to N+1 if N
    //  is greater than the current number.  Returns false if N is out of range.

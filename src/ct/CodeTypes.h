@@ -547,6 +547,8 @@ enum Warning
    NoEndlineAtEndOfFile,     // file does not have CRLF as its last character
    AutoCopiesReference,      // auto variable copies item returned as &
    AutoCopiesConstReference, // auto variable copies item returned as const&
+   AutoCopiesObject,         // auto variable copies an object
+   AutoCopiesConstObject,    // auto variable copies a const object
    Warning_N                 // number of warnings
 };
 

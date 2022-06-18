@@ -1672,9 +1672,9 @@ bool Data::InitByExpr(CxxToken* expr)
       //  is missing the antecedent, the class's name.  The constructor also
       //  requires a "this" argument.
       //
-      Context::PushArg(StackArg(cls, 0, false));
+      Context::PushArg(StackArg(cls, 0, false, false));
       Context::TopArg()->SetInvoke();
-      Context::PushArg(StackArg(cls, 1, false));
+      Context::PushArg(StackArg(cls, 1, false, false));
       Context::TopArg()->SetAsThis(true);
       Expression::Start();
       expr->EnterBlock();
@@ -1697,7 +1697,7 @@ bool Data::InitByExpr(CxxToken* expr)
             op->FrontArg()->EnterBlock();
             auto result = Context::PopArg(true);
             spec_->MustMatchWith(result);
-            result.AssignedTo(StackArg(this, 0, false), Copied);
+            result.AssignedTo(StackArg(this, 0, false, false), Copied);
          }
          else
          {
@@ -1710,7 +1710,7 @@ bool Data::InitByExpr(CxxToken* expr)
          expr->EnterBlock();
          auto result = Context::PopArg(true);
          spec_->MustMatchWith(result);
-         result.AssignedTo(StackArg(this, 0, false), Copied);
+         result.AssignedTo(StackArg(this, 0, false, false), Copied);
       }
       else
       {
@@ -2867,7 +2867,7 @@ TypeMatch Function::CalcConstructibilty
    {
       auto thisArg = args_[1].get();
       auto thisType = thisArg->TypeString(true);
-      return StackArg(thisArg, 0, false).CalcMatchWith
+      return StackArg(thisArg, 0, false, false).CalcMatchWith
          (that, thisType, thatType);
    }
 
@@ -5066,9 +5066,11 @@ Warning Function::Invoke(StackArgVector* args)
    {
       auto& sendArg = args->at(i);
       sendArg.WasRead();
-      StackArg recvArg(args_.at(i).get(), 0, false);
-      AdjustRecvConstness(func, recvArg);
-      sendArg.AssignedTo(recvArg, Passed);
+      auto recvArg = args_.at(i).get();
+      auto recvTags = recvArg->GetTypeSpec()->Tags();
+      StackArg arg(recvArg, 0, recvTags->IsLvalue(), false);
+      AdjustRecvConstness(func, arg);
+      sendArg.AssignedTo(arg, Passed);
    }
 
    //  Push the function's result onto the stack and increment the number
@@ -5529,12 +5531,12 @@ void Function::PushThisArg(StackArgVector& args) const
       {
          auto func = Context::Scope()->GetFunction();
          if((func == nullptr) || !func->this_) return;
-         StackArg arg(func->args_[0].get(), 0, false);
+         StackArg arg(func->args_[0].get(), 0, true, false);
          args.insert(args.cbegin(), arg);
       }
       else
       {
-         args.insert(args.cbegin(), StackArg(GetClass(), 1, false));
+         args.insert(args.cbegin(), StackArg(GetClass(), 1, false, false));
       }
 
       args.front().SetAsImplicitThis();
@@ -5586,8 +5588,8 @@ StackArg Function::ResultType() const
    //  Constructors and destructors have no return type.
    //
    if(spec_ != nullptr) return spec_->ResultType();
-   if(FuncType() == FuncCtor) return StackArg(GetClass(), 0, true);
-   return StackArg(Singleton<CxxRoot>::Instance()->VoidTerm(), 0, false);
+   if(FuncType() == FuncCtor) return StackArg(GetClass(), 0, false, true);
+   return StackArg(Singleton<CxxRoot>::Instance()->VoidTerm(), 0, false, false);
 }
 
 //------------------------------------------------------------------------------
@@ -5901,7 +5903,7 @@ void Function::UpdateThisArg(StackArgVector& args) const
       //
       if(FuncType() == FuncCtor)
       {
-         args.front() = StackArg(args_[0].get(), 0, false);
+         args.front() = StackArg(args_[0].get(), 0, false, false);
       }
    }
 }

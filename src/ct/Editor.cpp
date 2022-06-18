@@ -2828,7 +2828,6 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
    //
    attrs.pos_ = string::npos;
    attrs.offsets_.below_ = OffsetRule;
-   auto currSpace = Singleton<CxxRoot>::Instance()->GlobalNamespace();
    auto items = file_->Items();
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
@@ -2839,13 +2838,13 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
       //  Return if we've passed MAX.
       //
       if((*i)->IsInternal()) continue;
-      currSpace = (*i)->GetSpace();
-      if(currSpace != space) continue;
 
+      auto currSpace = (*i)->GetSpace();
+      if(currSpace != space) continue;
       auto currPos = (*i)->GetPos();
       if(currPos < min) continue;
-      attrs.pos_ = min;
 
+      attrs.pos_ = min;
       if(currPos > max) return;
 
       auto type = (*i)->Type();
@@ -3485,6 +3484,12 @@ word Editor::FixLog(const CodeWarning& log)
    {
    case NotSupported:
       return Report(NotImplemented);
+   case Revoked:
+      return Report("This warning was cancelled after it was logged.");
+   case Deleted:
+      return Report("The code associated with this warning was deleted.");
+   case NotFixed:
+      break;
    case Fixed:
    case Pending:
       return Report("This warning has already been fixed.");
@@ -3840,7 +3845,12 @@ word Editor::FixWarning(const CodeWarning& log)
    case NoEndlineAtEndOfFile:
       return AppendEndline();
    case AutoCopiesReference:
+      return ChangeAuto(log);
    case AutoCopiesConstReference:
+      return ChangeAuto(log);
+   case AutoCopiesObject:
+      return ChangeAuto(log);
+   case AutoCopiesConstObject:
       return ChangeAuto(log);
    }
 
@@ -5417,7 +5427,7 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
             auto qname = (elem != nullptr ? elem->GetQualName() : nullptr);
             if(qname != nullptr) qname->AddPrefix(name, ns);
             Insert(pos, qual);
-            qname->SetContext(pos);
+            if(qname != nullptr) qname->SetContext(pos);
             Changed();
             pos += qual.size();
          }

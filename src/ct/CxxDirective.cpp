@@ -966,7 +966,7 @@ void MacroName::EnterBlock()
    Debug::ft("MacroName.EnterBlock");
 
    Context::SetPos(GetLoc());
-   Context::PushArg(StackArg(Referent(), 0, false));
+   Context::PushArg(StackArg(Referent(), 0, false, false));
 }
 
 //------------------------------------------------------------------------------

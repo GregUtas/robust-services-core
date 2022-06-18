@@ -1146,8 +1146,9 @@ void Return::EnterBlock()
       expr_->EnterBlock();
       auto result = Context::PopArg(true);
       auto spec = Context::Scope()->GetFunction()->GetTypeSpec();
-      Context::Scope()->GetFunction()->GetTypeSpec()->MustMatchWith(result);
-      result.AssignedTo(StackArg(spec, 0, false), Returned);
+      spec->MustMatchWith(result);
+      auto tags = spec->Tags();
+      result.AssignedTo(StackArg(spec, 0, tags->IsLvalue(), false), Returned);
 
       if(result.item_ != nullptr)
       {

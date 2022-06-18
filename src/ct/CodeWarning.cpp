@@ -800,6 +800,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(AutoCopiesConstReference,
       WarningAttrs(true, true,
       "Auto variable copies an item returned by const reference")));
+   Attrs_.insert(WarningPair(AutoCopiesObject,
+      WarningAttrs(true, true,
+      "Auto variable copies an object")));
+   Attrs_.insert(WarningPair(AutoCopiesConstObject,
+      WarningAttrs(true, true,
+      "Auto variable copies a const object")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(false, false,
       ERROR_STR)));
@@ -993,6 +999,7 @@ bool CodeWarning::Revoke() const
    switch(warning_)
    {
    case AutoCopiesConstReference:
+   case AutoCopiesConstObject:
       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
       break;
    }

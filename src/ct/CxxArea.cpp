@@ -1361,7 +1361,7 @@ Function* Class::FindCtor
    if(args->empty() || !args->front().IsThis())
    {
       auto self = const_cast<Class*>(this);
-      args->insert(args->begin(), StackArg(self, 1, false));
+      args->insert(args->begin(), StackArg(self, 1, true, false));
    }
 
    return FindFunc(Name(), nullptr, args, false, scope, view);

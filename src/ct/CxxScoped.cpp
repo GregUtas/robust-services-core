@@ -1933,7 +1933,7 @@ void Forward::EnterBlock()
 {
    Debug::ft("Forward.EnterBlock");
 
-   Context::PushArg(StackArg(Referent(), 0, false));
+   Context::PushArg(StackArg(Referent(), 0, false, false));
 }
 
 //------------------------------------------------------------------------------
@@ -3249,7 +3249,7 @@ void Terminal::EnterBlock()
 {
    Debug::ft("Terminal.EnterBlock");
 
-   Context::PushArg(StackArg(this, 0, false));
+   Context::PushArg(StackArg(this, 0, false, false));
 }
 
 //------------------------------------------------------------------------------

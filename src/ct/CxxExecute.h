@@ -93,7 +93,7 @@ public:
    //  Constructs an argument for T.  Constructs a pointer to P if T is 1.
    //  CTOR indicates that the argument was created by a constructor call.
    //
-   StackArg(CxxToken* t, TagCount p, bool ctor);
+   StackArg(CxxToken* t, TagCount p, bool lvalue, bool ctor);
 
    //  Constructs an argument for T, which was just accessed by NAME.
    //
@@ -140,8 +140,8 @@ public:
 
    //  Adjusts the level of indirection to the argument.
    //
-   void DecrPtrs() { --ptrs_; }
-   void IncrPtrs() { ++ptrs_; }
+   void DecrPtrs() { --ptrs_; lvalue_ = (Ptrs(true) == 0); }
+   void IncrPtrs() { ++ptrs_; lvalue_ = (Ptrs(true) == 0); }
    void SetNewPtrs();
 
    //  Returns true if the indirection, address of, or array subscript
@@ -167,6 +167,10 @@ public:
    //  pointer, so an array is considered indirect here.
    //
    bool IsIndirect() const { return ((Ptrs(true) > 0) || (Refs() > 0)); }
+
+   //  Returns true if the argument is an lvalue.
+   //
+   bool IsLvalue() const { return lvalue_; }
 
    //  Returns the minimum access control that was required to access the item.
    //
@@ -383,6 +387,10 @@ private:
    //  Set if the argument is a const pointer.
    //
    bool constptr_ : 1;
+
+   //  Set if the argument is an lvalue.
+   //
+   bool lvalue_ : 1;
 
    //  Set if the argument is mutable.
    //

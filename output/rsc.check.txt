@@ -1,26 +1,26 @@
 LINE COUNTS
-   82625   source code not in one of the categories below
-   42780   blank line
-   19017   blank comment
-   10714   comment at the top of a file (e.g. for the file's name or license info)
-    8282   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   21970   comment not in one of the categories above (e.g. //  <text>)
-   16867   bare left brace
-   15276   bare right brace
-    1592   bare right brace with semicolon
-    1792   access control
-    5192   invocation of Debug::ft
-     668   definition of an fn_name
-    6582   #include directive
-    1179   preprocessor directive other than #include
-     982   using statement
-  235518   TOTAL
+   82671   source code not in one of the categories below
+   42818   blank line
+   19011   blank comment
+   10652   comment at the top of a file (e.g. for the file's name or license info)
+    8286   comment followed by a repeated character to draw a rule (e.g. //---- ...)
+   21994   comment not in one of the categories above (e.g. //  <text>)
+   16862   bare left brace
+   15270   bare right brace
+    1593   bare right brace with semicolon
+    1794   access control
+    5196   invocation of Debug::ft
+     667   definition of an fn_name
+    6572   #include directive
+    1172   preprocessor directive other than #include
+     979   using statement
+  235537   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   139  C-style cast
-  W005    56  Functional cast
+  W005    58  Functional cast
   W006   120  reinterpret_cast
-  W007   657  Cast down the inheritance hierarchy
+  W007   658  Cast down the inheritance hierarchy
   W008    47  Cast removes const qualification
   W009    15  Pointer arithmetic
 * W015     3  #include not sorted in standard order
@@ -32,17 +32,17 @@ WARNING COUNTS (* if supported by >fix)
 * W028    39  Unused data
 * W029     1  Unused enum
 * W030    19  Unused enumerator
-* W032   125  Unused function
+* W032   124  Unused function
 * W033     1  Unused typedef
   W037    15  Member hides inherited name
   W038     1  Class could be namespace
 * W042   157  Member could be private
-* W043    72  Member could be protected
+* W043    73  Member could be protected
   W044     8  Typedef of pointer type
 * W047     1  Data is init-only
 * W048     3  Data is write-only
   W050    26  Data is not private
-* W053    58  Data could be const
+* W053    54  Data could be const
 * W054     1  Data could be const pointer
 * W055     1  Data need not be mutable
   W056     5  Implicit constructor invoked: POD members not initialized
@@ -50,16 +50,18 @@ WARNING COUNTS (* if supported by >fix)
 * W065    10  Base class virtual destructor is not public
   W075   404  Virtual function is public
 * W077    58  Virtual function has no overrides
-  W082   115  Adjacent arguments have the same type
+  W082   116  Adjacent arguments have the same type
 * W088    15  Argument could be const
 * W090   100  Function could be const
-* W092   119  Function could be free
+* W092   120  Function could be free
 * W099   293  Line contains adjacent spaces
+* W100     1  Insertion of blank line recommended
+* W101     1  Deletion of line recommended
   W102     3  Line length exceeds the standard maximum
-* W106   666  Function does not invoke Debug::ft
+* W106   657  Function does not invoke Debug::ft
   W107    18  Function does not invoke Debug::ft as first statement
   W110    37  Override of Base.Display not found
-* W111    10  Override of Object.Patch not found
+* W111    11  Override of Object.Patch not found
 * W117    37  Line can merge with the next line and be under the length limit
   W119    93  Argument passed by value is modified
   W120     5  Function returns non-const reference or pointer to member data
@@ -69,6 +71,9 @@ WARNING COUNTS (* if supported by >fix)
 * W130     9  Redundant scope
   W131     2  C-style preprocessor directive
   W141     3  Function could be moved to a subclass
+* W143     2  Auto variable copies an item returned by reference
+* W144     1  Auto variable copies an item returned by const reference
+* W145     7  Auto variable copies an object
 ====================================================================================================================================
 WARNINGS SORTED BY TYPE/FILE/LINE (i = informational)
 W004 C-style cast
@@ -78,10 +83,10 @@ W004 C-style cast
   ct/CodeFileSet.cpp(634):    LibrarySet* nsSet = (LibrarySet*) this;
   ct/CxxArea.h(529):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   ct/CxxArea.h(901):    CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
-  ct/CxxNamed.h(1247):    CxxToken* AutoType() const override { return (CxxToken*) this; }
-  ct/CxxNamed.h(1455):    CxxToken* RootType() const override { return (CxxToken*) Referent(); }
+  ct/CxxNamed.h(1251):    CxxToken* AutoType() const override { return (CxxToken*) this; }
+  ct/CxxNamed.h(1459):    CxxToken* RootType() const override { return (CxxToken*) Referent(); }
   ct/CxxScope.cpp(4638):    if(tmplt_ != nullptr) return (CxxScope*) this;
-  ct/CxxScope.h(392):    CxxToken* AutoType() const override { return (CxxToken*) this; }
+  ct/CxxScope.h(396):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   ct/CxxScoped.cpp(1875):    return (CxxToken*) this;
   ct/CxxScoped.cpp(2105):    return (CxxToken*) this;
   ct/CxxScoped.cpp(2908):    return (CxxToken*) this;
@@ -215,11 +220,11 @@ W005 Functional cast
   cb/BcProtocol.cpp(509):    if(route->identifier != RouteResult::Id(rid)) return ParmValueMismatch;
   cb/DigitString.cpp(137):       auto rc = AddDigit(Digit(ds.digits_[i]));
   cb/DigitString.cpp(148):    if(i < Size()) return Digit(digits_[i]);
-  ct/CodeWarning.cpp(225):          << spaces(3) << LineType(t) << CRLF;
-  ct/CodeWarning.cpp(236):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
-  ct/CodeWarning.cpp(237):          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
-  ct/CodeWarning.cpp(238):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
-  ct/CodeWarning.cpp(297):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+  ct/CodeWarning.cpp(232):          << spaces(3) << LineType(t) << CRLF;
+  ct/CodeWarning.cpp(243):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+  ct/CodeWarning.cpp(244):          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
+  ct/CodeWarning.cpp(245):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+  ct/CodeWarning.cpp(304):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
   ct/CtIncrement.cpp(1321):       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
   ct/CtIncrement.cpp(1336):    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
   ct/Cxx.cpp(575):       if(Attrs[i].symbol.compare(sym) == 0) return Cxx::Operator(i);
@@ -227,13 +232,13 @@ W005 Functional cast
   ct/Cxx.cpp(672):       Attrs[ValidIntDigits[i]].intValue = int8_t(i);
   ct/Cxx.cpp(678):       Attrs[ValidHexDigits[i]].hexValue = int8_t(h);
   ct/Cxx.cpp(683):       Attrs[ValidOctDigits[i]].octValue = int8_t(i);
-  ct/CxxExecute.cpp(1769):             return TypeMatch(match - 1);
-  ct/CxxExecute.cpp(2199):    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
+  ct/CxxExecute.cpp(1774):             return TypeMatch(match - 1);
+  ct/CxxExecute.cpp(2227):    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
   ct/CxxNamed.cpp(4373):    if(TagCount(n) >= ptrs_) return false;
-  ct/CxxNamed.cpp(4391):    if(TagCount(n) >= ptrs_) return false;
-  ct/CxxNamed.cpp(4462):       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
+  ct/CxxNamed.cpp(4401):    if(TagCount(n) >= ptrs_) return false;
+  ct/CxxNamed.cpp(4472):       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
   ct/Editor.cpp(1107):       if(int(begin) < info->depth) begin = info->depth;
-  ct/Editor.cpp(2150):    *Cli_->obuf << ": " << Warning(log.warning_);
+  ct/Editor.cpp(2173):    *Cli_->obuf << ": " << Warning(log.warning_);
   ct/Interpreter.cpp(147):          type = LibTokenType(i);
   ct/Lexer.cpp(2325):          fp *= std::pow(10.0, int(num));
   ct/Lexer.cpp(2432):          oper = Cxx::Operator(match->second);
@@ -257,6 +262,8 @@ W005 Functional cast
   nw/SysIpL2Addr.cpp(101):    quartet = uint16_t(value);
   nw/SysIpL3Addr.cpp(64):    port = ipport_t(value);
   pb/PotsFeature.h(72):    Id Fid() const { return Id(fid_.GetId()); }
+  sb/Factory.cpp(245):       if(icSignals_[i]) stream << int(i) << SPACE;
+  sb/Factory.cpp(253):       if(ogSignals_[i]) stream << int(i) << SPACE;
   sb/Factory.h(90):    Id Fid() const { return Id(fid_.GetId()); }
   sb/InvokerPool.h(72):       { return NodeBase::Faction(faction_.GetId()); }
   sb/InvokerPoolRegistry.cpp(89):       auto p = reg->Pool(Faction(id));
@@ -323,7 +330,7 @@ W006 reinterpret_cast
   nb/CliParm.cpp(113):    auto fake = reinterpret_cast<const CliParm*>(&local);
   nb/Daemon.cpp(75):    auto fake = reinterpret_cast<const Daemon*>(&local);
   nb/Deferred.cpp(99):    auto fake = reinterpret_cast<const Deferred*>(&local);
-  nb/Log.cpp(136):    auto fake = reinterpret_cast<const Log*>(&local);
+  nb/Log.cpp(184):    auto fake = reinterpret_cast<const Log*>(&local);
   nb/LogBuffer.cpp(122):    SetNext(reinterpret_cast<Entry*>(buff_));
   nb/LogBuffer.cpp(340):       where = reinterpret_cast<Entry*>(buff_);
   nb/LogBuffer.cpp(348):    SetNext(reinterpret_cast<Entry*>(after));
@@ -359,8 +366,8 @@ W006 reinterpret_cast
   pb/PotsProtocol.cpp(636):    reinterpret_cast<const PotsHeaderInfo*>(bytes)->Display(stream, prefix);
   pb/PotsProtocol.cpp(749):    reinterpret_cast<const PotsRingInfo*>(bytes)->Display(stream, prefix);
   pb/PotsProtocol.cpp(831):    reinterpret_cast<const PotsScanInfo*>(bytes)->Display(stream, prefix);
-  sb/Context.cpp(576):    auto fake = reinterpret_cast<const Context*>(&local);
-  sb/Context.cpp(865):             auto toi = reinterpret_cast<TimeoutInfo*>(pptr->bytes);
+  sb/Context.cpp(580):    auto fake = reinterpret_cast<const Context*>(&local);
+  sb/Context.cpp(869):             auto toi = reinterpret_cast<TimeoutInfo*>(pptr->bytes);
   sb/Factory.cpp(202):    auto fake = reinterpret_cast<const Factory*>(&local);
   sb/Initiator.cpp(218):    auto fake = reinterpret_cast<const Initiator*>(&local);
   sb/InvokerPool.cpp(283):    auto fake = reinterpret_cast<const InvokerPool*>(&local);
@@ -418,8 +425,8 @@ W007 Cast down the inheritance hierarchy
   cb/BcProtocol.cpp(920):    auto&         tmsg = static_cast<TlvMessage&>(msg);
   cb/BcProtocol.cpp(1258):    auto& tmsg = static_cast<const CipMessage&>(msg);
   cb/BcProtocol.cpp(1263):    auto fac = static_cast<SsmFactory*>(reg->Factories().At(rte->selector));
-  cb/BcSsm.cpp(384):    auto& rre = static_cast<BcRemoteReleaseEvent&>(currEvent);
-  cb/BcSsm.cpp(825):       auto fac = static_cast<BcFactory*>(reg->Factories().At(route_.selector));
+  cb/BcSsm.cpp(385):    auto& rre = static_cast<BcRemoteReleaseEvent&>(currEvent);
+  cb/BcSsm.cpp(826):       auto fac = static_cast<BcFactory*>(reg->Factories().At(route_.selector));
   cb/ProxyBcSessions.cpp(360):    auto&         ame = static_cast<AnalyzeMsgEvent&>(currEvent);
   cb/ProxyBcSessions.cpp(361):    auto          msg = static_cast<CipMessage*>(ame.Msg());
   cb/ProxyBcSessions.cpp(363):    auto&         pssm = static_cast<ProxyBcSsm&>(ssm);
@@ -481,12 +488,13 @@ W007 Cast down the inheritance hierarchy
   ct/CodeItemSet.cpp(238):       auto item = static_cast<CxxScoped*>(*i);
   ct/CodeItemSet.cpp(260):       auto item = static_cast<CxxNamed*>(*i);
   ct/CodeWarning.cpp(206):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeWarning.cpp(1002):       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
-  ct/CodeWarning.cpp(1024):       auto data = static_cast<const Data*>(item_);
-  ct/CodeWarning.cpp(1066):       auto func = static_cast<Function*>(item_);
-  ct/CodeWarning.cpp(1147):       auto cls = static_cast<const Class*>(item_);
-  ct/CodeWarning.cpp(1171):       auto cls = static_cast<const Class*>(item_);
-  ct/CodeWarning.cpp(1202):          auto func = static_cast<const Function*>(item_);
+  ct/CodeWarning.cpp(1003):       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
+  ct/CodeWarning.cpp(1036):       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+  ct/CodeWarning.cpp(1058):       auto data = static_cast<const Data*>(item_);
+  ct/CodeWarning.cpp(1100):       auto func = static_cast<Function*>(item_);
+  ct/CodeWarning.cpp(1181):       auto cls = static_cast<const Class*>(item_);
+  ct/CodeWarning.cpp(1205):       auto cls = static_cast<const Class*>(item_);
+  ct/CodeWarning.cpp(1240):          auto func = static_cast<const Function*>(item_);
   ct/CtIncrement.cpp(1083):          auto dir = static_cast<CodeDir*>(*d);
   ct/CtIncrement.cpp(1106):          auto file = static_cast<CodeFile*>(*f);
   ct/CxxArea.cpp(108):       auto cls = static_cast<Class*>(call->Via()->Root());
@@ -495,18 +503,18 @@ W007 Cast down the inheritance hierarchy
   ct/CxxArea.cpp(1251):    auto area = static_cast<CxxArea*>(GetScope());
   ct/CxxArea.cpp(1262):          auto c = static_cast<Class*>(*s);
   ct/CxxArea.cpp(2691):       auto func = static_cast<const Function*>(item);
-  ct/CxxArea.cpp(2733):       auto func = static_cast<const Function*>(item);
-  ct/CxxArea.cpp(2742):       return tmplt_->FindFriend(static_cast<const CxxScope*>(ref));
+  ct/CxxArea.cpp(2734):       auto func = static_cast<const Function*>(item);
+  ct/CxxArea.cpp(2743):       return tmplt_->FindFriend(static_cast<const CxxScope*>(ref));
   ct/CxxArea.h(993):    Namespace* OuterSpace() const { return static_cast<Namespace*>(GetScope()); }
   ct/CxxDirective.cpp(1018):       auto macro = static_cast<Macro*>(ref_);
   ct/CxxDirective.cpp(1031):       auto macro = static_cast<Macro*>(ref_);
-  ct/CxxExecute.cpp(1723):          auto derived = static_cast<const Class*>(root);
-  ct/CxxExecute.cpp(1834):       auto thisClass = static_cast<Class*>(thisRoot);
-  ct/CxxExecute.cpp(1842):             auto thatClass = static_cast<Class*>(thatRoot);
-  ct/CxxExecute.cpp(1999):    if(AutoType_.SetAutoTypeOn(*static_cast<FuncData*>(item_)))
-  ct/CxxExecute.cpp(2053):       auto type = static_cast<TypeSpec*>(item_);
-  ct/CxxExecute.cpp(2063):       spec->SetReferent(static_cast<CxxScoped*>(item_), nullptr);
-  ct/CxxExecute.cpp(2249):          static_cast<Class*>(root)->BlockCopied(this);
+  ct/CxxExecute.cpp(1728):          auto derived = static_cast<const Class*>(root);
+  ct/CxxExecute.cpp(1839):       auto thisClass = static_cast<Class*>(thisRoot);
+  ct/CxxExecute.cpp(1847):             auto thatClass = static_cast<Class*>(thatRoot);
+  ct/CxxExecute.cpp(2008):    if(AutoType_.SetAutoTypeOn(*static_cast<FuncData*>(item_)))
+  ct/CxxExecute.cpp(2062):       auto type = static_cast<TypeSpec*>(item_);
+  ct/CxxExecute.cpp(2072):       spec->SetReferent(static_cast<CxxScoped*>(item_), nullptr);
+  ct/CxxExecute.cpp(2277):          static_cast<Class*>(root)->BlockCopied(this);
   ct/CxxNamed.cpp(100):             static_cast<Function*>(tfunc)->SetTemplateParm();
   ct/CxxNamed.cpp(474):          space = static_cast<Namespace*>(item);
   ct/CxxNamed.cpp(498):          cls = static_cast<Class*>(item);
@@ -534,11 +542,11 @@ W007 Cast down the inheritance hierarchy
   ct/CxxScope.cpp(4435):       func = static_cast<Function*>(inst->FindTemplateAnalog(this));
   ct/CxxScope.cpp(4448):       auto i = FindArg(static_cast<const Argument*>(item), false);
   ct/CxxScope.cpp(4495):    return static_cast<Function*>((*cti)->FindInstanceAnalog(this));
-  ct/CxxScope.cpp(5201):    auto that = static_cast<const Argument*>(FindTemplateAnalog(arg));
-  ct/CxxScope.cpp(5656):    auto func = static_cast<Function*>(FindTemplateAnalog(this));
-  ct/CxxScope.cpp(5668):    auto func = static_cast<Function*>(FindTemplateAnalog(this));
-  ct/CxxScope.cpp(5887):                auto item = static_cast<CxxNamed*>(args.front().item_);
-  ct/CxxScope.cpp(6076):       auto func = static_cast<Function*>(cls->FindTemplateAnalog(this));
+  ct/CxxScope.cpp(5203):    auto that = static_cast<const Argument*>(FindTemplateAnalog(arg));
+  ct/CxxScope.cpp(5658):    auto func = static_cast<Function*>(FindTemplateAnalog(this));
+  ct/CxxScope.cpp(5670):    auto func = static_cast<Function*>(FindTemplateAnalog(this));
+  ct/CxxScope.cpp(5889):                auto item = static_cast<CxxNamed*>(args.front().item_);
+  ct/CxxScope.cpp(6078):       auto func = static_cast<Function*>(cls->FindTemplateAnalog(this));
   ct/CxxScoped.cpp(93):          auto func = static_cast<Function*>(GetScope());
   ct/CxxScoped.cpp(201):       auto& fname = static_cast<Function*>(GetScope())->Name();
   ct/CxxScoped.cpp(217):    auto cls = static_cast<Class*>(ref);
@@ -566,80 +574,80 @@ W007 Cast down the inheritance hierarchy
   ct/CxxScoped.cpp(3577):    auto item = static_cast<Typedef*>(FindTemplateAnalog(this));
   ct/CxxScoped.cpp(3768):          auto item = static_cast<Using*>(FindTemplateAnalog(this));
   ct/CxxStatement.cpp(371):    static_cast<Block*>(GetScope())->EraseItem(this);
-  ct/CxxStatement.cpp(1156):             static_cast<Class*>(result.item_)->InvokeCopyCtor();
+  ct/CxxStatement.cpp(1157):             static_cast<Class*>(result.item_)->InvokeCopyCtor();
   ct/CxxSymbols.cpp(245):             if(static_cast<const Function*>(list[idx])->IsStatic())
   ct/CxxSymbols.cpp(552):    return static_cast<Macro*>(macros.front());
   ct/CxxSymbols.cpp(589):       if((*s)->ScopedName(false) == name) return static_cast<CxxScope*>(*s);
   ct/CxxSymbols.cpp(597):       if((*c)->ScopedName(false) == name) return static_cast<CxxScope*>(*c);
   ct/CxxSymbols.cpp(605):       if(pos != string::npos) return static_cast<CxxScope*>(*s);
   ct/CxxSymbols.cpp(611):       if(pos != string::npos) return static_cast<CxxScope*>(*c);
-  ct/CxxToken.cpp(949):    auto oper = static_cast<Operation*>(item.get());
-  ct/CxxToken.cpp(975):          auto ante = static_cast<Operation*>(prev.get());
-  ct/CxxToken.cpp(1034):       auto oper = static_cast<Operation*>(item.get());
-  ct/CxxToken.cpp(1067):    auto oper = static_cast<Operation*>(prev.get());
-  ct/CxxToken.cpp(1094):    auto oper = static_cast<Operation*>(item.get());
-  ct/CxxToken.cpp(1152):    auto oper = static_cast<Operation*>(item.get());
-  ct/CxxToken.cpp(1175):       auto ante = static_cast<Operation*>(prev.get());
-  ct/CxxToken.cpp(1336):    Context::PushOp(static_cast<Operation*>(StartOfExpr.get()));
-  ct/CxxToken.cpp(1884):       inClass = static_cast<Class*>(inRoot);
-  ct/CxxToken.cpp(1889):       outClass = static_cast<Class*>(outRoot);
-  ct/CxxToken.cpp(1930):    auto call = static_cast<Operation*>(args_.front().get());
-  ct/CxxToken.cpp(2325):       func = static_cast<Function*>(proc.item_);
-  ct/CxxToken.cpp(2339):       cls = static_cast<Class*>(proc.item_);
-  ct/CxxToken.cpp(2444):    auto cls = static_cast<Class*>(arg.item_->Root());
-  ct/CxxToken.cpp(2482):       auto newCall = static_cast<Operation*>(args_.front().get());
-  ct/CxxToken.cpp(2503):    auto cls = static_cast<Class*>(spec.item_->Root());
-  ct/CxxToken.cpp(2524):       auto ctorCall = static_cast<Operation*>(args_[2].get());
-  ct/CxxToken.cpp(2548):       cls = static_cast<Class*>(root);
-  ct/CxxToken.cpp(2750):       area = static_cast<Class*>(targ);
-  ct/CxxToken.cpp(3120):    auto cls = static_cast<Class*>(root);
-  ct/CxxToken.cpp(3187):          mem = static_cast<Function*>(mem)->InstantiateFunction(tmplt);
+  ct/CxxToken.cpp(944):    auto oper = static_cast<Operation*>(item.get());
+  ct/CxxToken.cpp(970):          auto ante = static_cast<Operation*>(prev.get());
+  ct/CxxToken.cpp(1029):       auto oper = static_cast<Operation*>(item.get());
+  ct/CxxToken.cpp(1062):    auto oper = static_cast<Operation*>(prev.get());
+  ct/CxxToken.cpp(1089):    auto oper = static_cast<Operation*>(item.get());
+  ct/CxxToken.cpp(1147):    auto oper = static_cast<Operation*>(item.get());
+  ct/CxxToken.cpp(1170):       auto ante = static_cast<Operation*>(prev.get());
+  ct/CxxToken.cpp(1331):    Context::PushOp(static_cast<Operation*>(StartOfExpr.get()));
+  ct/CxxToken.cpp(1879):       inClass = static_cast<Class*>(inRoot);
+  ct/CxxToken.cpp(1884):       outClass = static_cast<Class*>(outRoot);
+  ct/CxxToken.cpp(1925):    auto call = static_cast<Operation*>(args_.front().get());
+  ct/CxxToken.cpp(2342):       func = static_cast<Function*>(proc.item_);
+  ct/CxxToken.cpp(2356):       cls = static_cast<Class*>(proc.item_);
+  ct/CxxToken.cpp(2461):    auto cls = static_cast<Class*>(arg.item_->Root());
+  ct/CxxToken.cpp(2499):       auto newCall = static_cast<Operation*>(args_.front().get());
+  ct/CxxToken.cpp(2520):    auto cls = static_cast<Class*>(spec.item_->Root());
+  ct/CxxToken.cpp(2541):       auto ctorCall = static_cast<Operation*>(args_[2].get());
+  ct/CxxToken.cpp(2565):       cls = static_cast<Class*>(root);
+  ct/CxxToken.cpp(2767):       area = static_cast<Class*>(targ);
+  ct/CxxToken.cpp(3137):    auto cls = static_cast<Class*>(root);
+  ct/CxxToken.cpp(3204):          mem = static_cast<Function*>(mem)->InstantiateFunction(tmplt);
   ct/Editor.cpp(266):       auto func = static_cast<const Function*>(item);
   ct/Editor.cpp(735):    return static_cast<Namespace*>(scope);
   ct/Editor.cpp(807):    auto defn = static_cast<Data*>(data->GetMate());
   ct/Editor.cpp(900):    auto defn = static_cast<Function*>(func->GetMate());
   ct/Editor.cpp(928):    auto func = static_cast<const Function*>(item);
   ct/Editor.cpp(1166):    auto oper = static_cast<const Operation*>(log.item_);
-  ct/Editor.cpp(1447):    static_cast<Class*>(log.item_)->SetClassTag(Cxx::StructType);
-  ct/Editor.cpp(1496):          static_cast<Forward*>(*f)->SetClassTag(to);
-  ct/Editor.cpp(1538):    auto decl = static_cast<CxxScope*>(log.item_);
-  ct/Editor.cpp(1700):    auto item = static_cast<CxxScope*>(ParseFileItem(pos, space));
-  ct/Editor.cpp(1713):          auto tname = static_cast<const TypeName*>(*r);
-  ct/Editor.cpp(1727):       UpdateDebugFt(static_cast<Function*>(item));
-  ct/Editor.cpp(1763):    auto func = static_cast<const Function*>(log.item_);
-  ct/Editor.cpp(1833):    static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
-  ct/Editor.cpp(2092):    auto decl = static_cast<Function*>(log.item_);
-  ct/Editor.cpp(2485):    static_cast<Function*>(log.item_)->SetExplicit(false);
-  ct/Editor.cpp(2581):    static_cast<ClassData*>(log.item_)->SetMutable(false);
-  ct/Editor.cpp(2617):    static_cast<Function*>(log.item_)->SetOverride(false);
-  ct/Editor.cpp(2638):    auto qname = static_cast<const QualName*>(log.item_);
-  ct/Editor.cpp(2702):    static_cast<Function*>(log.item_)->SetVirtual(false);
-  ct/Editor.cpp(2772):       usages.directs.erase(static_cast<CxxNamed*>(*i));
-  ct/Editor.cpp(2773):       usages.indirects.erase(static_cast<CxxNamed*>(*i));
-  ct/Editor.cpp(2845):          auto data = static_cast<const Data*>(*i);
-  ct/Editor.cpp(2859):             auto func = static_cast<const Function*>(*i);
-  ct/Editor.cpp(2873):             auto data = static_cast<const Data*>(*i);
-  ct/Editor.cpp(3023):    return FindSigEnd(static_cast<const Function*>(log.item_));
-  ct/Editor.cpp(3337):    auto data = static_cast<Data*>(log.item_);
-  ct/Editor.cpp(3404):    auto func = static_cast<Function*>(log.item_);
-  ct/Editor.cpp(3497):    auto data = static_cast<Data*>(log.item_);
-  ct/Editor.cpp(4108):    auto data = static_cast<Data*>(aref);
-  ct/Editor.cpp(4115):    ReplaceImpl(static_cast<Function*>(log.item_));
-  ct/Editor.cpp(4266):    auto func = static_cast<Function*>(log.item_);
-  ct/Editor.cpp(4617):    auto cls = static_cast<Class*>(log.item_);
-  ct/Editor.cpp(4918):    auto cls = static_cast<Class*>(item);
-  ct/Editor.cpp(5359):       ns = static_cast<Namespace*>(ref)->OuterSpace();
-  ct/Editor.cpp(5435):    auto func = static_cast<const Function*>(log.item_);
-  ct/Editor.cpp(5516):    auto func = static_cast<const Function*>(log.item_);
-  ct/Editor.cpp(5526):       auto slit = static_cast<StrLiteral*>(arg);
-  ct/Editor.cpp(5540):    auto data = static_cast<SpaceData*>(arg->Referent());
-  ct/Editor.cpp(5547):    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
-  ct/Editor.cpp(5574):    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
-  ct/Editor.cpp(5639):    auto type = static_cast<TypeName*>(log.item_);
-  ct/Editor.cpp(6206):    static_cast<Function*>(log.item_)->SetExplicit(true);
-  ct/Editor.cpp(6254):    static_cast<Function*>(log.item_)->SetOverride(true);
-  ct/Editor.cpp(6358):    static_cast<Function*>(log.item_)->SetVirtual(true);
-  ct/Editor.cpp(6646):       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
+  ct/Editor.cpp(1470):    static_cast<Class*>(log.item_)->SetClassTag(Cxx::StructType);
+  ct/Editor.cpp(1519):          static_cast<Forward*>(*f)->SetClassTag(to);
+  ct/Editor.cpp(1561):    auto decl = static_cast<CxxScope*>(log.item_);
+  ct/Editor.cpp(1723):    auto item = static_cast<CxxScope*>(ParseFileItem(pos, space));
+  ct/Editor.cpp(1736):          auto tname = static_cast<const TypeName*>(*r);
+  ct/Editor.cpp(1750):       UpdateDebugFt(static_cast<Function*>(item));
+  ct/Editor.cpp(1786):    auto func = static_cast<const Function*>(log.item_);
+  ct/Editor.cpp(1856):    static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
+  ct/Editor.cpp(2115):    auto decl = static_cast<Function*>(log.item_);
+  ct/Editor.cpp(2508):    static_cast<Function*>(log.item_)->SetExplicit(false);
+  ct/Editor.cpp(2604):    static_cast<ClassData*>(log.item_)->SetMutable(false);
+  ct/Editor.cpp(2640):    static_cast<Function*>(log.item_)->SetOverride(false);
+  ct/Editor.cpp(2661):    auto qname = static_cast<const QualName*>(log.item_);
+  ct/Editor.cpp(2725):    static_cast<Function*>(log.item_)->SetVirtual(false);
+  ct/Editor.cpp(2795):       usages.directs.erase(static_cast<CxxNamed*>(*i));
+  ct/Editor.cpp(2796):       usages.indirects.erase(static_cast<CxxNamed*>(*i));
+  ct/Editor.cpp(2867):          auto data = static_cast<const Data*>(*i);
+  ct/Editor.cpp(2881):             auto func = static_cast<const Function*>(*i);
+  ct/Editor.cpp(2895):             auto data = static_cast<const Data*>(*i);
+  ct/Editor.cpp(3045):    return FindSigEnd(static_cast<const Function*>(log.item_));
+  ct/Editor.cpp(3365):    auto data = static_cast<Data*>(log.item_);
+  ct/Editor.cpp(3432):    auto func = static_cast<Function*>(log.item_);
+  ct/Editor.cpp(3531):    auto data = static_cast<Data*>(log.item_);
+  ct/Editor.cpp(4150):    auto data = static_cast<Data*>(aref);
+  ct/Editor.cpp(4157):    ReplaceImpl(static_cast<Function*>(log.item_));
+  ct/Editor.cpp(4308):    auto func = static_cast<Function*>(log.item_);
+  ct/Editor.cpp(4659):    auto cls = static_cast<Class*>(log.item_);
+  ct/Editor.cpp(4960):    auto cls = static_cast<Class*>(item);
+  ct/Editor.cpp(5401):       ns = static_cast<Namespace*>(ref)->OuterSpace();
+  ct/Editor.cpp(5477):    auto func = static_cast<const Function*>(log.item_);
+  ct/Editor.cpp(5558):    auto func = static_cast<const Function*>(log.item_);
+  ct/Editor.cpp(5568):       auto slit = static_cast<StrLiteral*>(arg);
+  ct/Editor.cpp(5582):    auto data = static_cast<SpaceData*>(arg->Referent());
+  ct/Editor.cpp(5589):    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
+  ct/Editor.cpp(5616):    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
+  ct/Editor.cpp(5681):    auto type = static_cast<TypeName*>(log.item_);
+  ct/Editor.cpp(6248):    static_cast<Function*>(log.item_)->SetExplicit(true);
+  ct/Editor.cpp(6296):    static_cast<Function*>(log.item_)->SetOverride(true);
+  ct/Editor.cpp(6400):    static_cast<Function*>(log.item_)->SetVirtual(true);
+  ct/Editor.cpp(6688):       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
   ct/Lexer.cpp(3214):          auto def = static_cast<Define*>(item);
   ct/Library.cpp(668):             auto f = static_cast<const Function*>(elem);
   ct/Parser.cpp(455):    auto op = static_cast<Operation*>(token.get());
@@ -684,15 +692,15 @@ W007 Cast down the inheritance hierarchy
   nb/CliCommandSet.cpp(173):    auto& commands = reinterpret_cast<const Registry<CliCommand>& >(Parms());
   nb/CoutThread.cpp(86):       auto req = static_cast<StreamRequest*>(msg);
   nb/FileThread.cpp(211):       auto req = static_cast<FileRequest*>(msg);
-  nb/FunctionTrace.cpp(573):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(587):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(606):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(634):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(681):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(800):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(822):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(840):       auto curr = static_cast<FunctionTrace*>(rec);
-  nb/FunctionTrace.cpp(913):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(572):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(586):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(604):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(631):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(677):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(795):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(817):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(834):       auto curr = static_cast<FunctionTrace*>(rec);
+  nb/FunctionTrace.cpp(906):       auto curr = static_cast<FunctionTrace*>(rec);
   nb/LogThread.cpp(85):       (static_cast<CfgIntParm*>(reg->FindParm("NoSpoolingMessageCount")));
   nb/MemoryTrace.cpp(89):       auto curr = static_cast<MemoryTrace*>(rec);
   nb/NbPools.cpp(108):          auto buff = static_cast<const MsgBuffer*>(*obj);
@@ -724,8 +732,8 @@ W007 Cast down the inheritance hierarchy
   pb/PotsProtocol.cpp(672):    auto&           pmsg = static_cast<const PotsMessage&>(msg);
   pb/PotsProtocol.cpp(760):    auto&         pmsg = static_cast<const PotsMessage&>(msg);
   pb/PotsProtocol.cpp(842):    auto&         pmsg = static_cast<const PotsMessage&>(msg);
-  sb/Context.cpp(756):                inv = static_cast<InvokerThread*>(Thread::RunningThread());
-  sb/Context.cpp(861):          auto pptr = static_cast<TlvMessage*>(m)->FindParm(Parameter::Timeout);
+  sb/Context.cpp(760):                inv = static_cast<InvokerThread*>(Thread::RunningThread());
+  sb/Context.cpp(865):          auto pptr = static_cast<TlvMessage*>(m)->FindParm(Parameter::Timeout);
   sb/InvokerPool.cpp(240):    invokersCfg_.reset(static_cast<CfgIntParm*>(reg->FindParm(parmKey)));
   sb/InvokerPool.cpp(566):       auto inv = static_cast<InvokerThread*>(Thread::RunningThread());
   sb/MsgContext.cpp(75):    static_cast<MsgFactory*>(fac)->ProcessIcMsg(msg);
@@ -1034,7 +1042,7 @@ W007 Cast down the inheritance hierarchy
   st/MscBuilder.cpp(900):          tt = static_cast<const TransTrace*>(rec);
   st/MscBuilder.cpp(936):             mt = static_cast<const MsgTrace*>(rec);
   st/StIncrement.cpp(112):    auto ctx = static_cast<Context*>(pool->FirstUsed(bid));
-  st/StTestData.cpp(63):    return static_cast<StTestData*>(data);
+  st/StTestData.cpp(64):    return static_cast<StTestData*>(data);
   st/TestSessions.cpp(481):    auto tpsm = static_cast<TestPsm*>(Psm());
   st/TestSessions.cpp(496):    auto tssm = static_cast<TestSsm*>(RootSsm());
   st/TestSessions.cpp(544):       if(p->GetFactory() == TestFactoryId) return static_cast<TestPsm*>(p);
@@ -1064,13 +1072,13 @@ W008 Cast removes const qualification
   ct/CxxNamed.cpp(1656):    const_cast<DataSpec*>(this)->FindReferent();
   ct/CxxNamed.cpp(3546):    return const_cast<TypeName*>(this);
   ct/CxxNamed.h(738):       { return const_cast<QualName*>(this); }
-  ct/CxxNamed.h(1247):    CxxToken* AutoType() const override { return (CxxToken*) this; }
+  ct/CxxNamed.h(1251):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   ct/CxxScope.cpp(3033):    return FoundFunc(const_cast<Function*>(this), args);
   ct/CxxScope.cpp(4404):    auto prev = const_cast<Function*>(this);
   ct/CxxScope.cpp(4628):    if(IsTemplate()) return const_cast<Function*>(this);
   ct/CxxScope.cpp(4638):    if(tmplt_ != nullptr) return (CxxScope*) this;
-  ct/CxxScope.h(392):    CxxToken* AutoType() const override { return (CxxToken*) this; }
-  ct/CxxScope.h(1418):       { return const_cast<Function*>(this); }
+  ct/CxxScope.h(396):    CxxToken* AutoType() const override { return (CxxToken*) this; }
+  ct/CxxScope.h(1422):       { return const_cast<Function*>(this); }
   ct/CxxScoped.cpp(728):    if(n == 0) return const_cast<CxxScoped*>(this);
   ct/CxxScoped.cpp(1875):    return (CxxToken*) this;
   ct/CxxScoped.cpp(2105):    return (CxxToken*) this;
@@ -1084,15 +1092,15 @@ W008 Cast removes const qualification
   ct/CxxScoped.h(605):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   ct/CxxScoped.h(1532):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   ct/CxxScoped.h(1629):    CxxToken* AutoType() const override { return (CxxToken*) this; }
-  ct/CxxToken.cpp(779):       const_cast<CxxToken*>(this) : nullptr);
-  ct/CxxToken.cpp(824):    CxxToken* prev = const_cast<CxxToken*>(this);
+  ct/CxxToken.cpp(774):       const_cast<CxxToken*>(this) : nullptr);
+  ct/CxxToken.cpp(819):    CxxToken* prev = const_cast<CxxToken*>(this);
   ct/CxxToken.h(515):    virtual CxxToken* RootType() const { return const_cast<CxxToken*>(this); }
   ct/Parser.cpp(4420):       func->SetTemplate(const_cast<Function*>(tmplt));
   nb/Algorithms.cpp(43):    return (void*) ((const_ptr_t) ptr2 - diff);
   nb/Algorithms.cpp(50):    return (void*) ((const_ptr_t) ptr1 + diff);
   nb/Base.cpp(67):    objects.push_back(const_cast<Base*>(this));
   nb/SysThread.win.cpp(191):       (_beginthreadex_proc_type) EnterThread, (void*) client, 0, &id);
-  sb/MsgPort.cpp(344):    return const_cast<MsgPort*>(this);
+  sb/MsgPort.cpp(342):    return const_cast<MsgPort*>(this);
   sb/ProtocolSM.cpp(650):    if(upper == nullptr) return const_cast<ProtocolSM*>(this);
   sb/TlvMessage.cpp(395):    pit.pptr = (TlvParm*) &pit.mptr->bytes[nextIndex];
 W009 Pointer arithmetic
@@ -1114,7 +1122,7 @@ W009 Pointer arithmetic
 W015 #include not sorted in standard order
   nb/SysStackTrace.win.cpp(30): #include <Windows.h>
   nw/SysSocket.win.cpp(28): #include <WinSock2.h>
-  rsc/main.cpp(31): #include "SysTypes.h"
+  rsc/main.cpp(37): #include "SysTypes.h"
 W020 Using statement in header
   an/AnIncrement.h(28): using namespace NodeBase;
   an/AnModule.h(28): using namespace NodeBase;
@@ -1159,7 +1167,7 @@ W020 Using statement in header
   dip/DipProtocol.h(40): using namespace NetworkBase;
   dip/DipTypes.h(26): using namespace NetworkBase;
   dip/DipTypes.h(27): using namespace NodeBase;
-  dip/MapAndUnits.h(35): using namespace NodeBase;
+  dip/MapAndUnits.h(31): using namespace NodeBase;
   dip/StartupParameters.h(21): using namespace NetworkBase;
   dip/Token.h(27): using namespace NodeBase;
   mb/Circuit.h(32): using namespace NodeBase;
@@ -1490,47 +1498,47 @@ W022 Add using statement
   st/TestSessions.cpp(0):  // namespace NodeBase
   st/TestSessions.cpp(0):  // namespace SessionBase
 W023 Remove using statement
-  sb/SbIpBuffer.cpp(37): using namespace NetworkBase;
+  sb/SbIpBuffer.cpp(38): using namespace NetworkBase;
 W026 Unused argument
   ct/CodeFile.h(421/3):       const CxxNamed* item, const CxxScope* scope) const;
   ct/CxxArea.h(704/1):       (const std::string& name, StackArgVector* args, SymbolView* view) const;
   ct/CxxArea.h(704/2):       (const std::string& name, StackArgVector* args, SymbolView* view) const;
   ct/CxxArea.h(704/3):       (const std::string& name, StackArgVector* args, SymbolView* view) const;
-  ct/CxxExecute.h(935/1):    static void Shutdown(NodeBase::RestartLevel level);
-  ct/CxxExecute.h(939/1):    static void Startup(NodeBase::RestartLevel level) { }
+  ct/CxxExecute.h(943/1):    static void Shutdown(NodeBase::RestartLevel level);
+  ct/CxxExecute.h(947/1):    static void Startup(NodeBase::RestartLevel level) { }
   ct/CxxScope.h(84/3):       const CxxNamed* item, const CxxScope* scope) const { return nullptr; }
   ct/CxxScoped.h(1798/3):       (const std::string& fqName, size_t prefix, const CxxScope* scope) const;
-  ct/Editor.h(170/1):    word ChangeCast(const CodeWarning& log);
-  ct/Editor.h(171/1):    word ChangeClassToNamespace(const CodeWarning& log);
-  ct/Editor.h(174/1):    word ChangeOperator(const CodeWarning& log);
-  ct/Editor.h(179/1):    word EraseCast(const CodeWarning& log);
-  ct/Editor.h(180/1):    word EraseClass(const CodeWarning& log);
-  ct/Editor.h(193/1):    word InsertCopyCtorCall(const CodeWarning& log);
-  ct/Editor.h(194/1):    word InsertDataInit(const CodeWarning& log);
-  ct/Editor.h(196/1):    word InsertDisplay(const CodeWarning& log);
-  ct/Editor.h(197/1):    word InsertEnumName(const CodeWarning& log);
-  ct/Editor.h(198/1):    word InsertFallthrough(const CodeWarning& log);
-  ct/Editor.h(203/1):    word InsertMemberInit(const CodeWarning& log);
-  ct/Editor.h(205/1):    word InsertPODCtor(const CodeWarning& log);
-  ct/Editor.h(206/1):    word InsertPureVirtual(const CodeWarning& log);
-  ct/Editor.h(208/1):    word MoveDefine(const CodeWarning& log);
-  ct/Editor.h(209/1):    word MoveMemberInit(const CodeWarning& log);
-  ct/Editor.h(213/1):    word ReplaceHeading(const CodeWarning& log);
-  ct/Editor.h(214/1):    word ReplaceName(const CodeWarning& log);
-  ct/Editor.h(418/1):    word FixInvokers(const CodeWarning& log);
-  ct/Editor.h(427/1):    word ChangeFunctionToMember(const Function* func, word offset);
-  ct/Editor.h(427/2):    word ChangeFunctionToMember(const Function* func, word offset);
-  ct/Editor.h(428/1):    word ChangeInvokerToMember(const Function* func, word offset);
-  ct/Editor.h(428/2):    word ChangeInvokerToMember(const Function* func, word offset);
-  ct/Editor.h(429/1):    word EraseArgument(const Function* func, word offset);
-  ct/Editor.h(429/2):    word EraseArgument(const Function* func, word offset);
-  ct/Editor.h(430/1):    word EraseDefaultValue(const Function* func, word offset);
-  ct/Editor.h(430/2):    word EraseDefaultValue(const Function* func, word offset);
-  ct/Editor.h(431/1):    word EraseParameter(const Function* func, word offset);
-  ct/Editor.h(431/2):    word EraseParameter(const Function* func, word offset);
-  ct/Editor.h(433/1):    word InsertArgument(const Function* func, word offset);
-  ct/Editor.h(433/2):    word InsertArgument(const Function* func, word offset);
-  ct/Editor.h(434/1):    word SplitVirtualFunction(const Function* func);
+  ct/Editor.h(171/1):    word ChangeCast(const CodeWarning& log);
+  ct/Editor.h(172/1):    word ChangeClassToNamespace(const CodeWarning& log);
+  ct/Editor.h(175/1):    word ChangeOperator(const CodeWarning& log);
+  ct/Editor.h(180/1):    word EraseCast(const CodeWarning& log);
+  ct/Editor.h(181/1):    word EraseClass(const CodeWarning& log);
+  ct/Editor.h(194/1):    word InsertCopyCtorCall(const CodeWarning& log);
+  ct/Editor.h(195/1):    word InsertDataInit(const CodeWarning& log);
+  ct/Editor.h(197/1):    word InsertDisplay(const CodeWarning& log);
+  ct/Editor.h(198/1):    word InsertEnumName(const CodeWarning& log);
+  ct/Editor.h(199/1):    word InsertFallthrough(const CodeWarning& log);
+  ct/Editor.h(204/1):    word InsertMemberInit(const CodeWarning& log);
+  ct/Editor.h(206/1):    word InsertPODCtor(const CodeWarning& log);
+  ct/Editor.h(207/1):    word InsertPureVirtual(const CodeWarning& log);
+  ct/Editor.h(209/1):    word MoveDefine(const CodeWarning& log);
+  ct/Editor.h(210/1):    word MoveMemberInit(const CodeWarning& log);
+  ct/Editor.h(214/1):    word ReplaceHeading(const CodeWarning& log);
+  ct/Editor.h(215/1):    word ReplaceName(const CodeWarning& log);
+  ct/Editor.h(419/1):    word FixInvokers(const CodeWarning& log);
+  ct/Editor.h(428/1):    word ChangeFunctionToMember(const Function* func, word offset);
+  ct/Editor.h(428/2):    word ChangeFunctionToMember(const Function* func, word offset);
+  ct/Editor.h(429/1):    word ChangeInvokerToMember(const Function* func, word offset);
+  ct/Editor.h(429/2):    word ChangeInvokerToMember(const Function* func, word offset);
+  ct/Editor.h(430/1):    word EraseArgument(const Function* func, word offset);
+  ct/Editor.h(430/2):    word EraseArgument(const Function* func, word offset);
+  ct/Editor.h(431/1):    word EraseDefaultValue(const Function* func, word offset);
+  ct/Editor.h(431/2):    word EraseDefaultValue(const Function* func, word offset);
+  ct/Editor.h(432/1):    word EraseParameter(const Function* func, word offset);
+  ct/Editor.h(432/2):    word EraseParameter(const Function* func, word offset);
+  ct/Editor.h(434/1):    word InsertArgument(const Function* func, word offset);
+  ct/Editor.h(434/2):    word InsertArgument(const Function* func, word offset);
+  ct/Editor.h(435/1):    word SplitVirtualFunction(const Function* func);
   mb/MediaEndpt.h(113/1):    virtual void ProcessIcMsg(Message& msg);
   nb/BuddyHeap.cpp(77/3):       const string& prefix, const Flags& options) const;
   nb/Debug.h(118/1):    static void noop(debug64_t info = 0);
@@ -1636,17 +1644,16 @@ W032 Unused function
   cb/BcProtocol.h(182):    MediaInfo* AddMedia(const MediaInfo& media);
   cb/ProxyBcSessions.h(195):    explicit ProxyBcDisconnecting(ServiceId sid);
   ct/CxxExecute.h(160):    size_t Arrays() const;
-  ct/CxxExecute.h(850):    static bool ParsingTemplate();
-  ct/CxxScope.h(1212):    bool IsFinal() const { return GetDecl()->final_; }
+  ct/CxxExecute.h(858):    static bool ParsingTemplate();
+  ct/CxxScope.h(1216):    bool IsFinal() const { return GetDecl()->final_; }
   ct/CxxString.h(46):    size_t rfind_first_of
   ct/CxxString.h(114):    std::string& Prefix(std::string&& scope,
-  ct/Editor.h(422):    word FixInvoker(const Function* func, const CodeWarning& log);
+  ct/Editor.h(423):    word FixInvoker(const Function* func, const CodeWarning& log);
   ct/Lexer.h(453):    size_t LineFindFirstOf(size_t pos, const std::string& chars) const;
   dip/BotTrace.h(72):    DipHeader* Header() const;
   dip/TokenMessage.h(48):    explicit TokenMessage(const Token* stream);
   dip/TokenMessage.h(141):    void set_as_ascii(const std::string& text);
   dip/WinterOrders.h(52):    size_t get_number_of_results() const;
-  launcher/RscLauncher.cpp(144): int main()
   mb/MediaEndpt.h(62):    virtual void SetState(StateId stid);
   mb/MediaEndpt.h(72):    ProtocolSM* MgwPsm() const;
   mb/MediaEndpt.h(78):    virtual void Deallocate();
@@ -1676,8 +1683,8 @@ W032 Unused function
   nb/Duration.h(43): std::string to_string(const secs_t& secs);
   nb/Duration.h(45): std::string to_string(const usecs_t& usecs);
   nb/Duration.h(46): std::string to_string(const nsecs_t& nsecs);
-  nb/ElementException.h(53):    RestartReason Reason() const { return reason_; }
-  nb/ElementException.h(57):    debug64_t Errval() const { return errval_; }
+  nb/ElementException.h(57):    RestartReason Reason() const { return reason_; }
+  nb/ElementException.h(61):    debug64_t Errval() const { return errval_; }
   nb/Formatters.h(53):    bool strToSize(const std::string& str, size_t& size);
   nb/FunctionTrace.cpp(169):    PerThreadInfo()
   nb/HeapCfg.h(55):    size_t GetMinSize(MemoryType type) const { return minSize_[type]; }
@@ -1690,10 +1697,10 @@ W032 Unused function
   nb/Memory.h(50):    size_t Words(size_t size);
   nb/Memory.h(58):    void Set(void* dest, byte_t value, size_t size);
   nb/Memory.h(78):    void* Realloc(void* addr, size_t size, MemoryType type);
-  nb/Object.h(92):    ClassId GetClassId() const;
-  nb/Object.h(104):    ObjectId GetObjectId() const;
-  nb/Object.h(110):    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid);
-  nb/Object.h(131):    void MorphTo(const Class& target);
+  nb/Object.h(100):    ClassId GetClassId() const;
+  nb/Object.h(112):    ObjectId GetObjectId() const;
+  nb/Object.h(118):    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid);
+  nb/Object.h(139):    void MorphTo(const Class& target);
   nb/PooledClass.h(53):    PooledClass(ClassId cid, size_t size);
   nb/PooledClass.h(69):    bool SetPool(ObjectPool& pool);
   nb/PosixSignal.h(148): Flags PS_Delayed();
@@ -1720,7 +1727,7 @@ W032 Unused function
   pb/PotsCircuit.h(97):    bool CanFlash() const { return flash_; }
   pb/PotsCircuit.h(102):    Cause::Ind GetCause() const { return cause_; }
   pb/PotsProtocol.h(287):    MediaInfo* AddMedia(const MediaInfo& media);
-  rsc/main.cpp(123): main_t main(int argc, char* argv[])
+  rsc/main.cpp(163): main_t main(int argc, char* argv[])
   sb/Context.h(120):    static void Kill(NodeBase::debug64_t errval, NodeBase::debug64_t offset);
   sb/Context.h(125):    static void Dump(NodeBase::fn_name_arg func,
   sb/Factory.h(230):    void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
@@ -1809,22 +1816,22 @@ W042 Member could be private
   ct/CxxDirective.h(270):    virtual CxxToken* GetValue() const = 0;
   ct/CxxDirective.h(319):    CxxToken* RootType() const override { return GetValue(); }
   ct/CxxExecute.h(164):    size_t Refs() const;
-  ct/CxxExecute.h(747):    static Cxx::Access ScopeAccess() { return Frame_->ScopeAccess(); }
-  ct/CxxExecute.h(878):    static bool OptionIsOn(char opt);
-  ct/CxxExecute.h(886):    static void Trace(CxxTrace::Action act, const CodeFile& file);
+  ct/CxxExecute.h(755):    static Cxx::Access ScopeAccess() { return Frame_->ScopeAccess(); }
+  ct/CxxExecute.h(886):    static bool OptionIsOn(char opt);
+  ct/CxxExecute.h(894):    static void Trace(CxxTrace::Action act, const CodeFile& file);
   ct/CxxNamed.h(265):    virtual bool ResolveTemplate
   ct/CxxNamed.h(625):    TypeName* Last() const;
   ct/CxxNamed.h(792):    bool ResolveTemplate
-  ct/CxxNamed.h(936):    bool IsUnboundedArray() const { return array_; }
-  ct/CxxNamed.h(1197):    DataSpec(const DataSpec& that);
+  ct/CxxNamed.h(940):    bool IsUnboundedArray() const { return array_; }
+  ct/CxxNamed.h(1201):    DataSpec(const DataSpec& that);
   ct/CxxScope.h(355):    const Data* GetDecl() const { return (defn_ ? mate_ : this); }
   ct/CxxScope.h(360):    const Data* GetDefn() const;
-  ct/CxxScope.h(1152):    bool IsDefaulted() const { return GetDefn()->defaulted_; }
-  ct/CxxScope.h(1206):    Function* GetBase() const { return GetDecl()->base_; }
-  ct/CxxScope.h(1272):    size_t MaxArgs() const { return args_.size(); }
-  ct/CxxScope.h(1337):    bool IsInvokedInBase() const;
-  ct/CxxScope.h(1366):    void CheckAccessControl() const override;
-  ct/CxxScope.h(1370):    void CheckIfHiding() const override;
+  ct/CxxScope.h(1156):    bool IsDefaulted() const { return GetDefn()->defaulted_; }
+  ct/CxxScope.h(1210):    Function* GetBase() const { return GetDecl()->base_; }
+  ct/CxxScope.h(1276):    size_t MaxArgs() const { return args_.size(); }
+  ct/CxxScope.h(1341):    bool IsInvokedInBase() const;
+  ct/CxxScope.h(1370):    void CheckAccessControl() const override;
+  ct/CxxScope.h(1374):    void CheckIfHiding() const override;
   ct/CxxScoped.h(70):    bool IsClassMember() const;
   ct/CxxScoped.h(79):    bool IsSubscopeOf(const std::string& fqSuper) const;
   ct/CxxScoped.h(137):    bool Contains(const CxxToken* item) const;
@@ -1848,7 +1855,7 @@ W042 Member could be private
   mb/MediaPsm.h(193):    void PrepareOgMsgq() override;
   mb/MediaPsm.h(197):    Event* ReceiveMsg(Message& msg) override;
   mb/Switch.h(74):    static bool IsValidPort(PortId pid)
-  nb/Base.h(82):    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
+  nb/Base.h(90):    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
   nb/CfgBitParm.h(52):    virtual bool CurrValue() const = 0;
   nb/CfgBitParm.h(56):    virtual bool NextValue() const = 0;
   nb/CfgBitParm.h(70):    bool SetNext(c_string input) override;
@@ -1872,7 +1879,7 @@ W042 Member could be private
   nb/LogGroup.h(76):    id_t Gid() const { return gid_.GetId(); }
   nb/LogGroup.h(80):    bool Suppressed() const { return suppressed_; }
   nb/MutexRegistry.h(56):    Mutex* Find(const std::string& name) const;
-  nb/Object.h(98):    virtual InstanceId GetInstanceId() const;
+  nb/Object.h(106):    virtual InstanceId GetInstanceId() const;
   nb/ObjectPoolRegistry.h(61):    bool NullifyObjectData() const { return nullifyObjectDataCfg_->CurrValue(); }
   nb/Registry.h(493):    void Purge()
   nb/StatisticsGroup.h(54):    static const size_t ReportWidth;
@@ -1950,7 +1957,7 @@ W043 Member could be protected
   ct/CxxDirective.h(865):    const std::string& GetText() const { return text_; }
   ct/CxxNamed.h(211):    void DisplayReferent(std::ostream& stream, bool fq) const;
   ct/CxxNamed.h(221):    void strName(std::ostream& stream, bool fq, const QualName* name) const;
-  ct/CxxNamed.h(1033):    TypeSpecUser GetUserType() const { return user_; }
+  ct/CxxNamed.h(1037):    TypeSpecUser GetUserType() const { return user_; }
   ct/CxxScope.h(73):    void ReplaceTemplateParms(std::string& code,
   ct/CxxScope.h(335):    bool IsThreadLocal() const { return thread_local_; }
   ct/CxxScope.h(339):    bool IsConstexpr() const { return constexpr_; }
@@ -1974,8 +1981,8 @@ W043 Member could be protected
   ct/Lexer.h(461):    size_t LineFindNonBlank(size_t pos) const;
   ct/Lexer.h(465):    size_t LineRfindNonBlank(size_t pos) const;
   ct/Lexer.h(477):    size_t FindNonBlank(size_t pos) const;
-  nb/Base.h(75):    virtual void Display(std::ostream& stream,
-  nb/Base.h(105):    void LogSubtended(std::ostream& stream,
+  nb/Base.h(83):    virtual void Display(std::ostream& stream,
+  nb/Base.h(113):    void LogSubtended(std::ostream& stream,
   nb/CliCommand.h(51):    static fixed_string UnexpectedIndex;
   nb/CliCommandSet.h(44):    bool BindCommand(CliCommand& comm);
   nb/CliParm.h(131):    static fixed_string AnyStringParm;
@@ -1989,9 +1996,10 @@ W043 Member could be protected
   nb/CliText.h(65):    const Registry<CliParm>& Parms() const { return parms_; }
   nb/FunctionTrace.h(44):    FunctionTrace();
   nb/MsgBuffer.h(47):    MsgBuffer(const MsgBuffer& that);
-  nb/Object.h(59):    virtual void Patch(sel_t selector, void* arguments) { }
+  nb/Object.h(67):    virtual void Patch(sel_t selector, void* arguments) { }
   nb/ObjectPool.h(122):    Pooled* NextUsed(PooledObjectId& bid) const;
   nb/SoftwareException.h(41):    SoftwareException(debug64_t errval, debug64_t offset);
+  nb/SoftwareException.h(50):    SoftwareException(const SoftwareException& that) = default;
   nb/Statistics.h(68):    virtual void DisplayStat(std::ostream& stream, const Flags& options) const;
   nb/StreamRequest.h(59):    StreamRequest(const StreamRequest& that);
   nw/InputHandler.h(71):    IpPort* Port() const { return port_; }
@@ -2020,14 +2028,14 @@ W044 Typedef of pointer type
 W047 Data is init-only
   nb/Gate.cpp(50):    std::unique_lock<std::mutex> lock(mutex_);
 W048 Data is write-only
-  dip/MapAndUnits.h(121):    bool game_started;                // set when the game has begun
-  dip/MapAndUnits.h(147):    word our_number_of_disbands;    // disbands required (negative for builds)
+  dip/MapAndUnits.h(117):    bool game_started;                // set when the game has begun
+  dip/MapAndUnits.h(143):    word our_number_of_disbands;    // disbands required (negative for builds)
   nb/Thread.cpp(920):    SteadyTime::Point readyTime_;
 W050 Data is not private
   ct/CxxDirective.h(340):    size_t refs_ : 16;
-  ct/CxxExecute.h(333):    CxxToken* item_;
-  ct/CxxNamed.h(980):    bool ptrDet_: 1;
-  ct/CxxNamed.h(984):    bool refDet_: 1;
+  ct/CxxExecute.h(337):    CxxToken* item_;
+  ct/CxxNamed.h(984):    bool ptrDet_: 1;
+  ct/CxxNamed.h(988):    bool refDet_: 1;
   ct/Lexer.h(569):    std::string code_;
   ct/Lexer.h(573):    CodeFile* file_;
   nb/CliThread.h(211):    std::unique_ptr<CliBuffer> ibuf;
@@ -2077,7 +2085,6 @@ W053 Data could be const
   nb/LogGroup.h(137):    RegCell gid_;
   nb/Module.h(134):    RegCell mid_;
   nb/Mutex.h(149):    RegCell mid_;
-  nb/Object.h(136):    uintptr_t patchArea_;
   nb/PosixSignal.h(135):    RegCell sid_;
   nb/Singletons.cpp(41):    MemoryType type;    // the type of memory that the singleton uses
   nb/Statistics.h(115):    RegCell sid_;
@@ -2106,16 +2113,11 @@ W053 Data could be const
   sn/PotsTreatments.h(172):    Q1Link link_;
   sn/PotsTreatments.h(201):    Tone::Id tone_;
   sn/PotsTreatments.h(205):    uint32_t secs_;
-  st/MscAddress.h(128):    Q1Link link_;
-  st/MscContext.h(145):    Q1Link link_;
-  st/MscContextPair.h(85):    Q1Link link_;
 W054 Data could be const pointer
   ct/LibraryTypes.h(63):    CodeFile* file;  // the file
 W055 Data need not be mutable
   dip/BotThread.h(113):       mutable uint32_t secs;  // delay
 W056 Implicit constructor invoked: POD members not initialized
-i launcher/RscLauncher.win.cpp(38):    STARTUPINFOA si;
-i launcher/RscLauncher.win.cpp(39):    PROCESS_INFORMATION pi;
 i nb/SystemTime.cpp(101):    tm ymdhms;
   nw/ByteBuffer.h(63): class TinyBuffer : public ByteBuffer
   nw/ByteBuffer.h(74): class SmallBuffer : public ByteBuffer
@@ -2312,35 +2314,35 @@ W075 Virtual function is public
   ct/CxxNamed.h(494):    bool ResolveTypedef(Typedef* type, size_t n) const override;
   ct/CxxNamed.h(792):    bool ResolveTemplate
   ct/CxxNamed.h(797):    bool ResolveTypedef(Typedef* type, size_t n) const override;
-  ct/CxxNamed.h(1041):    virtual Function* GetFuncSpec() const { return nullptr; }
-  ct/CxxNamed.h(1050):    virtual TypeTags* Tags() = 0;
-  ct/CxxNamed.h(1051):    virtual const TypeTags* Tags() const = 0;
-  ct/CxxNamed.h(1055):    virtual void AddArray(ArraySpecPtr& array) = 0;
-  ct/CxxNamed.h(1061):    virtual TagCount Ptrs(bool arrays) const = 0;
-  ct/CxxNamed.h(1067):    virtual TagCount Refs() const = 0;
-  ct/CxxNamed.h(1072):    virtual TagCount Arrays() const = 0;
-  ct/CxxNamed.h(1076):    virtual bool HasArrayDefn() const = 0;
-  ct/CxxNamed.h(1080):    virtual void EnteringScope(const CxxScope* scope) = 0;
-  ct/CxxNamed.h(1084):    virtual void EnterArrays() const = 0;
-  ct/CxxNamed.h(1089):    virtual TypeTags GetAllTags() const = 0;
-  ct/CxxNamed.h(1094):    virtual std::string TypeTagsString(const TypeTags& tags) const = 0;
-  ct/CxxNamed.h(1099):    virtual void DisplayTags(std::ostream& stream) const = 0;
-  ct/CxxNamed.h(1103):    virtual void DisplayArrays(std::ostream& stream) const = 0;
-  ct/CxxNamed.h(1109):    virtual void SetPtrs(TagCount count) = 0;
-  ct/CxxNamed.h(1114):    virtual bool MatchesExactly(const TypeSpec* that) const = 0;
-  ct/CxxNamed.h(1118):    virtual void SetTemplateRole(TemplateRole role) const { role_ = role; }
-  ct/CxxNamed.h(1122):    virtual void SetUserType(TypeSpecUser user) const { user_ = user; }
-  ct/CxxNamed.h(1133):    virtual TypeMatch MatchTemplate(const TypeSpec* that,
-  ct/CxxNamed.h(1140):    virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const = 0;
-  ct/CxxNamed.h(1145):    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const = 0;
-  ct/CxxNamed.h(1149):    virtual void GetNames(stringVector& names) const = 0;
+  ct/CxxNamed.h(1045):    virtual Function* GetFuncSpec() const { return nullptr; }
+  ct/CxxNamed.h(1054):    virtual TypeTags* Tags() = 0;
+  ct/CxxNamed.h(1055):    virtual const TypeTags* Tags() const = 0;
+  ct/CxxNamed.h(1059):    virtual void AddArray(ArraySpecPtr& array) = 0;
+  ct/CxxNamed.h(1065):    virtual TagCount Ptrs(bool arrays) const = 0;
+  ct/CxxNamed.h(1071):    virtual TagCount Refs() const = 0;
+  ct/CxxNamed.h(1076):    virtual TagCount Arrays() const = 0;
+  ct/CxxNamed.h(1080):    virtual bool HasArrayDefn() const = 0;
+  ct/CxxNamed.h(1084):    virtual void EnteringScope(const CxxScope* scope) = 0;
+  ct/CxxNamed.h(1088):    virtual void EnterArrays() const = 0;
+  ct/CxxNamed.h(1093):    virtual TypeTags GetAllTags() const = 0;
+  ct/CxxNamed.h(1098):    virtual std::string TypeTagsString(const TypeTags& tags) const = 0;
+  ct/CxxNamed.h(1103):    virtual void DisplayTags(std::ostream& stream) const = 0;
+  ct/CxxNamed.h(1107):    virtual void DisplayArrays(std::ostream& stream) const = 0;
+  ct/CxxNamed.h(1113):    virtual void SetPtrs(TagCount count) = 0;
+  ct/CxxNamed.h(1118):    virtual bool MatchesExactly(const TypeSpec* that) const = 0;
+  ct/CxxNamed.h(1122):    virtual void SetTemplateRole(TemplateRole role) const { role_ = role; }
+  ct/CxxNamed.h(1126):    virtual void SetUserType(TypeSpecUser user) const { user_ = user; }
+  ct/CxxNamed.h(1137):    virtual TypeMatch MatchTemplate(const TypeSpec* that,
+  ct/CxxNamed.h(1144):    virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const = 0;
+  ct/CxxNamed.h(1149):    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const = 0;
+  ct/CxxNamed.h(1153):    virtual void GetNames(stringVector& names) const = 0;
   ct/CxxScope.h(78):    virtual Cxx::Access GetCurrAccess() const { return Cxx::Private; }
   ct/CxxScope.h(83):    virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
   ct/CxxScope.h(91):    virtual void AccessibilityOf
   ct/CxxScope.h(379):    virtual void Promote
   ct/CxxScope.h(384):    virtual bool IsUnionMember() const { return false; }
-  ct/CxxScope.h(1366):    void CheckAccessControl() const override;
-  ct/CxxScope.h(1370):    void CheckIfHiding() const override;
+  ct/CxxScope.h(1370):    void CheckAccessControl() const override;
+  ct/CxxScope.h(1374):    void CheckIfHiding() const override;
   ct/CxxScoped.h(59):    virtual bool NameRefersToItem(const std::string& name,
   ct/CxxScoped.h(88):    virtual void AccessibilityTo(const CxxScope* scope, SymbolView& view) const;
   ct/CxxScoped.h(97):    virtual void RecordAccess(Cxx::Access access) const;
@@ -2465,14 +2467,14 @@ W075 Virtual function is public
   mb/MediaPsm.h(73):    virtual void SetOgTone(Tone::Id ogTone);
   mb/MediaPsm.h(78):    virtual void SetIcTone(Tone::Id icTone);
   mb/MediaSsm.h(48):    virtual bool SetMgwPsm(ProtocolSM* psm);
-  nb/Base.h(75):    virtual void Display(std::ostream& stream,
-  nb/Base.h(82):    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
-  nb/Base.h(100):    virtual void GetSubtended(std::vector<Base*>& objects) const;
-  nb/Base.h(111):    virtual void ClaimBlocks();
-  nb/Base.h(129):    virtual void Cleanup() { }
-  nb/Base.h(136):    virtual void Startup(RestartLevel level) { }
-  nb/Base.h(144):    virtual void Shutdown(RestartLevel level) { }
-  nb/Base.h(148):    virtual MemoryType MemType() const { return MemPermanent; }
+  nb/Base.h(83):    virtual void Display(std::ostream& stream,
+  nb/Base.h(90):    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
+  nb/Base.h(108):    virtual void GetSubtended(std::vector<Base*>& objects) const;
+  nb/Base.h(119):    virtual void ClaimBlocks();
+  nb/Base.h(137):    virtual void Cleanup() { }
+  nb/Base.h(144):    virtual void Startup(RestartLevel level) { }
+  nb/Base.h(152):    virtual void Shutdown(RestartLevel level) { }
+  nb/Base.h(156):    virtual MemoryType MemType() const { return MemPermanent; }
   nb/CallbackRequest.h(44):    virtual void Callback() { }
   nb/CfgBoolParm.h(47):    bool CurrValue() const override { return curr_; }
   nb/CfgFlagParm.h(48):    bool CurrValue() const override;
@@ -2509,10 +2511,10 @@ W075 Virtual function is public
   nb/Heap.h(90):    virtual size_t CurrAvail() const = 0;
   nb/Heap.h(94):    virtual size_t Overhead() const = 0;
   nb/MsgBuffer.h(60):    virtual TraceStatus GetStatus() const;
-  nb/Object.h(59):    virtual void Patch(sel_t selector, void* arguments) { }
-  nb/Object.h(79):    virtual Class* GetClass() const;
-  nb/Object.h(87):    virtual void PostInitialize() { }
-  nb/Object.h(98):    virtual InstanceId GetInstanceId() const;
+  nb/Object.h(67):    virtual void Patch(sel_t selector, void* arguments) { }
+  nb/Object.h(87):    virtual Class* GetClass() const;
+  nb/Object.h(95):    virtual void PostInitialize() { }
+  nb/Object.h(106):    virtual InstanceId GetInstanceId() const;
   nb/ObjectPool.h(103):    virtual Pooled* DeqBlock(size_t size);
   nb/ObjectPool.h(108):    virtual void EnqBlock(Pooled* obj, bool deleted);
   nb/ObjectPool.h(184):    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
@@ -2635,9 +2637,9 @@ W077 Virtual function has no overrides
   nb/Class.h(88):    virtual void FreeQuasiSingleton(Object* obj);
   nb/CliIncrement.h(80):    virtual void Exit();
   nb/Daemon.h(152):    virtual void Recover() { }
-  nb/Object.h(79):    virtual Class* GetClass() const;
-  nb/Object.h(87):    virtual void PostInitialize() { }
-  nb/Object.h(98):    virtual InstanceId GetInstanceId() const;
+  nb/Object.h(87):    virtual Class* GetClass() const;
+  nb/Object.h(95):    virtual void PostInitialize() { }
+  nb/Object.h(106):    virtual InstanceId GetInstanceId() const;
   nb/ObjectPool.h(103):    virtual Pooled* DeqBlock(size_t size);
   nb/ObjectPool.h(108):    virtual void EnqBlock(Pooled* obj, bool deleted);
   nb/Thread.h(117):    virtual bool EnqMsg(MsgBuffer& msg);
@@ -2680,16 +2682,17 @@ W082 Adjacent arguments have the same type
   cb/BcSessions.h(1212):    BcFactory(Id fid, ProtocolId prid, c_string name);
   ct/CodeFile.h(537):    void UpdatePos(EditorAction action,
   ct/CodeWarning.h(64):    WarningAttrs(bool fixable, bool preserve, NodeBase::c_string expl);
-  ct/CodeWarning.h(143):    void UpdatePos(EditorAction action,
+  ct/CodeWarning.h(144):    void UpdatePos(EditorAction action,
   ct/Cxx.h(619):    SymbolView(Accessibility a, TypeMatch m, Cxx::Access c,
-  ct/CxxExecute.h(287):    TypeMatch CalcMatchWith(const StackArg& that,
-  ct/CxxExecute.h(342):    TypeMatch MatchWith(const StackArg& that,
+  ct/CxxExecute.h(96):    StackArg(CxxToken* t, TagCount p, bool lvalue, bool ctor);
+  ct/CxxExecute.h(291):    TypeMatch CalcMatchWith(const StackArg& that,
+  ct/CxxExecute.h(346):    TypeMatch MatchWith(const StackArg& that,
   ct/CxxLocation.h(76):    void UpdatePos(EditorAction action, size_t begin, size_t count, size_t from);
   ct/CxxNamed.h(378):    TypeMatch MatchTemplate(const TypeName* that,
   ct/CxxNamed.h(682):    TypeMatch MatchTemplate(const QualName* that,
-  ct/CxxNamed.h(893):    bool SetPointer(size_t n, bool readonly, bool unstable);
-  ct/CxxNamed.h(1133):    virtual TypeMatch MatchTemplate(const TypeSpec* that,
-  ct/CxxNamed.h(1568):    TypeMatch MatchTemplate(const TemplateArg* that, stringVector& tmpltParms,
+  ct/CxxNamed.h(897):    bool SetPointer(size_t n, bool readonly, bool unstable);
+  ct/CxxNamed.h(1137):    virtual TypeMatch MatchTemplate(const TypeSpec* that,
+  ct/CxxNamed.h(1572):    TypeMatch MatchTemplate(const TemplateArg* that, stringVector& tmpltParms,
   ct/CxxScope.cpp(185): static TypeMatch MatchTemplate(const string& thisType,
   ct/CxxScope.h(379):    virtual void Promote
   ct/CxxScoped.h(236):    bool GetBracedSpan(size_t& begin, size_t& left, size_t& end) const;
@@ -2710,17 +2713,17 @@ W082 Adjacent arguments have the same type
   ct/Editor.cpp(949): static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
   ct/Editor.cpp(1006): static void Rename(string& code, const string& oldName, const string& newName)
   ct/Editor.h(106):    void Rename(size_t pos, const string& oldName, const string& newName);
-  ct/Editor.h(262):    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
-  ct/Editor.h(298):    word InsertForward(size_t pos, const string& nspace, const string& forward);
-  ct/Editor.h(303):    word InsertNamespaceForward(size_t pos,
-  ct/Editor.h(320):    static void ChangeForwards
-  ct/Editor.h(367):    void FindFreeItemPos(const Namespace* space, const string& name,
-  ct/Editor.h(377):    CxxItemVector FindDeclRange
-  ct/Editor.h(506):    void UpdateItemDefnAttrs(const CxxToken* prev,
-  ct/Editor.h(512):    word UpdateItemDefnLoc(const CxxToken* prev,
-  ct/Editor.h(567):    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
-  ct/Editor.h(595):    size_t Replace(size_t pos, size_t count, const string& code);
-  ct/Editor.h(642):    void UpdatePos(EditorAction action,
+  ct/Editor.h(263):    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
+  ct/Editor.h(299):    word InsertForward(size_t pos, const string& nspace, const string& forward);
+  ct/Editor.h(304):    word InsertNamespaceForward(size_t pos,
+  ct/Editor.h(321):    static void ChangeForwards
+  ct/Editor.h(368):    void FindFreeItemPos(const Namespace* space, const string& name,
+  ct/Editor.h(378):    CxxItemVector FindDeclRange
+  ct/Editor.h(507):    void UpdateItemDefnAttrs(const CxxToken* prev,
+  ct/Editor.h(513):    word UpdateItemDefnLoc(const CxxToken* prev,
+  ct/Editor.h(568):    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
+  ct/Editor.h(596):    size_t Replace(size_t pos, size_t count, const string& code);
+  ct/Editor.h(643):    void UpdatePos(EditorAction action,
   ct/Lexer.h(257):    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   ct/Lexer.h(583):    LineType CalcLineType(size_t n, bool& cont, bool& c_comment);
   ct/Lexer.h(661):    void SetDepth(int depth1, int depth2, bool merge = true);
@@ -2735,12 +2738,12 @@ W082 Adjacent arguments have the same type
   dip/BaseBot.h(143):    void send_press_to_server(const TokenMessage& press_to,
   dip/BaseBot.h(272):    virtual void process_not_ccd_message(const TokenMessage& message,
   dip/BaseBot.h(501):    virtual void report_failed_press
-  dip/MapAndUnits.h(187):    bool set_support_to_move_order
-  dip/MapAndUnits.h(189):    bool set_convoy_order(ProvinceId unit, ProvinceId client, ProvinceId dest);
-  dip/MapAndUnits.h(190):    bool set_move_by_convoy_order(ProvinceId unit,
-  dip/MapAndUnits.h(192):    bool set_move_by_single_step_convoy_order
-  dip/MapAndUnits.h(271):    Location find_result_unit_initial_location(ProvinceId province,
-  dip/MapAndUnits.h(398):    bool has_route_to_province(const UnitOrder& unit, ProvinceId province,
+  dip/MapAndUnits.h(183):    bool set_support_to_move_order
+  dip/MapAndUnits.h(185):    bool set_convoy_order(ProvinceId unit, ProvinceId client, ProvinceId dest);
+  dip/MapAndUnits.h(186):    bool set_move_by_convoy_order(ProvinceId unit,
+  dip/MapAndUnits.h(188):    bool set_move_by_single_step_convoy_order
+  dip/MapAndUnits.h(267):    Location find_result_unit_initial_location(ProvinceId province,
+  dip/MapAndUnits.h(402):    bool has_route_to_province(const UnitOrder& unit, ProvinceId province,
   nb/Alarm.h(64):    Alarm(c_string name, c_string expl, uint32_t delay);
   nb/Algorithms.h(51):    uint64_t pack3(uint16_t a, uint16_t b, uint16_t c);
   nb/Algorithms.h(55):    uint64_t pack4(uint16_t a, uint16_t b, uint16_t c, uint16_t d);
@@ -2793,8 +2796,8 @@ W082 Adjacent arguments have the same type
   st/StTestData.h(78):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
   st/TestSessions.h(354):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 W088 Argument could be const
-  ct/Editor.h(507/4):       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
-  nb/Object.h(59/2):    virtual void Patch(sel_t selector, void* arguments) { }
+  ct/Editor.h(508/4):       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
+  nb/Object.h(67/2):    virtual void Patch(sel_t selector, void* arguments) { }
   nb/Q1Way.h(90/1):    bool Enq(T& elem)
   nb/Q1Way.h(114/1):    bool Henq(T& elem)
   nb/Q1Way.h(136/1):    bool Insert(T* prev, T& elem)
@@ -2857,7 +2860,7 @@ W090 Function could be const
   nb/Class.h(158):    bool SetQuasiSingleton(Object& obj);
   nb/Deferred.h(89):    virtual void EventHasOccurred(Event event) = 0;
   nb/Log.h(114):    void SetInterval(uint8_t interval);
-  nb/Object.h(59):    virtual void Patch(sel_t selector, void* arguments) { }
+  nb/Object.h(67):    virtual void Patch(sel_t selector, void* arguments) { }
   nb/ObjectPool.h(196):    bool Corrupt(size_t n);
   nb/ObjectPool.h(262):    void UpdateAlarm();
   nb/Q2Way.h(150):    bool Exq(T& elem)
@@ -2917,53 +2920,53 @@ W092 Function could be free
   ct/CodeFile.h(359):    const stringVector& Prolog() const; // CodeFile.cpp
   ct/Cxx.h(463):    static void UpdateOperator(Cxx::Operator& oper, size_t args); // CxxScope.cpp
   ct/CxxArea.h(703):    Function* InstantiateFunction // CxxArea.cpp
-  ct/CxxExecute.h(743):    static bool AtFileScope(); // CxxToken.cpp
-  ct/CxxExecute.h(758):    static Cxx::Access ScopeVisibility(); // CxxArea.cpp
-  ct/CxxExecute.h(816):    static void WasCalled(Function* func); // CxxScope.cpp
-  ct/CxxExecute.h(850):    static bool ParsingTemplate(); // CxxExecute.cpp
-  ct/CxxExecute.h(858):    static void PushXrefFrame(XrefUpdater updater); // CxxScope.cpp
-  ct/CxxExecute.h(862):    static void PopXrefFrame(); // CxxScope.cpp
-  ct/CxxExecute.h(870):    static void PushXrefItem(TypeName* item); // CxxNamed.cpp
-  ct/CxxExecute.h(874):    static TypeName* FindXrefItem(const std::string& name); // CxxScoped.cpp
-  ct/CxxExecute.h(885):    static void Trace(CxxTrace::Action act, const StackArg& arg); // CxxExecute.cpp
-  ct/CxxExecute.h(886):    static void Trace(CxxTrace::Action act, const CodeFile& file); // Parser.cpp
-  ct/CxxExecute.h(892):    static void InsertTracepoint // CtIncrement.cpp
-  ct/CxxExecute.h(897):    static void EraseTracepoint // CtIncrement.cpp
-  ct/CxxExecute.h(902):    static void ClearTracepoints(); // CtIncrement.cpp
-  ct/CxxExecute.h(917):    static void DisplayTracepoints // CtIncrement.cpp
-  ct/CxxExecute.h(939):    static void Startup(NodeBase::RestartLevel level) { } // CtModule.cpp
+  ct/CxxExecute.h(751):    static bool AtFileScope(); // CxxToken.cpp
+  ct/CxxExecute.h(766):    static Cxx::Access ScopeVisibility(); // CxxArea.cpp
+  ct/CxxExecute.h(824):    static void WasCalled(Function* func); // CxxScope.cpp
+  ct/CxxExecute.h(858):    static bool ParsingTemplate(); // CxxExecute.cpp
+  ct/CxxExecute.h(866):    static void PushXrefFrame(XrefUpdater updater); // CxxScope.cpp
+  ct/CxxExecute.h(870):    static void PopXrefFrame(); // CxxScope.cpp
+  ct/CxxExecute.h(878):    static void PushXrefItem(TypeName* item); // CxxNamed.cpp
+  ct/CxxExecute.h(882):    static TypeName* FindXrefItem(const std::string& name); // CxxScoped.cpp
+  ct/CxxExecute.h(893):    static void Trace(CxxTrace::Action act, const StackArg& arg); // CxxExecute.cpp
+  ct/CxxExecute.h(894):    static void Trace(CxxTrace::Action act, const CodeFile& file); // Parser.cpp
+  ct/CxxExecute.h(900):    static void InsertTracepoint // CtIncrement.cpp
+  ct/CxxExecute.h(905):    static void EraseTracepoint // CtIncrement.cpp
+  ct/CxxExecute.h(910):    static void ClearTracepoints(); // CtIncrement.cpp
+  ct/CxxExecute.h(925):    static void DisplayTracepoints // CtIncrement.cpp
+  ct/CxxExecute.h(947):    static void Startup(NodeBase::RestartLevel level) { } // CtModule.cpp
   ct/CxxScope.h(177):    static void AddUsing(Using* use); // CxxScoped.cpp
   ct/CxxScope.h(182):    static void RemoveUsing(const Using* use); // CxxScoped.cpp
   ct/CxxScope.h(186):    static void ResetUsings(); // CxxExecute.cpp
-  ct/CxxScope.h(2032):    TypeSpec* Clone() const override; // CxxScope.cpp
+  ct/CxxScope.h(2036):    TypeSpec* Clone() const override; // CxxScope.cpp
   ct/Editor.h(118):    static size_t CommitCount(); // CodeFileSet.cpp
   ct/Editor.h(154):    static void ReportFix(const CodeWarning* log, word rc); // Editor.cpp
-  ct/Editor.h(170):    word ChangeCast(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(171):    word ChangeClassToNamespace(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(174):    word ChangeOperator(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(179):    word EraseCast(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(180):    word EraseClass(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(193):    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(194):    word InsertDataInit(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(196):    word InsertDisplay(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(197):    word InsertEnumName(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(198):    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(203):    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(205):    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(206):    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(208):    word MoveDefine(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(209):    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(213):    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(214):    word ReplaceName(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(359):    static void QualifyClassItems // Editor.cpp
-  ct/Editor.h(418):    word FixInvokers(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(427):    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(428):    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(429):    word EraseArgument(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(430):    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(431):    word EraseParameter(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(433):    word InsertArgument(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(434):    word SplitVirtualFunction(const Function* func); // Editor.cpp
+  ct/Editor.h(171):    word ChangeCast(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(172):    word ChangeClassToNamespace(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(175):    word ChangeOperator(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(180):    word EraseCast(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(181):    word EraseClass(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(194):    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(195):    word InsertDataInit(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(197):    word InsertDisplay(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(198):    word InsertEnumName(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(199):    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(204):    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(206):    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(207):    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(209):    word MoveDefine(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(210):    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(214):    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(215):    word ReplaceName(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(360):    static void QualifyClassItems // Editor.cpp
+  ct/Editor.h(419):    word FixInvokers(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(428):    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(429):    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(430):    word EraseArgument(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(431):    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(432):    word EraseParameter(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(434):    word InsertArgument(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(435):    word SplitVirtualFunction(const Function* func); // Editor.cpp
   ct/Interpreter.h(74):    static bool IsOperator(const std::string& s); // Library.cpp
   ct/Library.h(137):    NodeBase::word Rename(CliThread& cli, const std::string& oldName, // CtIncrement.cpp
   ct/Parser.h(171):    static void ResetStats(); // CtIncrement.cpp
@@ -2975,9 +2978,9 @@ W092 Function could be free
   dip/BaseBot.h(543):    static void report_out(const Token& power); // BaseBot.cpp
   dip/BaseBot.h(555):    void report_exit(c_string reason); // BaseBot.cpp
   dip/BaseBot.h(715):    static bool send_buff(DipIpBuffer& buff); // BaseBot.cpp
-  dip/MapAndUnits.h(162):    static MapAndUnits* create_clone(); // MapAndUnits.cpp
-  dip/MapAndUnits.h(166):    static void delete_clone(MapAndUnits*& clone); // MapAndUnits.cpp
-  dip/MapAndUnits.h(259):    std::string display_retreat_result(const UnitOrder& unit) const; // BaseBot.cpp
+  dip/MapAndUnits.h(158):    static MapAndUnits* create_clone(); // MapAndUnits.cpp
+  dip/MapAndUnits.h(162):    static void delete_clone(MapAndUnits*& clone); // MapAndUnits.cpp
+  dip/MapAndUnits.h(255):    std::string display_retreat_result(const UnitOrder& unit) const; // BaseBot.cpp
   mb/Switch.h(74):    static bool IsValidPort(PortId pid) // Circuit.cpp
   mb/ToneRegistry.h(54):    static Switch::PortId ToneToPort(Tone::Id tid); // MediaPsm.cpp
   nb/CfgTuple.h(92):    static const std::string& ValidValueChars(); // CfgParmRegistry.cpp
@@ -2985,6 +2988,7 @@ W092 Function could be free
   nb/Debug.h(106):    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
   nb/Debug.h(110):    static void ResetSwFlags(); // NtIncrement.cpp
   nb/Debug.h(114):    static Flags GetSwFlags(); // NtIncrement.cpp
+  nb/Debug.h(118):    static void noop(debug64_t info = 0); // CxxExecute.cpp
   nb/Element.h(50):    static bool IsUnnamed(); // ModuleRegistry.cpp
   nb/FileThread.h(45):    static ostringstreamPtr CreateStream(); // CliThread.cpp
   nb/FileThread.h(58):    static void Spool(const std::string& name, ostringstreamPtr& stream, // CliThread.cpp
@@ -2996,7 +3000,7 @@ W092 Function could be free
   nb/ModuleRegistry.h(95):    void SetLevel(RestartLevel level); // InitThread.cpp
   nb/ModuleRegistry.h(99):    static RestartLevel GetLevel(); // RootThread.cpp
   nb/ModuleRegistry.h(103):    static RestartLevel NextLevel(); // ModuleRegistry.cpp
-  nb/Object.h(110):    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid); // Object.cpp
+  nb/Object.h(118):    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid); // Object.cpp
   nb/PermanentHeap.h(41):    static PermanentHeap* Instance(); // Memory.cpp
   nb/RootThread.h(48):    static main_t Main(); // main.cpp
   nb/SysThread.h(101):    static bool ReportError(fn_name function, fixed_string expl, int error); // SysThread.win.cpp
@@ -3323,8 +3327,12 @@ W099 Line contains adjacent spaces
   sn/PotsProxyHandlers.cpp(348):    auto          sid = msg->GetSignal();
   sn/PotsProxyHandlers.cpp(349):    auto&         pssm = static_cast<PotsBcSsm&>(ssm);
   sn/PotsProxyHandlers.cpp(351):    CauseInfo*    cci;
+W100 Insertion of blank line recommended
+  nb/StatisticsGroup.cpp(47): //  --------------member name-----------------
+W101 Deletion of line recommended
+  ct/CxxString.cpp(142): 
 W102 Line length exceeds the standard maximum
-  cb/BcSsm.cpp(285):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
+  cb/BcSsm.cpp(286):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
   nb/NbIncrement.cpp(3284): "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
   nb/NbIncrement.cpp(3285): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 W106 Function does not invoke Debug::ft
@@ -3362,17 +3370,18 @@ W106 Function does not invoke Debug::ft
   ct/CodeTypes.cpp(406): size_t IndentSize()
   ct/CodeTypes.cpp(413): bool IsAccessControl(const std::string& s)
   ct/CodeTypes.cpp(426): size_t LineLengthMax()
-  ct/CodeWarning.cpp(343): bool CodeWarning::HasCodeToDisplay() const
-  ct/CodeWarning.cpp(350): bool CodeWarning::HasInfoToDisplay() const
-  ct/CodeWarning.cpp(809): bool CodeWarning::IsInformational() const
-  ct/CodeWarning.cpp(816): bool CodeWarning::IsSortedByFile
-  ct/CodeWarning.cpp(835): bool CodeWarning::IsSortedByType
-  ct/CodeWarning.cpp(854): bool CodeWarning::IsSortedToFix
-  ct/CodeWarning.cpp(873): void CodeWarning::ItemDeleted(const CxxToken* item) const
-  ct/CodeWarning.cpp(883): size_t CodeWarning::Line() const
-  ct/CodeWarning.cpp(951): bool CodeWarning::Preserve() const
-  ct/CodeWarning.cpp(978): bool CodeWarning::Suppress() const
-  ct/CodeWarning.cpp(1241): bool CodeWarning::WasResolved() const
+  ct/CodeWarning.cpp(350): bool CodeWarning::HasCodeToDisplay() const
+  ct/CodeWarning.cpp(357): bool CodeWarning::HasInfoToDisplay() const
+  ct/CodeWarning.cpp(828): bool CodeWarning::IsInformational() const
+  ct/CodeWarning.cpp(835): bool CodeWarning::IsSortedByFile
+  ct/CodeWarning.cpp(854): bool CodeWarning::IsSortedByType
+  ct/CodeWarning.cpp(873): bool CodeWarning::IsSortedToFix
+  ct/CodeWarning.cpp(892): void CodeWarning::ItemDeleted(const CxxToken* item) const
+  ct/CodeWarning.cpp(902): size_t CodeWarning::Line() const
+  ct/CodeWarning.cpp(970): bool CodeWarning::Preserve() const
+  ct/CodeWarning.cpp(997): bool CodeWarning::Revoke() const
+  ct/CodeWarning.cpp(1012): bool CodeWarning::Suppress() const
+  ct/CodeWarning.cpp(1279): bool CodeWarning::WasResolved() const
   ct/Cxx.cpp(89): Cxx::Access FindAccessControl(const std::string& s)
   ct/Cxx.cpp(810): static void EraseTemplateArgs
   ct/Cxx.cpp(842): static void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
@@ -3388,9 +3397,9 @@ W106 Function does not invoke Debug::ft
   ct/CxxArea.cpp(1619): void Class::GetDecls(CxxNamedSet& items)
   ct/CxxArea.cpp(1730): CxxScope* Class::GetTemplate() const
   ct/CxxArea.cpp(2216): Class* Class::OuterClass() const
-  ct/CxxArea.cpp(3356): const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
-  ct/CxxArea.cpp(3374): void CxxArea::GetDecls(CxxNamedSet& items)
-  ct/CxxArea.cpp(3414): void CxxArea::InsertFunc(Function* func)
+  ct/CxxArea.cpp(3357): const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
+  ct/CxxArea.cpp(3373): void CxxArea::GetDecls(CxxNamedSet& items)
+  ct/CxxArea.cpp(3413): void CxxArea::InsertFunc(Function* func)
   ct/CxxDirective.cpp(46): static void AlignLeft(ostream& stream, const string& prefix)
   ct/CxxDirective.cpp(58): bool IncludesAreSorted(const IncludePtr& incl1, const IncludePtr& incl2)
   ct/CxxDirective.cpp(193): CxxToken* Define::AutoType() const
@@ -3417,9 +3426,9 @@ W106 Function does not invoke Debug::ft
   ct/CxxExecute.cpp(1270): CxxScope* ParseFrame::Scope() const
   ct/CxxExecute.cpp(1277): Cxx::Access ParseFrame::ScopeAccess() const
   ct/CxxExecute.cpp(1284): Cxx::Access ParseFrame::SetAccess(Cxx::Access access)
-  ct/CxxExecute.cpp(1688): bool StackArg::IsBool() const
-  ct/CxxExecute.cpp(2394): TypeName* XrefFrame::FindItem(const string& name) const
-  ct/CxxExecute.cpp(2406): void XrefFrame::PushItem(TypeName* item)
+  ct/CxxExecute.cpp(1693): bool StackArg::IsBool() const
+  ct/CxxExecute.cpp(2422): TypeName* XrefFrame::FindItem(const string& name) const
+  ct/CxxExecute.cpp(2434): void XrefFrame::PushItem(TypeName* item)
   ct/CxxLocation.cpp(41): void CxxLocation::SetLoc(CodeFile* file, size_t pos)
   ct/CxxLocation.cpp(49): void CxxLocation::SetLoc(CodeFile* file, size_t pos, bool internal)
   ct/CxxNamed.cpp(204): CxxArea* CxxNamed::GetArea() const
@@ -3453,9 +3462,10 @@ W106 Function does not invoke Debug::ft
   ct/CxxNamed.cpp(4082): bool TypeName::VerifyReferents() const
   ct/CxxNamed.cpp(4362): int TypeTags::IsConstPtr() const
   ct/CxxNamed.cpp(4371): bool TypeTags::IsConstPtr(size_t n) const
-  ct/CxxNamed.cpp(4380): int TypeTags::IsVolatilePtr() const
-  ct/CxxNamed.cpp(4389): bool TypeTags::IsVolatilePtr(size_t n) const
-  ct/CxxNamed.cpp(4429): TagCount TypeTags::PtrCount(bool arrays) const
+  ct/CxxNamed.cpp(4380): bool TypeTags::IsLvalue() const
+  ct/CxxNamed.cpp(4390): int TypeTags::IsVolatilePtr() const
+  ct/CxxNamed.cpp(4399): bool TypeTags::IsVolatilePtr(size_t n) const
+  ct/CxxNamed.cpp(4439): TagCount TypeTags::PtrCount(bool arrays) const
   ct/CxxScope.cpp(114): bool FuncDefnsAreSorted(const Function* func1, const Function* func2)
   ct/CxxScope.cpp(146): FunctionVector FuncsInArea(const FunctionVector& defns, const CxxArea* area)
   ct/CxxScope.cpp(267): bool Block::CrlfOver(Form form) const
@@ -3502,11 +3512,11 @@ W106 Function does not invoke Debug::ft
   ct/CxxScope.cpp(4625): CxxScope* Function::GetTemplate() const
   ct/CxxScope.cpp(4636): CxxScope* Function::GetTemplateInstance() const
   ct/CxxScope.cpp(4644): TemplateType Function::GetTemplateType() const
-  ct/CxxScope.cpp(5153): bool Function::IsImplemented() const
-  ct/CxxScope.cpp(5376): size_t Function::LogOffsetToArgIndex(word offset) const
-  ct/CxxScope.cpp(6083): bool Function::WasRead()
-  ct/CxxScope.cpp(6288): void SpaceData::GetDecls(CxxNamedSet& items)
-  ct/CxxScope.cpp(6374): void SpaceDefn::GetDecls(CxxNamedSet& items)
+  ct/CxxScope.cpp(5155): bool Function::IsImplemented() const
+  ct/CxxScope.cpp(5378): size_t Function::LogOffsetToArgIndex(word offset) const
+  ct/CxxScope.cpp(6085): bool Function::WasRead()
+  ct/CxxScope.cpp(6290): void SpaceData::GetDecls(CxxNamedSet& items)
+  ct/CxxScope.cpp(6376): void SpaceDefn::GetDecls(CxxNamedSet& items)
   ct/CxxScoped.cpp(454): Class* BaseDecl::GetClass() const
   ct/CxxScoped.cpp(578): void CxxScoped::AddFiles(LibItemSet& imSet) const
   ct/CxxScoped.cpp(806): bool CxxScoped::IsAuto() const
@@ -3569,22 +3579,22 @@ W106 Function does not invoke Debug::ft
   ct/CxxSymbols.h(278): template<typename T> void ListSymbols(const std::string& name,
   ct/CxxToken.cpp(59): bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2)
   ct/CxxToken.cpp(90): bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2)
-  ct/CxxToken.cpp(701): CxxScope* CxxToken::GetTemplateInstance() const
-  ct/CxxToken.cpp(710): bool CxxToken::IsInTemplateInstance() const
-  ct/CxxToken.cpp(717): bool CxxToken::IsPointer(bool arrays) const
-  ct/CxxToken.cpp(909): bool CxxToken::VerifyReferents() const
-  ct/CxxToken.cpp(1382): Numeric FloatLiteral::GetNumeric() const
-  ct/CxxToken.cpp(1441): Numeric IntLiteral::BaseNumeric() const
-  ct/CxxToken.cpp(1587): CxxToken* Literal::AutoType() const
-  ct/CxxToken.cpp(1619): CxxToken* Literal::RootType() const
-  ct/CxxToken.cpp(1635): Cxx::ItemType Literal::Type() const
+  ct/CxxToken.cpp(696): CxxScope* CxxToken::GetTemplateInstance() const
+  ct/CxxToken.cpp(705): bool CxxToken::IsInTemplateInstance() const
+  ct/CxxToken.cpp(712): bool CxxToken::IsPointer(bool arrays) const
+  ct/CxxToken.cpp(904): bool CxxToken::VerifyReferents() const
+  ct/CxxToken.cpp(1377): Numeric FloatLiteral::GetNumeric() const
+  ct/CxxToken.cpp(1436): Numeric IntLiteral::BaseNumeric() const
+  ct/CxxToken.cpp(1582): CxxToken* Literal::AutoType() const
+  ct/CxxToken.cpp(1614): CxxToken* Literal::RootType() const
+  ct/CxxToken.cpp(1630): Cxx::ItemType Literal::Type() const
   ct/CxxVector.h(47): template<typename T> size_t IndexOf(const std::vector<T>& vec, const T& item)
   ct/CxxVector.h(61): template<class T> void SortAndDisplayItems
   ct/CxxVector.h(90): template<class T> void SortAndDisplayItemPtrs
   ct/CxxVector.h(124): template<class T> void EraseItem(std::vector<T*>& vec, const T* item)
   ct/CxxVector.h(148): template<class T> void EraseItemPtr
-  ct/Editor.cpp(1990): size_t Editor::CommitCount() { return Commits_; }
-  ct/Editor.cpp(4898): static FunctionRole WarningToRole(Warning log)
+  ct/Editor.cpp(2013): size_t Editor::CommitCount() { return Commits_; }
+  ct/Editor.cpp(4940): static FunctionRole WarningToRole(Warning log)
   ct/Interpreter.cpp(133): const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
   ct/Interpreter.cpp(141): bool OperatorInfo::GetType(const string& op, LibTokenType& type)
   ct/Lexer.cpp(87): static IndentRule ClassifyIndent(string& id)
@@ -3638,14 +3648,14 @@ W106 Function does not invoke Debug::ft
   dip/BaseBot.cpp(438): BaseBot* BaseBot::instance()
   dip/ConvoySubversion.cpp(29): void ConvoySubversion::clear()  // <b>
   dip/ConvoySubversion.cpp(37): void ConvoySubversion::decrement()
-  dip/MapAndUnits.cpp(282): bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
-  dip/MapAndUnits.cpp(300): bool MapAndUnits::can_move_to_province
-  dip/MapAndUnits.cpp(562): TokenMessage MapAndUnits::encode_location(const Location& location) const
-  dip/MapAndUnits.cpp(839): TokenMessage MapAndUnits::encode_unit(const UnitOrder& unit) const
-  dip/MapAndUnits.cpp(1146): const LocationSet* MapAndUnits::get_neighbours(const Location& location) const
-  dip/MapAndUnits.cpp(1385): MapAndUnits* MapAndUnits::instance()
-  dip/MapAndUnits.cpp(2452): Token MapAndUnits::province_token(ProvinceId province) const
-  dip/MapAndUnits.cpp(2571): bool MapAndUnits::set_move_by_single_step_convoy_order
+  dip/MapAndUnits.cpp(281): bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
+  dip/MapAndUnits.cpp(299): bool MapAndUnits::can_move_to_province
+  dip/MapAndUnits.cpp(561): TokenMessage MapAndUnits::encode_location(const Location& location) const
+  dip/MapAndUnits.cpp(838): TokenMessage MapAndUnits::encode_unit(const UnitOrder& unit) const
+  dip/MapAndUnits.cpp(1145): const LocationSet* MapAndUnits::get_neighbours(const Location& location) const
+  dip/MapAndUnits.cpp(1384): MapAndUnits* MapAndUnits::instance()
+  dip/MapAndUnits.cpp(2451): Token MapAndUnits::province_token(ProvinceId province) const
+  dip/MapAndUnits.cpp(2570): bool MapAndUnits::set_move_by_single_step_convoy_order
   dip/Token.cpp(32): Token::Token(const category_t cat, const subtoken_t sub)
   dip/Token.cpp(40): Token& Token::operator=(const Token& that)
   dip/Token.cpp(48): int Token::get_number() const
@@ -3730,7 +3740,7 @@ W106 Function does not invoke Debug::ft
   nb/Lock.cpp(70): Lock::~Lock()
   nb/Lock.cpp(80): void Lock::Acquire()
   nb/Lock.cpp(97): void Lock::Release()
-  nb/Log.cpp(142): size_t Log::Count()
+  nb/Log.cpp(190): size_t Log::Count()
   nb/LogBuffer.cpp(500): void LogBuffer::UpdateMax()
   nb/LogGroup.cpp(182): void LogGroup::SetSuppressed(bool suppressed)
   nb/LogGroupRegistry.cpp(190): LogGroup* LogGroupRegistry::Group(id_t gid) const
@@ -3743,9 +3753,9 @@ W106 Function does not invoke Debug::ft
   nb/Memory.cpp(429): bool Memory::Protect(MemoryType type)
   nb/Memory.cpp(556): bool Memory::Unprotect(MemoryType type)
   nb/Memory.cpp(586): size_t Memory::Words(size_t size)
-  nb/ModuleRegistry.cpp(64): static const FactionFlags& AllFactions()
-  nb/ModuleRegistry.cpp(106): static const FactionFlags& ShutdownFactions()
-  nb/ModuleRegistry.cpp(197): RestartLevel ModuleRegistry::GetLevel()
+  nb/ModuleRegistry.cpp(67): static const FactionFlags& AllFactions()
+  nb/ModuleRegistry.cpp(109): static const FactionFlags& ShutdownFactions()
+  nb/ModuleRegistry.cpp(245): RestartLevel ModuleRegistry::GetLevel()
   nb/MsgBuffer.cpp(63): TraceStatus MsgBuffer::GetStatus() const
   nb/Mutex.cpp(164): Thread* Mutex::Owner() const
   nb/NbCliParms.cpp(132): word ExplainTraceRc(const CliThread& cli, TraceRc rc)
@@ -3778,7 +3788,6 @@ W106 Function does not invoke Debug::ft
   nb/PosixSignal.cpp(144): Flags PS_Native()
   nb/PosixSignal.cpp(149): Flags PS_NoError()
   nb/PosixSignal.cpp(154): Flags PS_NoLog()
-  nb/PosixSignalRegistry.cpp(61): Flags PosixSignalRegistry::Attrs(signal_t value) const
   nb/PosixSignalRegistry.cpp(92): PosixSignal* PosixSignalRegistry::Find(signal_t value) const
   nb/PosixSignalRegistry.cpp(104): PosixSignal* PosixSignalRegistry::Find(const string& name) const
   nb/PosixSignalRegistry.cpp(175): signal_t PosixSignalRegistry::Value(const string& name) const
@@ -3932,26 +3941,16 @@ W106 Function does not invoke Debug::ft
   nw/SysSocket.win.cpp(53): uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
   nw/SysSocket.win.cpp(228): bool SysSocket::IsValid() const
   nw/TcpIoThread.cpp(492): SysTcpSocket* TcpIoThread::Listener() const
-  pb/PotsBicFeature.cpp(80): CliText* PotsBicFeature::Attrs() const
-  pb/PotsBocFeature.cpp(69): CliText* PotsBocFeature::Attrs() const
-  pb/PotsCfbFeature.cpp(76): CliText* PotsCfbFeature::Attrs() const { return new PotsCfbAttrs; }
-  pb/PotsCfnFeature.cpp(86): CliText* PotsCfnFeature::Attrs() const { return new PotsCfnAttrs; }
-  pb/PotsCfuFeature.cpp(76): CliText* PotsCfuFeature::Attrs() const { return new PotsCfuAttrs; }
-  pb/PotsCwtFeature.cpp(64): CliText* PotsCwtFeature::Attrs() const
-  pb/PotsCxfFeature.cpp(65): CliText* PotsCxfFeature::Attrs() const
   pb/PotsFeatureRegistry.cpp(148): PotsFeature* PotsFeatureRegistry::Feature(PotsFeature::Id fid) const
   pb/PotsFeatures.cpp(105): void DnRouteFeatureProfile::SetActive(bool on)
   pb/PotsFeatures.cpp(113): void DnRouteFeatureProfile::SetDN(Address::DN dn)
-  pb/PotsHtlFeature.cpp(81): CliText* PotsHtlFeature::Attrs() const { return new PotsHtlAttrs; }
   pb/PotsProfileRegistry.cpp(107): PotsProfile* PotsProfileRegistry::Profile(Address::DN dn) const
-  pb/PotsSusFeature.cpp(62): CliText* PotsSusFeature::Attrs() const
-  pb/PotsTwcFeature.cpp(81): CliText* PotsTwcFeature::Attrs() const
-  pb/PotsWmlFeature.cpp(85): CliText* PotsWmlFeature::Attrs() const { return new PotsWmlAttrs; }
+  rsc/main.cpp(129): static main_t LogTrap(const Exception* ex,
   sb/AnalyzeSapEvent.cpp(86): void AnalyzeSapEvent::Capture
   sb/AnalyzeSnpEvent.cpp(82): void AnalyzeSnpEvent::Capture
-  sb/Context.cpp(334): void Context::Dump() const
-  sb/Context.cpp(930): bool Context::TraceOn()
-  sb/Context.cpp(940): bool Context::TraceOn(TransTrace*& trans)
+  sb/Context.cpp(338): void Context::Dump() const
+  sb/Context.cpp(934): bool Context::TraceOn()
+  sb/Context.cpp(944): bool Context::TraceOn(TransTrace*& trans)
   sb/Event.cpp(137): void Event::Capture
   sb/Factory.cpp(217): size_t Factory::DiscardedContextCount() const
   sb/Factory.cpp(224): size_t Factory::DiscardedMessageCount() const
@@ -3996,7 +3995,7 @@ W106 Function does not invoke Debug::ft
   st/MscContextPair.cpp(53): void MscContextPair::Contexts(MscContext*& ctx1, MscContext*& ctx2) const
 W107 Function does not invoke Debug::ft as first statement
   ct/CodeFile.cpp(486):    Debug::ft("CodeFile.Affecters");
-  ct/CxxExecute.cpp(2332):    Debug::ft("Tracepoint.OnLine");
+  ct/CxxExecute.cpp(2360):    Debug::ft("Tracepoint.OnLine");
   nb/CinThread.cpp(104):       Debug::ft(CinThread_Enter);
   nb/Exception.cpp(42):    Debug::ft("Exception.ctor");  //@
   nb/Lock.cpp(38):    Debug::ft("LockGuard.ctor");
@@ -4012,7 +4011,7 @@ W107 Function does not invoke Debug::ft as first statement
   nb/Thread.cpp(3567):       Debug::ft(Thread_TrapHandler);  //@
   nt/NtIncrement.cpp(3254):       Debug::ft(RecoveryThread_Enter);
   nw/NwLogs.cpp(102):    Debug::ft("NetworkBase.NetworkIsUp");
-  sb/Context.cpp(688):    Debug::ft(Context_ProcessWork);
+  sb/Context.cpp(692):    Debug::ft(Context_ProcessWork);
 W110 Override of Base.Display not found
   an/PotsTrafficThread.cpp(227): class TrafficCallPool : public Dynamic
   cb/BcProtocol.h(298): class CipUdpService : public UdpIpService
@@ -4023,7 +4022,7 @@ W110 Override of Base.Display not found
   nb/Alarm.cpp(44): struct AlarmDynamic : public Permanent
   nb/Class.cpp(48): struct ClassDynamic : public Permanent
   nb/HeapCfg.h(41): class HeapCfg : public Immutable
-  nb/Log.cpp(56): struct LogDynamic : public Permanent
+  nb/Log.cpp(104): struct LogDynamic : public Permanent
   nb/NbTracer.h(63): class NbTracer : public Permanent
   nb/ObjectPool.cpp(96): class ObjectPoolSizeCfg : public CfgIntParm
   nb/ObjectPool.cpp(162): class ObjectPoolStats : public Dynamic
@@ -4052,6 +4051,7 @@ W110 Override of Base.Display not found
   sb/SbPools.h(183): class TimerPool : public NodeBase::ObjectPool
   sb/SbTracer.h(113): class SbTracer : public NodeBase::Permanent
 W111 Override of Object.Patch not found
+  nb/ModuleRegistry.cpp(153): class StopInitTracing : public Deferred
   nb/Thread.cpp(355): class ContextSwitches : public Permanent
   nb/Thread.cpp(783): class ThreadPriv : public Permanent
   nw/ByteBuffer.h(35): class ByteBuffer : public NodeBase::Pooled
@@ -4068,8 +4068,8 @@ W117 Line can merge with the next line and be under the length limit
   ct/CxxArea.cpp(686):       attrs.test(HasPublicMemberFunction) ||
   ct/CxxArea.cpp(717):       attrs.test(HasPublicStaticData) ||
   ct/CxxArea.cpp(724):          attrs.test(HasInstantiations) ||
-  ct/CxxToken.cpp(2771):    auto sName = (del ?
-  ct/CxxToken.cpp(2781):          auto vName = (del ?
+  ct/CxxToken.cpp(2788):    auto sName = (del ?
+  ct/CxxToken.cpp(2798):          auto vName = (del ?
   dip/BaseBot.cpp(1707):          (press->message == contents))
   nb/CliStack.h(68):    const CliCommand* FindCommand
   nb/LogBuffer.cpp(189):       stream << fileName_ << SPACE
@@ -4103,24 +4103,24 @@ W117 Line can merge with the next line and be under the length limit
 W119 Argument passed by value is modified
   cb/DigitString.cpp(50/1): DigitString::DigitString(Address::DN dn) :
   ct/CxxArea.cpp(132/3):    (const CxxScoped* member, const CxxScope* scope, SymbolView* view)
-  ct/CxxArea.cpp(2801/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
+  ct/CxxArea.cpp(2802/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
   ct/CxxNamed.cpp(2134/1): TypeName* QualName::At(size_t n) const
-  ct/CxxScope.cpp(5434/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
-  ct/CxxScope.cpp(5674/1): void Function::SetOperator(Cxx::Operator oper)
+  ct/CxxScope.cpp(5436/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
+  ct/CxxScope.cpp(5676/1): void Function::SetOperator(Cxx::Operator oper)
   ct/CxxScoped.cpp(3816/1): void Using::SetScope(CxxScope* scope)
   ct/CxxString.cpp(217/2): static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
   ct/CxxString.cpp(239/2): static size_t FindTemplateEnd(const string& name, size_t pos)
   ct/CxxString.cpp(762/5):    const string& s2, size_t begin, size_t end, char c)
   ct/CxxString.cpp(798/3): size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
   ct/CxxString.cpp(812/2): size_t rfind_first_of(const string& str, size_t off, const string& chars)
-  ct/CxxToken.cpp(730/2):    const CxxToken* item, word offset, const string& info) const
-  ct/Editor.cpp(1933/1): bool Editor::CodeFollowsImmediately(size_t pos) const
-  ct/Editor.cpp(1948/1): bool Editor::CommentFollows(size_t pos) const
-  ct/Editor.cpp(4417/1): word Editor::InsertForward(size_t pos,
-  ct/Editor.cpp(4585/1):    (size_t pos, const string& nspace, const string& forward)
-  ct/Editor.cpp(5211/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
-  ct/Editor.cpp(5404/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-  ct/Editor.cpp(6636/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+  ct/CxxToken.cpp(725/2):    const CxxToken* item, word offset, const string& info) const
+  ct/Editor.cpp(1956/1): bool Editor::CodeFollowsImmediately(size_t pos) const
+  ct/Editor.cpp(1971/1): bool Editor::CommentFollows(size_t pos) const
+  ct/Editor.cpp(4459/1): word Editor::InsertForward(size_t pos,
+  ct/Editor.cpp(4627/1):    (size_t pos, const string& nspace, const string& forward)
+  ct/Editor.cpp(5253/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
+  ct/Editor.cpp(5446/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+  ct/Editor.cpp(6678/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
   ct/Interpreter.cpp(488/1): LibExprErr Interpreter::ApplyOperator(bool operand)
   ct/Interpreter.cpp(599/1): LibrarySet* Interpreter::Error(LibExprErr err) const
   ct/Lexer.cpp(1285/1): size_t Lexer::CurrBegin(size_t pos) const
@@ -4182,8 +4182,8 @@ W119 Argument passed by value is modified
   nw/NwLogs.cpp(115/1): void OutputNwLog(LogId id, c_string func, nwerr_t errval, c_string extra)
   nw/SysTcpSocket.cpp(246/1): SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
   nw/SysTcpSocket.win.cpp(165/1): word SysTcpSocket::Listen(size_t backlog)
-  sb/Context.cpp(384/3): void Context::Enqueue(Q2Way<Context>& whichq, MsgPriority prio, bool henq)
-  sb/Context.cpp(682/1): void Context::ProcessWork(InvokerThread* inv)
+  sb/Context.cpp(388/3): void Context::Enqueue(Q2Way<Context>& whichq, MsgPriority prio, bool henq)
+  sb/Context.cpp(686/1): void Context::ProcessWork(InvokerThread* inv)
   sb/Message.cpp(603/1): bool Message::Retrieve(ProtocolSM* psm)
   sb/Message.cpp(670/1): bool Message::Send(Route route)
   sb/SbTrace.cpp(387/1):    (BuffTrace* bt, FactoryId fid, SignalId sid, SkipInfo& skip)
@@ -4210,7 +4210,7 @@ W127 Data could be free
   ct/Cxx.h(585):    static const Numeric Short; // CxxRoot.cpp
   ct/Cxx.h(586):    static const Numeric uChar; // CxxRoot.cpp
   ct/Cxx.h(590):    static const Numeric uShort; // CxxRoot.cpp
-  ct/CxxNamed.h(1201):    static const TypeSpecPtr Bool; // CxxExecute.cpp
+  ct/CxxNamed.h(1205):    static const TypeSpecPtr Bool; // CxxExecute.cpp
   ct/Library.h(151):    static NodeBase::fixed_string SubsDir; // CodeDir.cpp
   nb/CfgTuple.h(60):    static const char CommentChar; // CfgParmRegistry.cpp
   nb/CliCommand.h(46):    static const char CommandSeparator; // CliThread.cpp
@@ -4239,6 +4239,19 @@ W141 Function could be moved to a subclass
   nb/CfgBitParm.h(56):    virtual bool NextValue() const = 0; // CfgBoolParm
   sb/Context.h(192):    virtual void EndOfTransaction() { } // MsgContext
   sb/Factory.h(234):    virtual Context* AllocContext() const; // PsmFactory
+W143 Auto variable copies an item returned by reference
+  ct/CxxExecute.cpp(1113):    auto arg = args_.back();
+  ct/CxxScoped.cpp(1713):    auto name = names.front();
+W144 Auto variable copies an item returned by const reference
+  st/MscBuilder.cpp(1280):    auto tools = buff->GetTools();
+W145 Auto variable copies an object
+  an/PotsTrafficThread.cpp(1170):    auto sleep = timeout_;
+  ct/CxxSymbols.cpp(945):    for(auto i = range.first; i != range.second; ++i)
+  ct/CxxSymbols.h(264):    for(auto i = range.first; i != range.second; ++i)
+  ct/CxxSymbols.h(285):    for(auto i = range.first; i != range.second; ++i)
+  ct/Editor.cpp(818):    auto expl = Expl_;
+  nb/ObjectPoolAudit.cpp(112):    auto prev = interval_;
+  nb/SlabHeap.cpp(725):       for(auto free = avail.first; free != avail.second; ++free)
 ====================================================================================================================================
 WARNINGS SORTED BY FILE/TYPE/LINE (i = informational)
 an/AnIncrement.cpp
@@ -4298,6 +4311,8 @@ an/PotsTrafficThread.cpp
     1351: void PotsTrafficThread::RecordHoldingTime(const nsecs_t& time)
   W110 Override of Base.Display not found
     227: class TrafficCallPool : public Dynamic
+* W145 Auto variable copies an object
+    1170:    auto sleep = timeout_;
 an/PotsTrafficThread.h
 * W020 Using statement in header
     35: using namespace NodeBase;
@@ -4535,14 +4550,14 @@ cb/BcSessions.h
     1000:    DigitString& DialedDigits() { return dialed_; }
 cb/BcSsm.cpp
   W007 Cast down the inheritance hierarchy
-    384:    auto& rre = static_cast<BcRemoteReleaseEvent&>(currEvent);
-    825:       auto fac = static_cast<BcFactory*>(reg->Factories().At(route_.selector));
+    385:    auto& rre = static_cast<BcRemoteReleaseEvent&>(currEvent);
+    826:       auto fac = static_cast<BcFactory*>(reg->Factories().At(route_.selector));
 * W022 Add using statement
     0:  // namespace MediaBase
     0:  // namespace NodeBase
     0:  // namespace SessionBase
   W102 Line length exceeds the standard maximum
-    285:    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
+    286:    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
 cb/BcStates.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
@@ -4775,39 +4790,41 @@ ct/CodeTypes.cpp
     426: size_t LineLengthMax()
 ct/CodeWarning.cpp
   W005 Functional cast
-    225:          << spaces(3) << LineType(t) << CRLF;
-    236:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
-    237:          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
-    238:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
-    297:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+    232:          << spaces(3) << LineType(t) << CRLF;
+    243:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+    244:          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
+    245:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+    304:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
   W007 Cast down the inheritance hierarchy
     206:       auto file = static_cast<CodeFile*>(*f);
-    1002:       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
-    1024:       auto data = static_cast<const Data*>(item_);
-    1066:       auto func = static_cast<Function*>(item_);
-    1147:       auto cls = static_cast<const Class*>(item_);
-    1171:       auto cls = static_cast<const Class*>(item_);
-    1202:          auto func = static_cast<const Function*>(item_);
+    1003:       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
+    1036:       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+    1058:       auto data = static_cast<const Data*>(item_);
+    1100:       auto func = static_cast<Function*>(item_);
+    1181:       auto cls = static_cast<const Class*>(item_);
+    1205:       auto cls = static_cast<const Class*>(item_);
+    1240:          auto func = static_cast<const Function*>(item_);
   W008 Cast removes const qualification
     95:    item_(const_cast<CxxToken*>(item)),
 * W106 Function does not invoke Debug::ft
-    343: bool CodeWarning::HasCodeToDisplay() const
-    350: bool CodeWarning::HasInfoToDisplay() const
-    809: bool CodeWarning::IsInformational() const
-    816: bool CodeWarning::IsSortedByFile
-    835: bool CodeWarning::IsSortedByType
-    854: bool CodeWarning::IsSortedToFix
-    873: void CodeWarning::ItemDeleted(const CxxToken* item) const
-    883: size_t CodeWarning::Line() const
-    951: bool CodeWarning::Preserve() const
-    978: bool CodeWarning::Suppress() const
-    1241: bool CodeWarning::WasResolved() const
+    350: bool CodeWarning::HasCodeToDisplay() const
+    357: bool CodeWarning::HasInfoToDisplay() const
+    828: bool CodeWarning::IsInformational() const
+    835: bool CodeWarning::IsSortedByFile
+    854: bool CodeWarning::IsSortedByType
+    873: bool CodeWarning::IsSortedToFix
+    892: void CodeWarning::ItemDeleted(const CxxToken* item) const
+    902: size_t CodeWarning::Line() const
+    970: bool CodeWarning::Preserve() const
+    997: bool CodeWarning::Revoke() const
+    1012: bool CodeWarning::Suppress() const
+    1279: bool CodeWarning::WasResolved() const
 ct/CodeWarning.h
 * W020 Using statement in header
     38: using NodeBase::word;
   W082 Adjacent arguments have the same type
     64:    WarningAttrs(bool fixable, bool preserve, NodeBase::c_string expl);
-    143:    void UpdatePos(EditorAction action,
+    144:    void UpdatePos(EditorAction action,
 ct/CtIncrement.cpp
   W005 Functional cast
     1321:       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
@@ -4968,8 +4985,8 @@ ct/CxxArea.cpp
     1251:    auto area = static_cast<CxxArea*>(GetScope());
     1262:          auto c = static_cast<Class*>(*s);
     2691:       auto func = static_cast<const Function*>(item);
-    2733:       auto func = static_cast<const Function*>(item);
-    2742:       return tmplt_->FindFriend(static_cast<const CxxScope*>(ref));
+    2734:       auto func = static_cast<const Function*>(item);
+    2743:       return tmplt_->FindFriend(static_cast<const CxxScope*>(ref));
   W008 Cast removes const qualification
     1363:       auto self = const_cast<Class*>(this);
     1569:    return const_cast<Class*>(this);
@@ -4982,16 +4999,16 @@ ct/CxxArea.cpp
     1619: void Class::GetDecls(CxxNamedSet& items)
     1730: CxxScope* Class::GetTemplate() const
     2216: Class* Class::OuterClass() const
-    3356: const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
-    3374: void CxxArea::GetDecls(CxxNamedSet& items)
-    3414: void CxxArea::InsertFunc(Function* func)
+    3357: const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
+    3373: void CxxArea::GetDecls(CxxNamedSet& items)
+    3413: void CxxArea::InsertFunc(Function* func)
 * W117 Line can merge with the next line and be under the length limit
     686:       attrs.test(HasPublicMemberFunction) ||
     717:       attrs.test(HasPublicStaticData) ||
     724:          attrs.test(HasInstantiations) ||
   W119 Argument passed by value is modified
     132/3:    (const CxxScoped* member, const CxxScope* scope, SymbolView* view)
-    2801/2:    const CxxScope* scope, CodeFile* file, SymbolView& view) const
+    2802/2:    const CxxScope* scope, CodeFile* file, SymbolView& view) const
 ct/CxxArea.h
   W004 C-style cast
     529:    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -5071,16 +5088,16 @@ ct/CxxDirective.h
     477:    virtual bool HasCompiledCode() const { return compile_; }
 ct/CxxExecute.cpp
   W005 Functional cast
-    1769:             return TypeMatch(match - 1);
-    2199:    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
+    1774:             return TypeMatch(match - 1);
+    2227:    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
   W007 Cast down the inheritance hierarchy
-    1723:          auto derived = static_cast<const Class*>(root);
-    1834:       auto thisClass = static_cast<Class*>(thisRoot);
-    1842:             auto thatClass = static_cast<Class*>(thatRoot);
-    1999:    if(AutoType_.SetAutoTypeOn(*static_cast<FuncData*>(item_)))
-    2053:       auto type = static_cast<TypeSpec*>(item_);
-    2063:       spec->SetReferent(static_cast<CxxScoped*>(item_), nullptr);
-    2249:          static_cast<Class*>(root)->BlockCopied(this);
+    1728:          auto derived = static_cast<const Class*>(root);
+    1839:       auto thisClass = static_cast<Class*>(thisRoot);
+    1847:             auto thatClass = static_cast<Class*>(thatRoot);
+    2008:    if(AutoType_.SetAutoTypeOn(*static_cast<FuncData*>(item_)))
+    2062:       auto type = static_cast<TypeSpec*>(item_);
+    2072:       spec->SetReferent(static_cast<CxxScoped*>(item_), nullptr);
+    2277:          static_cast<Class*>(root)->BlockCopied(this);
   W075 Virtual function is public
     126:    bool Display(ostream& stream, const string& opts) override;
     138:    bool Display(ostream& stream, const string& opts) override;
@@ -5109,44 +5126,47 @@ ct/CxxExecute.cpp
     1270: CxxScope* ParseFrame::Scope() const
     1277: Cxx::Access ParseFrame::ScopeAccess() const
     1284: Cxx::Access ParseFrame::SetAccess(Cxx::Access access)
-    1688: bool StackArg::IsBool() const
-    2394: TypeName* XrefFrame::FindItem(const string& name) const
-    2406: void XrefFrame::PushItem(TypeName* item)
+    1693: bool StackArg::IsBool() const
+    2422: TypeName* XrefFrame::FindItem(const string& name) const
+    2434: void XrefFrame::PushItem(TypeName* item)
   W107 Function does not invoke Debug::ft as first statement
-    2332:    Debug::ft("Tracepoint.OnLine");
+    2360:    Debug::ft("Tracepoint.OnLine");
+* W143 Auto variable copies an item returned by reference
+    1113:    auto arg = args_.back();
 ct/CxxExecute.h
   W026 Unused argument
-    935/1:    static void Shutdown(NodeBase::RestartLevel level);
-    939/1:    static void Startup(NodeBase::RestartLevel level) { }
+    943/1:    static void Shutdown(NodeBase::RestartLevel level);
+    947/1:    static void Startup(NodeBase::RestartLevel level) { }
 * W032 Unused function
     160:    size_t Arrays() const;
-    850:    static bool ParsingTemplate();
+    858:    static bool ParsingTemplate();
 * W042 Member could be private
     164:    size_t Refs() const;
-    747:    static Cxx::Access ScopeAccess() { return Frame_->ScopeAccess(); }
-    878:    static bool OptionIsOn(char opt);
-    886:    static void Trace(CxxTrace::Action act, const CodeFile& file);
+    755:    static Cxx::Access ScopeAccess() { return Frame_->ScopeAccess(); }
+    886:    static bool OptionIsOn(char opt);
+    894:    static void Trace(CxxTrace::Action act, const CodeFile& file);
   W050 Data is not private
-    333:    CxxToken* item_;
+    337:    CxxToken* item_;
   W082 Adjacent arguments have the same type
-    287:    TypeMatch CalcMatchWith(const StackArg& that,
-    342:    TypeMatch MatchWith(const StackArg& that,
+    96:    StackArg(CxxToken* t, TagCount p, bool lvalue, bool ctor);
+    291:    TypeMatch CalcMatchWith(const StackArg& that,
+    346:    TypeMatch MatchWith(const StackArg& that,
 * W092 Function could be free
-    743:    static bool AtFileScope(); // CxxToken.cpp
-    758:    static Cxx::Access ScopeVisibility(); // CxxArea.cpp
-    816:    static void WasCalled(Function* func); // CxxScope.cpp
-    850:    static bool ParsingTemplate(); // CxxExecute.cpp
-    858:    static void PushXrefFrame(XrefUpdater updater); // CxxScope.cpp
-    862:    static void PopXrefFrame(); // CxxScope.cpp
-    870:    static void PushXrefItem(TypeName* item); // CxxNamed.cpp
-    874:    static TypeName* FindXrefItem(const std::string& name); // CxxScoped.cpp
-    885:    static void Trace(CxxTrace::Action act, const StackArg& arg); // CxxExecute.cpp
-    886:    static void Trace(CxxTrace::Action act, const CodeFile& file); // Parser.cpp
-    892:    static void InsertTracepoint // CtIncrement.cpp
-    897:    static void EraseTracepoint // CtIncrement.cpp
-    902:    static void ClearTracepoints(); // CtIncrement.cpp
-    917:    static void DisplayTracepoints // CtIncrement.cpp
-    939:    static void Startup(NodeBase::RestartLevel level) { } // CtModule.cpp
+    751:    static bool AtFileScope(); // CxxToken.cpp
+    766:    static Cxx::Access ScopeVisibility(); // CxxArea.cpp
+    824:    static void WasCalled(Function* func); // CxxScope.cpp
+    858:    static bool ParsingTemplate(); // CxxExecute.cpp
+    866:    static void PushXrefFrame(XrefUpdater updater); // CxxScope.cpp
+    870:    static void PopXrefFrame(); // CxxScope.cpp
+    878:    static void PushXrefItem(TypeName* item); // CxxNamed.cpp
+    882:    static TypeName* FindXrefItem(const std::string& name); // CxxScoped.cpp
+    893:    static void Trace(CxxTrace::Action act, const StackArg& arg); // CxxExecute.cpp
+    894:    static void Trace(CxxTrace::Action act, const CodeFile& file); // Parser.cpp
+    900:    static void InsertTracepoint // CtIncrement.cpp
+    905:    static void EraseTracepoint // CtIncrement.cpp
+    910:    static void ClearTracepoints(); // CtIncrement.cpp
+    925:    static void DisplayTracepoints // CtIncrement.cpp
+    947:    static void Startup(NodeBase::RestartLevel level) { } // CtModule.cpp
 ct/CxxLocation.cpp
 * W106 Function does not invoke Debug::ft
     41: void CxxLocation::SetLoc(CodeFile* file, size_t pos)
@@ -5157,8 +5177,8 @@ ct/CxxLocation.h
 ct/CxxNamed.cpp
   W005 Functional cast
     4373:    if(TagCount(n) >= ptrs_) return false;
-    4391:    if(TagCount(n) >= ptrs_) return false;
-    4462:       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
+    4401:    if(TagCount(n) >= ptrs_) return false;
+    4472:       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
   W007 Cast down the inheritance hierarchy
     100:             static_cast<Function*>(tfunc)->SetTemplateParm();
     474:          space = static_cast<Namespace*>(item);
@@ -5210,31 +5230,32 @@ ct/CxxNamed.cpp
     4082: bool TypeName::VerifyReferents() const
     4362: int TypeTags::IsConstPtr() const
     4371: bool TypeTags::IsConstPtr(size_t n) const
-    4380: int TypeTags::IsVolatilePtr() const
-    4389: bool TypeTags::IsVolatilePtr(size_t n) const
-    4429: TagCount TypeTags::PtrCount(bool arrays) const
+    4380: bool TypeTags::IsLvalue() const
+    4390: int TypeTags::IsVolatilePtr() const
+    4399: bool TypeTags::IsVolatilePtr(size_t n) const
+    4439: TagCount TypeTags::PtrCount(bool arrays) const
   W119 Argument passed by value is modified
     2134/1: TypeName* QualName::At(size_t n) const
 ct/CxxNamed.h
   W004 C-style cast
-    1247:    CxxToken* AutoType() const override { return (CxxToken*) this; }
-    1455:    CxxToken* RootType() const override { return (CxxToken*) Referent(); }
+    1251:    CxxToken* AutoType() const override { return (CxxToken*) this; }
+    1459:    CxxToken* RootType() const override { return (CxxToken*) Referent(); }
   W008 Cast removes const qualification
     738:       { return const_cast<QualName*>(this); }
-    1247:    CxxToken* AutoType() const override { return (CxxToken*) this; }
+    1251:    CxxToken* AutoType() const override { return (CxxToken*) this; }
 * W042 Member could be private
     265:    virtual bool ResolveTemplate
     625:    TypeName* Last() const;
     792:    bool ResolveTemplate
-    936:    bool IsUnboundedArray() const { return array_; }
-    1197:    DataSpec(const DataSpec& that);
+    940:    bool IsUnboundedArray() const { return array_; }
+    1201:    DataSpec(const DataSpec& that);
 * W043 Member could be protected
     211:    void DisplayReferent(std::ostream& stream, bool fq) const;
     221:    void strName(std::ostream& stream, bool fq, const QualName* name) const;
-    1033:    TypeSpecUser GetUserType() const { return user_; }
+    1037:    TypeSpecUser GetUserType() const { return user_; }
   W050 Data is not private
-    980:    bool ptrDet_: 1;
-    984:    bool refDet_: 1;
+    984:    bool ptrDet_: 1;
+    988:    bool refDet_: 1;
   W075 Virtual function is public
     58:    virtual bool IsDeclaredInFunction() const { return false; }
     64:    virtual void SetTemplateParms(TemplateParmsPtr& parms);
@@ -5261,36 +5282,36 @@ ct/CxxNamed.h
     494:    bool ResolveTypedef(Typedef* type, size_t n) const override;
     792:    bool ResolveTemplate
     797:    bool ResolveTypedef(Typedef* type, size_t n) const override;
-    1041:    virtual Function* GetFuncSpec() const { return nullptr; }
-    1050:    virtual TypeTags* Tags() = 0;
-    1051:    virtual const TypeTags* Tags() const = 0;
-    1055:    virtual void AddArray(ArraySpecPtr& array) = 0;
-    1061:    virtual TagCount Ptrs(bool arrays) const = 0;
-    1067:    virtual TagCount Refs() const = 0;
-    1072:    virtual TagCount Arrays() const = 0;
-    1076:    virtual bool HasArrayDefn() const = 0;
-    1080:    virtual void EnteringScope(const CxxScope* scope) = 0;
-    1084:    virtual void EnterArrays() const = 0;
-    1089:    virtual TypeTags GetAllTags() const = 0;
-    1094:    virtual std::string TypeTagsString(const TypeTags& tags) const = 0;
-    1099:    virtual void DisplayTags(std::ostream& stream) const = 0;
-    1103:    virtual void DisplayArrays(std::ostream& stream) const = 0;
-    1109:    virtual void SetPtrs(TagCount count) = 0;
-    1114:    virtual bool MatchesExactly(const TypeSpec* that) const = 0;
-    1118:    virtual void SetTemplateRole(TemplateRole role) const { role_ = role; }
-    1122:    virtual void SetUserType(TypeSpecUser user) const { user_ = user; }
-    1133:    virtual TypeMatch MatchTemplate(const TypeSpec* that,
-    1140:    virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const = 0;
-    1145:    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const = 0;
-    1149:    virtual void GetNames(stringVector& names) const = 0;
+    1045:    virtual Function* GetFuncSpec() const { return nullptr; }
+    1054:    virtual TypeTags* Tags() = 0;
+    1055:    virtual const TypeTags* Tags() const = 0;
+    1059:    virtual void AddArray(ArraySpecPtr& array) = 0;
+    1065:    virtual TagCount Ptrs(bool arrays) const = 0;
+    1071:    virtual TagCount Refs() const = 0;
+    1076:    virtual TagCount Arrays() const = 0;
+    1080:    virtual bool HasArrayDefn() const = 0;
+    1084:    virtual void EnteringScope(const CxxScope* scope) = 0;
+    1088:    virtual void EnterArrays() const = 0;
+    1093:    virtual TypeTags GetAllTags() const = 0;
+    1098:    virtual std::string TypeTagsString(const TypeTags& tags) const = 0;
+    1103:    virtual void DisplayTags(std::ostream& stream) const = 0;
+    1107:    virtual void DisplayArrays(std::ostream& stream) const = 0;
+    1113:    virtual void SetPtrs(TagCount count) = 0;
+    1118:    virtual bool MatchesExactly(const TypeSpec* that) const = 0;
+    1122:    virtual void SetTemplateRole(TemplateRole role) const { role_ = role; }
+    1126:    virtual void SetUserType(TypeSpecUser user) const { user_ = user; }
+    1137:    virtual TypeMatch MatchTemplate(const TypeSpec* that,
+    1144:    virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const = 0;
+    1149:    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const = 0;
+    1153:    virtual void GetNames(stringVector& names) const = 0;
   W082 Adjacent arguments have the same type
     378:    TypeMatch MatchTemplate(const TypeName* that,
     682:    TypeMatch MatchTemplate(const QualName* that,
-    893:    bool SetPointer(size_t n, bool readonly, bool unstable);
-    1133:    virtual TypeMatch MatchTemplate(const TypeSpec* that,
-    1568:    TypeMatch MatchTemplate(const TemplateArg* that, stringVector& tmpltParms,
+    897:    bool SetPointer(size_t n, bool readonly, bool unstable);
+    1137:    virtual TypeMatch MatchTemplate(const TypeSpec* that,
+    1572:    TypeMatch MatchTemplate(const TemplateArg* that, stringVector& tmpltParms,
 * W127 Data could be free
-    1201:    static const TypeSpecPtr Bool; // CxxExecute.cpp
+    1205:    static const TypeSpecPtr Bool; // CxxExecute.cpp
 ct/CxxScope.cpp
   W004 C-style cast
     4638:    if(tmplt_ != nullptr) return (CxxScope*) this;
@@ -5308,11 +5329,11 @@ ct/CxxScope.cpp
     4435:       func = static_cast<Function*>(inst->FindTemplateAnalog(this));
     4448:       auto i = FindArg(static_cast<const Argument*>(item), false);
     4495:    return static_cast<Function*>((*cti)->FindInstanceAnalog(this));
-    5201:    auto that = static_cast<const Argument*>(FindTemplateAnalog(arg));
-    5656:    auto func = static_cast<Function*>(FindTemplateAnalog(this));
-    5668:    auto func = static_cast<Function*>(FindTemplateAnalog(this));
-    5887:                auto item = static_cast<CxxNamed*>(args.front().item_);
-    6076:       auto func = static_cast<Function*>(cls->FindTemplateAnalog(this));
+    5203:    auto that = static_cast<const Argument*>(FindTemplateAnalog(arg));
+    5658:    auto func = static_cast<Function*>(FindTemplateAnalog(this));
+    5670:    auto func = static_cast<Function*>(FindTemplateAnalog(this));
+    5889:                auto item = static_cast<CxxNamed*>(args.front().item_);
+    6078:       auto func = static_cast<Function*>(cls->FindTemplateAnalog(this));
   W008 Cast removes const qualification
     3033:    return FoundFunc(const_cast<Function*>(this), args);
     4404:    auto prev = const_cast<Function*>(this);
@@ -5367,35 +5388,35 @@ ct/CxxScope.cpp
     4625: CxxScope* Function::GetTemplate() const
     4636: CxxScope* Function::GetTemplateInstance() const
     4644: TemplateType Function::GetTemplateType() const
-    5153: bool Function::IsImplemented() const
-    5376: size_t Function::LogOffsetToArgIndex(word offset) const
-    6083: bool Function::WasRead()
-    6288: void SpaceData::GetDecls(CxxNamedSet& items)
-    6374: void SpaceDefn::GetDecls(CxxNamedSet& items)
+    5155: bool Function::IsImplemented() const
+    5378: size_t Function::LogOffsetToArgIndex(word offset) const
+    6085: bool Function::WasRead()
+    6290: void SpaceData::GetDecls(CxxNamedSet& items)
+    6376: void SpaceDefn::GetDecls(CxxNamedSet& items)
   W119 Argument passed by value is modified
-    5434/2:    const CxxScope* scope, CodeFile* file, SymbolView& view) const
-    5674/1: void Function::SetOperator(Cxx::Operator oper)
+    5436/2:    const CxxScope* scope, CodeFile* file, SymbolView& view) const
+    5676/1: void Function::SetOperator(Cxx::Operator oper)
 ct/CxxScope.h
   W004 C-style cast
-    392:    CxxToken* AutoType() const override { return (CxxToken*) this; }
+    396:    CxxToken* AutoType() const override { return (CxxToken*) this; }
   W008 Cast removes const qualification
-    392:    CxxToken* AutoType() const override { return (CxxToken*) this; }
-    1418:       { return const_cast<Function*>(this); }
+    396:    CxxToken* AutoType() const override { return (CxxToken*) this; }
+    1422:       { return const_cast<Function*>(this); }
   W026 Unused argument
     84/3:       const CxxNamed* item, const CxxScope* scope) const { return nullptr; }
 * W030 Unused enumerator
     147:       Multiple   // two statements or more
 * W032 Unused function
-    1212:    bool IsFinal() const { return GetDecl()->final_; }
+    1216:    bool IsFinal() const { return GetDecl()->final_; }
 * W042 Member could be private
     355:    const Data* GetDecl() const { return (defn_ ? mate_ : this); }
     360:    const Data* GetDefn() const;
-    1152:    bool IsDefaulted() const { return GetDefn()->defaulted_; }
-    1206:    Function* GetBase() const { return GetDecl()->base_; }
-    1272:    size_t MaxArgs() const { return args_.size(); }
-    1337:    bool IsInvokedInBase() const;
-    1366:    void CheckAccessControl() const override;
-    1370:    void CheckIfHiding() const override;
+    1156:    bool IsDefaulted() const { return GetDefn()->defaulted_; }
+    1210:    Function* GetBase() const { return GetDecl()->base_; }
+    1276:    size_t MaxArgs() const { return args_.size(); }
+    1341:    bool IsInvokedInBase() const;
+    1370:    void CheckAccessControl() const override;
+    1374:    void CheckIfHiding() const override;
 * W043 Member could be protected
     73:    void ReplaceTemplateParms(std::string& code,
     335:    bool IsThreadLocal() const { return thread_local_; }
@@ -5407,15 +5428,15 @@ ct/CxxScope.h
     91:    virtual void AccessibilityOf
     379:    virtual void Promote
     384:    virtual bool IsUnionMember() const { return false; }
-    1366:    void CheckAccessControl() const override;
-    1370:    void CheckIfHiding() const override;
+    1370:    void CheckAccessControl() const override;
+    1374:    void CheckIfHiding() const override;
   W082 Adjacent arguments have the same type
     379:    virtual void Promote
 * W092 Function could be free
     177:    static void AddUsing(Using* use); // CxxScoped.cpp
     182:    static void RemoveUsing(const Using* use); // CxxScoped.cpp
     186:    static void ResetUsings(); // CxxExecute.cpp
-    2032:    TypeSpec* Clone() const override; // CxxScope.cpp
+    2036:    TypeSpec* Clone() const override; // CxxScope.cpp
 ct/CxxScoped.cpp
   W004 C-style cast
     1875:    return (CxxToken*) this;
@@ -5494,6 +5515,8 @@ ct/CxxScoped.cpp
     3607: bool Typedef::VerifyReferents() const
   W119 Argument passed by value is modified
     3816/1: void Using::SetScope(CxxScope* scope)
+* W143 Auto variable copies an item returned by reference
+    1713:    auto name = names.front();
 ct/CxxScoped.h
   W004 C-style cast
     206:    CxxScoped* Referent() const override { return (CxxScoped*) this; }
@@ -5535,7 +5558,7 @@ ct/CxxScoped.h
 ct/CxxStatement.cpp
   W007 Cast down the inheritance hierarchy
     371:    static_cast<Block*>(GetScope())->EraseItem(this);
-    1156:             static_cast<Class*>(result.item_)->InvokeCopyCtor();
+    1157:             static_cast<Class*>(result.item_)->InvokeCopyCtor();
 * W106 Function does not invoke Debug::ft
     377: void CxxStatement::EnterBlock()
 ct/CxxStatement.h
@@ -5545,6 +5568,8 @@ ct/CxxStatement.h
 ct/CxxString.cpp
   W082 Adjacent arguments have the same type
     40: static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth);
+* W101 Deletion of line recommended
+    142: 
   W119 Argument passed by value is modified
     217/2: static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
     239/2: static size_t FindTemplateEnd(const string& name, size_t pos)
@@ -5601,6 +5626,8 @@ ct/CxxSymbols.cpp
     894: void CxxSymbols::InsertSpace(Namespace* space)
     901: void CxxSymbols::InsertTerm(Terminal* term)
     908: void CxxSymbols::InsertType(Typedef* type)
+* W145 Auto variable copies an object
+    945:    for(auto i = range.first; i != range.second; ++i)
 ct/CxxSymbols.h
 * W090 Function could be const
     152:    void InsertClass(Class* cls);
@@ -5630,51 +5657,54 @@ ct/CxxSymbols.h
     278: template<typename T> void ListSymbols(const std::string& name,
   W110 Override of Base.Display not found
     97: class CxxSymbols: public NodeBase::Base
+* W145 Auto variable copies an object
+    264:    for(auto i = range.first; i != range.second; ++i)
+    285:    for(auto i = range.first; i != range.second; ++i)
 ct/CxxToken.cpp
   W007 Cast down the inheritance hierarchy
-    949:    auto oper = static_cast<Operation*>(item.get());
-    975:          auto ante = static_cast<Operation*>(prev.get());
-    1034:       auto oper = static_cast<Operation*>(item.get());
-    1067:    auto oper = static_cast<Operation*>(prev.get());
-    1094:    auto oper = static_cast<Operation*>(item.get());
-    1152:    auto oper = static_cast<Operation*>(item.get());
-    1175:       auto ante = static_cast<Operation*>(prev.get());
-    1336:    Context::PushOp(static_cast<Operation*>(StartOfExpr.get()));
-    1884:       inClass = static_cast<Class*>(inRoot);
-    1889:       outClass = static_cast<Class*>(outRoot);
-    1930:    auto call = static_cast<Operation*>(args_.front().get());
-    2325:       func = static_cast<Function*>(proc.item_);
-    2339:       cls = static_cast<Class*>(proc.item_);
-    2444:    auto cls = static_cast<Class*>(arg.item_->Root());
-    2482:       auto newCall = static_cast<Operation*>(args_.front().get());
-    2503:    auto cls = static_cast<Class*>(spec.item_->Root());
-    2524:       auto ctorCall = static_cast<Operation*>(args_[2].get());
-    2548:       cls = static_cast<Class*>(root);
-    2750:       area = static_cast<Class*>(targ);
-    3120:    auto cls = static_cast<Class*>(root);
-    3187:          mem = static_cast<Function*>(mem)->InstantiateFunction(tmplt);
+    944:    auto oper = static_cast<Operation*>(item.get());
+    970:          auto ante = static_cast<Operation*>(prev.get());
+    1029:       auto oper = static_cast<Operation*>(item.get());
+    1062:    auto oper = static_cast<Operation*>(prev.get());
+    1089:    auto oper = static_cast<Operation*>(item.get());
+    1147:    auto oper = static_cast<Operation*>(item.get());
+    1170:       auto ante = static_cast<Operation*>(prev.get());
+    1331:    Context::PushOp(static_cast<Operation*>(StartOfExpr.get()));
+    1879:       inClass = static_cast<Class*>(inRoot);
+    1884:       outClass = static_cast<Class*>(outRoot);
+    1925:    auto call = static_cast<Operation*>(args_.front().get());
+    2342:       func = static_cast<Function*>(proc.item_);
+    2356:       cls = static_cast<Class*>(proc.item_);
+    2461:    auto cls = static_cast<Class*>(arg.item_->Root());
+    2499:       auto newCall = static_cast<Operation*>(args_.front().get());
+    2520:    auto cls = static_cast<Class*>(spec.item_->Root());
+    2541:       auto ctorCall = static_cast<Operation*>(args_[2].get());
+    2565:       cls = static_cast<Class*>(root);
+    2767:       area = static_cast<Class*>(targ);
+    3137:    auto cls = static_cast<Class*>(root);
+    3204:          mem = static_cast<Function*>(mem)->InstantiateFunction(tmplt);
   W008 Cast removes const qualification
-    779:       const_cast<CxxToken*>(this) : nullptr);
-    824:    CxxToken* prev = const_cast<CxxToken*>(this);
+    774:       const_cast<CxxToken*>(this) : nullptr);
+    819:    CxxToken* prev = const_cast<CxxToken*>(this);
   W082 Adjacent arguments have the same type
     47: static bool GetSpanFailure(size_t& begin, size_t& left, size_t& end)
 * W106 Function does not invoke Debug::ft
     59: bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2)
     90: bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2)
-    701: CxxScope* CxxToken::GetTemplateInstance() const
-    710: bool CxxToken::IsInTemplateInstance() const
-    717: bool CxxToken::IsPointer(bool arrays) const
-    909: bool CxxToken::VerifyReferents() const
-    1382: Numeric FloatLiteral::GetNumeric() const
-    1441: Numeric IntLiteral::BaseNumeric() const
-    1587: CxxToken* Literal::AutoType() const
-    1619: CxxToken* Literal::RootType() const
-    1635: Cxx::ItemType Literal::Type() const
+    696: CxxScope* CxxToken::GetTemplateInstance() const
+    705: bool CxxToken::IsInTemplateInstance() const
+    712: bool CxxToken::IsPointer(bool arrays) const
+    904: bool CxxToken::VerifyReferents() const
+    1377: Numeric FloatLiteral::GetNumeric() const
+    1436: Numeric IntLiteral::BaseNumeric() const
+    1582: CxxToken* Literal::AutoType() const
+    1614: CxxToken* Literal::RootType() const
+    1630: Cxx::ItemType Literal::Type() const
 * W117 Line can merge with the next line and be under the length limit
-    2771:    auto sName = (del ?
-    2781:          auto vName = (del ?
+    2788:    auto sName = (del ?
+    2798:          auto vName = (del ?
   W119 Argument passed by value is modified
-    730/2:    const CxxToken* item, word offset, const string& info) const
+    725/2:    const CxxToken* item, word offset, const string& info) const
 ct/CxxToken.h
   W008 Cast removes const qualification
     515:    virtual CxxToken* RootType() const { return const_cast<CxxToken*>(this); }
@@ -5766,7 +5796,7 @@ ct/CxxVector.h
 ct/Editor.cpp
   W005 Functional cast
     1107:       if(int(begin) < info->depth) begin = info->depth;
-    2150:    *Cli_->obuf << ": " << Warning(log.warning_);
+    2173:    *Cli_->obuf << ": " << Warning(log.warning_);
   W007 Cast down the inheritance hierarchy
     266:       auto func = static_cast<const Function*>(item);
     735:    return static_cast<Namespace*>(scope);
@@ -5774,143 +5804,145 @@ ct/Editor.cpp
     900:    auto defn = static_cast<Function*>(func->GetMate());
     928:    auto func = static_cast<const Function*>(item);
     1166:    auto oper = static_cast<const Operation*>(log.item_);
-    1447:    static_cast<Class*>(log.item_)->SetClassTag(Cxx::StructType);
-    1496:          static_cast<Forward*>(*f)->SetClassTag(to);
-    1538:    auto decl = static_cast<CxxScope*>(log.item_);
-    1700:    auto item = static_cast<CxxScope*>(ParseFileItem(pos, space));
-    1713:          auto tname = static_cast<const TypeName*>(*r);
-    1727:       UpdateDebugFt(static_cast<Function*>(item));
-    1763:    auto func = static_cast<const Function*>(log.item_);
-    1833:    static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
-    2092:    auto decl = static_cast<Function*>(log.item_);
-    2485:    static_cast<Function*>(log.item_)->SetExplicit(false);
-    2581:    static_cast<ClassData*>(log.item_)->SetMutable(false);
-    2617:    static_cast<Function*>(log.item_)->SetOverride(false);
-    2638:    auto qname = static_cast<const QualName*>(log.item_);
-    2702:    static_cast<Function*>(log.item_)->SetVirtual(false);
-    2772:       usages.directs.erase(static_cast<CxxNamed*>(*i));
-    2773:       usages.indirects.erase(static_cast<CxxNamed*>(*i));
-    2845:          auto data = static_cast<const Data*>(*i);
-    2859:             auto func = static_cast<const Function*>(*i);
-    2873:             auto data = static_cast<const Data*>(*i);
-    3023:    return FindSigEnd(static_cast<const Function*>(log.item_));
-    3337:    auto data = static_cast<Data*>(log.item_);
-    3404:    auto func = static_cast<Function*>(log.item_);
-    3497:    auto data = static_cast<Data*>(log.item_);
-    4108:    auto data = static_cast<Data*>(aref);
-    4115:    ReplaceImpl(static_cast<Function*>(log.item_));
-    4266:    auto func = static_cast<Function*>(log.item_);
-    4617:    auto cls = static_cast<Class*>(log.item_);
-    4918:    auto cls = static_cast<Class*>(item);
-    5359:       ns = static_cast<Namespace*>(ref)->OuterSpace();
-    5435:    auto func = static_cast<const Function*>(log.item_);
-    5516:    auto func = static_cast<const Function*>(log.item_);
-    5526:       auto slit = static_cast<StrLiteral*>(arg);
-    5540:    auto data = static_cast<SpaceData*>(arg->Referent());
-    5547:    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
-    5574:    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
-    5639:    auto type = static_cast<TypeName*>(log.item_);
-    6206:    static_cast<Function*>(log.item_)->SetExplicit(true);
-    6254:    static_cast<Function*>(log.item_)->SetOverride(true);
-    6358:    static_cast<Function*>(log.item_)->SetVirtual(true);
-    6646:       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
+    1470:    static_cast<Class*>(log.item_)->SetClassTag(Cxx::StructType);
+    1519:          static_cast<Forward*>(*f)->SetClassTag(to);
+    1561:    auto decl = static_cast<CxxScope*>(log.item_);
+    1723:    auto item = static_cast<CxxScope*>(ParseFileItem(pos, space));
+    1736:          auto tname = static_cast<const TypeName*>(*r);
+    1750:       UpdateDebugFt(static_cast<Function*>(item));
+    1786:    auto func = static_cast<const Function*>(log.item_);
+    1856:    static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
+    2115:    auto decl = static_cast<Function*>(log.item_);
+    2508:    static_cast<Function*>(log.item_)->SetExplicit(false);
+    2604:    static_cast<ClassData*>(log.item_)->SetMutable(false);
+    2640:    static_cast<Function*>(log.item_)->SetOverride(false);
+    2661:    auto qname = static_cast<const QualName*>(log.item_);
+    2725:    static_cast<Function*>(log.item_)->SetVirtual(false);
+    2795:       usages.directs.erase(static_cast<CxxNamed*>(*i));
+    2796:       usages.indirects.erase(static_cast<CxxNamed*>(*i));
+    2867:          auto data = static_cast<const Data*>(*i);
+    2881:             auto func = static_cast<const Function*>(*i);
+    2895:             auto data = static_cast<const Data*>(*i);
+    3045:    return FindSigEnd(static_cast<const Function*>(log.item_));
+    3365:    auto data = static_cast<Data*>(log.item_);
+    3432:    auto func = static_cast<Function*>(log.item_);
+    3531:    auto data = static_cast<Data*>(log.item_);
+    4150:    auto data = static_cast<Data*>(aref);
+    4157:    ReplaceImpl(static_cast<Function*>(log.item_));
+    4308:    auto func = static_cast<Function*>(log.item_);
+    4659:    auto cls = static_cast<Class*>(log.item_);
+    4960:    auto cls = static_cast<Class*>(item);
+    5401:       ns = static_cast<Namespace*>(ref)->OuterSpace();
+    5477:    auto func = static_cast<const Function*>(log.item_);
+    5558:    auto func = static_cast<const Function*>(log.item_);
+    5568:       auto slit = static_cast<StrLiteral*>(arg);
+    5582:    auto data = static_cast<SpaceData*>(arg->Referent());
+    5589:    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
+    5616:    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
+    5681:    auto type = static_cast<TypeName*>(log.item_);
+    6248:    static_cast<Function*>(log.item_)->SetExplicit(true);
+    6296:    static_cast<Function*>(log.item_)->SetOverride(true);
+    6400:    static_cast<Function*>(log.item_)->SetVirtual(true);
+    6688:       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
   W082 Adjacent arguments have the same type
     579: static void DebugFtNames(const Function* func, string& flit, string& fvar)
     949: static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
     1006: static void Rename(string& code, const string& oldName, const string& newName)
 * W106 Function does not invoke Debug::ft
-    1990: size_t Editor::CommitCount() { return Commits_; }
-    4898: static FunctionRole WarningToRole(Warning log)
+    2013: size_t Editor::CommitCount() { return Commits_; }
+    4940: static FunctionRole WarningToRole(Warning log)
   W119 Argument passed by value is modified
-    1933/1: bool Editor::CodeFollowsImmediately(size_t pos) const
-    1948/1: bool Editor::CommentFollows(size_t pos) const
-    4417/1: word Editor::InsertForward(size_t pos,
-    4585/1:    (size_t pos, const string& nspace, const string& forward)
-    5211/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
-    5404/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-    6636/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+    1956/1: bool Editor::CodeFollowsImmediately(size_t pos) const
+    1971/1: bool Editor::CommentFollows(size_t pos) const
+    4459/1: word Editor::InsertForward(size_t pos,
+    4627/1:    (size_t pos, const string& nspace, const string& forward)
+    5253/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
+    5446/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+    6678/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+* W145 Auto variable copies an object
+    818:    auto expl = Expl_;
 ct/Editor.h
 * W020 Using statement in header
     47: using namespace NodeBase;
     48: using std::string;
   W026 Unused argument
-    170/1:    word ChangeCast(const CodeWarning& log);
-    171/1:    word ChangeClassToNamespace(const CodeWarning& log);
-    174/1:    word ChangeOperator(const CodeWarning& log);
-    179/1:    word EraseCast(const CodeWarning& log);
-    180/1:    word EraseClass(const CodeWarning& log);
-    193/1:    word InsertCopyCtorCall(const CodeWarning& log);
-    194/1:    word InsertDataInit(const CodeWarning& log);
-    196/1:    word InsertDisplay(const CodeWarning& log);
-    197/1:    word InsertEnumName(const CodeWarning& log);
-    198/1:    word InsertFallthrough(const CodeWarning& log);
-    203/1:    word InsertMemberInit(const CodeWarning& log);
-    205/1:    word InsertPODCtor(const CodeWarning& log);
-    206/1:    word InsertPureVirtual(const CodeWarning& log);
-    208/1:    word MoveDefine(const CodeWarning& log);
-    209/1:    word MoveMemberInit(const CodeWarning& log);
-    213/1:    word ReplaceHeading(const CodeWarning& log);
-    214/1:    word ReplaceName(const CodeWarning& log);
-    418/1:    word FixInvokers(const CodeWarning& log);
-    427/1:    word ChangeFunctionToMember(const Function* func, word offset);
-    427/2:    word ChangeFunctionToMember(const Function* func, word offset);
-    428/1:    word ChangeInvokerToMember(const Function* func, word offset);
-    428/2:    word ChangeInvokerToMember(const Function* func, word offset);
-    429/1:    word EraseArgument(const Function* func, word offset);
-    429/2:    word EraseArgument(const Function* func, word offset);
-    430/1:    word EraseDefaultValue(const Function* func, word offset);
-    430/2:    word EraseDefaultValue(const Function* func, word offset);
-    431/1:    word EraseParameter(const Function* func, word offset);
-    431/2:    word EraseParameter(const Function* func, word offset);
-    433/1:    word InsertArgument(const Function* func, word offset);
-    433/2:    word InsertArgument(const Function* func, word offset);
-    434/1:    word SplitVirtualFunction(const Function* func);
+    171/1:    word ChangeCast(const CodeWarning& log);
+    172/1:    word ChangeClassToNamespace(const CodeWarning& log);
+    175/1:    word ChangeOperator(const CodeWarning& log);
+    180/1:    word EraseCast(const CodeWarning& log);
+    181/1:    word EraseClass(const CodeWarning& log);
+    194/1:    word InsertCopyCtorCall(const CodeWarning& log);
+    195/1:    word InsertDataInit(const CodeWarning& log);
+    197/1:    word InsertDisplay(const CodeWarning& log);
+    198/1:    word InsertEnumName(const CodeWarning& log);
+    199/1:    word InsertFallthrough(const CodeWarning& log);
+    204/1:    word InsertMemberInit(const CodeWarning& log);
+    206/1:    word InsertPODCtor(const CodeWarning& log);
+    207/1:    word InsertPureVirtual(const CodeWarning& log);
+    209/1:    word MoveDefine(const CodeWarning& log);
+    210/1:    word MoveMemberInit(const CodeWarning& log);
+    214/1:    word ReplaceHeading(const CodeWarning& log);
+    215/1:    word ReplaceName(const CodeWarning& log);
+    419/1:    word FixInvokers(const CodeWarning& log);
+    428/1:    word ChangeFunctionToMember(const Function* func, word offset);
+    428/2:    word ChangeFunctionToMember(const Function* func, word offset);
+    429/1:    word ChangeInvokerToMember(const Function* func, word offset);
+    429/2:    word ChangeInvokerToMember(const Function* func, word offset);
+    430/1:    word EraseArgument(const Function* func, word offset);
+    430/2:    word EraseArgument(const Function* func, word offset);
+    431/1:    word EraseDefaultValue(const Function* func, word offset);
+    431/2:    word EraseDefaultValue(const Function* func, word offset);
+    432/1:    word EraseParameter(const Function* func, word offset);
+    432/2:    word EraseParameter(const Function* func, word offset);
+    434/1:    word InsertArgument(const Function* func, word offset);
+    434/2:    word InsertArgument(const Function* func, word offset);
+    435/1:    word SplitVirtualFunction(const Function* func);
 * W032 Unused function
-    422:    word FixInvoker(const Function* func, const CodeWarning& log);
+    423:    word FixInvoker(const Function* func, const CodeWarning& log);
   W082 Adjacent arguments have the same type
     106:    void Rename(size_t pos, const string& oldName, const string& newName);
-    262:    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
-    298:    word InsertForward(size_t pos, const string& nspace, const string& forward);
-    303:    word InsertNamespaceForward(size_t pos,
-    320:    static void ChangeForwards
-    367:    void FindFreeItemPos(const Namespace* space, const string& name,
-    377:    CxxItemVector FindDeclRange
-    506:    void UpdateItemDefnAttrs(const CxxToken* prev,
-    512:    word UpdateItemDefnLoc(const CxxToken* prev,
-    567:    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
-    595:    size_t Replace(size_t pos, size_t count, const string& code);
-    642:    void UpdatePos(EditorAction action,
+    263:    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
+    299:    word InsertForward(size_t pos, const string& nspace, const string& forward);
+    304:    word InsertNamespaceForward(size_t pos,
+    321:    static void ChangeForwards
+    368:    void FindFreeItemPos(const Namespace* space, const string& name,
+    378:    CxxItemVector FindDeclRange
+    507:    void UpdateItemDefnAttrs(const CxxToken* prev,
+    513:    word UpdateItemDefnLoc(const CxxToken* prev,
+    568:    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
+    596:    size_t Replace(size_t pos, size_t count, const string& code);
+    643:    void UpdatePos(EditorAction action,
 * W088 Argument could be const
-    507/4:       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
+    508/4:       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
 * W092 Function could be free
     118:    static size_t CommitCount(); // CodeFileSet.cpp
     154:    static void ReportFix(const CodeWarning* log, word rc); // Editor.cpp
-    170:    word ChangeCast(const CodeWarning& log); // Editor.cpp
-    171:    word ChangeClassToNamespace(const CodeWarning& log); // Editor.cpp
-    174:    word ChangeOperator(const CodeWarning& log); // Editor.cpp
-    179:    word EraseCast(const CodeWarning& log); // Editor.cpp
-    180:    word EraseClass(const CodeWarning& log); // Editor.cpp
-    193:    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
-    194:    word InsertDataInit(const CodeWarning& log); // Editor.cpp
-    196:    word InsertDisplay(const CodeWarning& log); // Editor.cpp
-    197:    word InsertEnumName(const CodeWarning& log); // Editor.cpp
-    198:    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
-    203:    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
-    205:    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
-    206:    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
-    208:    word MoveDefine(const CodeWarning& log); // Editor.cpp
-    209:    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
-    213:    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
-    214:    word ReplaceName(const CodeWarning& log); // Editor.cpp
-    359:    static void QualifyClassItems // Editor.cpp
-    418:    word FixInvokers(const CodeWarning& log); // Editor.cpp
-    427:    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
-    428:    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
-    429:    word EraseArgument(const Function* func, word offset); // Editor.cpp
-    430:    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
-    431:    word EraseParameter(const Function* func, word offset); // Editor.cpp
-    433:    word InsertArgument(const Function* func, word offset); // Editor.cpp
-    434:    word SplitVirtualFunction(const Function* func); // Editor.cpp
+    171:    word ChangeCast(const CodeWarning& log); // Editor.cpp
+    172:    word ChangeClassToNamespace(const CodeWarning& log); // Editor.cpp
+    175:    word ChangeOperator(const CodeWarning& log); // Editor.cpp
+    180:    word EraseCast(const CodeWarning& log); // Editor.cpp
+    181:    word EraseClass(const CodeWarning& log); // Editor.cpp
+    194:    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
+    195:    word InsertDataInit(const CodeWarning& log); // Editor.cpp
+    197:    word InsertDisplay(const CodeWarning& log); // Editor.cpp
+    198:    word InsertEnumName(const CodeWarning& log); // Editor.cpp
+    199:    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
+    204:    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
+    206:    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
+    207:    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
+    209:    word MoveDefine(const CodeWarning& log); // Editor.cpp
+    210:    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
+    214:    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
+    215:    word ReplaceName(const CodeWarning& log); // Editor.cpp
+    360:    static void QualifyClassItems // Editor.cpp
+    419:    word FixInvokers(const CodeWarning& log); // Editor.cpp
+    428:    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
+    429:    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
+    430:    word EraseArgument(const Function* func, word offset); // Editor.cpp
+    431:    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
+    432:    word EraseParameter(const Function* func, word offset); // Editor.cpp
+    434:    word InsertArgument(const Function* func, word offset); // Editor.cpp
+    435:    word SplitVirtualFunction(const Function* func); // Editor.cpp
 ct/Interpreter.cpp
   W005 Functional cast
     147:          type = LibTokenType(i);
@@ -6322,31 +6354,31 @@ dip/DipTypes.h
     27: using namespace NodeBase;
 dip/MapAndUnits.cpp
 * W106 Function does not invoke Debug::ft
-    282: bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
-    300: bool MapAndUnits::can_move_to_province
-    562: TokenMessage MapAndUnits::encode_location(const Location& location) const
-    839: TokenMessage MapAndUnits::encode_unit(const UnitOrder& unit) const
-    1146: const LocationSet* MapAndUnits::get_neighbours(const Location& location) const
-    1385: MapAndUnits* MapAndUnits::instance()
-    2452: Token MapAndUnits::province_token(ProvinceId province) const
-    2571: bool MapAndUnits::set_move_by_single_step_convoy_order
+    281: bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
+    299: bool MapAndUnits::can_move_to_province
+    561: TokenMessage MapAndUnits::encode_location(const Location& location) const
+    838: TokenMessage MapAndUnits::encode_unit(const UnitOrder& unit) const
+    1145: const LocationSet* MapAndUnits::get_neighbours(const Location& location) const
+    1384: MapAndUnits* MapAndUnits::instance()
+    2451: Token MapAndUnits::province_token(ProvinceId province) const
+    2570: bool MapAndUnits::set_move_by_single_step_convoy_order
 dip/MapAndUnits.h
 * W020 Using statement in header
-    35: using namespace NodeBase;
+    31: using namespace NodeBase;
 * W048 Data is write-only
-    121:    bool game_started;                // set when the game has begun
-    147:    word our_number_of_disbands;    // disbands required (negative for builds)
+    117:    bool game_started;                // set when the game has begun
+    143:    word our_number_of_disbands;    // disbands required (negative for builds)
   W082 Adjacent arguments have the same type
-    187:    bool set_support_to_move_order
-    189:    bool set_convoy_order(ProvinceId unit, ProvinceId client, ProvinceId dest);
-    190:    bool set_move_by_convoy_order(ProvinceId unit,
-    192:    bool set_move_by_single_step_convoy_order
-    271:    Location find_result_unit_initial_location(ProvinceId province,
-    398:    bool has_route_to_province(const UnitOrder& unit, ProvinceId province,
+    183:    bool set_support_to_move_order
+    185:    bool set_convoy_order(ProvinceId unit, ProvinceId client, ProvinceId dest);
+    186:    bool set_move_by_convoy_order(ProvinceId unit,
+    188:    bool set_move_by_single_step_convoy_order
+    267:    Location find_result_unit_initial_location(ProvinceId province,
+    402:    bool has_route_to_province(const UnitOrder& unit, ProvinceId province,
 * W092 Function could be free
-    162:    static MapAndUnits* create_clone(); // MapAndUnits.cpp
-    166:    static void delete_clone(MapAndUnits*& clone); // MapAndUnits.cpp
-    259:    std::string display_retreat_result(const UnitOrder& unit) const; // BaseBot.cpp
+    158:    static MapAndUnits* create_clone(); // MapAndUnits.cpp
+    162:    static void delete_clone(MapAndUnits*& clone); // MapAndUnits.cpp
+    255:    std::string display_retreat_result(const UnitOrder& unit) const; // BaseBot.cpp
 dip/StartupParameters.h
 * W020 Using statement in header
     21: using namespace NetworkBase;
@@ -6404,13 +6436,6 @@ dip/WinterOrders.cpp
 dip/WinterOrders.h
 * W032 Unused function
     52:    size_t get_number_of_results() const;
-launcher/RscLauncher.cpp
-* W032 Unused function
-    144: int main()
-launcher/RscLauncher.win.cpp
-  W056 Implicit constructor invoked: POD members not initialized
-  i 38:    STARTUPINFOA si;
-  i 39:    PROCESS_INFORMATION pi;
 mb/Circuit.cpp
   W006 reinterpret_cast
     58:    auto fake = reinterpret_cast<const Circuit*>(&local);
@@ -6633,19 +6658,19 @@ nb/Base.cpp
     90/1: void Base::Nullify(size_t n)
 nb/Base.h
 * W042 Member could be private
-    82:    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
+    90:    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
 * W043 Member could be protected
-    75:    virtual void Display(std::ostream& stream,
-    105:    void LogSubtended(std::ostream& stream,
+    83:    virtual void Display(std::ostream& stream,
+    113:    void LogSubtended(std::ostream& stream,
   W075 Virtual function is public
-    75:    virtual void Display(std::ostream& stream,
-    82:    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
-    100:    virtual void GetSubtended(std::vector<Base*>& objects) const;
-    111:    virtual void ClaimBlocks();
-    129:    virtual void Cleanup() { }
-    136:    virtual void Startup(RestartLevel level) { }
-    144:    virtual void Shutdown(RestartLevel level) { }
-    148:    virtual MemoryType MemType() const { return MemPermanent; }
+    83:    virtual void Display(std::ostream& stream,
+    90:    virtual size_t Summarize(std::ostream& stream, uint32_t selector) const
+    108:    virtual void GetSubtended(std::vector<Base*>& objects) const;
+    119:    virtual void ClaimBlocks();
+    137:    virtual void Cleanup() { }
+    144:    virtual void Startup(RestartLevel level) { }
+    152:    virtual void Shutdown(RestartLevel level) { }
+    156:    virtual MemoryType MemType() const { return MemPermanent; }
 nb/BuddyHeap.cpp
   W004 C-style cast
     332:       auto child = (HeapBlock*) (uintptr_t(block) + LevelToSize(level + 1));
@@ -7012,6 +7037,7 @@ nb/Debug.h
     106:    static void SetSwFlag(FlagId fid, bool value); // NtIncrement.cpp
     110:    static void ResetSwFlags(); // NtIncrement.cpp
     114:    static Flags GetSwFlags(); // NtIncrement.cpp
+    118:    static void noop(debug64_t info = 0); // CxxExecute.cpp
 nb/Deferred.cpp
   W006 reinterpret_cast
     99:    auto fake = reinterpret_cast<const Deferred*>(&local);
@@ -7044,8 +7070,8 @@ nb/Element.h
     50:    static bool IsUnnamed(); // ModuleRegistry.cpp
 nb/ElementException.h
 * W032 Unused function
-    53:    RestartReason Reason() const { return reason_; }
-    57:    debug64_t Errval() const { return errval_; }
+    57:    RestartReason Reason() const { return reason_; }
+    61:    debug64_t Errval() const { return errval_; }
 nb/Exception.cpp
   W107 Function does not invoke Debug::ft as first statement
     42:    Debug::ft("Exception.ctor");  //@
@@ -7082,15 +7108,15 @@ nb/Formatters.h
     111:    std::string strCenter(const std::string& s, size_t breadth, size_t blanks);
 nb/FunctionTrace.cpp
   W007 Cast down the inheritance hierarchy
-    573:       auto curr = static_cast<FunctionTrace*>(rec);
-    587:       auto curr = static_cast<FunctionTrace*>(rec);
-    606:       auto curr = static_cast<FunctionTrace*>(rec);
-    634:       auto curr = static_cast<FunctionTrace*>(rec);
-    681:       auto curr = static_cast<FunctionTrace*>(rec);
-    800:       auto curr = static_cast<FunctionTrace*>(rec);
-    822:       auto curr = static_cast<FunctionTrace*>(rec);
-    840:       auto curr = static_cast<FunctionTrace*>(rec);
-    913:       auto curr = static_cast<FunctionTrace*>(rec);
+    572:       auto curr = static_cast<FunctionTrace*>(rec);
+    586:       auto curr = static_cast<FunctionTrace*>(rec);
+    604:       auto curr = static_cast<FunctionTrace*>(rec);
+    631:       auto curr = static_cast<FunctionTrace*>(rec);
+    677:       auto curr = static_cast<FunctionTrace*>(rec);
+    795:       auto curr = static_cast<FunctionTrace*>(rec);
+    817:       auto curr = static_cast<FunctionTrace*>(rec);
+    834:       auto curr = static_cast<FunctionTrace*>(rec);
+    906:       auto curr = static_cast<FunctionTrace*>(rec);
 * W032 Unused function
     169:    PerThreadInfo()
 * W106 Function does not invoke Debug::ft
@@ -7168,11 +7194,11 @@ nb/Lock.h
     117:    void Release();
 nb/Log.cpp
   W006 reinterpret_cast
-    136:    auto fake = reinterpret_cast<const Log*>(&local);
+    184:    auto fake = reinterpret_cast<const Log*>(&local);
 * W106 Function does not invoke Debug::ft
-    142: size_t Log::Count()
+    190: size_t Log::Count()
   W110 Override of Base.Display not found
-    56: struct LogDynamic : public Permanent
+    104: struct LogDynamic : public Permanent
 nb/Log.h
 * W042 Member could be private
     119:    static Log* Find(c_string groupName, LogId id, LogGroup*& group);
@@ -7266,9 +7292,11 @@ nb/Module.h
     134:    RegCell mid_;
 nb/ModuleRegistry.cpp
 * W106 Function does not invoke Debug::ft
-    64: static const FactionFlags& AllFactions()
-    106: static const FactionFlags& ShutdownFactions()
-    197: RestartLevel ModuleRegistry::GetLevel()
+    67: static const FactionFlags& AllFactions()
+    109: static const FactionFlags& ShutdownFactions()
+    245: RestartLevel ModuleRegistry::GetLevel()
+* W111 Override of Object.Patch not found
+    153: class StopInitTracing : public Deferred
 nb/ModuleRegistry.h
 * W092 Function could be free
     95:    void SetLevel(RestartLevel level); // InitThread.cpp
@@ -7370,31 +7398,29 @@ nb/Object.cpp
     95: Object::ObjectId Object::GetObjectId() const
 nb/Object.h
 * W032 Unused function
-    92:    ClassId GetClassId() const;
-    104:    ObjectId GetObjectId() const;
-    110:    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid);
-    131:    void MorphTo(const Class& target);
+    100:    ClassId GetClassId() const;
+    112:    ObjectId GetObjectId() const;
+    118:    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid);
+    139:    void MorphTo(const Class& target);
 * W042 Member could be private
-    98:    virtual InstanceId GetInstanceId() const;
+    106:    virtual InstanceId GetInstanceId() const;
 * W043 Member could be protected
-    59:    virtual void Patch(sel_t selector, void* arguments) { }
-* W053 Data could be const
-    136:    uintptr_t patchArea_;
+    67:    virtual void Patch(sel_t selector, void* arguments) { }
   W075 Virtual function is public
-    59:    virtual void Patch(sel_t selector, void* arguments) { }
-    79:    virtual Class* GetClass() const;
-    87:    virtual void PostInitialize() { }
-    98:    virtual InstanceId GetInstanceId() const;
+    67:    virtual void Patch(sel_t selector, void* arguments) { }
+    87:    virtual Class* GetClass() const;
+    95:    virtual void PostInitialize() { }
+    106:    virtual InstanceId GetInstanceId() const;
 * W077 Virtual function has no overrides
-    79:    virtual Class* GetClass() const;
-    87:    virtual void PostInitialize() { }
-    98:    virtual InstanceId GetInstanceId() const;
+    87:    virtual Class* GetClass() const;
+    95:    virtual void PostInitialize() { }
+    106:    virtual InstanceId GetInstanceId() const;
 * W088 Argument could be const
-    59/2:    virtual void Patch(sel_t selector, void* arguments) { }
+    67/2:    virtual void Patch(sel_t selector, void* arguments) { }
 * W090 Function could be const
-    59:    virtual void Patch(sel_t selector, void* arguments) { }
+    67:    virtual void Patch(sel_t selector, void* arguments) { }
 * W092 Function could be free
-    110:    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid); // Object.cpp
+    118:    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid); // Object.cpp
 nb/ObjectPool.cpp
   W004 C-style cast
     87:    return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
@@ -7460,6 +7486,9 @@ nb/ObjectPool.h
 * W090 Function could be const
     196:    bool Corrupt(size_t n);
     262:    void UpdateAlarm();
+nb/ObjectPoolAudit.cpp
+* W145 Auto variable copies an object
+    112:    auto prev = interval_;
 nb/ObjectPoolRegistry.h
 * W042 Member could be private
     61:    bool NullifyObjectData() const { return nullifyObjectDataCfg_->CurrValue(); }
@@ -7505,7 +7534,6 @@ nb/PosixSignal.h
     51:    static const signal_t MaxId; // PosixSignalRegistry.cpp
 nb/PosixSignalRegistry.cpp
 * W106 Function does not invoke Debug::ft
-    61: Flags PosixSignalRegistry::Attrs(signal_t value) const
     92: PosixSignal* PosixSignalRegistry::Find(signal_t value) const
     104: PosixSignal* PosixSignalRegistry::Find(const string& name) const
     175: signal_t PosixSignalRegistry::Value(const string& name) const
@@ -7638,9 +7666,12 @@ nb/SlabHeap.cpp
     906: MemoryType SlabHeap::Type() const
   W119 Argument passed by value is modified
     638/1: void SlabPriv::SetSlabSize(size_t size)
+* W145 Auto variable copies an object
+    725:       for(auto free = avail.first; free != avail.second; ++free)
 nb/SoftwareException.h
 * W043 Member could be protected
     41:    SoftwareException(debug64_t errval, debug64_t offset);
+    50:    SoftwareException(const SoftwareException& that) = default;
 * W060 Base class constructor is public
     41:    SoftwareException(debug64_t errval, debug64_t offset);
     42:    SoftwareException(const std::string& errstr, debug64_t offset);
@@ -7669,6 +7700,8 @@ nb/Statistics.h
 nb/StatisticsGroup.cpp
   W006 reinterpret_cast
     87:    auto fake = reinterpret_cast<const StatisticsGroup*>(&local);
+* W100 Insertion of blank line recommended
+    47: //  --------------member name-----------------
 nb/StatisticsGroup.h
 * W042 Member could be private
     54:    static const size_t ReportWidth;
@@ -8561,16 +8594,12 @@ pb/PbModule.h
 pb/PotsBicFeature.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    80: CliText* PotsBicFeature::Attrs() const
 pb/PotsBicFeature.h
 * W020 Using statement in header
     28: using namespace NodeBase;
 pb/PotsBocFeature.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    69: CliText* PotsBocFeature::Attrs() const
 pb/PotsBocFeature.h
 * W020 Using statement in header
     28: using namespace NodeBase;
@@ -8578,8 +8607,6 @@ pb/PotsCfbFeature.cpp
 * W022 Add using statement
     0:  // namespace CallBase
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    76: CliText* PotsCfbFeature::Attrs() const { return new PotsCfbAttrs; }
 pb/PotsCfbFeature.h
 * W020 Using statement in header
     30: using namespace CallBase;
@@ -8588,8 +8615,6 @@ pb/PotsCfnFeature.cpp
 * W022 Add using statement
     0:  // namespace CallBase
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    86: CliText* PotsCfnFeature::Attrs() const { return new PotsCfnAttrs; }
 pb/PotsCfnFeature.h
 * W020 Using statement in header
     31: using namespace CallBase;
@@ -8598,8 +8623,6 @@ pb/PotsCfuFeature.cpp
 * W022 Add using statement
     0:  // namespace CallBase
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    76: CliText* PotsCfuFeature::Attrs() const { return new PotsCfuAttrs; }
 pb/PotsCfuFeature.h
 * W020 Using statement in header
     30: using namespace CallBase;
@@ -8636,16 +8659,12 @@ pb/PotsCliParms.h
 pb/PotsCwtFeature.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    64: CliText* PotsCwtFeature::Attrs() const
 pb/PotsCwtFeature.h
 * W020 Using statement in header
     28: using namespace NodeBase;
 pb/PotsCxfFeature.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    65: CliText* PotsCxfFeature::Attrs() const
 pb/PotsCxfFeature.h
 * W020 Using statement in header
     28: using namespace NodeBase;
@@ -8716,8 +8735,6 @@ pb/PotsHtlFeature.cpp
 * W022 Add using statement
     0:  // namespace CallBase
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    81: CliText* PotsHtlFeature::Attrs() const { return new PotsHtlAttrs; }
 pb/PotsHtlFeature.h
 * W020 Using statement in header
     30: using namespace NodeBase;
@@ -8824,16 +8841,12 @@ pb/PotsProtocol.h
 pb/PotsSusFeature.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    62: CliText* PotsSusFeature::Attrs() const
 pb/PotsSusFeature.h
 * W020 Using statement in header
     28: using namespace NodeBase;
 pb/PotsTwcFeature.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    81: CliText* PotsTwcFeature::Attrs() const
 pb/PotsTwcFeature.h
 * W020 Using statement in header
     28: using namespace NodeBase;
@@ -8841,8 +8854,6 @@ pb/PotsWmlFeature.cpp
 * W022 Add using statement
     0:  // namespace CallBase
     0:  // namespace NodeBase
-* W106 Function does not invoke Debug::ft
-    85: CliText* PotsWmlFeature::Attrs() const { return new PotsWmlAttrs; }
 pb/PotsWmlFeature.h
 * W020 Using statement in header
     31: using namespace CallBase;
@@ -8855,9 +8866,11 @@ rn/RnModule.h
     28: using namespace NodeBase;
 rsc/main.cpp
 * W015 #include not sorted in standard order
-    31: #include "SysTypes.h"
+    37: #include "SysTypes.h"
 * W032 Unused function
-    123: main_t main(int argc, char* argv[])
+    163: main_t main(int argc, char* argv[])
+* W106 Function does not invoke Debug::ft
+    129: static main_t LogTrap(const Exception* ex,
 sb/AnalyzeSapEvent.cpp
 * W106 Function does not invoke Debug::ft
     86: void AnalyzeSapEvent::Capture
@@ -8866,20 +8879,20 @@ sb/AnalyzeSnpEvent.cpp
     82: void AnalyzeSnpEvent::Capture
 sb/Context.cpp
   W006 reinterpret_cast
-    576:    auto fake = reinterpret_cast<const Context*>(&local);
-    865:             auto toi = reinterpret_cast<TimeoutInfo*>(pptr->bytes);
+    580:    auto fake = reinterpret_cast<const Context*>(&local);
+    869:             auto toi = reinterpret_cast<TimeoutInfo*>(pptr->bytes);
   W007 Cast down the inheritance hierarchy
-    756:                inv = static_cast<InvokerThread*>(Thread::RunningThread());
-    861:          auto pptr = static_cast<TlvMessage*>(m)->FindParm(Parameter::Timeout);
+    760:                inv = static_cast<InvokerThread*>(Thread::RunningThread());
+    865:          auto pptr = static_cast<TlvMessage*>(m)->FindParm(Parameter::Timeout);
 * W106 Function does not invoke Debug::ft
-    334: void Context::Dump() const
-    930: bool Context::TraceOn()
-    940: bool Context::TraceOn(TransTrace*& trans)
+    338: void Context::Dump() const
+    934: bool Context::TraceOn()
+    944: bool Context::TraceOn(TransTrace*& trans)
   W107 Function does not invoke Debug::ft as first statement
-    688:    Debug::ft(Context_ProcessWork);
+    692:    Debug::ft(Context_ProcessWork);
   W119 Argument passed by value is modified
-    384/3: void Context::Enqueue(Q2Way<Context>& whichq, MsgPriority prio, bool henq)
-    682/1: void Context::ProcessWork(InvokerThread* inv)
+    388/3: void Context::Enqueue(Q2Way<Context>& whichq, MsgPriority prio, bool henq)
+    686/1: void Context::ProcessWork(InvokerThread* inv)
 sb/Context.h
 * W032 Unused function
     120:    static void Kill(NodeBase::debug64_t errval, NodeBase::debug64_t offset);
@@ -8935,6 +8948,9 @@ sb/EventHandler.h
 * W111 Override of Object.Patch not found
     47: class EventHandler : public NodeBase::Immutable
 sb/Factory.cpp
+  W005 Functional cast
+    245:       if(icSignals_[i]) stream << int(i) << SPACE;
+    253:       if(ogSignals_[i]) stream << int(i) << SPACE;
   W006 reinterpret_cast
     202:    auto fake = reinterpret_cast<const Factory*>(&local);
 * W099 Line contains adjacent spaces
@@ -9145,7 +9161,7 @@ sb/MsgPort.cpp
     205:    auto port = static_cast<MsgPort*>(pool->BidToObj(locAddr.bid));
     260:       static_cast<PsmFactory*>(fac)->PortAllocated(*this, msg);
   W008 Cast removes const qualification
-    344:    return const_cast<MsgPort*>(this);
+    342:    return const_cast<MsgPort*>(this);
 * W106 Function does not invoke Debug::ft
     324: bool MsgPort::Passes(uint32_t selector) const
 sb/MsgPort.h
@@ -9288,7 +9304,7 @@ sb/SbInvokerPools.cpp
     73:       (static_cast<CfgIntParm*>(reg->FindParm("NoIngressMessageCount")));
 sb/SbIpBuffer.cpp
 * W023 Remove using statement
-    37: using namespace NetworkBase;
+    38: using namespace NetworkBase;
 sb/SbIpBuffer.h
   W006 reinterpret_cast
     62:       { return reinterpret_cast<MsgHeader*>(HeaderPtr()); }
@@ -10160,8 +10176,6 @@ st/MscAddress.h
 * W020 Using statement in header
     41: using namespace NodeBase;
     42: using namespace SessionBase;
-* W053 Data could be const
-    128:    Q1Link link_;
 st/MscBuilder.cpp
   W007 Cast down the inheritance hierarchy
     140:          tt = static_cast<const TransTrace*>(rec);
@@ -10179,6 +10193,8 @@ st/MscBuilder.cpp
     0:  // namespace SessionBase
   W119 Argument passed by value is modified
     1025/1:    (const MscContext* active, const MsgTrace& mt, const TransTrace* tt)
+* W144 Auto variable copies an item returned by const reference
+    1280:    auto tools = buff->GetTools();
 st/MscBuilder.h
 * W020 Using statement in header
     54: using namespace NodeBase;
@@ -10195,8 +10211,6 @@ st/MscContext.h
 * W020 Using statement in header
     33: using namespace NodeBase;
     34: using namespace SessionBase;
-* W053 Data could be const
-    145:    Q1Link link_;
 st/MscContextPair.cpp
   W006 reinterpret_cast
     87:    auto fake = reinterpret_cast<const MscContextPair*>(&local);
@@ -10207,8 +10221,6 @@ st/MscContextPair.cpp
 st/MscContextPair.h
 * W020 Using statement in header
     34: using namespace NodeBase;
-* W053 Data could be const
-    85:    Q1Link link_;
 st/StIncrement.cpp
   W007 Cast down the inheritance hierarchy
     112:    auto ctx = static_cast<Context*>(pool->FirstUsed(bid));
@@ -10225,7 +10237,7 @@ st/StModule.h
     28: using namespace NodeBase;
 st/StTestData.cpp
   W007 Cast down the inheritance hierarchy
-    63:    return static_cast<StTestData*>(data);
+    64:    return static_cast<StTestData*>(data);
 * W022 Add using statement
     0:  // namespace NodeBase
     0:  // namespace SessionBase

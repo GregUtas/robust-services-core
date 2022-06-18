@@ -453,7 +453,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
 
 ostream& operator<<(ostream& stream, LineType type)
 {
-   if((type >= 0) && (type < LineType_N))
+   if(type < LineType_N)
       stream << LineTypeStrings[type];
    else
       stream << LineTypeStrings[LineType_N];

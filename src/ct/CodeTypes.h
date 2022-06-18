@@ -567,7 +567,7 @@ struct FixOptions
 //
 //  Types of source code lines.
 //
-enum LineType
+enum LineType : uint8_t
 {
    CodeLine,              // source code
    BlankLine,             // blank lines

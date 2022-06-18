@@ -227,16 +227,16 @@ void Lexer::CalcDepths()
       CalcLineTypes();
    }
 
-   string id;             // identifier extracted from code
-   Cxx::Keyword kwd;      // keyword extracted from code
-   auto ctor = false;     // if parsing a constructor's initialization list
-   auto ternary = false;  // if parsing operator?
-   int currDepth = 0;     // current depth for indentation
-   int nextDepth = 0;     // next depth for indentation
-   int semiDepth = -1;    // depth to restore when reaching next semicolon
-   size_t commaPos;       // position of comma that sets depths
-   size_t rparPos;        // position of right parenthesis that sets depths
-   bool elseif = false;   // if processing an "else if"
+   string id;              // identifier extracted from code
+   Cxx::Keyword kwd;       // keyword extracted from code
+   auto ctor = false;      // if parsing a constructor's initialization list
+   auto ternary = false;   // if parsing operator?
+   int8_t currDepth = 0;   // current depth for indentation
+   int8_t nextDepth = 0;   // next depth for indentation
+   int8_t semiDepth = -1;  // depth to restore when reaching next semicolon
+   size_t commaPos;        // position of comma that sets depths
+   size_t rparPos;         // position of right parenthesis that sets depths
+   bool elseif = false;    // if processing an "else if"
 
    std::vector<LeftBraceRole> lbStack;
    std::vector<size_t> lbDepths;
@@ -3302,7 +3302,7 @@ size_t Lexer::RfindNonBlank(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Lexer::SetDepth(int depth1, int depth2, bool merge)
+void Lexer::SetDepth(int8_t depth1, int8_t depth2, bool merge)
 {
    //  START is the last position where a line of code whose depth has not
    //  been determined started, and curr_ has finalized the depth of that

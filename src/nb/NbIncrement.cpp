@@ -1226,7 +1226,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       }
       else if(id == NIL_ID)
       {
-         auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+         auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
          Memory::Display(*cli.obuf, spaces(2), opts);
       }
       else

@@ -1036,8 +1036,7 @@ CxxScoped* MacroName::Referent() const
    //  This is the first appearance of the macro name, so create a placeholder
    //  for it.
    //
-   auto name = name_;
-   MacroPtr macro(new Define(name));
+   MacroPtr macro(new Define(name_));
    ref_ = macro.get();
    Singleton<CxxRoot>::Instance()->AddMacro(macro);
    ref_->WasRead();

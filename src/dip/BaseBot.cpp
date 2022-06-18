@@ -114,7 +114,7 @@ void BaseBot::check_sent_press_for_inactive_power(const Token& inactive_power)
 
    for(auto press = sent_press_.begin(); press != sent_press_.end(); ++press)
    {
-      auto receiving_powers = press->receiving_powers;
+      auto& receiving_powers = press->receiving_powers;
 
       for(size_t p = 0; p < receiving_powers.size(); ++p)
       {
@@ -1905,7 +1905,7 @@ void BaseBot::report_ords()
    if(!ord_received_) return;
    ord_received_ = false;
 
-   auto season = map_and_units->curr_season;
+   auto& season = map_and_units->curr_season;
    auto year = map_and_units->curr_year;
 
    std::ostringstream stream;
@@ -2259,7 +2259,7 @@ void BaseBot::send_to_reduced_powers
    Debug::ft("BaseBot.send_to_reduced_powers");
 
    TokenMessage reduced_powers;
-   auto receiving_powers = press_iter->receiving_powers;
+   auto& receiving_powers = press_iter->receiving_powers;
 
    for(size_t p = 0; p < receiving_powers.size(); ++p)
    {

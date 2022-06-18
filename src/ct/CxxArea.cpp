@@ -2653,8 +2653,8 @@ void ClassInst::Display(ostream& stream,
    else
    {
       auto lead = prefix + spaces(IndentSize());
+      auto& opts = options;
       auto qual = options;
-      auto opts = options;
       qual.set(DispFQ);
 
       SortAndDisplayItemPtrs(*Friends(), stream, lead, qual, SortByPos);

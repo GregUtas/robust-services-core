@@ -195,7 +195,7 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       buff->Lock();
       {
          TraceRecord* rec = nullptr;
-         auto mask = FunctionTrace::FTmask;
+         auto& mask = FunctionTrace::FTmask;
          auto reg = Singleton<ThreadRegistry>::Instance();
 
          for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))

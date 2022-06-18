@@ -564,11 +564,10 @@ void FunctionTrace::AdjustDepths()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
-   auto mask = FTmask;
 
    auto minDepth = INT16_MAX;
 
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
       if(curr->depth_ < minDepth) minDepth = curr->depth_;
@@ -582,7 +581,7 @@ void FunctionTrace::AdjustDepths()
 
    rec = nullptr;
 
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
       curr->depth_ -= minDepth;
@@ -596,12 +595,11 @@ void FunctionTrace::CalcFuncTimes()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
-   auto mask = FTmask;
 
    //  Find the gross and net time spent in each function and adjust
    //  each function's depth to avoid unnecessary indentation.
    //
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
       curr->CalcTimes();
@@ -617,7 +615,6 @@ usecs_t FunctionTrace::CalcGrossTime()
    if(!SystemTime::IsValid(GetTime())) return usecs_t(0);
 
    auto buff = Singleton<TraceBuffer>::Instance();
-   auto mask = FTmask;
    TraceRecord* rec = this;
    FunctionTrace* prev = this;
    auto nid = Nid();
@@ -629,7 +626,7 @@ usecs_t FunctionTrace::CalcGrossTime()
    //  spent in other threads.  Rounding can result in a negative net time,
    //  so check for this.
    //
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
 
@@ -661,7 +658,6 @@ usecs_t FunctionTrace::CalcGrossTime()
 void FunctionTrace::CalcTimes()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
-   auto mask = FTmask;
    auto nid = Nid();
    TraceRecord* rec = this;
 
@@ -676,7 +672,7 @@ void FunctionTrace::CalcTimes()
    net_ = gross_;
    if(net_ == ZERO_SECS) return;
 
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
 
@@ -791,11 +787,10 @@ bool FunctionTrace::FindDeleteOperator()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = this;
-   auto mask = FTmask;
    auto nid = Nid();
    auto stop = Depth();
 
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
       if(curr->Nid() != nid) continue;
@@ -815,7 +810,7 @@ void FunctionTrace::FindInvokerDepths()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
-   auto mask = FTmask;
+   auto& mask = FTmask;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
@@ -833,9 +828,8 @@ void FunctionTrace::FixCtorChains()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
-   auto mask = FTmask;
 
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
 
@@ -906,9 +900,8 @@ void FunctionTrace::RemoveCxxDeletes()
 
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
-   auto mask = FTmask;
 
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   for(buff->Next(rec, FTmask); rec != nullptr; buff->Next(rec, FTmask))
    {
       auto curr = static_cast<FunctionTrace*>(rec);
 

@@ -2342,7 +2342,7 @@ void Friend::FindReferent()
    ++Depth_;
 
    SymbolView view = DeclaredGlobally;
-   auto mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
+   auto& mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
    CxxScoped* ref = nullptr;
 
    if(!searched_)

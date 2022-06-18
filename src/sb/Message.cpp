@@ -333,7 +333,7 @@ GlobalAddress Message::GetReceiver() const
    Debug::ft("Message.GetReceiver");
 
    const auto& ipaddr = buff_->RxAddr();
-   auto sbaddr = buff_->Header()->rxAddr;
+   auto& sbaddr = buff_->Header()->rxAddr;
 
    return GlobalAddress(ipaddr, sbaddr);
 }
@@ -345,7 +345,7 @@ GlobalAddress Message::GetSender() const
    Debug::ft("Message.GetSender");
 
    const auto& ipaddr = buff_->TxAddr();
-   auto sbaddr = buff_->Header()->txAddr;
+   auto& sbaddr = buff_->Header()->txAddr;
 
    return GlobalAddress(ipaddr, sbaddr);
 }

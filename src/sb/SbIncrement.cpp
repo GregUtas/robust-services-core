@@ -1067,7 +1067,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
       if(count == 0) return cli.Report(0, NoPsmsExpl);
    }
@@ -1278,7 +1278,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, sid);
       if(count == 0) return cli.Report(0, NoSsmsExpl);
    }
@@ -1458,7 +1458,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      auto opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
       if(count == 0) return cli.Report(0, NoTimersExpl);
    }

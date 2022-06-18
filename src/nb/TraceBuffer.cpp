@@ -634,7 +634,7 @@ void TraceBuffer::RecordInvocation(fn_name_arg func) const
    //
    if(!result.second)
    {
-      auto entry = result.first;
+      auto& entry = result.first;
       ++entry->second;
    }
 }

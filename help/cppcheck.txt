@@ -595,3 +595,11 @@ variable should be declared as auto&.
 Auto variable copies an item returned by const reference
   An auto variable copies an object returned by const reference. Perhaps
 the variable should be declared as const auto&.
+? W145
+Auto variable copies an object
+  An auto variable is making a copy of an object. Perhaps it could be a
+reference to the object by changing its declaration to auto&.
+? W146
+Auto variable copies a const object
+  An auto variable is making a copy of a const object. Perhaps it could
+be a reference to the object by changing its declaration to const auto&.

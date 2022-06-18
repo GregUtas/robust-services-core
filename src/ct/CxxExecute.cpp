@@ -1943,6 +1943,7 @@ void StackArg::SetAsAutoType() const
       AutoType_.refs_ = this->refs_;
       AutoType_.const_ = this->const_;
       AutoType_.constptr_ = this->constptr_;
+      AutoType_.lvalue_ = this->lvalue_;
       if(AutoType_.item_ != nullptr) return;
    }
 
@@ -1979,6 +1980,7 @@ void StackArg::SetAsTemporary()
 
    SetAsWriteable();
    member_ = false;
+   lvalue_ = false;
 }
 
 //------------------------------------------------------------------------------

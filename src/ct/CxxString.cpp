@@ -139,10 +139,9 @@ size_t CompareScopes(const string& fqSub, const string& fqSuper, bool tmplt)
    //  of fqSub.  On a partial match, check that the match actually reached a
    //  scope operator or, if TMPLT is set, template arguments in fqSub.
    //
-   auto size = fqSuper.size();
-
-   if(fqSub.compare(0, size, fqSuper) == 0)
+   if(fqSub.rfind(fqSuper, 0) == 0)
    {
+      auto size = fqSuper.size();
       if(size == fqSub.size()) return size;
       if(fqSub.compare(size, 2, SCOPE_STR) == 0) return size;
       if(tmplt && (fqSub[size] == '<')) return size;

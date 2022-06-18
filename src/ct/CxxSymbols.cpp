@@ -564,7 +564,7 @@ CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
    //  NAME (redundantly) includes that scope.  Template arguments are left
    //  out because a template instance is in the scope of the class template.
    //
-   if(name.compare(0, 2, SCOPE_STR) == 0)
+   if(name.rfind(SCOPE_STR, 0) == 0)
    {
       name.erase(0, 2);
    }

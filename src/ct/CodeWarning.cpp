@@ -1126,8 +1126,8 @@ bool CodeWarning::Suppress() const
       if(name.find("Summarize") == 0) return true;
       if(name.find("CellDiff") == 0) return true;
       if(name.find("LinkDiff") == 0) return true;
-      if(name.find("Shrink") == 0) return true;
       if(name.compare("Patch") == 0) return true;
+      if(name.compare("Attrs") == 0) return true;
       if(name.compare("CreateText") == 0) return true;
       if(name.compare("CreateCliParm") == 0) return true;
       if(name.compare("UpdateXref") == 0) return true;

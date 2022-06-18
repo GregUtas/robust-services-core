@@ -639,7 +639,7 @@ void Lexer::CalcDepths()
                if(curr_ == string::npos) curr_ = size - 1;
                SetDepth(currDepth, currDepth);
 
-               if(id.compare(0, 3, "#if") == 0)
+               if(id.rfind("#if", 0) == 0)
                {
                   currDepth = NextLineIndentation(curr_);
                }

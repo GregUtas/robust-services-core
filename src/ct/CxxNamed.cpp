@@ -648,7 +648,7 @@ string CxxNamed::to_str() const
    //  resolution operator.
    //
    auto name = ScopedName(true);
-   if((name.compare(0, 2, SCOPE_STR) == 0) && (name.size() > 2))
+   if((name.rfind(SCOPE_STR, 0) == 0) && (name.size() > 2))
    {
       name.erase(0, 2);
    }
@@ -3860,7 +3860,7 @@ void TypeName::SetOperator(Cxx::Operator oper)
          //
          auto name = CxxOp::OperatorToName(oper);
 
-         if(name_.compare(0, name.size(), name) != 0)
+         if(name_.rfind(name, 0) != 0)
          {
             name_ = CxxOp::OperatorToName(oper);
          }

@@ -3356,15 +3356,13 @@ Typedef* CxxArea::FindType(const string& name) const
 
 const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
 {
-   auto size = strlen(OPERATOR_STR);
-
-   if(name.compare(0, size, OPERATOR_STR) == 0)
+   if(name.rfind(OPERATOR_STR, 0) == 0)
    {
       //  For this to be an actual operator, the next character must be illegal
       //  in an identifier (internally, the name of each operation function has
       //  the operator punctuation appended to "operator").
       //
-      if(!CxxChar::Attrs[name[size]].validNext) return &opers_;
+      if(!CxxChar::Attrs[name[strlen(OPERATOR_STR)]].validNext) return &opers_;
    }
 
    return &funcs_;

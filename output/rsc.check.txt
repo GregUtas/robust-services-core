@@ -1,6 +1,6 @@
 LINE COUNTS
    82671   source code not in one of the categories below
-   42818   blank line
+   42817   blank line
    19011   blank comment
    10652   comment at the top of a file (e.g. for the file's name or license info)
     8286   comment followed by a repeated character to draw a rule (e.g. //---- ...)
@@ -14,7 +14,7 @@ LINE COUNTS
     6572   #include directive
     1172   preprocessor directive other than #include
      979   using statement
-  235537   TOTAL
+  235536   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   139  C-style cast
@@ -56,7 +56,6 @@ WARNING COUNTS (* if supported by >fix)
 * W092   120  Function could be free
 * W099   293  Line contains adjacent spaces
 * W100     1  Insertion of blank line recommended
-* W101     1  Deletion of line recommended
   W102     3  Line length exceeds the standard maximum
 * W106   657  Function does not invoke Debug::ft
   W107    18  Function does not invoke Debug::ft as first statement
@@ -2726,7 +2725,7 @@ W082 Adjacent arguments have the same type
   ct/Editor.h(643):    void UpdatePos(EditorAction action,
   ct/Lexer.h(257):    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   ct/Lexer.h(583):    LineType CalcLineType(size_t n, bool& cont, bool& c_comment);
-  ct/Lexer.h(661):    void SetDepth(int depth1, int depth2, bool merge = true);
+  ct/Lexer.h(661):    void SetDepth(int8_t depth1, int8_t depth2, bool merge = true);
   ct/Library.h(74):    NodeBase::word Import
   ct/Library.h(108):    NodeBase::word Assign(CliThread& cli, const std::string& name,
   ct/Library.h(137):    NodeBase::word Rename(CliThread& cli, const std::string& oldName,
@@ -3329,8 +3328,6 @@ W099 Line contains adjacent spaces
   sn/PotsProxyHandlers.cpp(351):    CauseInfo*    cci;
 W100 Insertion of blank line recommended
   nb/StatisticsGroup.cpp(47): //  --------------member name-----------------
-W101 Deletion of line recommended
-  ct/CxxString.cpp(142): 
 W102 Line length exceeds the standard maximum
   cb/BcSsm.cpp(286):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
   nb/NbIncrement.cpp(3284): "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
@@ -3612,7 +3609,7 @@ W106 Function does not invoke Debug::ft
   ct/Lexer.cpp(2872): size_t Lexer::NextBegin(size_t pos) const
   ct/Lexer.cpp(2987): size_t Lexer::NextPos(size_t pos) const
   ct/Lexer.cpp(3229): size_t Lexer::PrevBegin(size_t pos) const
-  ct/Lexer.cpp(3305): void Lexer::SetDepth(int depth1, int depth2, bool merge)
+  ct/Lexer.cpp(3305): void Lexer::SetDepth(int8_t depth1, int8_t depth2, bool merge)
   ct/LibraryItem.cpp(34): bool IsSortedByName(const LibraryItem* item1, const LibraryItem* item2)
   ct/LibraryItem.cpp(78): bool LibItemSort::operator()
   ct/LibrarySet.cpp(97): LibrarySet* LibrarySet::AffectedBy() const
@@ -4108,11 +4105,11 @@ W119 Argument passed by value is modified
   ct/CxxScope.cpp(5436/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
   ct/CxxScope.cpp(5676/1): void Function::SetOperator(Cxx::Operator oper)
   ct/CxxScoped.cpp(3816/1): void Using::SetScope(CxxScope* scope)
-  ct/CxxString.cpp(217/2): static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
-  ct/CxxString.cpp(239/2): static size_t FindTemplateEnd(const string& name, size_t pos)
-  ct/CxxString.cpp(762/5):    const string& s2, size_t begin, size_t end, char c)
-  ct/CxxString.cpp(798/3): size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
-  ct/CxxString.cpp(812/2): size_t rfind_first_of(const string& str, size_t off, const string& chars)
+  ct/CxxString.cpp(216/2): static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
+  ct/CxxString.cpp(238/2): static size_t FindTemplateEnd(const string& name, size_t pos)
+  ct/CxxString.cpp(761/5):    const string& s2, size_t begin, size_t end, char c)
+  ct/CxxString.cpp(797/3): size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
+  ct/CxxString.cpp(811/2): size_t rfind_first_of(const string& str, size_t off, const string& chars)
   ct/CxxToken.cpp(725/2):    const CxxToken* item, word offset, const string& info) const
   ct/Editor.cpp(1956/1): bool Editor::CodeFollowsImmediately(size_t pos) const
   ct/Editor.cpp(1971/1): bool Editor::CommentFollows(size_t pos) const
@@ -5568,14 +5565,12 @@ ct/CxxStatement.h
 ct/CxxString.cpp
   W082 Adjacent arguments have the same type
     40: static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth);
-* W101 Deletion of line recommended
-    142: 
   W119 Argument passed by value is modified
-    217/2: static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
-    239/2: static size_t FindTemplateEnd(const string& name, size_t pos)
-    762/5:    const string& s2, size_t begin, size_t end, char c)
-    798/3: size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
-    812/2: size_t rfind_first_of(const string& str, size_t off, const string& chars)
+    216/2: static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
+    238/2: static size_t FindTemplateEnd(const string& name, size_t pos)
+    761/5:    const string& s2, size_t begin, size_t end, char c)
+    797/3: size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
+    811/2: size_t rfind_first_of(const string& str, size_t off, const string& chars)
 ct/CxxString.h
 * W032 Unused function
     46:    size_t rfind_first_of
@@ -5991,7 +5986,7 @@ ct/Lexer.cpp
     2872: size_t Lexer::NextBegin(size_t pos) const
     2987: size_t Lexer::NextPos(size_t pos) const
     3229: size_t Lexer::PrevBegin(size_t pos) const
-    3305: void Lexer::SetDepth(int depth1, int depth2, bool merge)
+    3305: void Lexer::SetDepth(int8_t depth1, int8_t depth2, bool merge)
   W119 Argument passed by value is modified
     1285/1: size_t Lexer::CurrBegin(size_t pos) const
     1344/1: size_t Lexer::Find(size_t pos, const string& str) const
@@ -6050,7 +6045,7 @@ ct/Lexer.h
   W082 Adjacent arguments have the same type
     257:    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
     583:    LineType CalcLineType(size_t n, bool& cont, bool& c_comment);
-    661:    void SetDepth(int depth1, int depth2, bool merge = true);
+    661:    void SetDepth(int8_t depth1, int8_t depth2, bool merge = true);
 ct/Library.cpp
   W007 Cast down the inheritance hierarchy
     668:             auto f = static_cast<const Function*>(elem);

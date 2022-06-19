@@ -1406,9 +1406,14 @@ word Editor::ChangeAuto(const CodeWarning& log)
    if(apos == string::npos) return NotFound("auto");
    Insert(apos + strlen(AUTO_STR), "&");
 
-   if((log.warning_ == AutoCopiesConstReference) && (cpos > apos))
+   if(cpos > apos)
    {
-      Insert(apos, "const ");
+      switch(log.warning_)
+      {
+      case AutoCopiesConstReference:
+      case AutoCopiesConstObject:
+         Insert(apos, "const ");
+      }
    }
 
    return Changed(apos);
@@ -3480,6 +3485,9 @@ word Editor::FixLog(const CodeWarning& log)
 {
    Debug::ft("Editor.FixLog");
 
+   //  Only a status_ of NotFixed should come through here.  The others
+   //  should have been intercepted by the switch statement in Fix.
+   //
    switch(log.status_)
    {
    case NotSupported:

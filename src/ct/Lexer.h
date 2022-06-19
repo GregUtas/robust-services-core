@@ -50,7 +50,7 @@ struct LineInfo
    const size_t begin;  // offset where line starts; it ends at a CRLF
    int8_t depth;        // lexical level for indentation
    bool ctorBraceInit;  // set for brace initialization of member
-   bool continuation;   // incremented if code continues from the previous line
+   bool continuation;   // set if code continues from the previous line
    bool mergeable;      // set if code can merge with another line
    bool c_comment;      // set if the line lies within a C-style comment
    LineType type;       // line's type

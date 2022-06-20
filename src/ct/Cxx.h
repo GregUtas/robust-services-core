@@ -606,7 +606,7 @@ private:
 //------------------------------------------------------------------------------
 //
 //  Information about a symbol's accessibility within a specific scope.
-//  CMDTS is an input; all other fields are returned as results.
+//  defts_ is an input; all other fields are returned as results.
 //
 struct SymbolView
 {

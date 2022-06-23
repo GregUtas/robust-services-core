@@ -738,7 +738,7 @@ public:
       { return const_cast<QualName*>(this); }
 
    //  Overridden to return the parser's enclosing scope when initializing data
-   //  at file scope.  This prevents the RedundantScope from being logged on a
+   //  at file scope.  This prevents logging the RedundantScope warning on a
    //  qualified name.  The problem is that Context::Scope() is the data item
    //  itself when compiling its initialization statement, but the scope should
    //  be the namespace in which the initialzation appears until compilation of
@@ -1045,7 +1045,7 @@ public:
    virtual Function* GetFuncSpec() const { return nullptr; }
 
    //  Returns the level of compatibility when assigning THAT to this type.
-   //  Generates a log if the types are Incompatible.
+   //  Generates an error log if the types are Incompatible.
    //
    TypeMatch MustMatchWith(const StackArg& that) const;
 

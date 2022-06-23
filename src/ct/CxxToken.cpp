@@ -1910,6 +1910,21 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
 
 //------------------------------------------------------------------------------
 
+fn_name Operation_CheckIfLvalue = "Operation.CheckIfLvalue";
+
+void Operation::CheckIfLvalue(const StackArg& arg) const
+{
+   Debug::ft(Operation_CheckIfLvalue);
+
+   if(!arg.IsLvalue())
+   {
+      auto expl = arg.Trace() + " was not an lvalue";
+      Context::SwLog(Operation_CheckIfLvalue, expl, op_);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Operation::DisplayArg(ostream& stream, size_t index) const
 {
    if(index < args_.size())
@@ -2059,13 +2074,7 @@ void Operation::Execute() const
       //  Push ARG1 again.
       //
       if(IsOverloaded(arg1)) return;
-
-      if(!arg1.IsLvalue())
-      {
-         auto expl = arg1.Trace() + " was not an lvalue";
-         Context::SwLog(Operation_Execute, expl, op_);
-      }
-
+      CheckIfLvalue(arg1);
       Record(op_, arg1, &arg2);
       Context::PushArg(arg1.EraseName());
       return;
@@ -2134,13 +2143,7 @@ void Operation::Execute() const
       //  Push ARG1 after incrementing its indirection level.
       //
       if(IsOverloaded(arg1)) return;
-
-      if(!arg1.IsLvalue())
-      {
-         auto expl = arg1.Trace() + " was not an lvalue";
-         Context::SwLog(Operation_Execute, expl, op_);
-      }
-
+      CheckIfLvalue(arg1);
       Record(op_, arg1, &arg2);
       arg1.IncrPtrs();
       Context::PushArg(arg1.EraseName());
@@ -2254,13 +2257,7 @@ void Operation::Execute() const
    case Cxx::BITWISE_OR_ASSIGN:
       CheckBitwiseOp(arg1, arg2);
       if(IsOverloaded(arg1, arg2)) return;
-
-      if(!arg1.IsLvalue())
-      {
-         auto expl = arg1.Trace() + " was not an lvalue";
-         Context::SwLog(Operation_Execute, expl, op_);
-      }
-
+      CheckIfLvalue(arg1);
       Record(op_, arg1, &arg2);
       PushResult(arg1, arg2);
       return;

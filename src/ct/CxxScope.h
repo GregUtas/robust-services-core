@@ -1373,7 +1373,7 @@ public:
    //
    void CheckIfHiding() const override;
 
-   //  Overridden to generate a log if the function is unused.
+   //  Overridden to log a warning if the function is unused.
    //
    bool CheckIfUnused(Warning warning) const override;
 
@@ -2011,7 +2011,7 @@ private:
    std::string TypeTagsString(const TypeTags& tags) const override;
 
    //  The following are forwarded to the function's return type but also
-   //  generate a log because they may not be properly supported.
+   //  generate an error log because they may not be properly supported.
    //
    void FindReferent() override;
    void GetNames(stringVector& names) const override;
@@ -2025,12 +2025,12 @@ private:
       CodeFile* file, size_t& index) const override;
 
    //  The following are forwarded to the function's return type but also
-   //  generate a log because they should not be invoked.
+   //  generate an error log because they should not be invoked.
    //
    void EnterArrays() const override;
    void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
-   //  The following is not supported.  It generates a log and returns
+   //  The following is not supported.  It generates an error log and returns
    //  nullptr.
    //
    TypeSpec* Clone() const override;

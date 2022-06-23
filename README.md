@@ -35,9 +35,9 @@ The development of RSC has been somewhat sidetracked by the development of C++
 static analysis tools. These tools detect violations of various C++ design
 guidelines, such as those found in Scott Meyers' _Effective C++_. They also
 analyze `#include` directives to determine which ones to add or delete. Their
-editor then allows you to easily and interactively fix about two-thirds of the
-140 or so warning types. Even if you're not developing applications with RSC,
-you might find these tools useful. An overview of them is provided
+editor then allows you to easily and interactively fix (as of release v0.30.0)
+100 of the 146 warning types. Even if you're not developing applications with
+RSC, you might find these tools useful. An overview of them is provided
 [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
 ## POTS application

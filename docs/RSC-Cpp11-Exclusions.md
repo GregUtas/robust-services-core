@@ -92,8 +92,8 @@ RSC's use of the preprocessor is restricted to
 - `#include` directives
 - `#ifndef` for `#include` guards
 - `#ifdef` to include software that supports the target platform
-- `#define` for a pseudo-keyword that maps to an empty string (`NO_OP` is
-  the only current example)
+- `#define` for a pseudo-keyword that maps to an empty string (`NO_OP` and
+  `NO_FT` are the only current examples)
 - `#define` for a few integral constants in the _subs_ directory
 
   A constant of this type is effectively treated as if it had been declared

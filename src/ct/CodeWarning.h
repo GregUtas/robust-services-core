@@ -169,17 +169,17 @@ private:
    static const CodeWarning* FindWarning(const CodeFile* file,
       Warning warning, const CxxToken* item, NodeBase::word offset);
 
-   //  Returns true if the log should be suppressed.  Invoked when
-   //  the log is generated.
+   //  Returns true if the warning should be suppressed.  Invoked when
+   //  the warning is detected.
    //
    bool Suppress() const;
 
-   //  Returns true if the log should be revoked.  Invoked before
-   //  the log is included by GenerateReport.
+   //  Returns true if the warning should be revoked.  Invoked just
+   //  before the warning is included by GenerateReport.
    //
    bool Revoke() const;
 
-   //  Returns true if the log has code to display.
+   //  Returns true if the warning has code to display.
    //
    bool HasCodeToDisplay() const;
 
@@ -187,25 +187,25 @@ private:
    //
    bool HasInfoToDisplay() const;
 
-   //  Returns true if the log is informational and cannot be fixed.
+   //  Returns true if the warning is informational and cannot be fixed.
    //
    bool IsInformational() const;
 
-   //  Returns true if the log was fixed or the code associated with it
-   //  was deleted.
+   //  Returns true if the warning was fixed or the code associated with
+   //  it was deleted.
    //
    bool WasResolved() const;
 
-   //  Returns the logs that need to be fixed to resolve this log.
-   //  The log itself is included in the result unless it does not
+   //  Returns the warnings that need to be fixed to resolve this one.
+   //  The warning itself is included in the result unless it does not
    //  need to be fixed.
    //
    std::vector<const CodeWarning*> LogsToFix(std::string& expl) const;
 
-   //  Returns the other log associated with a warning that involves
+   //  Returns the other warning associated with a warning that involves
    //  fixing both a declaration and a definition.
    //
-   const CodeWarning* FindMateLog(std::string& expl) const;
+   const CodeWarning* FindMate(std::string& expl) const;
 
    //  Returns the name of the function that this warning wants added to
    //  a class.  Returns an empty string if LOG does not suggest this.

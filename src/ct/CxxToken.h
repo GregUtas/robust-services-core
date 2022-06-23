@@ -895,13 +895,17 @@ private:
    //
    void PushResult(StackArg& lhs, StackArg& rhs) const;
 
-   //  Generates any log that applies to a cast operation from inArg to outArg.
+   //  Logs any warning that applies to a cast operation from inArg to outArg.
    //
    void CheckCast(const StackArg& inArg, const StackArg& outArg) const;
 
-   //  Generates a log when a bitwise operator is used on a boolean.
+   //  Logs a warning when a bitwise operator is used on a boolean.
    //
    void CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const;
+
+   //  Generates an error log if ARG is not an lvalue.
+   //
+   void CheckIfLvalue(const StackArg& arg) const;
 
    //  Displays operator new or operator new[].
    //

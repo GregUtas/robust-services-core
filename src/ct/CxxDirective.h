@@ -54,7 +54,8 @@ public:
    //
    virtual bool IsIncludeGuard() const { return false; }
 
-   //  Overridden to prevent a log when a directive appears inside a function.
+   //  Overridden to prevent an error log when a directive appears inside
+   //  a function.
    //
    void EnterBlock() override { }
 
@@ -276,7 +277,7 @@ public:
 
    //  Sets RHS as the macro's definition when the macro name appears in a
    //  #define after its name was already used.  If invoked on this class,
-   //  which is only used for built-in macros, a log is output.
+   //  which is only used for built-in macros, an error log is generated.
    //
    virtual void SetExpr(ExprPtr& rhs);
 
@@ -919,7 +920,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to generate a log.
+   //  Overridden to generate an error log.
    //
    bool EnterScope() override;
 };

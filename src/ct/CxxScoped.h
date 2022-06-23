@@ -124,9 +124,8 @@ public:
    //
    virtual bool IsUnused() const { return false; }
 
-   //  Logs an unused item.  The default version generates a log that
-   //  contains WARNING if IsUnused returns true.  Returns true if a
-   //  log was generated.
+   //  Logs an unused item.  The default version logs WARNING if IsUnused
+   //  returns true.  Returns true if a warning was generated.
    //
    virtual bool CheckIfUnused(Warning warning) const;
 
@@ -227,7 +226,7 @@ protected:
    //
    CxxScoped();
 
-   //  Logs an item whose name hides a name defined in a base class.
+   //  Logs a warning when an item's name hides a name in a base class.
    //
    virtual void CheckIfHiding() const;
 
@@ -251,7 +250,7 @@ protected:
    //
    bool SkipAccessControlCheck() const;
 
-   //  Logs an item whose access control could be more restrictive.
+   //  Logs a warning if an item's access control could be more restrictive.
    //
    virtual void CheckAccessControl() const;
 
@@ -749,7 +748,7 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to generate a log if the enumerator is unused but its enum
+   //  Overridden to log a warning if the enumerator is unused but its enum
    //  *is* used.
    //
    bool CheckIfUnused(Warning warning) const override;

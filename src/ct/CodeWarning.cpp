@@ -108,9 +108,9 @@ CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
 
 //------------------------------------------------------------------------------
 
-const CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
+const CodeWarning* CodeWarning::FindMate(std::string& expl) const
 {
-   Debug::ft("CodeWarning.FindMateLog");
+   Debug::ft("CodeWarning.FindMate");
 
    //  Look for the mate item associated with this log.  Find its file and
    //  editor, and ask its editor find the log that corresponds to this one.
@@ -930,7 +930,7 @@ std::vector<const CodeWarning*> CodeWarning::LogsToFix(string& expl) const
    case ShouldNotBeNoexcept:
    case FunctionCouldBeDefaulted:
       logs.push_back(this);
-      log = FindMateLog(expl);
+      log = FindMate(expl);
       if(log != nullptr) logs.push_back(log);
       break;
 

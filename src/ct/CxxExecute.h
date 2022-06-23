@@ -319,7 +319,7 @@ public:
    void AssignedTo(const StackArg& that, AssignmentType type) const;
 
    //  Invokes SetNonConst on this->item (if INDEX is 0) or this->via_
-   //  (if INDEX is 1).  Generates a log if item/via_ was const.
+   //  (if INDEX is 1).  Generates an error log if item/via_ was const.
    //
    void SetNonConst(size_t index) const;
 
@@ -926,14 +926,14 @@ public:
       (std::ostream& stream, const std::string& prefix);
 
    //  Logs WARNING at the current compilation position.  ITEM and OFFSET
-   //  are included as additional information for the log.
+   //  are included as additional information for the warning.
    //
    static void Log(Warning warning,
       const CxxNamed* item = nullptr, NodeBase::word offset = 0);
 
-   //  The following invokes its Debug counterpart but also inserts
-   //  the log in the compilation trace to make it easier to see where
-   //  the error occurred.
+   //  The following invokes its Debug counterpart but also inserts the
+   //  log in the compilation trace to make it easier to see where the
+   //  error occurred.
    //
    static void SwLog(NodeBase::fn_name_arg func,
       const std::string& expl, NodeBase::word errval, bool stack = false);

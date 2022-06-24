@@ -19,7 +19,7 @@ to cause traps in various ways. Getting the safety net to work could be
 challenging when porting RSC to another platform, which is one reason
 why these tests are provided. The entire set can be run with the command
 `>read test.trap.all.` Each test generates the following (see the
-_recover.*_ files in the  [_output_](output) directory):
+_recover.*_ files in the  [_output_](/output) directory):
 
   * A function trace (_*.trace.txt_).
   * A function profile (_*.funcs.txt_) that lists each function that was

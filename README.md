@@ -180,28 +180,13 @@ also discusses its tests, which exercise a considerable portion of the RSC
 software. The tests described below are rather tactical by comparison.
 
 Twenty-eight scripts test the _Safety Net_ capability of the `Thread` class.
-Most of them cause a POSIX signal to be raised. POSIX signals are handled by
-throwing a C++ exception that is caught in `Thread.Start`, after which an
-appropriate recovery action is taken. Getting the safety net to work could be
-challenging when porting RSC to another platform, which is why these tests are
-provided. All of the safety net tests can be run with the command
-`>read test.trap.all.`  During each test, the following are generated (see
-the _recover.*_ files in the [_output_](output) directory):
-
-  * A function trace (_*.trace.txt_), as described above.
-  * A function profile (_*.funcs.txt_) that lists each function that was
-invoked, along with how many times it was invoked and the total net time spent
-in it. This information is not that useful here, but it is valuable when you
-want to pinpoint which functions to focus on in order to improve real-time
-performance.
-  * A scheduler trace (_*.sched.txt_). The first part of this trace lists all
-threads in the executable, with statistics for each. The second part is a
-record of all the context switches that occurred during the test.
-  * A console file of the test (_*.cli.txt_), as described above.
+A dedicated [page](docs/RSC-Trap-Recovery.md) describes these tests and the
+current status of each one.
  
 Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
 commands). It provides sets of commands for testing functions in the
-[`NbHeap`](src/nb/NbHeap.h), [`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),
+[`BuddyHeap`](src/nb/BuddyHeap.h),
+[`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),
 [`Q1Way`](src/nb/Q1Way.h), [`Q2Way`](src/nb/Q2Way.h), and
 [`Registry`](src/nb/Registry.h) interfaces.
 

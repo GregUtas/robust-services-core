@@ -14,9 +14,24 @@ for a signal handler to try to do almost anything useful in C++, so how well
 this strategy works depends on the compiler that was used and the platform
 for which it targeted the executable.
 
-There are 28 tests that exercise RSC's Safety Net by telling
-[`RecoveryThread`](/src/nt/NtIncrement.cpp) to cause traps in various ways.
+RSC has 28 tests that tell [`RecoveryThread`](/src/nt/NtIncrement.cpp)
+to cause traps in various ways. Getting the safety net to work could be
+challenging when porting RSC to another platform, which is one reason
+why these tests are provided. The entire set can be run with the command
+`>read test.trap.all.` Each test generates the following (see the
+_recover.*_ files in the  [_output_](output) directory):
 
+  * A function trace (_*.trace.txt_).
+  * A function profile (_*.funcs.txt_) that lists each function that was
+invoked, along with how many times it was invoked and the total net time
+spent in it. This information is not that useful here, but it is valuable
+when you want to pinpoint which functions to focus on in order to improve
+real-time performance.
+  * A scheduler trace (_*.sched.txt_). The first part of this trace lists
+allthreads in the executable, with statistics for each. The second part is
+a record of all the context switches that occurred during the test.
+  * A console file of the test (_*.cli.txt_).
+ 
 ## Current Status
 
 RSC is built using
@@ -25,7 +40,7 @@ RSC is built using
 - the clang compiler, also targeted to Windows; and
 - the gcc compiler, targeted to Linux.
 
-The following table provides the current status of each Safety Net test for
+The following table provides the current status of each safety net test for
 the above combinations.
 
 Description | Test Name[1] | Script[2] | MSVC/Windows | clang/Windows | gcc/Linux

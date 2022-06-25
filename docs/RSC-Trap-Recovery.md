@@ -1,7 +1,7 @@
 # Robust Services Core: Trap Recovery
 
 In RSC, the term _trap_ refers to something, usually a POSIX signal, that
-results in a C++ exception. A common example is SIGSEGV, the signal that a
+results in a C++ exception. A common example is `SIGSEGV`, the signal that a
 thread receives when it performs an illegal memory access, perhaps because
 it used a bad pointer.
 
@@ -28,7 +28,7 @@ spent in it. This information is not that useful here, but it is valuable
 when you want to pinpoint which functions to focus on in order to improve
 real-time performance.
   * A scheduler trace (_*.sched.txt_). The first part of this trace lists
-allthreads in the executable, with statistics for each. The second part is
+all threads in the executable, with statistics for each. The second part is
 a record of all the context switches that occurred during the test.
   * A console file of the test (_*.cli.txt_).
  

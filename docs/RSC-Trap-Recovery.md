@@ -80,6 +80,6 @@ raise `SIGBUS` | SIGBUS | trap.28 | n/a | n/a | pass
   1. causes infinite loop that divides by zero
   1. causes stack overflow by rethrowing exceptions
   1. causes stack overflow by rethrowing exceptions
-  1. not killed; WSL does not appear to forward ctrl-C to Linux console
+  1. not killed; VS2022 does not appear to forward ctrl-C to Linux Console Window
   1. causes infinite loop that rethrows exceptions
   1. causes stack overflow by rethrowing exceptions

@@ -80,8 +80,7 @@ std::cv_status Gate::WaitFor(const msecs_t& timeout)
          //  told to proceed.  Using WaitFor allows the thread to be
          //  woken *before* the timeout expires.  This capability is
          //  used, for example, to tell threads to exit during restarts
-         //  and to notify watchdogs that necessary work is still being
-         //  performed.
+         //  and to send heartbeats to watchdogs.
          //
          result = gate_.wait_for(lock, timeout);
          break;

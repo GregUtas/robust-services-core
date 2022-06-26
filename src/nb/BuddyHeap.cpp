@@ -849,7 +849,7 @@ int BuddyHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft("BuddyHeap.SetPermissions");
 
-   if(GetAttrs() == attrs) return 0;
+   if(GetPermissions() == attrs) return 0;
    auto err = SysMemory::Protect(heap_, size_, attrs);
    if(err == 0) return SetAttrs(attrs);
    Restart::Initiate(Restart::LevelToClear(Type()), HeapProtectionFailed, err);

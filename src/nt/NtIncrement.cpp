@@ -2996,7 +2996,20 @@ word CountCommand::ProcessCommand(CliThread& cli) const
 
 //==============================================================================
 //
-//  Daemon and thread for testing the safety net.
+//  Protected data for testing the mapping of SIGSEGV to SIGWRITE.
+//
+class ReadOnlyData : public Protected
+{
+public:
+   ReadOnlyData() : data_(0) { }
+   void SetData(int value) { data_ = value; }
+private:
+   int data_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Daemon for testing the safety net.
 //
 class RecoveryDaemon : public Daemon
 {
@@ -3009,7 +3022,9 @@ class RecoveryDaemon : public Daemon
 };
 
 //------------------------------------------------------------------------------
-
+//
+//  Thread for testing the safety net.
+//
 class RecoveryThread : public Thread
 {
    friend class Singleton<RecoveryThread>;
@@ -3033,7 +3048,8 @@ public:
       RaiseSignal,
       Return,
       Terminate,
-      Trap
+      Trap,
+      Write
    };
 
    void SetTest(Test test) { test_ = test; }
@@ -3052,6 +3068,7 @@ private:
    static void LoopForever();
    static void RecurseForever(size_t depth);
    static void UseBadPointer();
+   void WriteToReadOnly();
    void DoRaise() const;
    void DoTrap();
    c_string AbbrName() const override;
@@ -3061,6 +3078,7 @@ private:
 
    Test test_;
    signal_t signal_;
+   ReadOnlyData* prot_;
 };
 
 static Mutex RecoveryMutex_("RecoveryTestMutex");
@@ -3099,7 +3117,8 @@ AlarmStatus RecoveryDaemon::GetAlarmLevel() const
 RecoveryThread::RecoveryThread() :
    Thread(LoadTestFaction, Singleton<RecoveryDaemon>::Instance()),
    test_(Sleep),
-   signal_(0)
+   signal_(0),
+   prot_(nullptr)
 {
    Debug::ft("RecoveryThread.ctor");
 
@@ -3131,6 +3150,13 @@ RecoveryThread::RecoveryThread() :
 RecoveryThread::~RecoveryThread()
 {
    Debug::ftnt("RecoveryThread.dtor");
+
+   if(prot_ == nullptr)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      delete prot_;
+      prot_ = nullptr;
+   }
 
    if(Debug::SwFlagOn(ThreadDtorTrapFlag))
    {
@@ -3315,6 +3341,9 @@ void RecoveryThread::Enter()
       case Trap:
          DoTrap();
          break;
+      case Write:
+         WriteToReadOnly();
+         break;
       default:
          Debug::SwLog(RecoveryThread_Enter, "unexpected test", test);
       }
@@ -3372,6 +3401,21 @@ void RecoveryThread::UseBadPointer()
    Debug::ft("RecoveryThread.UseBadPointer");
 
    CauseTrap();
+}
+
+//------------------------------------------------------------------------------
+
+void RecoveryThread::WriteToReadOnly()
+{
+   Debug::ft("RecoveryThread.WriteToReadOnly");
+
+   if(prot_ == nullptr)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      prot_ = new ReadOnlyData;
+   }
+
+   prot_->SetData(1);
 }
 
 //------------------------------------------------------------------------------
@@ -3515,6 +3559,11 @@ TrapText::TrapText() : CliText(TrapTextExpl, TrapTextStr)
 
 //------------------------------------------------------------------------------
 
+fixed_string WriteTextStr = "write";
+fixed_string WriteTextExpl = "write to read-only data";
+
+//------------------------------------------------------------------------------
+
 fixed_string RecoverWhatExpl = "what to recover from...";
 
 RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
@@ -3549,6 +3598,8 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
    BindText(*new DeleteText, RecoveryThread::Delete);
    BindText(*new CliText
       (DtorTrapTextExpl, DtorTrapTextStr), RecoveryThread::DtorTrap);
+   BindText(*new CliText
+      (WriteTextExpl, WriteTextStr), RecoveryThread::Write);
 }
 
 //------------------------------------------------------------------------------
@@ -3614,9 +3665,10 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryThread::OverflowStack:
    case RecoveryThread::Return:
    case RecoveryThread::Terminate:
+   case RecoveryThread::Write:
       if(!cli.EndOfInput()) return -1;
       thr->SetTest(test);
-      thr->Interrupt();
+      thr->Interrupt(Thread::WorkAvailable);
       break;
 
    case RecoveryThread::Delete:
@@ -3625,7 +3677,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       if(flag)
       {
          thr->SetTest(test);
-         thr->Interrupt();
+         thr->Interrupt(Thread::WorkAvailable);
       }
       else
       {
@@ -3640,7 +3692,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       if(signal == SIGNIL) return cli.Report(-3, UnknownSignalExpl);
       thr->SetTest(test);
       thr->SetTestSignal(signal);
-      thr->Interrupt();
+      thr->Interrupt(Thread::WorkAvailable);
       break;
 
    case RecoveryThread::Trap:
@@ -3653,7 +3705,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       {
          thr->SetTest(test);
          thr->SetTestSignal(ps->Value());
-         thr->Interrupt();
+         thr->Interrupt(Thread::WorkAvailable);
       }
       else
       {

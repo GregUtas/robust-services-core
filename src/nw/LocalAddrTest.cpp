@@ -260,7 +260,7 @@ void SendLocalThread::Enter()
 
    if(retest_)
    {
-      Singleton<CliThread>::Instance()->Interrupt();
+      Singleton<CliThread>::Instance()->Interrupt(ResumeExecution);
    }
 }
 
@@ -278,7 +278,7 @@ void SendLocalThread::Retest()
    Debug::ft("SendLocalThread.Retest");
 
    retest_ = true;
-   Interrupt();
+   Interrupt(WorkAvailable);
 }
 
 //==============================================================================
@@ -311,7 +311,7 @@ void LocalAddrRetest::EventHasOccurred(Event event)
    if(thread == nullptr)
       Singleton<SendLocalThread>::Instance();
    else
-      thread->Interrupt();
+      thread->Interrupt(Thread::ResumeExecution);
 }
 
 //------------------------------------------------------------------------------

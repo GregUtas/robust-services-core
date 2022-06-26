@@ -84,7 +84,7 @@ DelayRc SysThread::Delay(const msecs_t& timeout)
 {
    Debug::ft("SysThread.Delay");
 
-   return Suspend(alarm_, timeout);
+   return Suspend(clock_, timeout);
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ bool SysThread::Interrupt()
 {
    Debug::ft("SysThread.Interrupt");
 
-   alarm_.Notify();
+   clock_.Notify();
    return true;
 }
 

@@ -157,8 +157,8 @@ void NtTestData::Query(bool verbose, string& expl) const
 
    std::ostringstream stream;
    stream << "Current test session:" << CRLF;
-   stream << spaces(2) << "Passed: " << passCount_ << CRLF;
-   stream << spaces(2) << "Failed: " << failCount_ << CRLF;
+   stream << spaces(2) << "failed: " << failCount_;
+   stream << spaces(2) << "passed: " << passCount_ << CRLF;
    stream << "Test database:" << CRLF;
 
    string info;

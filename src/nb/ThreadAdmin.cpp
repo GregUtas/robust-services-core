@@ -198,7 +198,7 @@ void BreakEnabledCfg::SetCurr()
    //
    if(curr && !next)
    {
-      Singleton<InitThread>::Instance()->Interrupt();
+      Singleton<InitThread>::Instance()->Interrupt(Thread::ResumeExecution);
    }
 }
 

@@ -95,7 +95,7 @@ public:
 
    //  Returns the heap's current memory protection.
    //
-   MemoryProtection GetAttrs() const { return attrs_; }
+   MemoryProtection GetPermissions() const { return attrs_; }
 
    //  Returns the number of bytes currently allocated or requested.
    //  Ideally, this should be the number allocated rather than the

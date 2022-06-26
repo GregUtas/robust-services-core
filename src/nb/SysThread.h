@@ -123,9 +123,10 @@ private:
    typedef void (*sighandler_t)(signal_t sig);
 
    //  Platform-specific.  Registers HANDLER against SIG.  Invoked when
-   //  the thread is entered or reentered after trap recovery.
+   //  the thread is entered or reentered after trap recovery.  Returns
+   //  false after generating a log if HANDLER could not be registered.
    //
-   static void RegisterForSignal(signal_t sig, sighandler_t handler);
+   static bool RegisterForSignal(signal_t sig, sighandler_t handler);
 
    //  Platform-specific.  Invoked when the thread is entered or reentered
    //  after trap recovery.  Returns a non-zero value if the thread should
@@ -209,7 +210,7 @@ private:
 
    //  Used to implement Delay and Interrupt.
    //
-   Gate alarm_;
+   Gate clock_;
 
    //  Used to implement Wait and Proceed.
    //

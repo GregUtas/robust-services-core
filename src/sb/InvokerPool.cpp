@@ -473,7 +473,7 @@ void InvokerPool::KickThread()
 
    for(auto i = invokers_.First(); i != nullptr; invokers_.Next(i))
    {
-      if(i->Interrupt()) return;
+      if(i->Interrupt(Thread::WorkAvailable)) return;
    }
 
    stats_->lockouts_->Incr();

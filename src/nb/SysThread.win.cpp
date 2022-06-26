@@ -227,9 +227,10 @@ void SysThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
+bool SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
 {
    signal(sig, handler);
+   return true;
 }
 
 //------------------------------------------------------------------------------

@@ -361,7 +361,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       //  Wake the audit without otherwise changing its interval.
       //
       if(!cli.EndOfInput()) return -1;
-      thr->Interrupt();
+      thr->Interrupt(Thread::WorkAvailable);
       break;
    default:
       Debug::SwLog(AuditCommand_ProcessCommand, UnexpectedIndex, index);
@@ -874,7 +874,7 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
    if(!cli.EndOfInput()) return -1;
 
    auto rc = ThisThread::Pause(msecs_t(secs * ONE_SEC));
-   if(rc != DelayCompleted) return cli.Report(-6, DelayFailure);
+   if(rc != DelayCompleted) return cli.Report(-6, DelayIncomplete);
    return cli.Report(0, SuccessExpl);
 }
 
@@ -3324,7 +3324,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
          *cli.obuf << SPACE << setw(10) << heap->AllocCount();
          *cli.obuf << SPACE << setw(10) << heap->FreeCount();
          *cli.obuf << SPACE << setw(11) << heap->Type();
-         *cli.obuf << SPACE << setw(4) << heap->GetAttrs();
+         *cli.obuf << SPACE << setw(4) << heap->GetPermissions();
          *cli.obuf << SPACE << setw(6) << heap->ChangeCount() << CRLF;
       }
    }

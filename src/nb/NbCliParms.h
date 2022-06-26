@@ -49,7 +49,7 @@ extern fixed_string CommandAbortedExpl;
 extern fixed_string ConsoleAutomaticExpl;
 extern fixed_string ContinuePrompt;
 extern fixed_string CreateStreamFailure;
-extern fixed_string DelayFailure;
+extern fixed_string DelayIncomplete;
 extern fixed_string EmptySet;
 extern fixed_string EndOfFreeQueue;
 extern fixed_string NoAlarmExpl;

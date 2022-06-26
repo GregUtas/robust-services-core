@@ -470,7 +470,7 @@ bool LogBuffer::Push(const std::string& log)
    guard.Release();
 
    auto thread = Singleton<LogThread>::Extant();
-   if(thread != nullptr) thread->Interrupt();
+   if(thread != nullptr) thread->Interrupt(Thread::WorkAvailable);
    return true;
 }
 

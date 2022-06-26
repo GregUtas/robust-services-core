@@ -298,7 +298,7 @@ void RootThread::Enter()
 
             if(initThr != nullptr)
             {
-               initThr->Interrupt(InitThread::RestartMask);
+               initThr->Interrupt(InitThread::Restart);
             }
 
             state_ = Initializing;

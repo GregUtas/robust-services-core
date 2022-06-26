@@ -179,7 +179,7 @@ document that describes the [POTS application](docs/RSC-POTS-Application.md)
 also discusses its tests, which exercise a considerable portion of the RSC
 software. The tests described below are rather tactical by comparison.
 
-Twenty-eight scripts test the _Safety Net_ capability of the `Thread` class.
+Twenty-nine scripts test the _Safety Net_ capability of the `Thread` class.
 A dedicated [page](docs/RSC-Trap-Recovery.md) describes these tests and the
 current status of each one.
  

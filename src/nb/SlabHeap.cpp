@@ -880,7 +880,7 @@ int SlabHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft("SlabHeap.SetPermissions");
 
-   if(GetAttrs() == attrs) return 0;
+   if(GetPermissions() == attrs) return 0;
    auto err = priv_->SetPermissions(attrs);
    return (err == 0 ? SetAttrs(attrs) : err);
 }

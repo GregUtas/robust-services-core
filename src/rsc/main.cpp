@@ -213,6 +213,4 @@ main_t main(int argc, char* argv[])
    {
       return LogTrap(nullptr, nullptr, 0, nullptr);
    }
-
-   return 0;
 }

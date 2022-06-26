@@ -49,10 +49,6 @@ namespace NodeBase
 {
 static uint64_t RunningTicks_ = 0;
 
-const Flags InitThread::RestartMask = Flags(1 << Restart);
-const Flags InitThread::RecreateMask = Flags(1 << Recreate);
-const Flags InitThread::ScheduleMask = Flags(1 << Schedule);
-
 //------------------------------------------------------------------------------
 
 InitThread::InitThread() : Thread(SystemFaction),
@@ -139,7 +135,7 @@ void InitThread::CauseRestart()
 
    auto reg = Singleton<ModuleRegistry>::Extant();
    reg->SetLevel(RestartWarm);
-   Singleton<RootThread>::Extant()->Interrupt(RestartMask);
+   Singleton<RootThread>::Extant()->Interrupt(Restart);
    state_ = Initializing;
    Pause(msecs_t(100));
 }
@@ -288,7 +284,7 @@ void InitThread::HandleInterrupt()
    //  In each of these cases, interrupt RootThread so that its watchdog
    //  timer won't expire.
    //
-   Singleton<RootThread>::Extant()->Interrupt();
+   Singleton<RootThread>::Extant()->Interrupt(Heartbeat);
 
    if(Test(Recreate))
    {
@@ -309,7 +305,7 @@ void InitThread::HandleTimeout()
 
    //  Interrupt RootThread so that its watchdog timer won't expire.
    //
-   Singleton<RootThread>::Extant()->Interrupt();
+   Singleton<RootThread>::Extant()->Interrupt(Heartbeat);
    timeout_ = false;
 
    //  If there is no locked thread, schedule one.  If the locked thread
@@ -352,7 +348,7 @@ void InitThread::InitializeSystem()
    //
    Singleton<ModuleRegistry>::Extant()->Restart();
    state_ = Running;
-   Singleton<RootThread>::Extant()->Interrupt();
+   Singleton<RootThread>::Extant()->Interrupt(Heartbeat);
 
    //  Now that the restart is over, disable tracing of RootThread
    //  and this thread, which usually cause unwanted noise in traces.
@@ -376,8 +372,8 @@ void InitThread::InitiateRestart(RestartLevel level)
    //  then wake up our thread.
    //
    Singleton<ModuleRegistry>::Extant()->SetLevel(level);
-   Singleton<RootThread>::Extant()->Interrupt(RestartMask);
-   Interrupt(RestartMask);
+   Singleton<RootThread>::Extant()->Interrupt(Restart);
+   Interrupt(Restart);
 }
 
 //------------------------------------------------------------------------------

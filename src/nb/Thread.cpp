@@ -1534,7 +1534,7 @@ bool Thread::EnqMsg(MsgBuffer& msg)
    {
       auto size = msgq_.Size();
       stats_->maxMsgs_->Update(size);
-      Interrupt();
+      Interrupt(MessageAvailable);
       return true;
    }
 
@@ -1989,7 +1989,7 @@ msecs_t Thread::InitialTime() const
 
 //------------------------------------------------------------------------------
 
-bool Thread::Interrupt(const Flags& mask)
+bool Thread::Interrupt(FlagId reason)
 {
    Debug::ft("Thread.Interrupt");
 
@@ -2005,8 +2005,7 @@ bool Thread::Interrupt(const Flags& mask)
    //    before this function returns, in which case its vector must have
    //    already been updated.
    //
-   auto bits = mask.to_ulong();
-   priv_->vector_.fetch_or(bits);
+   priv_->vector_.fetch_or(1 << reason);
 
    if((priv_->blocked_ == NotBlocked) || (priv_->blocked_ == BlockedOnClock))
    {
@@ -2602,7 +2601,7 @@ void Thread::Raise(signal_t sig)
 
    if(install) SetSignal(sig);
    if(!ps1->Attrs().test(PosixSignal::Delayed)) SetTrap(true);
-   if(ps1->Attrs().test(PosixSignal::Interrupt)) Interrupt();
+   if(ps1->Attrs().test(PosixSignal::Interrupt)) Interrupt(Signalled);
 }
 
 //------------------------------------------------------------------------------
@@ -2624,7 +2623,7 @@ void Thread::Ready()
 
    if(ActiveThread() == nullptr)
    {
-      Singleton<InitThread>::Instance()->Interrupt(InitThread::ScheduleMask);
+      Singleton<InitThread>::Instance()->Interrupt(InitThread::Schedule);
    }
 
    systhrd_->Wait();
@@ -2849,7 +2848,7 @@ void Thread::Schedule()
    //  No unpreemptable thread is running.  Wake InitThread to schedule
    //  the next thread.
    //
-   Singleton<InitThread>::Instance()->Interrupt(InitThread::ScheduleMask);
+   Singleton<InitThread>::Instance()->Interrupt(InitThread::Schedule);
 }
 
 //------------------------------------------------------------------------------
@@ -2947,11 +2946,6 @@ void Thread::SignalHandler(signal_t sig)
    //  Re-register for signals before handling the signal.
    //
    RegisterForSignals();
-
-   //L Support SIGWRITE on Linux.  On Windows, it is distinguished from
-   //  SIGSEGV when mapping the infamous 0xc0000005 structured exception
-   //  in SysThread.win.cpp.  A different solution is needed on Linux.
-   //
    if(HandleSignal(sig, 0)) return;
 
    //  Either trap recovery is off or we received a signal that could not be
@@ -3318,7 +3312,7 @@ void Thread::Startup(RestartLevel level)
 
    auto wakeup = (priv_->action_ == SleepThread);
    priv_->action_ = RunThread;
-   if(wakeup && (priv_->blocked_ == BlockedOnClock)) Interrupt();
+   if(wakeup && (priv_->blocked_ == BlockedOnClock)) Interrupt(RestartIsOver);
 }
 
 //------------------------------------------------------------------------------

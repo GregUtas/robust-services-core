@@ -479,7 +479,7 @@ bool TcpIoThread::InsertSocket(SysSocket* socket)
       auto flags = sock->InFlags();
       flags->set(PollRead);
       sock->Register();
-      if(interrupt) Interrupt();
+      if(interrupt) Interrupt(ResumeExecution);
       return true;
    }
 

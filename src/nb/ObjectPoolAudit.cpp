@@ -114,6 +114,9 @@ void ObjectPoolAudit::SetInterval(const msecs_t& interval)
 
    //  If the thread was sleeping forever and has now been enabled, wake it.
    //
-   if((prev == TIMEOUT_NEVER) && (interval_ != TIMEOUT_NEVER)) Interrupt();
+   if((prev == TIMEOUT_NEVER) && (interval_ != TIMEOUT_NEVER))
+   {
+      Interrupt(Thread::ResumeExecution);
+   }
 }
 }

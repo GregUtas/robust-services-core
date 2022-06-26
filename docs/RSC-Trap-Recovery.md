@@ -14,7 +14,7 @@ for a signal handler to try to do almost anything useful in C++, so how well
 this strategy works depends on the compiler that was used and the platform
 for which it targeted the executable.
 
-RSC has 28 tests that tell [`RecoveryThread`](/src/nt/NtIncrement.cpp)
+RSC has 29 tests that tell [`RecoveryThread`](/src/nt/NtIncrement.cpp)
 to cause traps in various ways. Getting the safety net to work could be
 challenging when porting RSC to another platform, which is one reason
 why these tests are provided. The entire set can be run with the command
@@ -54,7 +54,7 @@ raise `SIGILL` | SIGILL | trap.06 | pass | pass | pass
 raise `SIGTERM` | SIGTERM | trap.07 | pass | pass | pass
 raise `SIGBREAK` | SIGBREAK | trap.08 | pass | pass | n/a
 call `abort` | abort | trap.09 | pass | pass | pass
-call `std::terminate` | terminate | trap.10 | **fail[3]** | pass | **fail[6]**
+call `std::terminate` | terminate | trap.10 | **fail[3]** | pass | **fail[5]**
 call `Thread::Kill` on another thread | KillRemote | trap.11 | pass | pass | pass
 call `Thread::Kill` on running thread | KillLocal | trap.12 | pass | pass | pass
 cause an infinite loop and be killed by `InitThread` | InfiniteLoop | trap.13 | pass | pass | pass
@@ -62,24 +62,25 @@ cause a stack overflow and be killed by `Thread::StackCheck` | StackOverflow | t
 trap, and trap again in `Thread::Recover` | TrapInRecover | trap.15 | pass | pass | pass
 delete `Thread` object of another thread | DeleteRemote | trap.16 | pass | pass | pass
 delete `Thread` object of running thread | DeleteLocal | trap.17 | pass | pass | pass
-cause an infinite loop and be killed by **ctrl-C** | Ctrl-C  | trap.18 | pass | pass | **fail[7]**
+cause an infinite loop and be killed by **ctrl-C** | Ctrl-C  | trap.18 | pass | pass | **pass[7]**
 call `Thread::EnterBlockingOperation` while holding a mutex | MutexBlock | trap.19 | pass | pass | pass
 trap, and constructor traps first time thread is recreated | ThreadCtorTrap | trap.20 | pass | pass | pass
 exit thread while holding a mutex | MutexExit | trap.21 | pass | pass | pass
 trap while holding a mutex | MutexTrap | trap.22 | pass | pass | pass
-trap, and trap once more during trap recovery | Retrap | trap.23 | pass | pass | **fail[8]**
+trap, and trap once more during trap recovery | Retrap | trap.23 | pass | pass | pass
 trap and allow thread to exit | BadPtrExit | trap.24 | pass | pass | pass
 disable [`Daemon`](/src/nb/Daemon.h); kill thread; reenable `Daemon`; thread recreated | DaemonReenable | trap.25 | pass | pass | pass
 exit thread; constructor traps first time `Daemon` recreates thread, so `Daemon` is disabled; reenable `Daemon`; thread recreated | DaemonTrap | trap.26 | pass | pass | pass
-trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail[5]** | **fail[9]**
+trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail[5]** | **fail[5]**
 raise `SIGBUS` | SIGBUS | trap.28 | n/a | n/a | pass
+write to protected memory | SIGWRITE | test.29 | pass | **fail[6]** | pass
 
   1. file name in [_output_](/output) directory
-  1. file name in [_input_](/input) directory
-  1. causes stack overflow by rethrowing exceptions (release build only)
-  1. causes infinite loop that divides by zero
-  1. causes stack overflow by rethrowing exceptions
-  1. causes stack overflow by rethrowing exceptions
-  1. not killed; VS2022 does not appear to forward ctrl-C to Linux Console Window
-  1. causes infinite loop that rethrows exceptions
-  1. causes stack overflow by rethrowing exceptions
+  2. file name in [_input_](/input) directory
+  3. causes stack overflow by rethrowing exceptions (release build only)
+  4. causes infinite loop that divides by zero
+  5. causes stack overflow by rethrowing exceptions
+  6. raises `SIGSEGV`, not the Windows structured exception that includes
+the details needed to map it to `SIGWRITE`
+  7. fails if launched from VS2022, which does not forward ctrl-C to Linux
+Console Window

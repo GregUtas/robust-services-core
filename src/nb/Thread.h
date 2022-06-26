@@ -116,13 +116,23 @@ public:
    //
    virtual bool EnqMsg(MsgBuffer& msg);
 
+   //  Flags for Interrupt.  Thread-specific flags must start with TS_Flag.
+   //
+   static const FlagId Signalled = 0;         // POSIX signal sent to thread
+   static const FlagId RestartIsOver = 1;     // system is back in service
+   static const FlagId MessageAvailable = 2;  // message queued on thread
+   static const FlagId ResumeExecution = 3;   // wake from hibernation
+   static const FlagId WorkAvailable = 4;     // handle work item
+   static const FlagId TS_Flag = 8;           // first thread-specific flag
+
    //  Awakens a thread if it has paused.  If it has not paused, it will be
    //  immediately reawakened if it pauses.  If it is blocked for some other
-   //  reason, it remains blocked.  MASK can be used to set flags that the
+   //  reason, it remains blocked.  REASON is used to set the flags that the
    //  thread can access with Vector() when it resumes execution.  How these
-   //  flags are interpreted is thread-specific.
+   //  flags are interpreted is thread-specific, but they allow a thread to
+   //  determine why it was woken up.
    //
-   bool Interrupt(const Flags& mask = NoFlags);
+   bool Interrupt(FlagId reason);
 
    //  Returns the running thread's interrupt vector.
    //

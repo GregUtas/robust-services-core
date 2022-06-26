@@ -1467,7 +1467,7 @@ void PotsTrafficThread::SetRate(uint32_t rate)
       milCallsPerTick_ = CallsPerTick1000 % 1000;
       maxCallsPerTick_ = (CallsPerTick1000 / 1000) << 1;
 
-      if(wakeup) Interrupt();
+      if(wakeup) Interrupt(WorkAvailable);
    }
 
    auto log = Log::Create(PotsLogGroup, PotsTrafficRate);

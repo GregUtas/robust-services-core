@@ -8,6 +8,8 @@ tests begin recover.BadPtrExit
 read trap.24
 tests begin recover.BadPtr
 read trap.03
+tests begin recover.SIGWRITE
+read trap.29
 tests begin recover.DivZero
 read trap.04
 tests begin recover.SIGINT
@@ -22,8 +24,8 @@ tests begin recover.SIGBUS
 read trap.28
 tests begin recover.abort
 read trap.09
-/ tests begin recover.terminate
-/ read trap.10
+tests begin recover.terminate
+read trap.10
 tests begin recover.KillLocal
 read trap.11
 tests begin recover.KillRemote

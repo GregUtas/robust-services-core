@@ -121,7 +121,7 @@ void CinThread::Enter()
       if(source)
       {
          buff_.push_back(CRLF);
-         if(client_ != nullptr) client_->Interrupt();
+         if(client_ != nullptr) client_->Interrupt(WorkAvailable);
          Pause(TIMEOUT_NEVER);
       }
       else
@@ -179,7 +179,7 @@ std::streamsize CinThread::GetLine(string& buff)
    server->client_ = nullptr;
    guard.Release();
 
-   server->Interrupt();
+   server->Interrupt(ResumeExecution);
    return buff.size();
 }
 

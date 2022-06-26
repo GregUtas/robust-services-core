@@ -75,17 +75,13 @@ private:
       Restarting     // internal error: initiating a restart
    };
 
-   //  Flags used when interrupting InitThread.
+   //  Flags used when interrupting InitThread.  RootThread also uses the
+   //  Heartbeat and Restart flags.
    //
-   static const FlagId Restart = 0;   // restart system; also used by RootThread
-   static const FlagId Recreate = 1;  // recreate critical thread
-   static const FlagId Schedule = 2;  // schedule next thread
-
-   //  The mask passed to Thread::Interrupt to set one of the above flags.
-   //
-   static const Flags RestartMask;
-   static const Flags RecreateMask;
-   static const Flags ScheduleMask;
+   static const FlagId Heartbeat = TS_Flag + 0;  // reporting to RootThread
+   static const FlagId Restart = TS_Flag + 1;    // restart system
+   static const FlagId Recreate = TS_Flag + 2;   // recreate critical thread
+   static const FlagId Schedule = TS_Flag + 3;   // schedule next thread
 
    //  Private because this is a singleton.
    //

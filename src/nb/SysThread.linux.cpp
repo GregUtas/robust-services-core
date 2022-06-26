@@ -24,9 +24,11 @@
 #include "SysThread.h"
 #include <csignal>
 #include <cstdint>
+#include <errno.h>
 #include <pthread.h>
 #include <sys/resource.h>
 #include "Debug.h"
+#include "NbSignals.h"
 #include "Thread.h"
 
 //------------------------------------------------------------------------------
@@ -43,6 +45,11 @@ const int PriorityMap[SysThread::Priority_N] =
    3   // WatchdogPriority
 };
 
+//  Thread.h's signal handler.  We register a different one that invokes this
+//  one after it performs some preliminary work.
+//
+static sighandler_t SignalHandler = nullptr;
+
 //------------------------------------------------------------------------------
 
 static void* EnterThread(void* arg)
@@ -54,6 +61,24 @@ static void* EnterThread(void* arg)
    auto thread = static_cast<Thread*>(arg);
    uintptr_t rc = thread->Start();
    return (void*) rc;
+}
+
+//------------------------------------------------------------------------------
+
+static void SigActionHandler(int signal, siginfo_t* info, void* unused)
+{
+   //  If the address that caused a SIGSEGV can be read but not written,
+   //  change the signal to SIGWRITE.
+   //
+   if(signal == SIGSEGV)
+   {
+      if((info->si_code == SEGV_ACCERR) || (info->si_code == SEGV_PKUERR))
+      {
+         signal = SIGWRITE;
+      }
+   }
+
+   SignalHandler(signal);
 }
 
 //------------------------------------------------------------------------------
@@ -161,28 +186,34 @@ void SysThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
-{
-   signal(sig, handler);
+fn_name SysThread_RegisterForSignal = "SysThread.RegisterForSignal";
 
-   //L Use sigaction() instead of signal().
+bool SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
+{
+   //  Save HANDLER so that SigActionHandler can invoke it.
    //
-   //  Block signals except those that can occur because of an error in the
-   //  signal handler itself.  This is only a sketch.  For example, SIGSEGV
-   //  should use sigaltstack to safely catch a stack overflow.
+   SignalHandler = handler;
+
+   //  Register SigActionHandler against the signal by setting SA_SIGINFO.
+   //  This provides extra information about a signal so that the handler
+   //  can map SIGSEGV to SIGWRITE when appropriate.  Also set SA_RESETHAND
+   //  and SA_NODEFER to prevent a received signal from being masked when
+   //  the handler is invoked.  The masking persists even after the handler
+   //  is reinstalled.  Setting these two flags results in behavior that is
+   //  similar to that for the basic signal() function.
    //
-   //  sigaction action;
-   //  sigset_t  block_mask;
-   //
-   //  sigemptyset(&block_mask);
-   //  sigaddset(&block_mask, SIGTERM);
-   //  sigaddset(&block_mask, SIGINT);
-   //
-   //  action.sa_handler = handler;
-   //  action.sa_mask = block_mask;
-   //  action.sa_flags = 0;
-   //
-   //  sigaction(sig, &action, nullptr);
+   struct sigaction action;
+   action.sa_sigaction = SigActionHandler;
+   sigemptyset(&action.sa_mask);
+   action.sa_flags = (SA_SIGINFO | SA_RESETHAND | SA_NODEFER);
+ 
+   auto err = sigaction(sig, &action, nullptr);
+   if(err != 0)
+   {
+      return ReportError(SysThread_RegisterForSignal, "sigaction", errno);
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -231,8 +262,9 @@ signal_t SysThread::Start()
 {
    Debug::ft("SysThread.Start");
 
-   //L This is invoked when recovering from a trap, so check status_
-   //  to see if any Linux-specific actions need to be taken.
+   //  This is invoked when recovering from a trap.  If any Linux-specific
+   //  actions are required, they should be recorded in status_, but there
+   //  are currently none.
    //
    return 0;
 }

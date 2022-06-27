@@ -3152,7 +3152,7 @@ RecoveryThread::~RecoveryThread()
 {
    Debug::ftnt("RecoveryThread.dtor");
 
-   if(prot_ == nullptr)
+   if(prot_ != nullptr)
    {
       FunctionGuard guard(Guard_MemUnprotect);
       delete prot_;

@@ -23,6 +23,7 @@
 #include <chrono>
 #include <ratio>
 #include "Debug.h"
+#include "SteadyTime.h"
 
 //------------------------------------------------------------------------------
 
@@ -60,30 +61,45 @@ std::cv_status Gate::WaitFor(const msecs_t& timeout)
 
    auto result = std::cv_status::no_timeout;
 
-   while(!flag_.load())
+   //  The wait function must be called with the mutex locked.  Before
+   //  blocking the thread, the wait function releases the mutex, which
+   //  allows Notify to obtain it and unblock the waiting thread.
+   //
+   if(timeout == TIMEOUT_NEVER)
    {
-      //  The wait function must be called with the mutex locked.  Before
-      //  the wait returns, it unlocks the mutex, which allows Notify to
-      //  obtain it and unblock the waiting thread.
-      //
-      std::unique_lock<std::mutex> lock(mutex_);
-
-      if(timeout == TIMEOUT_NEVER)
+      while(!flag_.load())
       {
+         std::unique_lock<std::mutex> lock(mutex_);
          gate_.wait(lock);
       }
-      else
+   }
+   else
+   {
+      //  A thread uses a timeout when it wants to sleep for a finite
+      //  length of time, so exit the condition if the timeout occurs.
+      //  Spurious wakeups have been observed in DelayCommand, so go
+      //  back to sleep unless flag_ has been set.  Using wait_for
+      //  allows a thread to be woken *before* the timeout occurs.
+      //  This capability is used, for example, to wake up a watchdog
+      //  with a heartbeat or to wake up a thread and request that it
+      //  immediately exit when a restart is initiated.
+      //
+      auto deadline = SteadyTime::Now() + timeout;
+
+      while(!flag_.load())
       {
-         //  A timeout is only used when a thread wants to sleep for a
-         //  fixed period of time.  When the timeout occurs, we simply
-         //  exit the condition, because the thread blocks until it is
-         //  told to proceed.  Using WaitFor allows the thread to be
-         //  woken *before* the timeout expires.  This capability is
-         //  used, for example, to tell threads to exit during restarts
-         //  and to send heartbeats to watchdogs.
-         //
-         result = gate_.wait_for(lock, timeout);
-         break;
+         std::unique_lock<std::mutex> lock(mutex_);
+         auto sleep = deadline - SteadyTime::Now();
+
+         if(sleep.count() > 0)
+         {
+            result = gate_.wait_for(lock, sleep);
+         }
+         else
+         {
+            result = std::cv_status::timeout;
+            break;
+         }
       }
    }
 

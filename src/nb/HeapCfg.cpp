@@ -49,7 +49,7 @@ HeapCfg::HeapCfg() :
    //
    minSize_[MemProtected] = 2 * MBs;
    maxSize_[MemProtected] = (BYTES_PER_WORD == 4 ? 1 * GBs : 16 * GBs);
-   targSize_[MemProtected] = 8 * MBs;
+   targSize_[MemProtected] = 10 * MBs;
 
    //> The minimum and maximum sizes of the persistent heap:
    //    min = 512kB, init = 2MB, max = 128MB (32-bit), 2GB (64-bit)
@@ -59,14 +59,14 @@ HeapCfg::HeapCfg() :
    //
    minSize_[MemPersistent] = 512 * kBs;
    maxSize_[MemPersistent] = (BYTES_PER_WORD == 4 ? 128 * MBs : 2 * GBs);
-   targSize_[MemPersistent] = 3 * MBs;
+   targSize_[MemPersistent] = 4 * MBs;
 
    //> The minimum and maximum sizes of the dynamic heap:
    //    min = 2MB, init = 16MB, max = 1GB (32-bit), 16GB (64-bit)
    //
    minSize_[MemDynamic] = 2 * MBs;
    maxSize_[MemDynamic] = (BYTES_PER_WORD == 4 ? 1 * GBs : 16 * GBs);
-   targSize_[MemDynamic] = 16 * MBs;
+   targSize_[MemDynamic] = 20 * MBs;
 
    //> The minimum and maximum sizes of the temporary heap:
    //    min = 512kB, init = 1MB, max = 128MB (32-bit), 2GB (64-bit)

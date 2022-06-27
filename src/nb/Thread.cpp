@@ -3459,7 +3459,7 @@ string Thread::to_str() const
    stream << " (tid=" << Tid();
    stream << ", nid=";
    if(systhrd_ != nullptr)
-      stream << strHex(systhrd_->Nid(), 0);
+      stream << strHex(systhrd_->Nid());
    else
       stream << "none";
    stream << ')';

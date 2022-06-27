@@ -94,7 +94,7 @@ void SysThread::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "nid      : " << strHex(nid_, 8, false) << CRLF;
+   stream << prefix << "nid      : " << strHex(nid_) << CRLF;
    stream << prefix << "nthread  : " << nthread_ << CRLF;
    stream << prefix << "status   : " << status_.to_string() << CRLF;
    stream << prefix << "priority : " << priority_ << CRLF;

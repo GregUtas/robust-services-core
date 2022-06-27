@@ -116,7 +116,7 @@ ThreadsStats::ThreadsStats()
    locks_.reset(new Counter("scheduled to run locked"));
    preempts_.reset(new Counter("preemptions"));
    delays_.reset(new Counter("scheduled after timeout"));
-   resignals_.reset(new Counter("resignaled to proceed"));
+   resignals_.reset(new Counter("resignalled to proceed"));
    reentries_.reset(new Counter("scheduling interrupt when thread locked"));
    reselects_.reset(new Counter("selected to run again"));
    retractions_.reset(new Counter("race condition between selected threads"));

@@ -3181,7 +3181,6 @@ main_t Thread::Start()
             continue;
          case Release:
             return Exit(sex.GetSignal());
-         case Return:
          default:
             return AbnormalExit(sex.GetSignal());
          }
@@ -3195,7 +3194,6 @@ main_t Thread::Start()
             continue;
          case Release:
             return Exit(SIGNIL);
-         case Return:
          default:
             return AbnormalExit(SIGNIL);
          }
@@ -3211,7 +3209,6 @@ main_t Thread::Start()
             continue;
          case Release:
             return Exit(SIGNIL);
-         case Return:
          default:
             return AbnormalExit(SIGNIL);
          }
@@ -3225,7 +3222,6 @@ main_t Thread::Start()
             continue;
          case Release:
             return Exit(SIGNIL);
-         case Return:
          default:
             return AbnormalExit(SIGNIL);
          }
@@ -3239,7 +3235,6 @@ main_t Thread::Start()
             continue;
          case Release:
             return Exit(SIGNIL);
-         case Return:
          default:
             return AbnormalExit(SIGNIL);
          }
@@ -3669,7 +3664,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          [[fallthrough]];
       case Release:
          return Release;
-      case Return:
       default:
          return Return;
       }
@@ -3684,7 +3678,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          [[fallthrough]];
       case Release:
          return Release;
-      case Return:
       default:
          return Return;
       }
@@ -3701,7 +3694,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          [[fallthrough]];
       case Release:
          return Release;
-      case Return:
       default:
          return Return;
       }
@@ -3716,7 +3708,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          [[fallthrough]];
       case Release:
          return Release;
-      case Return:
       default:
          return Return;
       }
@@ -3731,7 +3722,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          [[fallthrough]];
       case Release:
          return Release;
-      case Return:
       default:
          return Return;
       }

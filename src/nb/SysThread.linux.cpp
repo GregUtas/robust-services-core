@@ -48,7 +48,7 @@ const int PriorityMap[SysThread::Priority_N] =
 //  Thread.h's signal handler.  We register a different one that invokes this
 //  one after it performs some preliminary work.
 //
-static sighandler_t SignalHandler = nullptr;
+static SysThread::sighandler_t SignalHandler = nullptr;
 
 //------------------------------------------------------------------------------
 
@@ -206,7 +206,7 @@ bool SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
    action.sa_sigaction = SigActionHandler;
    sigemptyset(&action.sa_mask);
    action.sa_flags = (SA_SIGINFO | SA_RESETHAND | SA_NODEFER);
- 
+
    auto err = sigaction(sig, &action, nullptr);
    if(err != 0)
    {

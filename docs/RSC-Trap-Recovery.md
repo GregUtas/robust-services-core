@@ -1,8 +1,8 @@
 # Robust Services Core: Trap Recovery
 
-In RSC, the term _trap_ refers to something, usually a POSIX signal, that
-results in a C++ exception. A common example is `SIGSEGV`, the signal that a
-thread receives when it performs an illegal memory access, perhaps because
+In RSC, a _trap_ refers to something, usually a POSIX signal, that results
+in a C++ exception. A common example is `SIGSEGV`, the signal that a
+thread receives when it performs an illegal memory access, usually because
 it used a bad pointer.
 
 [Robust C++: Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net)
@@ -15,7 +15,7 @@ this strategy works depends on the compiler that was used and the platform
 for which it targeted the executable.
 
 RSC has 29 tests that tell [`RecoveryThread`](/src/nt/NtIncrement.cpp)
-to cause traps in various ways. Getting the safety net to work could be
+to cause traps in various ways. Getting the safety net to work can be
 challenging when porting RSC to another platform, which is one reason
 why these tests are provided. The entire set can be run with the command
 `>read test.trap.all.` Each test generates the following (see the
@@ -30,7 +30,7 @@ real-time performance.
   * A scheduler trace (_*.sched.txt_). The first part of this trace lists
 all threads in the executable, with statistics for each. The second part is
 a record of all the context switches that occurred during the test.
-  * A console file of the test (_*.cli.txt_).
+  * A console transcript of the test (_*.cli.txt_).
  
 ## Current Status
 
@@ -77,10 +77,10 @@ write to protected memory | SIGWRITE | test.29 | pass | **fail[6]** | pass
 
   1. file name in [_output_](/output) directory
   2. file name in [_input_](/input) directory
-  3. causes stack overflow by rethrowing exceptions (release build only)
-  4. causes infinite loop that divides by zero
-  5. causes stack overflow by rethrowing exceptions
+  3. causes a stack overflow by rethrowing exceptions (release build only)
+  4. causes an infinite loop that divides by zero
+  5. causes a stack overflow by rethrowing exceptions
   6. raises `SIGSEGV`, not the Windows structured exception that includes
 the details needed to map it to `SIGWRITE`
-  7. fails if launched from VS2022, which does not forward ctrl-C to Linux
-Console Window
+  7. fails if launched from VS2022, which does not forward ctrl-C to the 
+Linux Console Window

@@ -201,6 +201,16 @@ namespace Cxx
       NIL_TYPE   // none of the above
    };
 
+   //  Access control.
+   //
+   enum Access : unsigned int
+   {
+      Private,
+      Protected,
+      Public,
+      Access_N
+   };
+
    //  Class types.
    //
    enum ClassTag : unsigned int
@@ -212,14 +222,16 @@ namespace Cxx
       ClassTag_N
    };
 
-   //  Access control.
+   //  Elaborated type specifiers.
    //
-   enum Access : unsigned int
+   enum Specifier : unsigned int
    {
-      Private,
-      Protected,
-      Public,
-      Access_N
+      NilSpecifier,
+      ClassSpecifier,
+      StructSpecifier,
+      UnionSpecifier,
+      EnumSpecifier,
+      Specifier_N
    };
 
    //  Character encodings.
@@ -256,7 +268,6 @@ namespace Cxx
       Enumerator,
       Forward,
       Friend,
-      FuncSpec,
       Function,
       Macro,
       MemberInit,
@@ -332,6 +343,10 @@ std::ostream& operator<<(std::ostream& stream, Cxx::Access access);
 //  Inserts a string for TAG into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, Cxx::ClassTag tag);
+
+//  Inserts a string for SPECIFIER into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, Cxx::Specifier specifier);
 
 //  Inserts a string for CODE into STREAM.
 //

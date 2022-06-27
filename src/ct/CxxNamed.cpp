@@ -1079,7 +1079,7 @@ Numeric DataSpec::GetNumeric() const
    if(ptrs > 0) return Numeric::Pointer;
 
    auto root = Root();
-   if(root == nullptr) return Numeric::Nil;
+   if((root == nullptr) || (root == this)) return Numeric::Nil;
    return root->GetNumeric();
 }
 
@@ -2012,7 +2012,9 @@ bool DataSpec::VerifyReferents() const
 
 //==============================================================================
 
-QualName::QualName(TypeNamePtr& name) : init_(false)
+QualName::QualName(TypeNamePtr& name) :
+   specifier_(Cxx::NilSpecifier),
+   init_(false)
 {
    Debug::ft("QualName.ctor(name)");
 
@@ -2022,7 +2024,9 @@ QualName::QualName(TypeNamePtr& name) : init_(false)
 
 //------------------------------------------------------------------------------
 
-QualName::QualName(const string& name) : init_(false)
+QualName::QualName(const string& name) :
+   specifier_(Cxx::NilSpecifier),
+   init_(false)
 {
    Debug::ft("QualName.ctor(string)");
 
@@ -2041,6 +2045,7 @@ QualName::~QualName()
 //------------------------------------------------------------------------------
 
 QualName::QualName(const QualName& that) : CxxNamed(that),
+   specifier_(that.specifier_),
    init_(that.init_)
 {
    Debug::ft("QualName.ctor(copy)");
@@ -2514,6 +2519,8 @@ CxxToken* QualName::PosToItem(size_t pos) const
 
 void QualName::Print(ostream& stream, const Flags& options) const
 {
+   if(specifier_ != Cxx::NilSpecifier) stream << specifier_ << SPACE;
+
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       n->Print(stream, options);
@@ -2584,8 +2591,22 @@ CxxScoped* QualName::Referent() const
    auto ref = Last()->Referent();
    if(ref != nullptr) return ref;
 
+   auto mask = CODE_REFS;
    SymbolView view;
-   auto item = ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);
+
+   switch(specifier_)
+   {
+   case Cxx::ClassSpecifier:
+   case Cxx::StructSpecifier:
+   case Cxx::UnionSpecifier:
+      mask = (CLASS_MASK | FORW_MASK | FRIEND_MASK);
+      break;
+   case Cxx::EnumSpecifier:
+      mask = ENUM_MASK;
+      break;
+   }
+
+   auto item = ResolveName(Context::File(), Context::Scope(), mask, view);
    if(item == nullptr) return ReferentError(QualifiedName(true, true), 0);
 
    //  Verify that the item has a referent in case it's a typedef or a

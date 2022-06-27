@@ -1820,7 +1820,7 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
    {
       if(this->Ptrs(true) > 0) return Compatible;
       if(thisNonCVType == NULLPTR_T_STR) return Compatible;
-      if(thisRoot->Type() == Cxx::FuncSpec) return Compatible;
+      if(thisRoot->Type() == Cxx::Function) return Compatible;
    }
 
    //  Some kind of conversion will be required.  Start by seeing if

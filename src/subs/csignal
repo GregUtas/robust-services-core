@@ -5,6 +5,8 @@
 #ifndef CSIGNAL_INCLUDED
 #define CSIGNAL_INCLUDED
 
+#include "cstddef"
+
 #define SIGABRT 6
 #define SIGINT 2
 #define SIGILL 4
@@ -24,4 +26,62 @@ typedef void (*sighandler)(int sig);
 void* signal(int sig, sighandler handler);
 int raise(int sig);
 
+#ifdef OS_LINUX
+
+enum
+{
+   SEGV_MAPERR = 1,
+   SEGV_ACCERR,
+   SEGV_BNDERR,
+   SEGV_PKUERR,
+   SEGV_ACCADI,
+   SEGV_ADIDERR,
+   SEGV_ADIPERR
+};
+
+struct siginfo_t
+{
+   int si_signo;  // signal number
+   int si_errno;  // from errno.h
+   int si_code;   // specifies field(s) with further info
+
+   //  Fields for SIGILL, SIGFPE, SIGSEGV, and SIGBUS.
+   //
+   void* si_addr;
+   short si_addr_lsb;
+   void* si_lower;    // si_code is SEGV_BNDERR
+   void* si_upper;    // si_code is SEGV_BNDERR
+   uint32_t si_pkey;  // si_code is SEGV_PKUERR
+};
+
+typedef void (*sigacthandler)(int signo, siginfo_t* info, void* unused);
+
+constexpr int SIGSET_NWORDS = (1024 / (8 * sizeof (unsigned long)));
+
+struct sigset_t
+{
+   unsigned long int val[SIGSET_NWORDS];
+};
+
+int sigemptyset(sigset_t* set);
+
+constexpr int SA_SIGINFO = 4;
+constexpr int SA_NODEFER = 0x40000000;
+constexpr int SA_RESETHAND = 0x80000000;
+
+struct sigaction
+{
+   union
+   {
+      sighandler sa_handler;       // used if SA_SIGINFO not set
+      sigacthandler sa_sigaction;  // used if SA_SIGINFO set
+   };
+
+   sigset_t sa_mask;
+   int sa_flags;
+};
+
+int sigaction(int signo, const struct sigaction* act, struct sigaction* oact);
+
+#endif
 #endif

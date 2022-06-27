@@ -240,11 +240,41 @@ static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
          {
             idx = i;
          }
-         else if(list[idx]->Type() == Cxx::Function)
+         else
          {
-            if(static_cast<const Function*>(list[idx])->IsStatic())
+            switch(list[idx]->Type())
             {
-               idx = i;
+            case Cxx::Class:
+            case Cxx::Forward:
+            case Cxx::Enum:
+               //
+               //  These need an elaborated name specifier to be selected
+               //  over an item that is not one of these types.
+               //
+               switch(list[i]->Type())
+               {
+               case Cxx::Class:
+               case Cxx::Forward:
+               case Cxx::Enum:
+                  break;
+               default:
+                  idx = i;
+               }
+               break;
+
+            case Cxx::Function:
+               //
+               //  Prefer a non-static function to a static function.  The
+               //  non-static function will push a "this" pointer that the
+               //  static function will ignore, whereas function matching
+               //  fails if the static function is selected and no "this"
+               //  pointer is pushed.
+               //
+               if(static_cast<const Function*>(list[idx])->IsStatic())
+               {
+                  idx = i;
+               }
+               break;
             }
          }
       }

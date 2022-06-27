@@ -24,6 +24,7 @@
 #include "CliCommandSet.h"
 #include "CliText.h"
 #include "Daemon.h"
+#include "Protected.h"
 #include "SlabHeap.h"
 #include "Temporary.h"
 #include "Thread.h"
@@ -3598,8 +3599,7 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
    BindText(*new DeleteText, RecoveryThread::Delete);
    BindText(*new CliText
       (DtorTrapTextExpl, DtorTrapTextStr), RecoveryThread::DtorTrap);
-   BindText(*new CliText
-      (WriteTextExpl, WriteTextStr), RecoveryThread::Write);
+   BindText(*new CliText(WriteTextExpl, WriteTextStr), RecoveryThread::Write);
 }
 
 //------------------------------------------------------------------------------

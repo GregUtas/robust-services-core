@@ -2324,7 +2324,6 @@ void Operation::ExecuteCall() const
    //    type conversion, such as double(<arg>).
    //
    Function* func = nullptr;
-   Class* cls = nullptr;
    auto scope = Context::Scope();
    SymbolView view;
 
@@ -2350,7 +2349,8 @@ void Operation::ExecuteCall() const
       break;
 
    case Cxx::Class:
-      cls = static_cast<Class*>(proc.item_);
+   {
+      auto cls = static_cast<Class*>(proc.item_);
       cls->Instantiate();
       func = cls->FindCtor(&args, scope, &view);
       if((proc.Name() != nullptr) && (func != nullptr))
@@ -2358,11 +2358,12 @@ void Operation::ExecuteCall() const
          proc.Name()->SetReferent(func, nullptr);
       }
       break;
+   }
 
    case Cxx::Terminal:
    case Cxx::Typedef:
    case Cxx::Enum:
-      //
+   {
       //  To perform an explicit conversion, the type must be convertible
       //  to a numeric and there must be one argument.  If so, register a
       //  read to that argument and push the target type.  If an implicit
@@ -2390,6 +2391,17 @@ void Operation::ExecuteCall() const
       return;
    }
 
+   case Cxx::Data:
+   {
+      auto data = static_cast<Data*>(proc.item_);
+      auto root = data->GetTypeSpec()->Root();
+      if(root->Type() == Cxx::Function)
+      {
+         func = static_cast<Function*>(root);
+      }
+   }
+   }
+
    if(func != nullptr)
    {
       //  Invoke the function, which pushes its return value onto the stack.
@@ -2410,8 +2422,8 @@ void Operation::ExecuteCall() const
    auto size = args.size();
    if(proc.IsDefaultCtor(args))
    {
+      auto cls = proc.item_->GetClass();
       auto role = (size == 1 ? PureCtor : CopyCtor);
-      cls = proc.item_->GetClass();
       cls->WasCalled(role, nullptr);
       if(size > 1) args[1].WasRead();
       Context::PushArg(StackArg(cls, 0, false, true));
@@ -3090,6 +3102,7 @@ void Operation::Push() const
       case Cxx::Terminal:
       case Cxx::Typedef:
       case Cxx::Enum:
+      case Cxx::Data:
          top->SetInvoke();
       }
    }

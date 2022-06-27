@@ -1040,21 +1040,26 @@ bool Parser::GetClassDefn(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
 
    //  <Class> = [<TemplateParms>] <ClassTag> <QualName>
    //            [ [<BaseDecl>] "{" [<MemberDecl>]* "}" ] ";"
-   //  The initial keyword has already been parsed unless it is "template".
    //
-   auto begin = kwdBegin_;
    auto start = CurrPos();
+   auto begin = start;
 
    TemplateParmsPtr parms;
-   Cxx::ClassTag tag = Cxx::ClassType;
+   auto tag = Cxx::ClassTag_N;
 
    switch(kwd)
    {
+   case Cxx::CLASS:
+      tag = Cxx::ClassType;
+      lexer_.Advance(strlen(CLASS_STR));
+      break;
    case Cxx::STRUCT:
       tag = Cxx::StructType;
+      lexer_.Advance(strlen(STRUCT_STR));
       break;
    case Cxx::UNION:
       tag = Cxx::UnionType;
+      lexer_.Advance(strlen(UNION_STR));
       break;
    case Cxx::TEMPLATE:
       if(!GetTemplateParms(parms)) return Backup(start, 43);
@@ -1742,12 +1747,12 @@ bool Parser::GetEnum(EnumPtr& decl)
 
    //  <Enum> = "enum" [<AlignAs>] [<Name>]
    //           "{" <Enumerator> ["," <Enumerator>]* "}" ";"
-   //  The "enum" keyword has already been parsed.  An enum without enumerators
-   //  is legal but seems to be useless and is therefore not supported.  After
-   //  the last enumerator, a comma can actually precede the brace.
+   //  An enum without enumerators is legal but seems to be useless and
+   //  is therefore not supported.  After the last enumerator, a comma
+   //  can actually precede the brace.
    //
-   auto begin = kwdBegin_;
    auto start = CurrPos();
+   lexer_.Advance(strlen(ENUM_STR));
 
    AlignAsPtr align;
    string enumName;
@@ -1767,7 +1772,7 @@ bool Parser::GetEnum(EnumPtr& decl)
    auto etorPos = CurrPos();
    if(!GetEnumerator(etorName, etorInit)) return Backup(start, 105);
    decl.reset(new Enum(enumName));
-   decl->SetContext(begin);
+   decl->SetContext(start);
    decl->SetAlignment(align);
    decl->AddType(typeSpec);
    decl->AddEnumerator(etorName, etorInit, etorPos);
@@ -3128,6 +3133,40 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 
 //------------------------------------------------------------------------------
 
+Cxx::Specifier Parser::GetSpecifier()
+{
+   Debug::ft("Parser.GetSpecifier");
+
+   string str;
+   auto specifier = Cxx::NilSpecifier;
+   auto kwd = NextKeyword(str);
+
+   switch(kwd)
+   {
+   case Cxx::CLASS:
+      specifier = Cxx::ClassSpecifier;
+      break;
+   case Cxx::STRUCT:
+      specifier = Cxx::StructSpecifier;
+      break;
+   case Cxx::UNION:
+      specifier = Cxx::UnionSpecifier;
+      break;
+   case Cxx::ENUM:
+      specifier = Cxx::EnumSpecifier;
+      break;
+   }
+
+   if(specifier != Cxx::NilSpecifier)
+   {
+      lexer_.Advance(str.size());
+   }
+
+   return specifier;
+}
+
+//------------------------------------------------------------------------------
+
 bool Parser::GetStatements(Block* block, bool braced)
 {
    Debug::ft("Parser.GetStatements");
@@ -3602,8 +3641,10 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, KeywordSet* attrs)
    }
 
    QualNamePtr typeName;
+   auto type = GetSpecifier();
    if(!GetQualName(typeName, TypeKeyword)) return Backup(start, 206);
    if(!CheckType(typeName)) return Backup(start, 207);
+   typeName->SetSpecifier(type);
    spec.reset(new DataSpec(typeName));
    spec->SetContext(start);
 

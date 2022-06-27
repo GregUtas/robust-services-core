@@ -1361,6 +1361,10 @@ public:
    //
    void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;
 
+   //  Overridden to set the type for an "auto" variable.
+   //
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
+
    //  Overridden to log warnings associated with the function.
    //
    void Check() const override;
@@ -1963,15 +1967,12 @@ public:
    //  Deleted to prohibit copying.
    //
    FuncSpec(const FuncSpec& that) = delete;
-
-   //  Overridden to reveal that this is a function specification.
-   //
-   Cxx::ItemType Type() const override { return Cxx::FuncSpec; }
 private:
    //  The following are overridden to return the function signature.
    //
    Function* GetFuncSpec() const override { return func_.get(); }
    CxxScoped* Referent() const override { return func_.get(); }
+   CxxToken* RootType() const override { return func_.get(); }
 
    //  The following are forwarded to the function.
    //

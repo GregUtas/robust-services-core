@@ -161,6 +161,27 @@ ostream& operator<<(ostream& stream, Cxx::Encoding code)
 
 //------------------------------------------------------------------------------
 
+fixed_string SpecifierStrings[Cxx::Specifier_N + 1] =
+{
+   EMPTY_STR,
+   CLASS_STR,
+   STRUCT_STR,
+   UNION_STR,
+   ENUM_STR,
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, Cxx::Specifier specifier)
+{
+   if(specifier < Cxx::Specifier_N)
+      stream << SpecifierStrings[specifier];
+   else
+      stream << SpecifierStrings[Cxx::Specifier_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 Cxx::DirectiveTablePtr Cxx::Directives = nullptr;
 Cxx::KeywordTablePtr Cxx::Keywords = nullptr;
 Cxx::OperatorTablePtr Cxx::CxxOps = nullptr;
@@ -396,51 +417,51 @@ constexpr bool T = true;
 
 const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
 {
-   //      file   class   func  advance
-   CxxWord("D",   "D",    "D",  F),  // ALIGNAS
-   CxxWord("@",   "@",    "@",  T),  // ASM
-   CxxWord("-",   "-",    "D",  F),  // AUTO
-   CxxWord("-",   "-",    "b",  T),  // BREAK
-   CxxWord("-",   "-",    "c",  T),  // CASE
-   CxxWord("C",   "C",    "-",  T),  // CLASS
-   CxxWord("DP",  "DP",   "D",  F),  // CONST
-   CxxWord("DP",  "DP",   "D",  F),  // CONSTEXPR
-   CxxWord("-",   "-",    "n",  T),  // CONTINUE
-   CxxWord("-",   "-",    "o",  T),  // DEFAULT
-   CxxWord("-",   "-",    "d",  T),  // DO
-   CxxWord("E",   "E",    "E",  T),  // ENUM
-   CxxWord("-",   "P",    "-",  F),  // EXPLICIT
-   CxxWord("DP",  "-",    "-",  F),  // EXTERN
-   CxxWord("-",   "-",    "-",  F),  // FINAL
-   CxxWord("-",   "-",    "f",  T),  // FOR
-   CxxWord("-",   "F",    "-",  T),  // FRIEND
-   CxxWord("-",   "-",    "g",  T),  // GOTO
-   CxxWord("H",   "H",    "H",  F),  // HASH
-   CxxWord("-",   "-",    "i",  T),  // IF
-   CxxWord("P",   "P",    "-",  F),  // INLINE
-   CxxWord("-",   "D",    "-",  F),  // MUTABLE
-   CxxWord("N",   "-",    "-",  T),  // NAMESPACE
-   CxxWord("-",   "P",    "-",  F),  // OPERATOR
-   CxxWord("-",   "-",    "-",  F),  // OVERRIDE
-   CxxWord("-",   "A",    "-",  T),  // PRIVATE
-   CxxWord("-",   "A",    "-",  T),  // PROTECTED
-   CxxWord("-",   "A",    "-",  T),  // PUBLIC
-   CxxWord("-",   "-",    "r",  T),  // RETURN
-   CxxWord("DP",  "DP",   "D",  F),  // STATIC
-   CxxWord("$",   "$",    "$",  T),  // STATIC_ASSERT
-   CxxWord("C",   "C",    "-",  T),  // STRUCT
-   CxxWord("-",   "-",    "s",  T),  // SWITCH
-   CxxWord("DCP", "DCFP", "-",  F),  // TEMPLATE
-   CxxWord("D",   "D",    "D",  F),  // THREAD_LOCAL
-   CxxWord("-",   "-",    "t",  T),  // TRY
-   CxxWord("T",   "T",    "T",  T),  // TYPEDEF
-   CxxWord("C",   "C",    "-",  T),  // UNION
-   CxxWord("U",   "U",    "U",  T),  // USING
-   CxxWord("-",   "P",    "-",  F),  // VIRTUAL
-   CxxWord("DP",  "DP",   "D",  F),  // VOLATILE
-   CxxWord("-",   "-",    "w",  T),  // WHILE
-   CxxWord("-",   "P",    "-",  F),  // NVDTOR
-   CxxWord("DP",  "DP",   "xD", F)   // NIL_KEYWORD
+   //      file   class   func   advance
+   CxxWord("D",   "D",    "D",   F),  // ALIGNAS
+   CxxWord("@",   "@",    "@",   T),  // ASM
+   CxxWord("-",   "-",    "D",   F),  // AUTO
+   CxxWord("-",   "-",    "b",   T),  // BREAK
+   CxxWord("-",   "-",    "c",   T),  // CASE
+   CxxWord("DPC", "DPC",  "DP",  F),  // CLASS
+   CxxWord("DP",  "DP",   "D",   F),  // CONST
+   CxxWord("DP",  "DP",   "D",   F),  // CONSTEXPR
+   CxxWord("-",   "-",    "n",   T),  // CONTINUE
+   CxxWord("-",   "-",    "o",   T),  // DEFAULT
+   CxxWord("-",   "-",    "d",   T),  // DO
+   CxxWord("DPE", "DPE",  "DPE", F),  // ENUM
+   CxxWord("-",   "P",    "-",   F),  // EXPLICIT
+   CxxWord("DP",  "-",    "-",   F),  // EXTERN
+   CxxWord("-",   "-",    "-",   F),  // FINAL
+   CxxWord("-",   "-",    "f",   T),  // FOR
+   CxxWord("-",   "F",    "-",   T),  // FRIEND
+   CxxWord("-",   "-",    "g",   T),  // GOTO
+   CxxWord("H",   "H",    "H",   F),  // HASH
+   CxxWord("-",   "-",    "i",   T),  // IF
+   CxxWord("P",   "P",    "-",   F),  // INLINE
+   CxxWord("-",   "D",    "-",   F),  // MUTABLE
+   CxxWord("N",   "-",    "-",   T),  // NAMESPACE
+   CxxWord("-",   "P",    "-",   F),  // OPERATOR
+   CxxWord("-",   "-",    "-",   F),  // OVERRIDE
+   CxxWord("-",   "A",    "-",   T),  // PRIVATE
+   CxxWord("-",   "A",    "-",   T),  // PROTECTED
+   CxxWord("-",   "A",    "-",   T),  // PUBLIC
+   CxxWord("-",   "-",    "r",   T),  // RETURN
+   CxxWord("DP",  "DP",   "D",   F),  // STATIC
+   CxxWord("$",   "$",    "$",   T),  // STATIC_ASSERT
+   CxxWord("DPC", "DPC",  "DP",  F),  // STRUCT
+   CxxWord("-",   "-",    "s",   T),  // SWITCH
+   CxxWord("DCP", "DCFP", "-",   F),  // TEMPLATE
+   CxxWord("D",   "D",    "D",   F),  // THREAD_LOCAL
+   CxxWord("-",   "-",    "t",   T),  // TRY
+   CxxWord("T",   "T",    "T",   T),  // TYPEDEF
+   CxxWord("DPC", "DPC",  "DP",  F),  // UNION
+   CxxWord("U",   "U",    "U",   T),  // USING
+   CxxWord("-",   "P",    "-",   F),  // VIRTUAL
+   CxxWord("DP",  "DP",   "D",   F),  // VOLATILE
+   CxxWord("-",   "-",    "w",   T),  // WHILE
+   CxxWord("-",   "P",    "-",   F),  // NVDTOR
+   CxxWord("DP",  "DP",   "xD",  F)   // NIL_KEYWORD
 };
 
 //------------------------------------------------------------------------------

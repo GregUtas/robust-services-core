@@ -607,6 +607,10 @@ public:
    //
    void PushBack(TypeNamePtr& name);
 
+   //  Records any elaborated type specifier that preceded the name.
+   //
+   void SetSpecifier(Cxx::Specifier specifier) { specifier_ = specifier; }
+
    //  Removes NAME from the qualified name when NAME is being deleted.
    //  NEXT is the name that follows NAME.
    //
@@ -837,6 +841,10 @@ private:
    //  The first name in what might be a qualified name.
    //
    TypeNamePtr first_;
+
+   //  Any elaborated type specifier that preceded the name.
+   //
+   Cxx::Specifier specifier_;
 
    //  Set if the name is used when initializing data at file scope.
    //

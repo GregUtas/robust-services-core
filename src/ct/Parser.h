@@ -421,6 +421,10 @@ private:
    //
    bool GetTemplateArg(TemplateArgPtr& arg);
 
+   //  Looks for an elaborated type specifier that precedes a type.
+   //
+   Cxx::Specifier GetSpecifier();
+
    //  Returns true and creates or updates NAME on finding a name that could be
    //  qualified.  If NAME ends in "operator", the operator that follows it is
    //  also parsed.  A CONSTRAINT of TypeKeyword allows the name to be a type,

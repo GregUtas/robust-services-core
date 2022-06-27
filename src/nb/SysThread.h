@@ -86,6 +86,10 @@ public:
    //  be changed.
    //
    static bool SetPriorityAllowed();
+
+   //  The signature of a signal handler.  SIG is the signal that occurred.
+   //
+   typedef void (*sighandler_t)(signal_t sig);
 private:
    //  Creates a native thread for CLIENT.  PRIO is the priority at which
    //  it will run, and SIZE is its stack size).
@@ -117,10 +121,6 @@ private:
    //  unpreemptably to preemptably or vice versa.
    //
    bool SetPriority(Priority prio);
-
-   //  The signature of a signal handler.  SIG is the signal that occurred.
-   //
-   typedef void (*sighandler_t)(signal_t sig);
 
    //  Platform-specific.  Registers HANDLER against SIG.  Invoked when
    //  the thread is entered or reentered after trap recovery.  Returns

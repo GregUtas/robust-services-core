@@ -26,6 +26,9 @@ static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
 ### Recently Implemented
+- [x] elaborated type specifiers (`class`, `struct`, `union`, or `enum`
+  prefixed to an identifier to resolve an ambiguity caused by overloading
+  a symbol)
 - [x] `[[fallthrough]];`
 - [x] constant expressions as template arguments
 - [x] brace initialization of members in a constructor's initialization list
@@ -100,9 +103,7 @@ RSC's use of the preprocessor is restricted to
   using `constexpr`.
 
 ### Identifiers
-- [ ] elaborated type specifiers (`class`, `struct`, `union`, or `enum`
-  prefixed to an identifier to act as an inline forward declaration or to
-  resolve an ambiguity caused by overloading an identifier)
+- [ ] elaborated type specifiers may not act as inline forward declarations
 - [ ] unnecessary name qualification
 
   Declaring a function as `Class::Function` causes the the parser to fail
@@ -140,6 +141,7 @@ that appear within it as `static`.
 - [ ] tagging a base class as virtual (`Parser.GetBaseDecl`)
 - [ ] non-public base class (allowed by parser, but accessibility checking does
   not enforce it)
+- [ ] local classes (defining a class within a function)
 - [ ] anonymous structs (`Parser.GetClassDecl`)
 - [ ] an `enum`, `typedef`, or function in an anonymous union (allowed by
   parser, but `CxxArea.FindEnum`, `CxxArea.FindFunc`, and `CxxArea.FindType`
@@ -167,7 +169,6 @@ that appear within it as `static`.
     is in `std::filesystem`)
 - [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and
   others)
-- [ ] defining a class within a function (`Parser.ParseInBlock` and others)
 - [ ] range-based `for` loops (`Parser.GetFor`, `Parser.GetTypeSpec`, and
   `Operation.Execute`)
 - [ ] overloading the function call or comma operator

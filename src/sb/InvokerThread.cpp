@@ -42,7 +42,7 @@ using std::string;
 
 namespace SessionBase
 {
-word InvokerThread::RtcYieldPercent_ = 90;
+word InvokerThread::RtcYieldPercent_ = 83;
 const InvokerThread* InvokerThread::RunningInvoker_ = nullptr;
 
 //------------------------------------------------------------------------------

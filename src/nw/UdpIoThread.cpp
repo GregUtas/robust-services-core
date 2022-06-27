@@ -137,7 +137,7 @@ void UdpIoThread::Enter()
       //  However, some ports are more important than others (e.g. remote
       //  operations messages should be dropped before payload messages).
       //
-      ConditionalPause(95);
+      ConditionalPause(87);
 
       if(socket->Empty())
       {

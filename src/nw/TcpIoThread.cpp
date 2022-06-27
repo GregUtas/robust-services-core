@@ -400,7 +400,7 @@ void TcpIoThread::Enter()
       for(curr_ = first; curr_ < sockets_.Size(); ++curr_)
       {
          ServiceSocket();
-         ConditionalPause(90);
+         ConditionalPause(83);
       }
 
       //  Service connection requests on the listener.
@@ -408,7 +408,7 @@ void TcpIoThread::Enter()
       while(AcceptConn())
       {
          ++recvs_;
-         ConditionalPause(90);
+         ConditionalPause(83);
       }
 
       //  If the listener has another flag set, it is probably an error.
@@ -416,7 +416,7 @@ void TcpIoThread::Enter()
       if((flags != nullptr) && (flags->any()))
       {
          if(!EnsureListener()) return;
-         ConditionalPause(90);
+         ConditionalPause(83);
       }
    }
 }

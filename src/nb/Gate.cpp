@@ -91,15 +91,14 @@ std::cv_status Gate::WaitFor(const msecs_t& timeout)
          std::unique_lock<std::mutex> lock(mutex_);
          auto sleep = deadline - SteadyTime::Now();
 
-         if(sleep.count() > 0)
-         {
-            result = gate_.wait_for(lock, sleep);
-         }
-         else
+         if(sleep.count() <= 0)
          {
             result = std::cv_status::timeout;
             break;
          }
+
+         result = gate_.wait_for(lock, sleep);
+         if(SteadyTime::Now() > deadline) break;
       }
    }
 

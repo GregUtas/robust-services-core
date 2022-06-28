@@ -23,11 +23,12 @@
 #define CXXROOT_H_INCLUDED
 
 #include "Base.h"
-#include <iosfwd>
+#include <string>
 #include "CxxArea.h"
 #include "CxxFwd.h"
 #include "CxxScoped.h"
 #include "NbTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -80,9 +81,11 @@ public:
    //
    bool AddMacro(MacroPtr& macro);
 
-   //  Creates #define symbols at the beginning of a compile.
+   //  Creates #define symbols at the beginning of a compile.  The symbols
+   //  appear in the file ..rsc/input/file.txt.  Returns 0 on success.  On
+   //  failure, returns a non-zero value and updates EXPL with an explanation.
    //
-   void DefineSymbols(std::istream& stream);
+   NodeBase::word DefineSymbols(const std::string& file, std::string& expl);
 
    //  Checks all C++ items.  If FORCE is set, the items are rechecked even if
    //  they were previously checked.
@@ -138,6 +141,10 @@ private:
    TerminalPtr void_;
    TerminalPtr wchar_;
    MacroPtrVector macros_;
+
+   //  The file from which #define symbols were read for >parse.
+   //
+   std::string file_;
 
    //  Set if >check was run on all C++ items.
    //

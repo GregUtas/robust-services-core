@@ -25,7 +25,6 @@
 #include "CliTextParm.h"
 #include <cstddef>
 #include <iomanip>
-#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
@@ -45,7 +44,6 @@
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Element.h"
-#include "FileSystem.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
@@ -869,15 +867,13 @@ word ParseCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
-   auto file = FileSystem::CreateIstream(path.c_str());
-   if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   Singleton<CxxRoot>::Instance()->DefineSymbols(*file.get());
+   auto rc = Singleton<CxxRoot>::Instance()->DefineSymbols(name, expl);
+   if(rc != 0) return cli.Report(rc, expl);
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
-   auto rc = set->Parse(expl, opts);
+   rc = set->Parse(expl, opts);
    return cli.Report(rc, expl);
 }
 

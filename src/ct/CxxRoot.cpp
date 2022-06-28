@@ -26,7 +26,6 @@
 #include <cstdio>
 #include <istream>
 #include <ostream>
-#include <string>
 #include <utility>
 #include "CodeFile.h"
 #include "CodeTypes.h"
@@ -36,12 +35,13 @@
 #include "CxxStrLiteral.h"
 #include "CxxVector.h"
 #include "Debug.h"
+#include "Element.h"
 #include "FileSystem.h"
+#include "NbCliParms.h"
 #include "Parser.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SystemTime.h"
-#include "SysTypes.h"
 #include "ToolTypes.h"
 
 using namespace NodeBase;
@@ -307,17 +307,39 @@ void CxxRoot::Check(bool force)
 
 //------------------------------------------------------------------------------
 
-void CxxRoot::DefineSymbols(std::istream& stream)
+word CxxRoot::DefineSymbols(const string& file, string& expl)
 {
    Debug::ft("CxxRoot.DefineSymbols");
 
-   //  Read the symbols from STREAM that are to be #defined for the compile.
+   //  Check if symbols have already been defined.
    //
+   if(file_ == file) return 0;
+
+   if(!file_.empty())
+   {
+      expl = "The previous >parse used '" + file_;
+      expl += "': you must either use it again or restart RSC,";
+      expl += " because there is currently no 'clean' command.";
+      return -1;
+   }
+
+   //  Read the symbols that are to be #defined for the compile.
+   //
+   auto path = Element::InputPath() + PATH_SEPARATOR + file + ".txt";
+   auto stream = FileSystem::CreateIstream(path.c_str());
+   if(stream == nullptr)
+   {
+      expl = NoFileExpl;
+      return -2;
+   }
+
+   file_ = file;
+
    string input;
 
-   while(stream.peek() != EOF)
+   while(stream->peek() != EOF)
    {
-      FileSystem::GetLine(stream, input);
+      FileSystem::GetLine(*stream, input);
 
       if(IsValidIdentifier(input))
       {
@@ -326,6 +348,8 @@ void CxxRoot::DefineSymbols(std::istream& stream)
          macros_.push_back(std::move(def));
       }
    }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------

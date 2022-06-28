@@ -1,7 +1,8 @@
 ﻿# Robust Services Core: Windows Build Options
 
-In Properties > Configuration Properties, the following options are set
-for all projects:
+[_GlobalSettingsInclude.cmake_](/src/CMake/GlobalSettingsInclude.cmake)
+specifies options that all projects share. For Windows, these are (with
+the paths to them in VS2022's _Properties > Configuration Properties_)
 
 - C/C++ > General > Common Language RunTime Support: No CLR Support
 
@@ -89,4 +90,3 @@ switch specified
 */nb*) and ws2_32.lib (for */nw*)
     
   These libraries contain *DbgHelp.h* and *Winsock2.h*, respectively.
-

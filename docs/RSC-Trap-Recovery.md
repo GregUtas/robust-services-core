@@ -73,7 +73,7 @@ disable [`Daemon`](/src/nb/Daemon.h); kill thread; reenable `Daemon`; thread rec
 exit thread; constructor traps first time `Daemon` recreates thread, so `Daemon` is disabled; reenable `Daemon`; thread recreated | DaemonTrap | trap.26 | pass | pass | pass
 trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail[5]** | **fail[5]**
 raise `SIGBUS` | SIGBUS | trap.28 | n/a | n/a | pass
-write to protected memory | SIGWRITE | test.29 | pass | **fail[6]** | pass
+write to protected memory | SIGWRITE | trap.29 | pass | **fail[6]** | pass
 
   1. file name in [_output_](/output) directory
   2. file name in [_input_](/input) directory

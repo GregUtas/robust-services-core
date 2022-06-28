@@ -62,5 +62,5 @@ The tool [CMakeConverter](https://github.com/pavelliavonau/cmakeconverter)
 significantly eased RSC's migration to CMake by analyzing _.vcxproj_ files
 to generate the initial _CMakeLists.txt_ files and a
 _GlobalSettingsInclude.cmake_ stub that could be populated with RSC's
-compile and link options. If you have a VS solution that want to migrate
-to CMake but are new to it, give this tool a try.
+compile and link options. If you have a VS solution that you want to
+migrate to CMake but are new to it, give this tool a try.

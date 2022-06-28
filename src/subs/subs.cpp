@@ -9,6 +9,7 @@
 #include "atomic"
 #include "bitset"
 #include "cctype"
+#include "cfloat"
 #include "chrono"
 #include "cmath"
 #include "condition_variable"
@@ -50,9 +51,7 @@
 
 #ifdef OS_WIN
 #include "dbghelp.h"
-#include "intsafe.h"
 #include "process.h"
-#include "stdlib.h"
 #include "windows.h"
 #include "winerror.h"
 #include "winsock2.h"
@@ -68,14 +67,13 @@
 #include "ioctl.h"
 #include "malloc.h"
 #include "mman.h"
-#include "mcheck.h"
 #include "netdb.h"
 #include "poll.h"
 #include "pthread.h"
 #include "resource.h"
-#include "spawn.h"
 #include "sched.h"
 #include "socket.h"
+#include "spawn.h"
 #include "unistd.h"
 #include "wait.h"
 #endif

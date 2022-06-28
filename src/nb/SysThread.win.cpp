@@ -22,10 +22,11 @@
 #ifdef OS_WIN
 
 #include "SysThread.h"
+#include <cfloat>
 #include <csignal>
 #include <cstdint>
+#include <cstdlib>
 #include <process.h>
-#include <stdlib.h>
 #include <Windows.h>
 #include "Debug.h"
 #include "NbSignals.h"
@@ -119,6 +120,7 @@ static void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
    case STATUS_INTEGER_DIVIDE_BY_ZERO:    // 0xC0000094
    case STATUS_INTEGER_OVERFLOW:          // 0xC0000095
       sig = SIGFPE;
+      _fpreset();
       break;
 
    case STATUS_PRIVILEGED_INSTRUCTION:    // 0xC0000096

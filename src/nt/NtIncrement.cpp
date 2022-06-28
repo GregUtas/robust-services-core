@@ -3063,7 +3063,7 @@ private:
    static void AcquireMutex();
    static void DoAbort();
    static void DoDelete();
-   static int DoDivide();
+   static int DoDivide(int dividend, int divisor);
    static void DoException();
    static void DoTerminate();
    static void LoopForever();
@@ -3227,12 +3227,11 @@ void RecoveryThread::DoDelete()
 
 //------------------------------------------------------------------------------
 
-int RecoveryThread::DoDivide()
+int RecoveryThread::DoDivide(int dividend, int divisor)
 {
    Debug::ft("RecoveryThread.DoDivide");
 
-   int one = 1, zero = 0;
-   return (one / zero);
+   return (dividend / divisor);
 }
 
 //------------------------------------------------------------------------------
@@ -3303,7 +3302,7 @@ void RecoveryThread::Enter()
          UseBadPointer();
          break;
       case DivideByZero:
-         DoDivide();
+         DoDivide(1, 0);
          break;
       case DtorTrap:
          Debug::SetSwFlag(ThreadDtorTrapFlag, true);

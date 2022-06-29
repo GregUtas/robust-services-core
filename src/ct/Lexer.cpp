@@ -3304,9 +3304,9 @@ size_t Lexer::RfindNonBlank(size_t pos) const
 
 void Lexer::SetDepth(int8_t depth1, int8_t depth2, bool merge)
 {
-   //  START is the last position where a line of code whose depth has not
+   //  BEGIN is the last position where a line of code whose depth has not
    //  been determined started, and curr_ has finalized the depth of that
-   //  code.  Each line from START to the one above the next parse position
+   //  code.  Each line from BEGIN to the one above the next parse position
    //  is therefore at DEPTH unless its depth has already been determined.
    //  If there is more than one line in this range, the subsequent ones
    //  are continuations of the first.

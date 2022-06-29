@@ -447,8 +447,8 @@ public:
    size_t LineRfind(size_t pos, const std::string& str) const;
 
    //  Returns the first occurrence of a character in CHARS, starting at POS.
-   //  Does not proceed to subsequent lines.  Returns string::npos if no such
-   //  character was found.
+   //  Ignores non-code and does not proceed to subsequent lines.  Returns
+   //  string::npos if no such character was found.
    //
    size_t LineFindFirstOf(size_t pos, const std::string& chars) const;
 

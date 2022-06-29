@@ -83,7 +83,7 @@ void to_calendar_time
 
    if(!ok)
    {
-      throw SoftwareException("Platform needs to support ToCalendarTime", 0);
+      throw SoftwareException("Platform needs to support to_calendar_time", 0);
    }
 
    //  Extract the milliseconds.

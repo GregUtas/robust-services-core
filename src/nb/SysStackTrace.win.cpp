@@ -33,8 +33,8 @@
 #include "Formatters.h"
 #include "Log.h"
 #include "Memory.h"
+#include "Mutex.h"
 #include "NbLogs.h"
-#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -55,6 +55,14 @@ typedef void* StackFrames[MaxFrames];
 //  For holding stack frames.
 //
 typedef std::unique_ptr<void*[]> StackFramesPtr;
+
+//  For serializing the acquisition of stack frames.  During restarts, many
+//  threads exit, and TrapIsOk is invoked for each of them.  This causes a
+//  flood of requests for stack frames that, for some reason, culminates in
+//  a heap corruption.  It used to be OK, but something changed so that it
+//  no longer is.
+//
+static Mutex StackTraceLock_("StackTraceLock");
 
 //------------------------------------------------------------------------------
 //
@@ -120,15 +128,6 @@ const char* StackInfo::GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp)
 
 fn_depth StackInfo::GetFrames(StackFramesPtr& frames)
 {
-   //* Reading stack frames during the shutdown phase of a restart fails
-   //  because a heap corruption is detected.  It appears that a library
-   //  up-issued by VS2022 is the culprit, because the problem occurs even
-   //  after reverting to the most recent code that passed restart tests
-   //  in VS2017.
-   //
-   auto stage = Restart::GetStage();
-   if(stage == ShuttingDown) return 0;
-
    frames.reset(new StackFrames);
    return RtlCaptureStackBackTrace(0, MaxFrames, frames.get(), nullptr);
 }
@@ -196,6 +195,8 @@ void SysStackTrace::Demangle(std::string& name)
 
 void SysStackTrace::Display(ostream& stream) NO_FT
 {
+   MutexGuard guard(&StackTraceLock_);
+
    StackFramesPtr frames = nullptr;
 
    auto depth = StackInfo::GetFrames(frames);
@@ -269,6 +270,8 @@ void SysStackTrace::Display(ostream& stream) NO_FT
          stream << CRLF;
       }
    }
+
+   frames.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -322,6 +325,8 @@ bool SysStackTrace::TrapIsOk() NO_FT
 {
    //  Do not trap a thread that is currently executing a destructor.
    //
+   MutexGuard guard(&StackTraceLock_);
+
    StackFramesPtr frames = nullptr;
 
    auto depth = StackInfo::GetFrames(frames);
@@ -338,6 +343,7 @@ bool SysStackTrace::TrapIsOk() NO_FT
       }
    }
 
+   frames.reset();
    return true;
 }
 }

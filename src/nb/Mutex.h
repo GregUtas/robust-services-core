@@ -115,9 +115,9 @@ public:
    //
    Thread* Owner() const;
 
-   //  Returns true if the mutex blocked a thread.
+   //  Returns the number of times that the mutex blocked a thread.
    //
-   bool ConflictOccurred() const { return conflict_; }
+   size_t Blocks() const { return blocks_; }
 
    //  Returns the mutex's name.
    //
@@ -160,13 +160,15 @@ private:
    //
    Thread* owner_;
 
-   //  The number of times the mutex was acquired recursively.
+   //  Implements a recursive mutex: incremented when the mutex is acquired,
+   //  and decremented when it is released.  When it reaches 0, the mutex is
+   //  unlocked.
    //
    std::atomic_size_t locks_;
 
-   //  Set if the mutex caused blocking.
+   //  Incremented when the mutex causes blocking.  Increases monotonically.
    //
-   bool conflict_;
+   size_t blocks_;
 };
 
 //------------------------------------------------------------------------------

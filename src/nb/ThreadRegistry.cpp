@@ -127,7 +127,7 @@ void ThreadStatsGroup::DisplayStats
 //
 //  Critical section lock for the thread registry.
 //
-static Mutex ThreadsLock_("ThreadsLock");
+static Mutex ThreadsLock_("ThreadRegistryLock");
 
 //  The thread at which to start searching for the thread to be
 //  scheduled in.  Scheduling is currently round-robin but will

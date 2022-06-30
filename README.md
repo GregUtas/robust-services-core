@@ -169,8 +169,8 @@ For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes
 `NodeBase`. Change [`CreateModules`](src/rsc/main.cpp) so that it also
 instantiates your module, and comment out its instantiation of modules that
 you don't want in your build. If you prefer not to change RSC's `main()`,
-you can change the copy in the [_app_](app) directory, as described
-[here](app/README.md).
+you can change the copy in the [_app_](src/app) directory, as described
+[here](src/app/README.md).
 
 To interact with your application, derive from
 [`CliIncrement`](src/nb/CliIncrement.h).

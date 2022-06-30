@@ -1,23 +1,15 @@
-set(PROJECT_NAME launcher)
+set(PROJECT_NAME rscapp)
 
 ################################################################################
 # Source groups
 ################################################################################
-set(Headers
-    "RscLauncher.h"
+set(Source_Files
+    "rscapp.cpp"
 )
-source_group("Headers" FILES ${Headers})
-
-set(Sources
-    "RscLauncher.cpp"
-    "RscLauncher.linux.cpp"
-    "RscLauncher.win.cpp"
-)
-source_group("Sources" FILES ${Sources})
+source_group("Source Files" FILES ${Source_Files})
 
 set(ALL_FILES
-    ${Headers}
-    ${Sources}
+    ${Source_Files}
 )
 
 ################################################################################
@@ -37,6 +29,27 @@ if(MSVC)
         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
     )
 endif()
+
+################################################################################
+# Include directories
+################################################################################
+target_include_directories(${PROJECT_NAME} PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/../nb;"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../nt;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../ct;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../nw;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../sb;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../st;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../mb;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../cb;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../pb;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../on;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../cn;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../rn;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../an;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../sn;"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/../dip"
+)
 
 ################################################################################
 # Compile definitions
@@ -101,3 +114,32 @@ if(MSVC)
         /SUBSYSTEM:CONSOLE
     )
 endif()
+
+################################################################################
+# Startup project
+################################################################################
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    PROPERTY VS_STARTUP_PROJECT rscapp
+)
+
+################################################################################
+# Dependencies
+################################################################################
+# Link with other targets.
+target_link_libraries(${PROJECT_NAME} PRIVATE
+#   an
+#   cb
+#   cn
+#   ct
+#   dip
+#   mb
+    nb
+    nt
+#   nw
+#   on
+#   pb
+#   rn
+#   sb
+#   sn
+#   st
+)

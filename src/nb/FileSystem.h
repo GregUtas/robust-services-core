@@ -60,6 +60,11 @@ namespace FileSystem
    //  subdirectories.  Returns false if DIR could not be opened.
    //
    bool ListFiles(const std::string& dir, std::set<std::string>& names);
+
+   //  Enables/disables file output.  By default, file output is enabled
+   //  on startup, so main() should invoke this to suppress file output.
+   //
+   void DisableFileOutput(bool disabled);
 }
 }
 #endif

@@ -98,7 +98,7 @@ void TestDatabase::Commit() const
    if(stream == nullptr)
    {
       auto expl = "Failed to create test database";
-      Debug::SwLog(TestDatabase_Commit, expl, 0);
+      Debug::SwLog(TestDatabase_Commit, expl, 0, false);
       return;
    }
 

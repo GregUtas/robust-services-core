@@ -85,6 +85,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Subprojects
 ################################################################################
 add_subdirectory(an)
+add_subdirectory(app)
 add_subdirectory(cb)
 add_subdirectory(cn)
 add_subdirectory(ct)

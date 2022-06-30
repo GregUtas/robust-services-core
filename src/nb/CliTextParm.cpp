@@ -210,7 +210,7 @@ CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
 
       if(stream == nullptr)
       {
-         cli.ibuf->ErrorAtPos(cli, "Could not open file: check name and path");
+         *cli.obuf << "Failed to open " << s << '.';
          cli.Cookie().Advance();
          return Error;
       }
@@ -224,9 +224,7 @@ CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
 
          if(err != 0)
          {
-            string expl("failed to remove ");
-            expl.append(s);
-            Debug::SwLog(CliTextParm_GetFileNameRc, expl, err);
+            *cli.obuf << "Failed to remove " << s << '.';
          }
       }
    }

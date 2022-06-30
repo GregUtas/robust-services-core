@@ -34,6 +34,12 @@ using std::string;
 
 namespace NodeBase
 {
+//  Disables file output if set.
+//
+static bool FileOutputDisabled = false;
+
+//------------------------------------------------------------------------------
+
 istreamPtr FileSystem::CreateIstream(c_string name)
 {
    Debug::ft("FileSystem.CreateIstream");
@@ -55,11 +61,19 @@ ostreamPtr FileSystem::CreateOstream(c_string name, bool trunc)
 {
    Debug::ftnt("FileSystem.CreateOstream");
 
+   if(FileOutputDisabled) return nullptr;
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
    ostreamPtr stream(new (std::nothrow) std::ofstream(name, mode));
    if(stream == nullptr) return nullptr;
    *stream << std::boolalpha << std::nouppercase;
    return stream;
+}
+
+//------------------------------------------------------------------------------
+
+void FileSystem::DisableFileOutput(bool disabled)
+{
+   FileOutputDisabled = disabled;
 }
 
 //------------------------------------------------------------------------------

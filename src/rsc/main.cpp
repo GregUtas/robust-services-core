@@ -21,14 +21,10 @@
 //
 //------------------------------------------------------------------------------
 
-#include <iosfwd>
-#include <istream>
 #include <ostream>
-#include <sstream>
-#include <string>
 #include <system_error>
 #include "Debug.h"
-#include "Formatters.h"
+#include "Log.h"
 #include "MainArgs.h"
 #include "RootThread.h"
 #include "SignalException.h"
@@ -126,40 +122,6 @@ static void CreateModules()
 
 //------------------------------------------------------------------------------
 
-static main_t LogTrap(const Exception* ex,
-   const std::exception* e, int code, const std::ostringstream* stack)
-{
-   auto& outdev = SysConsole::Out();
-
-   outdev << CRLF << "FATAL EXCEPTION" << CRLF;
-
-   if(e != nullptr)
-   {
-      outdev << spaces(2) << "type=" << e->what() << CRLF;
-      if(code != 0) outdev << spaces(2) << "code=" << code << CRLF;
-      if(ex != nullptr) ex->Display(outdev, spaces(2));
-      if(stack != nullptr) outdev << stack->str();
-   }
-   else
-   {
-      outdev << spaces(2) << "unknown exception" << CRLF;
-   }
-
-   outdev << "Enter any string to continue\n";
-   outdev << std::flush;
-
-   std::string input;
-   auto& indev = SysConsole::In();
-   std::getline(indev, input);
-
-   //  The system was dead on arrival, so return 0 to prevent automatic
-   //  rebooting.
-   //
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 main_t main(int argc, char* argv[])
 {
    Debug::ft("main");
@@ -168,49 +130,37 @@ main_t main(int argc, char* argv[])
 
    try
    {
-      //  Echo and save the arguments.
+      //  Echo and save the arguments.  Create the desired
+      //  modules and finish initializing the system.
       //
       outdev << "ROBUST SERVICES CORE" << CRLF;
-      outdev << "Entering main(int argc, char* argv[])" << CRLF;
-      outdev << "  argc: " << argc << CRLF;
-
-      for(auto i = 0; i < argc; ++i)
-      {
-         std::string arg(argv[i]);
-         MainArgs::PushBack(arg);
-         outdev << "  argv[" << i << "]: " << arg << CRLF;
-      }
-
-      outdev << std::flush;
-
-      //  Create the desired modules and finish initializing the system.
-      //
+      MainArgs::EchoAndSaveArgs(argc, argv);
       CreateModules();
       return RootThread::Main();
    }
 
    catch(SignalException& sex)
    {
-      return LogTrap(&sex, &sex, 0, sex.Stack());
+      return Log::TrapInMain(&sex, &sex, 0, sex.Stack());
    }
 
    catch(Exception& ex)
    {
-      return LogTrap(&ex, &ex, 0, ex.Stack());
+      return Log::TrapInMain(&ex, &ex, 0, ex.Stack());
    }
 
    catch(std::system_error& se)
    {
-      return LogTrap(nullptr, &se, se.code().value(), nullptr);
+      return Log::TrapInMain(nullptr, &se, se.code().value(), nullptr);
    }
 
    catch(std::exception& e)
    {
-      return LogTrap(nullptr, &e, 0, nullptr);
+      return Log::TrapInMain(nullptr, &e, 0, nullptr);
    }
 
    catch(...)
    {
-      return LogTrap(nullptr, nullptr, 0, nullptr);
+      return Log::TrapInMain(nullptr, nullptr, 0, nullptr);
    }
 }

@@ -25,13 +25,16 @@
 #include <bitset>
 #include <cctype>
 #include <ios>
+#include <istream>
 #include <new>
+#include <ostream>
 #include <sstream>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Element.h"
+#include "Exception.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "LogBuffer.h"
@@ -469,5 +472,39 @@ ostringstreamPtr Log::Suppressed() const
 
    suppressCount_->Incr();
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+main_t Log::TrapInMain(const Exception* ex,
+   const std::exception* e, int code, const std::ostringstream* stack)
+{
+   auto& outdev = SysConsole::Out();
+
+   outdev << CRLF << "FATAL EXCEPTION" << CRLF;
+
+   if(e != nullptr)
+   {
+      outdev << spaces(2) << "type=" << e->what() << CRLF;
+      if(code != 0) outdev << spaces(2) << "code=" << code << CRLF;
+      if(ex != nullptr) ex->Display(outdev, spaces(2));
+      if(stack != nullptr) outdev << stack->str();
+   }
+   else
+   {
+      outdev << spaces(2) << "unknown exception" << CRLF;
+   }
+
+   outdev << "Enter any string to continue\n";
+   outdev << std::flush;
+
+   std::string input;
+   auto& indev = SysConsole::In();
+   std::getline(indev, input);
+
+   //  The system was dead on arrival, so return 0 to prevent automatic
+   //  rebooting.
+   //
+   return 0;
 }
 }

@@ -25,6 +25,7 @@
 #include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <iosfwd>
 #include <string>
 #include "NbTypes.h"
@@ -99,6 +100,13 @@ public:
    //  is freed and becomes nullptr.
    //
    static void Submit(ostringstreamPtr& stream);
+
+   //  Logs a trap in main().  EX and E are the exceptions that were caught,
+   //  CODE is from a system_error exception, and STACK captured the thread
+   //  stack at the time of the trap.  Returns the exit code for main().
+   //
+   static main_t TrapInMain(const Exception* ex,
+      const std::exception* e, int code, const std::ostringstream* stack);
 
    //  Returns the log's identifier within its group.
    //

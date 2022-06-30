@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Singleton.h"
+#include "SysConsole.h"
 
 using std::ostream;
 using std::string;
@@ -85,6 +86,27 @@ void MainArgs::Display(ostream& stream,
    {
       stream << spaces(2) << strIndex(i) << args_.at(i).c_str() << CRLF;
    }
+}
+
+//------------------------------------------------------------------------------
+
+void MainArgs::EchoAndSaveArgs(int argc, char* argv[])
+{
+   Debug::ft("MainArgs.EchoAndSaveArgs");
+
+   auto& outdev = SysConsole::Out();
+
+   outdev << "Entering main(int argc, char* argv[])" << CRLF;
+   outdev << "  argc: " << argc << CRLF;
+
+   for(auto i = 0; i < argc; ++i)
+   {
+      std::string arg(argv[i]);
+      PushBack(arg);
+      outdev << "  argv[" << i << "]: " << arg << CRLF;
+   }
+
+   outdev << std::flush;
 }
 
 //------------------------------------------------------------------------------

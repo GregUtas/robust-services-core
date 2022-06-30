@@ -48,6 +48,11 @@ public:
    //
    MainArgs& operator=(const MainArgs& that) = delete;
 
+   //  Echoes main()'s arguments to the console and saves them.
+   //  ARGC and ARGV are the arguments to main().
+   //
+   static void EchoAndSaveArgs(int argc, char* argv[]);
+
    //  Returns the number of arguments that were passed to main().
    //
    static size_t Size();

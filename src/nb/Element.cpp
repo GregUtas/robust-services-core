@@ -170,20 +170,21 @@ void Element::Patch(sel_t selector, void* arguments)
 
 const string Element::RscPath()
 {
-   //  Return the last directory named "rsc" on the path to the executable.
+   //  Return the directory above the "src" directory on the path to the
+   //  executable.
    //
    string path(MainArgs::At(0));
-   string dir("rsc");
+   string dir("src");
    dir.push_back(PATH_SEPARATOR);
    auto pos = path.rfind(dir);
 
    if(pos != string::npos)
    {
-      path.erase(pos + 3);
+      path.erase(pos);
    }
    else
    {
-      //  An "rsc" directory was not found.  Set RscDir to the executable's
+      //  A "src" directory was not found.  Set RscDir to the executable's
       //  directory, though this is unlikely to work.
       //
       pos = path.rfind(PATH_SEPARATOR);

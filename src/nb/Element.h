@@ -58,9 +58,8 @@ public:
    //
    static std::string strTimePlace();
 
-   //  Returns the first directory named "rsc" on the path to the .exe that
-   //  contains the object code.  Does not include a trailing PATH_SEPARATOR
-   //  character.
+   //  Returns the directory immediately above the "src" directory on the path
+   //  to the executable.  Does not include a trailing PATH_SEPARATOR character.
    //
    static const std::string RscPath();
 

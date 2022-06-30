@@ -14,7 +14,7 @@ yourself. They are _not_ installers, so you must still have the full
 repository installed, along with the Visual Studio components that an
 _.exe_ requires (VS2022, although earlier versions may also work).
 
-Download an executable to the top-level _rsc_ directory or one below
+Download an executable to the [_src_](/src) directory or one below
 it. This will allow the executable to locate its
 [configuration file](/input/element.config.txt). When RSC starts, it
 notes the path from which it was launched and searches for _rsc/_

@@ -81,12 +81,11 @@ Code checked since the latest release is work in progress and may be unstable
 or incomplete, so downloading from the green "Code" dropdown menu on the home
 page is not recommended.
 
-After you download and extract the repository, its top-level directory will have
-a name like _robust-services-core-v0.n.n_ now that releases are tagged. So will
-the directory directly underneath it. Rename that second-level directory _rsc_.
-This is because, when the executable starts, it looks for its
+After you download and extract the repository, do not alter its directory
+structure. This is because, when the executable starts, it looks for its
 [configuration file](input/element.config.txt) on the path
-_../rsc/input/element.config.txt_.
+_../&lt;dir>/input/element.config.txt_, where _&lt;dir>_ is the directory
+immediately above the _src_ directory that contains the code.
 
 ## Building an executable
 
@@ -150,12 +149,20 @@ _log_ file).
 
 ## Developing an application
 
-To use RSC as a framework, create a static library which uses the subset of
-RSC that your application requires. This will always include the namespace
+The easiest way to use RSC as a framework is to create a static library below
+RSC's [_src_](src) directory. Simply use whatever subset of RSC that your
+application needs. This will always include the namespace
 `NodeBase` (in the [_nb_](src/nb) directory). It might also include
-`NetworkBase` (in the [_nw_](src/nw) directory) and `SessionBase` (in the
-[_sb_](src/sb) directory). Using a new namespace for your application is
-recommended.
+`NetworkBase` (in the [_nw_](src/nw) directory) and
+`SessionBase` (in the [_sb_](src/sb) directory). Using a new namespace for
+your application is recommended.
+
+If you put your code elsewhere, RSC will be unable to find its configuration
+file when you launch it, as described in
+[Installing the Repository](#installing-the-repository). You will then need
+to modify the function [`Element::RscPath`](src/nb/Element.cpp) so that it
+can find the directory that contains the [_input_](input) directory. You
+should also add RSC's [_help_](help) directory to that directory.
 
 To initialize your application, derive from [`Module`](src/nb/Module.h).
 For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes

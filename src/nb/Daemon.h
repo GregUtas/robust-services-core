@@ -52,11 +52,11 @@ namespace NodeBase
 //    may have to wake up just to send a heartbeat, even if it has no work to
 //    do.  This is also an overhead.
 //  o The primary purpose of heartbeating is to create a new thread when the
-//    existing one fails send a heartbeat.  But given that a thread cannot exit
-//    without its daemon being notified, the primary risk is a thread that gets
-//    into an infinite loop.  However, threads usually run locked, and a locked
-//    thread is signalled if it runs too long, so again heartbeating has little
-//    additional value.
+//    existing one fails to send a heartbeat.  But given that a thread cannot
+//    exit without its daemon being notified, the primary risk is a thread that
+//    gets into an infinite loop.  However, threads usually run locked, and a
+//    locked thread is signalled if it runs too long, so again heartbeating has
+//    little additional value.
 //
 class Daemon : public Permanent
 {

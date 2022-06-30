@@ -248,7 +248,7 @@ static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
             case Cxx::Forward:
             case Cxx::Enum:
                //
-               //  These need an elaborated name specifier to be selected
+               //  These need an elaborated type specifier to be selected
                //  over an item that is not one of these types.
                //
                switch(list[i]->Type())

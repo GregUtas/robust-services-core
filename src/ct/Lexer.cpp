@@ -1341,6 +1341,28 @@ void Lexer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+void Lexer::DisplayComments(std::ostream& stream) const
+{
+   const auto& info = GetLinesInfo();
+
+   for(auto i = info.cbegin(); i != info.cend(); ++i)
+   {
+      if((i->type == TextComment) || LineTypeAttr::Attrs[i->type].isCode)
+      {
+         auto pos = FindComment(i->begin);
+
+         if(pos != string::npos)
+         {
+            auto end = CurrEnd(pos);
+            auto comment = code_.substr(pos + 3, end - pos - 2);
+            stream << comment;
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 size_t Lexer::Find(size_t pos, const string& str) const
 {
    Debug::ft("Lexer.Find");

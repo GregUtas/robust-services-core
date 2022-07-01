@@ -196,6 +196,10 @@ public:
    //
    void Scan();
 
+   //  Displays all code comments classified as a TextComment in STREAM.
+   //
+   void DisplayComments(std::ostream& stream) const;
+
    //  Includes, in the cross-reference, symbols that appear in the
    //  file's items.
    //

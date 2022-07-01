@@ -350,6 +350,10 @@ public:
    //
    void CalcLineTypes();
 
+   //  Displays all code comments classified as a TextComment in STREAM.
+   //
+   void DisplayComments(std::ostream& stream) const;
+
    //  Returns 0 or 1 if line N and the following line can be merged and remain
    //  within the line length limit, with 1 indicating that a space needs to be
    //  inserted when merging them.  Returns -1 if the lines cannot merge.

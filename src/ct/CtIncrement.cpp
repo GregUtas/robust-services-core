@@ -501,6 +501,7 @@ static const string& ValidExportOptions()
       ValidOpts.push_back(FileSymbolUsage);
       ValidOpts.push_back(CrossReferenceVerbose);
       ValidOpts.push_back(CrossReferenceBrief);
+      ValidOpts.push_back(CodeComments);
    }
 
    return ValidOpts;
@@ -558,6 +559,15 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       auto filename = title + ".xref.txt";
       Singleton<CxxSymbols>::Instance()->DisplayXref(*stream, opts);
+      cli.SendToFile(filename, true);
+   }
+
+   if(opts.find(CodeComments) != string::npos)
+   {
+      Debug::Progress(string("Exporting comments...") + CRLF);
+      auto stream = cli.FileStream();
+      Singleton<Library>::Instance()->DisplayComments(*stream);
+      auto filename = title + ".comments.txt";
       cli.SendToFile(filename, true);
    }
 

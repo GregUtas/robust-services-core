@@ -140,5 +140,6 @@ constexpr char ItemStatistics = 's';
 constexpr char FileSymbolUsage = 'u';
 constexpr char CrossReferenceBrief = 'x';
 constexpr char CrossReferenceVerbose = 'z';
+constexpr char CodeComments = 'k';
 }
 #endif

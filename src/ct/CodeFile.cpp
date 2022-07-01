@@ -1037,6 +1037,14 @@ void CodeFile::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+void CodeFile::DisplayComments(std::ostream& stream) const
+{
+   stream << Name() << CRLF;
+   editor_.DisplayComments(stream);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 {
    if(dir_ == nullptr) return;

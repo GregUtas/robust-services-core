@@ -119,6 +119,10 @@ public:
    //
    void Trim(std::ostream& stream) const;
 
+   //  Displays all code comments classified as a TextComment in STREAM.
+   //
+   void DisplayComments(std::ostream& stream) const;
+
    //  Deletes the variable known by NAME.  Updates EXPL to indicate success
    //  or failure.  Returns 0 on success.
    //

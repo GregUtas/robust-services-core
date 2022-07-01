@@ -278,6 +278,17 @@ void Library::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+void Library::DisplayComments(ostream& stream) const
+{
+   for(auto f = files_.cbegin(); f != files_.cend(); ++f)
+   {
+      (*f)->DisplayComments(stream);
+      if(std::next(f) != files_.cend()) stream << SingleRule() << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Library_EnsureFile = "Library.EnsureFile";
 
 CodeFile* Library::EnsureFile(const string& file, CodeDir* dir)

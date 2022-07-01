@@ -99,7 +99,7 @@ CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
 {
    Debug::ft("CodeWarning.ctor");
 
-   //  Make the warning non-internal so that CxxLocation.UpdatePos will
+   //  Make the warning non-internal so that CxxLocation::UpdatePos will
    //  will update its position when code is edited.
    //
    loc_.SetLoc(file, pos, false);

@@ -71,7 +71,7 @@ struct HeapBlock
    }
 
    //  Displays member variables.  This has the same signature as
-   //  Base.Display so that Q2Way can invoke it.
+   //  Base::Display so that Q2Way can invoke it.
    //
    void Display(std::ostream& stream,
       const string& prefix, const Flags& options) const;

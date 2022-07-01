@@ -32,7 +32,7 @@
 namespace NodeBase
 {
 //  Defines a string (such as a command) that may take additional parameters.
-//  Each instance is added to a CliTextParm by invoking CliTextParm.BindText.
+//  Each instance is added to a CliTextParm by invoking CliTextParm::BindText.
 //
 class CliText : public CliParm
 {

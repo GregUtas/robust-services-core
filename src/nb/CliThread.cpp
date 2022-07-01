@@ -504,7 +504,7 @@ const CliCommand* CliThread::ParseCommand() const
    string tag;
    auto inIncr = true;
 
-   //  Record the command in any output file.  (CliBuffer.GetLine copies
+   //  Record the command in any output file.  (CliBuffer::GetLine copies
    //  each input to the console and/or the console transcript file.)
    //
    if(!outFiles_.empty())

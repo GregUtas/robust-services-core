@@ -44,9 +44,9 @@ namespace CodeTools
 //  manageable.
 //
 //  The parser is implemented using recursive descent.  Except for the analysis
-//  of #include lists (CodeFile.Scan) and the preprocessing of empty macro names
-//  (Lexer.Preprocess), it is a single-pass parser.  The grammar is documented
-//  in the relevant parser functions.
+//  of #include lists (CodeFile::Scan) and the preprocessing of empty macro
+//  names (Lexer::Preprocess), it is a single-pass parser.  The grammar is
+//  documented in the relevant parser functions.
 //
 //  The parser does not support the concept of "translation units".  All files
 //  are parsed in one pass after analyzing #include directives to calculate a

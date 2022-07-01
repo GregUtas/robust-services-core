@@ -203,8 +203,8 @@ void Class::AccessibilityOf
    }
 
    //  If ITEM is a forward declaration, increase its distance from SCOPE
-   //  so that CxxSymbols.FindNearestItem will resolve the class's name to
-   //  its definition instead of to the forward declaration.
+   //  so that CxxSymbols::FindNearestItem will resolve the class's name
+   //  to its definition instead of to the forward declaration.
    //
    auto itemType = item->Type();
    auto f = (itemType == Cxx::Forward ? 1 : 0);
@@ -3524,7 +3524,7 @@ CxxToken* CxxArea::NewestItem()
 CxxToken* CxxArea::PosToItem(size_t pos) const
 {
    //  This does not forward to decls_, whose items reside at file scope
-   //  in a .cpp and are therefore found by CodeFile.PosToItem.
+   //  in a .cpp and are therefore found by CodeFile::PosToItem.
    //
    auto item = CxxScope::PosToItem(pos);
    if(item != nullptr) return item;
@@ -3598,7 +3598,7 @@ void CxxArea::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
    //  This does not forward to decls_, whose items reside at file scope
-   //  in a .cpp and are therefore updated by CodeFile.UpdatePos.
+   //  in a .cpp and are therefore updated by CodeFile::UpdatePos.
    //
    CxxScope::UpdatePos(action, begin, count, from);
 

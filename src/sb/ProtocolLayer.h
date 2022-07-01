@@ -143,7 +143,7 @@ private:
    virtual ProtocolLayer* AllocUpper(const Message& msg);
 
    //  Creates the layer below for an outgoing initial message.  If the stack
-   //  is being created by ProtocolSM.CreateStack, MSG will be nullptr.  The
+   //  is being created by ProtocolSM::CreateStack, MSG will be nullptr.  The
    //  default version returns nullptr and must be overridden by a layer that
    //  is not at the bottom of a stack.
    //

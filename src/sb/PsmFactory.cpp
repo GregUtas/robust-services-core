@@ -101,7 +101,7 @@ Factory::Rc PsmFactory::ReceiveMsg
       //  The message isn't addressed to a port.  There are three cases:
       //  (a) Initial message.  Create a context and port.  A port is created
       //      at I/O level (that is, as soon as a message arrives) because it
-      //      immediately records the peer's address.  MsgPort.FindPeer can
+      //      immediately records the peer's address.  MsgPort::FindPeer can
       //      then deliver a subsequent message to the same port and context
       //      if the dialog's initiator sends another message before it has
       //      received a reply.  Similarly, the MsgPort constructor invokes
@@ -109,13 +109,13 @@ Factory::Rc PsmFactory::ReceiveMsg
       //      factory can save the port in a user profile so that subsequent
       //      messages from the user can also be delivered to the port and
       //      context that were just created to handle this initial message.
-      //  (b) Join message.  SsmContext.ReceiveMsg has set CTX to the context
+      //  (b) Join message.  SsmContext::ReceiveMsg has set CTX to the context
       //      that will handle this session.  Create a port on that context.
       //  (c) Subsequent message.  The message was not addressed to a port
       //      because the sender had not yet received a reply, so it still
       //      doesn't know the address of the port that was allocated for its
       //      initial message.  This is prevented, for intraprocessor messages
-      //      only, by MsgPort.UpdatePeer.  But for an interprocessor message,
+      //      only, by MsgPort::UpdatePeer.  But for an interprocessor message,
       //      we must search for the port that contains the sender's address.
       //
       if(header->initial)

@@ -126,7 +126,7 @@ public:
 
    //  Returns the item's direct type, which could be a typedef or forward
    //  declaration.  To follow either of these to the final underlying type,
-   //  use CxxToken.Root.
+   //  use CxxToken::Root.
    //
    virtual CxxScoped* DirectType() const { return Referent(); }
 

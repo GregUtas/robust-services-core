@@ -512,8 +512,8 @@ enum Warning
    DebugFtNotFirst,          // function invokes Debug::ft after first statement
    DebugFtNameMismatch,      // function name for Debug::ft is incorrect
    DebugFtNameDuplicated,    // function name for Debug::ft used previously
-   DisplayNotOverridden,     // class does not override Base.Display
-   PatchNotOverridden,       // class does not override Object.Patch
+   DisplayNotOverridden,     // class does not override Base::Display
+   PatchNotOverridden,       // class does not override Object::Patch
    FunctionCouldBeDefaulted, // empty special member function defined
    InitCouldUseConstructor,  // initialization uses oper= instead of constructor
    CouldBeNoexcept,          // function could be tagged noexcept

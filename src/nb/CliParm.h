@@ -286,7 +286,7 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Returns true if it is OK to invoke CliCookie.Ascend, which is
+   //  Returns true if it is OK to invoke CliCookie::Ascend, which is
    //  equivalent to backing up to this item and continuing down the
    //  parse tree when looking for the next parameter.
    //

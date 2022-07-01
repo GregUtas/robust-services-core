@@ -1139,7 +1139,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
          //  CWT, we won't send a message to the user at all.  Messages from
          //  the user would then continue to be routed to the active POTS call,
          //  bypassing the multiplexer.  We must therefore force a port to be
-         //  allocated for this PSM now, so that PotsCallFactory.PortAllocated
+         //  allocated for this PSM now, so that PotsCallFactory::PortAllocated
          //  will register it as the user's address.
          //
          if(muxUPsm->EnsurePort() == nullptr)

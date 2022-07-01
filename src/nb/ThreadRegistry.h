@@ -56,7 +56,7 @@ enum ThreadState
 {
    NotRegistered,  // no entry for SysThreadId in ThreadRegistry
    Constructing,   // Thread under construction
-   Constructed,    // waiting to enter Thread.Start or running
+   Constructed,    // waiting to enter Thread::Start or running
    Deleting,       // Thread destructor entered
    Deleted         // Thread unexpectedly deleted but still running
 };

@@ -4092,9 +4092,9 @@ bool Parser::HandleInclude()
 
    //  <Include> = "#include" <FileName>
    //
-   //  Note that #includes are handled before parsing, by CodeFile.Scan, because
-   //  they allow the compile order to be calculated.  Here, we finally insert
-   //  the #include as a statement in the code file.
+   //  Note that #includes are handled before parsing, by CodeFile::Scan,
+   //  because they allow the compile order to be calculated.  Here, we
+   //  finally insert the #include as a statement in the code file.
    //
    auto start = CurrPos();
    auto end = lexer_.FindLineEnd(start);

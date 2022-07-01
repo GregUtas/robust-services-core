@@ -915,7 +915,7 @@ static void Inform(string text)
 
 //------------------------------------------------------------------------------
 //
-//  Returns true if ITEM, whose CODE is provided, is a non-trival inline.
+//  Returns true if ITEM, whose CODE is provided, is a non-trivial inline.
 //  To be an inline, it must be a function without a separate definition, but
 //  it must have an implementation (as opposed to being deleted or defaulted).
 //  To be non-trivial, its code must span at least three lines.
@@ -1836,7 +1836,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeStructToClass");
 
-   //  Start by changing the structs's forward declarations.
+   //  Start by changing the struct's forward declarations.
    //
    ChangeForwards(log.item_, Cxx::StructType, Cxx::ClassType);
 
@@ -3115,7 +3115,7 @@ word Editor::FindSpecialFuncDeclLoc
 
    //  The user can decide to define the function as defaulted or deleted.
    //  If it will be defaulted and a related function is not trivial, ask
-   //  if the user wants to create a shell for implmenting the function.
+   //  if the user wants to create a shell for implementing the function.
    //
    if(prompt)
    {
@@ -6636,7 +6636,7 @@ void Editor::UpdateItemDefnAttrs(const CxxToken* prev,
       else if(next != nullptr)
       {
          //  The item will be added above NEXT, so duplicate the offset
-         //  currently above NEXT,which will get pushed above the item.
+         //  currently above NEXT, which will get pushed above the item.
          //
          itemOffsets.below_ = nextOffsets.above_;
       }

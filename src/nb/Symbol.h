@@ -34,7 +34,7 @@ namespace NodeBase
 {
 //  Base class for CLI symbols.  A symbol is used as a mnemonic to represent
 //  a numeric value or string in CLI commands.  Symbols are defined through
-//  SymbolRegistry.BindSymbol rather than by using this class directly.
+//  SymbolRegistry::BindSymbol rather than by using this class directly.
 //
 class Symbol : public Permanent
 {

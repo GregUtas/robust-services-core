@@ -45,8 +45,8 @@ const int PriorityMap[SysThread::Priority_N] =
    3   // WatchdogPriority
 };
 
-//  Thread.h's signal handler.  We register a different one that invokes this
-//  one after it performs some preliminary work.
+//  The Thread signal handler.  We register a different one that invokes
+//  this one after it performs some preliminary work.
 //
 static SysThread::sighandler_t SignalHandler = nullptr;
 
@@ -89,7 +89,7 @@ void SysThread::ConfigureProcess()
 {
    Debug::ft(SysThread_ConfigureProcess);
 
-   //  If changing our process' priority is not allowed, setpriority returns
+   //  If changing our process priority is not allowed, setpriority returns
    //  EACCES.
    //
    if(SetPriorityAllowed())

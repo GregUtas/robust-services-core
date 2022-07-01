@@ -42,7 +42,7 @@ void Gate::Notify()
    //    next time that Notify is invoked.
    //  Not locking the mutex would improve performance and be low risk:
    //  o If a thread is supposed to run but doesn't, this function is
-   //    reinvoked when InitThread reinvokes Thread.Interrupt.
+   //    reinvoked when InitThread reinvokes Thread::Interrupt.
    //  o A thread that sleeps until a work item arrives is notified each
    //    time a work item arrives, so the risk is a situation in which
    //    the next work item doesn't arrive for quite some time, leaving

@@ -1156,7 +1156,7 @@ public:
    //
    std::string TypeString(bool arg) const override;
 
-   //  Overridden to update the friends's location.
+   //  Overridden to update the friend's location.
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -1303,7 +1303,7 @@ public:
    //
    Cxx::ItemType Type() const override { return Cxx::MemberInit; }
 
-   //  Overridden to update the initializations's location.
+   //  Overridden to update the initialization's location.
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -1615,7 +1615,7 @@ public:
    //
    void SetAlignment(AlignAsPtr& align);
 
-   //  Overridden to return the the underlying type's template arguments.
+   //  Overridden to return the underlying type's template arguments.
    //
    const TemplateArgPtrVector* Args() const override;
 

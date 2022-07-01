@@ -152,7 +152,7 @@ enum SlabCorruptionReason
 {
    AreaMisaligned,        // area's addr != previous area's addr + size
    AvailNotFoundInAreas,  // found in avail but not found in areas
-   FreeNotFoundInAvail,   // marked FREE in areas_but not found in avail
+   FreeNotFoundInAvail,   // marked FREE in areas but not found in avail
    NotFreeFoundInAvail,   // not marked FREE in areas but found in avail
    SlabAddrNotInAreas,    // slab's addr not found in areas
    TooFewAreas,           // areas exhausted before all slabs accounted for

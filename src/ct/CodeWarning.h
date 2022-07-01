@@ -49,7 +49,7 @@ struct WarningAttrs
    //
    const bool fixable_;
 
-   //  Set if the warning should be retained when >check is reexecuted.  This
+   //  Set if the warning should be retained when >check is re-executed.  This
    //  is true for warnings detected during compilation, because they cannot
    //  be regenerated without recompiling.
    //
@@ -148,7 +148,7 @@ public:
    //
    void ItemDeleted(const CxxToken* item) const;
 
-   //  Returns true if LOG should be retained when >check is reexecuted.
+   //  Returns true if LOG should be retained when >check is re-executed.
    //
    bool Preserve() const;
 private:

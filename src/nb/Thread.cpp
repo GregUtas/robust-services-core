@@ -1608,7 +1608,7 @@ bool Thread::EnterSwLog()
 main_t Thread::Exit(signal_t sig)
 {
    //  Set this immediately to prevent an exception from being thrown
-   //  to force the thread to exit.  We have exited Thread.Start, so
+   //  to force the thread to exit.  We have exited Thread::Start, so
    //  the exception wouldn't be caught.
    //
    priv_->exiting_ = true;
@@ -1678,7 +1678,7 @@ void Thread::ExitIfSafe(debug64_t offset) NO_FT
 {
    //  If the thread is blocked, it just invoked ExitBlockingOperation.  It
    //  can be trapped before it can even record the time when it started to
-   //  run, so record it now.  This prevents ContextSwitches.DisplaySwitches
+   //  run, so record it now.  This prevents ContextSwitches::DisplaySwitches
    //  from generating a "simultaneous unpreemptable threads" log.
    //
    if(priv_->blocked_ != NotBlocked)
@@ -1999,9 +1999,9 @@ bool Thread::Interrupt(FlagId reason)
    //  o A thread is only interrupted if it is sleeping (or running), not
    //    if it is waiting on a stream or socket.  Nonetheless, the thread
    //    may want to react to this interrupt at its next opportunity.
-   //  o If SysThread.Interrupt fails, the thread can still react to the
+   //  o If SysThread::Interrupt fails, the thread can still react to the
    //    interrupt as soon as it checks its vector.
-   //  o If SysThread.Interrupt succeeds, the thread may run immediately,
+   //  o If SysThread::Interrupt succeeds, the thread may run immediately,
    //    before this function returns, in which case its vector must have
    //    already been updated.
    //
@@ -2057,7 +2057,7 @@ bool Thread::IsTraceable() const
    case WatchdogFaction:
    case SystemFaction:
       //
-      //  Always trace RootThread and InitThread during system initalization
+      //  Always trace RootThread and InitThread during system initialization
       //  and restarts.
       //
       if(Restart::GetStage() != Running) return true;
@@ -2727,7 +2727,7 @@ bool Thread::Restarting(RestartLevel level) const
 {
    Debug::ft("Thread.Restarting");
 
-   //  If the thread is willing to exit, ModuleRegistry.Shutdown will
+   //  If the thread is willing to exit, ModuleRegistry::Shutdown will
    //  momentarily signal and schedule it so that it can exit.
    //
    if(ExitOnRestart(level)) return true;

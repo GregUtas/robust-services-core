@@ -745,7 +745,7 @@ public:
    //  at file scope.  This prevents logging the RedundantScope warning on a
    //  qualified name.  The problem is that Context::Scope() is the data item
    //  itself when compiling its initialization statement, but the scope should
-   //  be the namespace in which the initialzation appears until compilation of
+   //  be the namespace in which the initialization appears until compilation of
    //  the assignment operator's rvalue.
    //
    CxxScope* GetScope() const override;
@@ -804,8 +804,8 @@ public:
    //
    void SetContext(size_t pos) override;
 
-   //  Sets the last name's referent.  This is used by QualName.EnterBlock and
-   //  Operation.PushMember when a name appears in executable code.  It is also
+   //  Sets the last name's referent.  This is used by QualName::EnterBlock and
+   //  Operation::PushMember when a name appears in executable code.  It is also
    //  used by classes that contain a QualName member and that find a referent.
    //  Those classes do not contain executable code, so they can safely use the
    //  last name's ref_ field because it is normally used only when it appears
@@ -1011,8 +1011,8 @@ private:
    //
    TagCount arrays_ : 8;
 
-   //  The number of pointers associated with the type.  NOTE: This value can
-   //  be *negative* for an auto type.  See the comment in TypeTags.TypeString.
+   //  The number of pointers associated with the type.  This value can be
+   //  *negative* for an auto type.  See the comment in TypeTags::TypeString.
    //
    TagCount ptrs_ : 8;
 

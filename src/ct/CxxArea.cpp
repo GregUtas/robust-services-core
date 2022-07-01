@@ -2410,8 +2410,8 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
    //  generate a log.  An implicit constructor, copy constructor, or copy
    //  operator always results in a log, and a destructor results in a log if
    //  the class is a base, a singleton, or isn't a struct and has a pointer
-   //  member (which might mean that it needs to free free memory).  Propagate
-   //  the call up the class hierarchy if a log is not generated.
+   //  member (which might mean that it needs to free memory).  Propagate the
+   //  call up the class hierarchy if a log is not generated.
    //
    implicit_ = true;
 

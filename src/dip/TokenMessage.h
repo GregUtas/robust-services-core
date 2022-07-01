@@ -97,7 +97,7 @@ public:
    //
    bool has_nested_parms() const { return (length_ != parm_count_); }
 
-   //  Returns the number of parameter.  A parameter is a single token or
+   //  Returns the number of parameters.  A parameter is a single token or
    //  a stream of tokens enclosed by parentheses.  A parameter can itself
    //  contain nested parameters.
    //

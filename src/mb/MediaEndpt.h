@@ -86,7 +86,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
-   //  Overridden to select MEPs by FactoryID.
+   //  Overridden to select MEPs by FactoryId.
    //
    bool Passes(uint32_t selector) const override;
 protected:

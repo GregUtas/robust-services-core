@@ -197,7 +197,7 @@ bool InvokerThread::Recover()
    {
       ctx_->Dump();
 
-      //  The implementation of unique_ptr.reset may be equivalent to this:
+      //  The implementation of unique_ptr::reset may be equivalent to this:
       //    item = this->ptr_;
       //    this->ptr_ = nullptr;
       //    delete item;

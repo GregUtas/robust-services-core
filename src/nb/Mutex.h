@@ -61,7 +61,7 @@ namespace NodeBase
 //     A mutex--especially when locked--should not be deleted.  The risk of
 //     this increases when a mutex is allocated in memory that can be freed.
 //     Deleting a locked mutex produces a bizarre function traceback from
-//     Debug.SwLog.  And if a mutex is allocated in memory whose heap is
+//     Debug::SwLog.  And if a mutex is allocated in memory whose heap is
 //     freed during a restart, the handle to it will be lost--although it
 //     will still exist--unless it is deleted before the heap is freed.
 //

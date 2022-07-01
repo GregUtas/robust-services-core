@@ -125,8 +125,8 @@ TraceBuffer::TraceBuffer() :
    AllocBuffers(MinSize);
    invocations_.reset(new InvocationsTable);
 
-   //  Create NbTracer here.  It used to be done in Thread.CalcStatus, but it
-   //  now uses Singleton.Extant, instead of Singleton.Instance, to avoid the
+   //  Create NbTracer here.  It used to be done in Thread::CalcStatus, but it
+   //  now uses Singleton::Extant, instead of Singleton::Instance, to avoid the
    //  potentially throwing new operator in the latter.  This caused NbTracer
    //  to not be created until after the system had initialized, in which case
    //  initialization could not be traced at all.

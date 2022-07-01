@@ -74,8 +74,8 @@ class TimeoutSignal : public Signal
 //
 struct TimeoutInfo
 {
-   const NodeBase::Base* owner;  // as passed to ProtocolSM.StartTimer
-   TimerId tid;                  // as passed to ProtocolSM.StartTimer
+   const NodeBase::Base* owner;  // as passed to ProtocolSM::StartTimer
+   TimerId tid;                  // as passed to ProtocolSM::StartTimer
 
    TimeoutInfo();
    void Display(std::ostream& stream, const std::string& prefix) const;

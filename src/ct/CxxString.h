@@ -53,7 +53,7 @@ namespace CodeTools
    size_t rfind_first_not_of(const std::string& str,
       const std::string& chars, size_t off = std::string::npos);
 
-   //  For matching a name and template arguments, as they appears in source
+   //  For matching a name and template arguments, as they appear in source
    //  code, to a template instance.
    //
    struct NameAndPtrs

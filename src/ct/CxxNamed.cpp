@@ -994,8 +994,8 @@ void DataSpec::FindReferent()
    case TemplateParameter:
    case TemplateClass:
       //
-      //  When Operation.ExecuteOverload checks if a function overload applies,
-      //  Function.MatchTemplate may create the DataSpec for a class template
+      //  When Operation::ExecuteOverload checks if a function overload applies,
+      //  Function::MatchTemplate may create the DataSpec for a class template
       //  that defines an operator at file scope, like operator<< for a string.
       //  In this case, the class template may not even be visible in the scope
       //  where the possibility of the overload is being checked.
@@ -1187,7 +1187,7 @@ void DataSpec::Instantiating(CxxScopedVector& locals) const
       {
          //  To compile templates--not just template *instances*--we need to
          //  handle situations where one template uses another.  For example,
-         //  TlvMessage.CopyParm<T> invokes TlvMessage.FindParm<T>.  In such
+         //  TlvMessage::CopyParm<T> invokes TlvMessage::FindParm<T>.  In such
          //  a case, we "instantiate" the second template using a *template
          //  parameter* as a template argument.  So when FindParm<T> is about
          //  to be compiled, we will make T a local variable so that it can
@@ -1924,11 +1924,11 @@ string DataSpec::TypeString(bool arg) const
    //  declaration.  In such cases, just use the full name.
    //
    //  Shameless hack.  If a static function returns a type defined in its
-   //  class (e.g. an enum), code invoked from Function.AddThisArg arrives
+   //  class (e.g. an enum), code invoked from Function::AddThisArg arrives
    //  here when comparing function signatures.  This results in a spurious
    //  RedundantScope warning for the return type Class::Enum.  To suppress
    //  this, set our user type to TS_Definition, which is the value that it
-   //  will soon take on when Function.EnterSignature is reached in that
+   //  will soon take on when Function::EnterSignature is reached in that
    //  scenario.
    //
    auto hack = (GetUserType() == TS_Function);
@@ -2346,7 +2346,7 @@ void QualName::GetNames(stringVector& names) const
 
 CxxScope* QualName::GetScope() const
 {
-   //  Currently, this is only invoked when CxxNamed.ResolveName is deciding
+   //  Currently, this is only invoked when CxxNamed::ResolveName is deciding
    //  whether to check if this name contains a redundant scope.  The current
    //  scope is usually the correct one, but we don't want to bother checking
    //  internally generated names, and we need to use the parser's enclosing
@@ -3574,7 +3574,7 @@ void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
    if(direct_) GetDirectClasses(symbols);
 
    //  Currently, this does not report usages based on ref_ or type_.
-   //  If it did,  DataSpec.GetUsages would need a way to suppress or
+   //  If it did,  DataSpec::GetUsages would need a way to suppress or
    //  bypass it, because a name doesn't know whether its ref_ or type_
    //  was used directly or indirectly.
    //
@@ -4540,11 +4540,11 @@ void TypeTags::TypeString(std::string& name, bool arg) const
    {
       //  For an auto type, ptrs_ can be negative:
       //     auto& entry = table[index];
-      //  ENTRY initially has ptrs_ = 0.  StackArg.WasIndexed, invoked on TABLE,
-      //  decrements its ptrs_ from 0 to -1.  The result is ENTRY's referent, so
-      //  ENTRY has ptrs_ = -1 and arrays_ = 1 (from TABLE's DataSpec).  These
-      //  must cancel each other out so that ENTRY doesn't masquerade as either
-      //  an array or a pointer.
+      //  ENTRY initially has ptrs_ = 0.  StackArg::WasIndexed, invoked on
+      //  TABLE, decrements its ptrs_ from 0 to -1.  The result is ENTRY's
+      //  referent, so ENTRY has ptrs_ = -1 and arrays_ = 1 (from TABLE's
+      //  DataSpec).  These must cancel each other out so that ENTRY doesn't
+      //  masquerade as either an array or a pointer.
       //
       auto count = (ptrs_ < 0 ? ptrs_ + arrays_ : arrays_);
       if(count > 0) name += string(count, '*');

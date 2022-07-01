@@ -333,7 +333,7 @@ Event* MediaPsm::ReceiveMsg(Message& msg)
    Debug::ft("MediaPsm.ReceiveMsg");
 
    //  Give the MEP a chance to process any media parameters before
-   //  application software handles the message.  This ensure that
+   //  application software handles the message.  This ensures that
    //  media modifications ripple through the context before the end
    //  of the transaction.
    //

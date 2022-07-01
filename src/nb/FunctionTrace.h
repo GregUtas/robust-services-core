@@ -116,7 +116,7 @@ private:
    //
    static void Capture(fn_name_arg func);
 
-   //  Adjusts  all functions' depths to prevent unnecessary indentation.
+   //  Adjusts all functions' depths to prevent unnecessary indentation.
    //
    static void AdjustDepths();
 

@@ -515,7 +515,7 @@ void BaseDecl::SetAccess(Cxx::Access access)
    Debug::ft("BaseDecl.SetAccess");
 
    //  This is invoked twice: first by our constructor, and then by
-   //  Parser.SetContext.  We want to preserve the value set by our
+   //  Parser::SetContext.  We want to preserve the value set by our
    //  constructor, so if the current value isn't Cxx::Public (the
    //  default), it has already been set and should be preserved.
    //
@@ -2578,11 +2578,11 @@ bool Friend::ResolveTemplate(Class* cls, const TypeName* type, bool end) const
    auto scope = cls->GetScope();
    const_cast<Friend*>(this)->SetScope(scope);
 
-   //  Class.AccessbilityTo invokes Class.FindFriend to determine if a friend
+   //  Class::AccessbilityTo invokes Class::FindFriend to determine if a friend
    //  declaration did anything useful, even if it wasn't needed to access a
    //  member.  If a friend is a class template instance, this can cause this
    //  code to be invoked to find the friend's referent.  If the referent for
-   //  a template parameter is unknown, it would cause Class.EnsureInstance
+   //  a template parameter is unknown, it would cause Class::EnsureInstance
    //  to create a class instance name with unqualified template parameters,
    //  and so we prevent this.
    //

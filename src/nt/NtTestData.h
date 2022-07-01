@@ -66,7 +66,7 @@ public:
    //
    void Conclude();
 
-   //  Invoked to report a test's failure.  Invokes CliThread.Report with
+   //  Invoked to report a test's failure.  Invokes CliThread::Report with
    //  RC and a string that includes EXPL.  Returns RC.
    //
    word SetFailed(word rc, const std::string& expl);

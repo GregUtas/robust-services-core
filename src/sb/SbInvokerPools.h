@@ -74,11 +74,11 @@ private:
    NodeBase::CfgIntParmPtr noIngressQueueLength_;
 
    //  The configuration parameter for the number of SbIpBuffers reserved
-   //  for non-ingress work.  It was considerly higher when the size of
+   //  for non-ingress work.  It was considerably higher when the size of
    //  object pools was fixed, but has been lowered now that object pools
-   //  grow to handle the amount of work work offered.  The lower number
-   //  could cause problems, however, if the number of buffers reached a
-   //  limit before the system entered overload.
+   //  grow to handle the amount of work offered.  The lower number could
+   //  cause problems, however, if the number of buffers reached a limit
+   //  before the system entered overload.
    //
    NodeBase::CfgIntParmPtr noIngressMessageCount_;
 };

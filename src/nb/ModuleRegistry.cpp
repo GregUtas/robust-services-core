@@ -420,8 +420,8 @@ void ModuleRegistry::Shutdown(RestartLevel level)
          if(prev == exiting.size())
          {
             //  No thread exited while we were paused.  Resignal the remaining
-            //  threads.  This is similar to code in InitThread.HandleTimeout
-            //  and Thread.SwitchContext, where a thread occasionally misses
+            //  threads.  This is similar to code in InitThread::HandleTimeout
+            //  and Thread::SwitchContext, where a thread occasionally misses
             //  its Proceed() and must be resignalled.
             //
             for(auto t = exiting.cbegin(); t != exiting.cend(); ++t)

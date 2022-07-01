@@ -72,8 +72,6 @@ TimedRecord::TimedRecord(FlagId owner) :
 
 bool TimedRecord::Display(ostream& stream, const string& opts)
 {
-   //  Some records are captured before SysTickTimer is even initialized.
-   //
    if(!SystemTime::IsValid(time_)) return false;
 
    auto reg = Singleton<ThreadRegistry>::Instance();

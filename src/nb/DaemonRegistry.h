@@ -76,7 +76,7 @@ public:
    //
    void Startup(RestartLevel level) override;
 
-   //  Overridden to display each daenon.
+   //  Overridden to display each daemon.
    //
    size_t Summarize(std::ostream& stream, uint32_t selector) const override;
 private:

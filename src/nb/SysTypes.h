@@ -109,7 +109,7 @@ typedef uint8_t byte_t;
 //
 typedef int main_t;
 
-//  The type for a Posix signal.
+//  The type for a POSIX signal.
 //
 typedef int signal_t;
 

@@ -189,8 +189,8 @@ public:
    //
    void EraseItem(const CxxToken* item);
 
-   //  Replaces CURR with NEXT in the the block's statements when CURR is
-   //  being deleted.
+   //  Replaces CURR with NEXT in the block's statements when CURR is being
+   //  deleted.
    //
    void ReplaceItem(const CxxToken* curr, CxxToken* next);
 
@@ -1224,8 +1224,8 @@ public:
    void DeleteVoidArg();
 
    //  Returns the first declaration of this function in the class hierarchy
-   //  (that is, virtual but not an override).  Returns the function itself
-   //  if it is not an override.
+   //  which is virtual but not an override.  Returns the function itself if
+   //  it is not an override.
    //
    Function* FindRootFunc() const;
 
@@ -1554,7 +1554,7 @@ public:
    bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
       { return false; }
 
-   //  Overridden  to append argument types if the function's name is ambiguous.
+   //  Overridden to append argument types if the function's name is ambiguous.
    //
    std::string XrefName(bool templates) const override;
 private:

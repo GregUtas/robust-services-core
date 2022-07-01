@@ -53,7 +53,7 @@ RestartLevel IpServiceCfg::RestartRequired() const
 {
    Debug::ftnt("IpServiceCfg.RestartRequired");
 
-   //  A restart is required to disable,but not to enable, a service.
+   //  A restart is required to disable, but not to enable, a service.
    //
    return (NextValue() ? RestartNone : RestartCold);
 }

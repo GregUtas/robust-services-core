@@ -298,7 +298,7 @@ NameVector GetNameAndArgs(const string& name)
    //  Put the outer name in NAMES[0] and its N template arguments in NAMES[1]
    //  through NAMES[N].  Append any nested template arguments (DEPTH > 1) to
    //  the template argument to which they belong.  This is necessary because
-   //  DataSpec.NamesReferToArgs invokes NameRefersToItem recursively, which
+   //  DataSpec::NamesReferToArgs invokes NameRefersToItem recursively, which
    //  will unpack a nested template.  For example, A<B<C,D>,E> results in the
    //  strings A, B<C,D>, and E, where B<C,D> will be unpacked recursively.
    //

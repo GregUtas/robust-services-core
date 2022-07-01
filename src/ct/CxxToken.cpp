@@ -995,8 +995,8 @@ bool Expression::AddBinaryOp(TokenPtr& item)
          //
          //  Nothing preceded this binary operator.  Back up and try another
          //  parse.  This occurs with "(<name>) <binOp>", which looks like
-         //  a cast until <binOp> appears.  If Parser.GetTypeSpec (used by
-         //  Parser.GetCast) checked that its name was actually a type, this
+         //  a cast until <binOp> appears.  If Parser::GetTypeSpec (used by
+         //  Parser::GetCast) checked that its name was actually a type, this
          //  might be avoided, but it does not do so.
          //
          return false;
@@ -2316,7 +2316,7 @@ void Operation::ExecuteCall() const
    //  returned the first match.  However, there are a couple of exceptions:
    //  o If the function is a constructor, name resolution actually returned
    //    the class, because it and the constructor have the same names.
-   //    QualName.Referent does not instantiate a template that is only named
+   //    QualName::Referent does not instantiate a template that is only named
    //    as a class, so instantiate it here in case it doesn't yet exist.
    //  o If the function is an operator (except new and new[]), the correct
    //    function has already been identified.
@@ -2702,7 +2702,7 @@ bool Operation::ExecuteOverload
 
    //  If an overload was found, invoke it after fixing its "this" argument
    //  if it a member function.  If assigning an auto type, pop the function's
-   //  return type and set it as the auto type for FuncData.EnterBlock.  When
+   //  return type and set it as the auto type for FuncData::EnterBlock.  When
    //  setting an auto type, update ARG1 to ARG2, the argument on which the
    //  function was invoked.
    //
@@ -3184,7 +3184,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
          //  If MEM was Inherited, it must actually be public (rather than
          //  protected) if SCOPE was not a friend of its declarer and neither
          //  in CLS nor one of its subclasses.  For a function, this code is
-         //  deferred until argument matching is compilete, in case another
+         //  deferred until argument matching is complete, in case another
          //  member function with the same name is selected.
          //
          arg2.Name()->MemberAccessed(cls, mem);

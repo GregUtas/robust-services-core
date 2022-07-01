@@ -372,7 +372,7 @@ public:
    //
    virtual void RecordUsage() { }
 
-   //  Invokes CxxScoped.UpdateReference on items that this one references.
+   //  Invokes CxxScoped::UpdateReference on items that this one references.
    //
    virtual void UpdateXref(bool insert) { }
 
@@ -622,12 +622,12 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  A floating point literal.
+//  A floating-point literal.
 //
 class FloatLiteral : public Literal
 {
 public:
-   //  Suffixes that specify a floating point literal's size.
+   //  Suffixes that specify a floating-point literal's size.
    //
    enum Size : unsigned int
    {
@@ -636,7 +636,7 @@ public:
       SIZE_L   // "L" suffix (long double)
    };
 
-   //  Tags for an floating point literal.
+   //  Tags for a floating-point literal.
    //
    struct Tags
    {
@@ -830,7 +830,7 @@ public:
    //
    Cxx::ItemType Type() const override { return Cxx::Operation; }
 
-   //  Overridden to update the operations's location.
+   //  Overridden to update the operation's location.
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;

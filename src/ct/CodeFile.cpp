@@ -1348,7 +1348,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
    auto tmplt = ref->GetTemplate();
    if(tmplt != nullptr) ref = tmplt;
 
-   //  This loop was adapted from CxxScoped.NameRefersToItem, simplified
+   //  This loop was adapted from CxxScoped::NameRefersToItem, simplified
    //  to handle only the case where a symbol must be resolved by a using
    //  statement.
    //

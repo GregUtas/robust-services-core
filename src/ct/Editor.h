@@ -68,7 +68,7 @@ namespace CodeTools
 //  o Finding a position in the code, editing the code, and then using that
 //    position after the underlying text has shifted as the result of using
 //    the Editor functions Erase, Insert, or Replace, or invoking Rename on
-//    a C++ item.  An edit can even change CodeWarning.Pos(), so it may also
+//    a C++ item.  An edit can even change CodeWarning::Pos(), so it may also
 //    need to be reread or accessed later.  The function UpdateAfterErase
 //    can be used to update a string position after each code erasure.
 //  o Manipulating code_ using string functions such as erase, insert, or
@@ -97,7 +97,7 @@ public:
    word Fix(CliThread& cli, const FixOptions& opts, string& expl) const;
 
    //  Formats the code.  Returns a negative value on failure, in which
-   //  case EXPL provides provides an explanation.
+   //  case EXPL provides an explanation.
    //
    word Format(string& expl);
 
@@ -401,7 +401,7 @@ private:
    //
    word ChangeSpecialFunction(const CodeWarning& log);
 
-   //  Fixes LOG, which involves deletig a special member function.
+   //  Fixes LOG, which involves deleting a special member function.
    //
    word DeleteSpecialFunction(const CodeWarning& log);
 
@@ -591,7 +591,7 @@ private:
    size_t InsertLine(size_t pos, const string& code);
 
    //  Erases COUNT characters starting at POS and then inserts CODE.  Should
-   //  not be used if an erased susbstring is reinserted by CODE.
+   //  not be used if an erased substring is reinserted by CODE.
    //
    size_t Replace(size_t pos, size_t count, const string& code);
 

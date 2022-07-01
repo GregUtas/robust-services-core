@@ -326,7 +326,7 @@ private:
    //
    std::unique_ptr<InvocationsTable> invocations_;
 
-   //  Set when FunctionTrace.Process is invoked to reorder constructors.
+   //  Set when FunctionTrace::Process is invoked to reorder constructors.
    //
    bool processed_;
 };

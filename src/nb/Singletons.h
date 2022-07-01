@@ -39,7 +39,7 @@ namespace NodeBase
 //  Global registry for singletons.  This simplifies restart software because
 //  Shutdown functions do not have to nullify a singleton's Instance_ pointer
 //  when a restart frees the heap in which the singleton was created.  When
-//  Singleton.Instance creates a singleton, it adds it to this registry, which
+//  Singleton::Instance creates a singleton, it adds it to this registry, which
 //  saves the location of the Instance_ pointer and the type of memory used by
 //  the singleton.  This allows all affected singleton Instance_ pointers to
 //  be cleared by this registry's Shutdown function.

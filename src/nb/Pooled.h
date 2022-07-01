@@ -55,7 +55,7 @@ public:
    //
    Pooled& operator=(const Pooled& that) = delete;
 
-   //  Returns true if the object satisifes SELECTOR, whose interpretation
+   //  Returns true if the object satisfies SELECTOR, whose interpretation
    //  is subclass specific.  This function is used to select a subset of
    //  the objects from an ObjectPool.  Note that IsValid must be invoked
    //  *before* invoking this function if the object could have been deleted

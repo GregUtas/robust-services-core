@@ -800,8 +800,8 @@ void ClassData::EnterBlock()
    Debug::ft(ClassData_EnterBlock);
 
    //  The initialization of a static member is handled by
-   //  o ClassData.EnterScope, if initialized where declared, or
-   //  o SpaceData.EnterScope, if initialized separately.
+   //  o ClassData::EnterScope, if initialized where declared, or
+   //  o SpaceData::EnterScope, if initialized separately.
    //
    if(IsStatic())
    {
@@ -4940,7 +4940,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    if(code->empty()) return InstantiateError(instName, 0);
 
    //  A function template in a substitute file (e.g. std::move) does not
-   //  have an implementation, which will cause Parser.GetProcDefn to fail.
+   //  have an implementation, which will cause Parser::GetProcDefn to fail.
    //  Replacing the final semicolon with braces overcomes this.
    //
    if(code->back() == CRLF) code->pop_back();
@@ -5450,7 +5450,7 @@ bool Function::NameRefersToItem(const string& name,
    //  its template arguments.
    //
    //  NOTE: This has not been tested.  Nothing in the code base caused its
-   //  ====  execution, but it is identical to ClassInst.NameRefersToItem.
+   //  ====  execution, but it is identical to ClassInst::NameRefersToItem.
    //
    auto names = GetNameAndArgs(name);
    auto syms = Singleton<CxxSymbols>::Instance();

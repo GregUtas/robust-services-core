@@ -610,8 +610,6 @@ void FunctionTrace::CalcFuncTimes()
 
 usecs_t FunctionTrace::CalcGrossTime()
 {
-   //  Some records are captured before SysTickTimer is even initialized.
-   //
    if(!SystemTime::IsValid(GetTime())) return usecs_t(0);
 
    auto buff = Singleton<TraceBuffer>::Instance();

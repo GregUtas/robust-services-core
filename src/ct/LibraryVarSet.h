@@ -30,7 +30,7 @@
 
 namespace CodeTools
 {
-//  Implments the library symbol $vars, which allows library variables to
+//  Implements the library symbol $vars, which allows library variables to
 //  be counted and listed.
 //
 class LibraryVarSet : public LibrarySet

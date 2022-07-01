@@ -1755,7 +1755,7 @@ TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
    //    function can be invoked merely to check if two operands are compatible.
    //    It therefore does not reject passing a const argument to a non-const
    //    pointer or reference.  Instead, it returns Adaptable, which satisifies
-   //    operand compatibility checks.  Later on, StackArg.AssignedTo verifies
+   //    operand compatibility checks.  Later on, StackArg::AssignedTo verifies
    //    whether constness was properly interpreted.
    //  o A non-const THAT can be passed to a const THIS, but only if there
    //    isn't another overload of the function that is non-const.  In this

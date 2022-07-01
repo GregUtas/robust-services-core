@@ -31,11 +31,11 @@
 namespace NodeBase
 {
 //  Daemons for managing NodeBase threads.  The following threads do not have
-//  daemons because they will be recreated, on demand, by Singleton.Instance:
-//  o CinThread (by CinThread.GetLine)
-//  o CoutThread (by CoutThread.Spool)
-//  o FileThread (by FileThread.Spool)
-//  o InitThread (by Thread.Ready, Thread.Schedule, and others)
+//  daemons because they will be recreated, on demand, by Singleton::Instance:
+//  o CinThread (by CinThread::GetLine)
+//  o CoutThread (by CoutThread::Spool)
+//  o FileThread (by FileThread::Spool)
+//  o InitThread (by Thread::Ready, Thread::Schedule, and others)
 //
 extern fixed_string CliDaemonName;
 

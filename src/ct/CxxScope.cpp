@@ -1333,7 +1333,8 @@ void Data::CheckConstness(bool could) const
    {
       if(!IsConst())
       {
-         if(!nonconst_ && could) Log(DataCouldBeConst);
+         if(!nonconst_ && could && (spec_->Ptrs(true) <= 1))
+            Log(DataCouldBeConst);
       }
       else
       {
@@ -3235,9 +3236,11 @@ void Function::CheckArgs() const
          //  o if the argument is an object passed by value, it could
          //    be passed as a const reference;
          //  o otherwise, the argument could be declared const unless it
-         //    is a pointer type used as a template argument (in which
-         //    case making it const would apply to the pointer, not the
-         //    underlying type)
+         //    - is a pointer type used as a template argument (in which
+         //      case making it const would apply to the pointer, not the
+         //      underlying type)
+         //    - is a double pointer, where passing a non-const to a const
+         //      isn't allowed (e.g. char* strs[] to const char* strs[])
          //
          if(ArgCouldBeConst(i))
          {
@@ -3256,7 +3259,7 @@ void Function::CheckArgs() const
                }
                else if(!IsTemplateArg(arg) || (spec->Ptrs(true) == 0))
                {
-                  LogToArg(ArgumentCouldBeConst, i);
+                  if(spec->Ptrs(true) <= 1) LogToArg(ArgumentCouldBeConst, i);
                }
             }
          }

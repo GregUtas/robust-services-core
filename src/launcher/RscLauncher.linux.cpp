@@ -53,6 +53,9 @@ int LaunchRsc(const std::string& exe, const std::string& parms)
       args[1] = buff1.get();
    }
 
+   //  If the process can't be started, or if waitpid fails, report success
+   //  to prevent it from being automatically relaunched.
+   //
    auto code = posix_spawnp(&pid, exe.c_str(), nullptr, nullptr, args, envp);
 
    if(code == 0)
@@ -60,15 +63,15 @@ int LaunchRsc(const std::string& exe, const std::string& parms)
       if(waitpid(pid, &code, 0) == -1)
       {
          perror("Error from waitpid");
-         return Reprompt;
+         return EXIT_SUCCESS;
       }
    }
    else
    {
       std::cout << "Error launching RSC: " << strerror(code) << '\n';
-      return Reprompt;
+      return EXIT_SUCCESS;
    }
 
-   return (code == 0 ? Reprompt : Relaunch);
+   return (code == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 #endif

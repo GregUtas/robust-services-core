@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 {
    string exe;
    string parms;
-   auto code = Reprompt;
+   auto code = EXIT_SUCCESS;
 
    cout << argv[0] << '\n' << '\n';
 
@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
 
    while(true)
    {
-      if(code != Relaunch)
+      if(code == EXIT_SUCCESS)
       {
          while(true)
          {

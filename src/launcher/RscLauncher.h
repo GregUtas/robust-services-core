@@ -26,15 +26,11 @@
 
 //------------------------------------------------------------------------------
 //
-//  Launches EXE (a path to an .exe) with command line parameters PARMS.
-//  When EXE exits, returns its exit code.  Returns -1 if EXE could not
-//  be launched.  Implementations are platform-specific.
+//  Launches EXE (a path to an executable) with command line parameters
+//  PARMS.  Returns the exit code from EXE.  If EXE could not be launched,
+//  returns EXIT_SUCCESS to prevent it from being automatically relaunched.
+//  Implementations are platform-specific.
 //
 int LaunchRsc(const std::string& exe, const std::string& parms);
-
-//  Outcomes from LaunchRsc.
-//
-constexpr int Reprompt = 0;  // prompt for another executable or to quit
-constexpr int Relaunch = 1;  // launch same executable immediately
 
 #endif

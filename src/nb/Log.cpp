@@ -24,6 +24,7 @@
 #include <atomic>
 #include <bitset>
 #include <cctype>
+#include <cstdlib>
 #include <ios>
 #include <istream>
 #include <new>
@@ -502,9 +503,9 @@ main_t Log::TrapInMain(const Exception* ex,
    auto& indev = SysConsole::In();
    std::getline(indev, input);
 
-   //  The system was dead on arrival, so return 0 to prevent automatic
-   //  rebooting.
+   //  The system was dead on arrival, so report a successful exit
+   //  to prevent it from being automatically relaunched.
    //
-   return 0;
+   return EXIT_SUCCESS;
 }
 }

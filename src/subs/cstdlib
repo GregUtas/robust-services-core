@@ -7,13 +7,15 @@
 
 #include "cstddef"
 
-constexpr int RAND_MAX = 0x7fff;
-
 void* malloc(size_t size);
 void free(void* addr);
 
-void exit(int status);
+constexpr int RAND_MAX = 0x7fff;
 int rand();
+
+constexpr int EXIT_SUCCESS = 0;
+constexpr int EXIT_FAILURE = 1;
+void exit(int status);
 
 namespace std
 {

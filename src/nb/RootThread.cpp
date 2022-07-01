@@ -56,10 +56,10 @@ namespace NodeBase
 //  After the thread that was created to run main() creates RootThread, it
 //  waits forever on this gate.  To initiate a reboot or exit, RootThread
 //  sets ExitCode and signals this gate, which unblocks the original thread
-//  and allows it to exit with ExitCode. On a non-zero code, RscLauncher
-//  restarts the executable.
+//  and allows it to exit with ExitCode.  RscLauncher restarts the executable
+//  if ExitCode is not EXIT_SUCCESS.
 //
-static main_t ExitCode = 0;
+static main_t ExitCode = EXIT_SUCCESS;
 
 static Gate& ExitGate()
 {
@@ -233,7 +233,8 @@ void RootThread::Enter()
 
                if((level == RestartReboot) || (level == RestartExit))
                {
-                  ExitCode = (level == RestartExit ? 0 : -1);
+                  ExitCode =
+                     (level == RestartExit ? EXIT_SUCCESS : EXIT_FAILURE);
                   ExitGate().Notify();
                   Pause(TIMEOUT_NEVER);
                }

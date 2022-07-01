@@ -27,10 +27,10 @@
 #include "CfgParm.h"
 #include "CfgTuple.h"
 #include "Debug.h"
+#include "Element.h"
 #include "FileSystem.h"
 #include "Formatters.h"
 #include "Log.h"
-#include "MainArgs.h"
 #include "NbLogs.h"
 #include "Restart.h"
 #include "SysTypes.h"
@@ -165,26 +165,7 @@ CfgParmRegistry::CfgParmRegistry()
    tupleq_.Init(CfgTuple::LinkDiff());
    parmq_.Init(CfgParm::LinkDiff());
 
-   //> Construct the name of the file that contains this node's configuration
-   //  parameters.  This is done by modifying the first argument to main(),
-   //  which is the path to our executable, as follows:
-   //  o find the last occurrence of directory "rsc" and erase what *follows*
-   //    it (that is, keep the path to that directory as a "suffix"), and then
-   //  o append the directory "input" and the file name "element.config.txt".
-   //
-   string exe(MainArgs::At(0));
-   configFileName_ = exe.c_str();
-
-   auto upFromExe = string("rsc") + PATH_SEPARATOR;
-   auto pos = configFileName_.rfind(upFromExe.c_str());
-
-   if(pos != string::npos)
-      pos += upFromExe.size();
-   else
-      pos = configFileName_.rfind(PATH_SEPARATOR) + 1;
-
-   configFileName_.erase(pos);
-   configFileName_.append("input");
+   configFileName_ = Element::InputPath().c_str();
    configFileName_.push_back(PATH_SEPARATOR);
    configFileName_.append("element.config.txt");
 }

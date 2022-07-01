@@ -73,6 +73,8 @@ ostreamPtr FileSystem::CreateOstream(c_string name, bool trunc)
 
 void FileSystem::DisableFileOutput(bool disabled)
 {
+   Debug::ft("FileSystem.DisableFileOutput");
+
    FileOutputDisabled = disabled;
 }
 

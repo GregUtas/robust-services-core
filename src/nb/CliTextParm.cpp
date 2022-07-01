@@ -25,7 +25,7 @@
 #include <cstring>
 #include <ios>
 #include <memory>
-#include <ostream>
+#include <sstream>
 #include <string>
 #include "CliBuffer.h"
 #include "CliCookie.h"
@@ -193,11 +193,9 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_GetFileNameRc = "CliTextParm.GetFileNameRc";
-
 CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
 {
-   Debug::ft(CliTextParm_GetFileNameRc);
+   Debug::ft("CliTextParm.GetFileNameRc");
 
    auto rc = GetStringRc(s, cli);
 

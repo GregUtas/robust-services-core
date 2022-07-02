@@ -85,7 +85,7 @@ After you download and extract the repository, do not alter its directory
 structure. This is because, when the executable starts, it looks for its
 [configuration file](input/element.config.txt) on the path
 _../&lt;dir>/input/element.config.txt_, where _&lt;dir>_ is the directory
-immediately above the _src_ directory that contains the code.
+immediately above the [_src_](src) directory that contains the code.
 
 ## Building an executable
 
@@ -123,7 +123,7 @@ CLI commands is provided [here](docs/help.cli.txt).
 
 If you enter `>read saveinit` as the first CLI command, a function trace of
 the initialization, which starts even before the invocation of `main`, is
-generated. This trace should look a lot like [this](output/init.trace.txt).
+generated. This trace will look a lot like [this](output/init.trace.txt).
 Each function that appears in such a trace invoked `Debug::ft`, which records
 the following:
   * the function's name
@@ -134,8 +134,8 @@ can see how function calls were nested
   * the total time spent in the function (in microseconds)
   * the net time spent in the function (in microseconds)
 
-All output appears in the directory _../rsc/excluded/output_ (the first
-directory named _rsc_ above the directory from which the _.exe_ was launched).
+All output appears in the directory _../&lt;dir>/excluded/output_, where
+_&lt;dir>_ is, again, the directory immediately above the _src_ directory.
 In addition to any specific output that you request, such as the initialization
 trace, every CLI session produces
   * a _console_ file (a transcript of the CLI commands that you entered and
@@ -150,11 +150,10 @@ _log_ file).
 ## Developing an application
 
 The easiest way to use RSC as a framework is to create a static library below
-RSC's [_src_](src) directory. Simply use whatever subset of RSC that your
-application needs. This will always include the namespace
-`NodeBase` (in the [_nb_](src/nb) directory). It might also include
-`NetworkBase` (in the [_nw_](src/nw) directory) and
-`SessionBase` (in the [_sb_](src/sb) directory). Using a new namespace for
+RSC's _src_ directory. Simply use whatever subset of RSC that your application
+needs. This will always include the namespace `NodeBase` (in the [_nb_](src/nb)
+directory). It might also include `NetworkBase` (in the [_nw_](src/nw) directory)
+and `SessionBase` (in the [_sb_](src/sb) directory). Using a new namespace for
 your application is recommended.
 
 If you put your code elsewhere, RSC will be unable to find its configuration

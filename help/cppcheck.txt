@@ -429,7 +429,8 @@ This is usually desirable, so RSC usually omits this only for
   o simple "getters"
   o "streamers" (e.g. Base.Display and its overrides)
   o simple functions that would clutter a trace by appearing frequently
-  o functions used while modifying the trace buffer
+  o functions invoked by Debug::ft
+  o functions invoked while modifying the trace buffer
 ? W107
 Function does not invoke Debug::ft as first statement
   The invocation of Debug::ft should almost always be a function's first
@@ -579,27 +580,27 @@ Function at .cpp file scope is neither static nor extern
 neither is it made externally visible by an extern declaration in a header
 file. If it is meant to be private to the .cpp, it should be static.
 ? W141
-Function could be moved to a subclass
+Function could move to a subclass
   This virtual function is not invoked through the class that declares it.
 It is only invoked through a class on one subtree of the class hierarchy,
-so it could be moved down to that class.
+so it could move down to that class.
 ? W142
 File does not end with an endline
   This file does not end with a '\n' character, the absence of which can
 cause problems on Unix-based systems.
 ? W143
-Auto variable copies an item returned by reference
-  An auto variable copies an object returned by reference. Perhaps the
+Auto variable copies an object returned by reference
+  An auto variable is copying an object returned by reference. Perhaps the
 variable should be declared as auto&.
 ? W144
-Auto variable copies an item returned by const reference
-  An auto variable copies an object returned by const reference. Perhaps
+Auto variable copies an object returned by const reference
+  An auto variable is copying an object returned by const reference. Perhaps
 the variable should be declared as const auto&.
 ? W145
 Auto variable copies an object
-  An auto variable is making a copy of an object. Perhaps it could be a
+  An auto variable is copying an object. Perhaps it could be a
 reference to the object by changing its declaration to auto&.
 ? W146
 Auto variable copies a const object
-  An auto variable is making a copy of a const object. Perhaps it could
-be a reference to the object by changing its declaration to const auto&.
+  An auto variable is copying a const object. Perhaps it could be a
+reference to the object by changing its declaration to const auto&.

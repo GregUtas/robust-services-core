@@ -678,6 +678,13 @@ bool SlabPriv::Validate(const void* addr) const
 
    MutexGuard guard(mutex_.get());
 
+   if(addr != nullptr)
+   {
+      auto area = areas_.find(addr);
+      if(area == areas_.cend()) return false;
+      return (area->second.state_ == USED);
+   }
+
    //  Iterate over areas_ to verify that all memory in slabs_ is accounted
    //  for with no gaps or overlaps, that an entry appears in avail_ iff its
    //  area is FREE, and that each entry in avail_ is known to areas_.

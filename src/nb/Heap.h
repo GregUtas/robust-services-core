@@ -72,7 +72,8 @@ public:
    virtual size_t BlockToSize(const void* addr) const = 0;
 
    //  Validates the heap.  If ADDR is not nullptr, only the memory
-   //  segment alleged to be at ADDR is validated.
+   //  segment alleged to be at ADDR is validated for being a valid,
+   //  in-use address managed by the heap.
    //
    virtual bool Validate(const void* addr) const = 0;
 

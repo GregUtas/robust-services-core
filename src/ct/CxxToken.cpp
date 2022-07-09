@@ -2313,15 +2313,16 @@ void Operation::ExecuteCall() const
    if(proc.item_ == nullptr) return;
 
    //  Use ARGS to find the right function, because the initial lookup only
-   //  returned the first match.  However, there are a couple of exceptions:
+   //  returned the first match.
+   //  o If the function is an operator (except new and new[]), the correct
+   //    function has already been identified.
    //  o If the function is a constructor, name resolution actually returned
    //    the class, because it and the constructor have the same names.
    //    QualName::Referent does not instantiate a template that is only named
    //    as a class, so instantiate it here in case it doesn't yet exist.
-   //  o If the function is an operator (except new and new[]), the correct
-   //    function has already been identified.
    //  o If the function is a terminal, typedef, or enum this is an explicit
    //    type conversion, such as double(<arg>).
+   //  o If the function is a data item, its type should be a FuncSpec.
    //
    Function* func = nullptr;
    auto scope = Context::Scope();
@@ -2684,9 +2685,6 @@ bool Operation::ExecuteOverload
 
       if(area != nullptr)
       {
-         //c This invocation of FindFunc should not invoke FuncAccessed; that
-         //  should be deferred until the best candidate has been selected.
-         //
          SymbolView view;
          auto candidate =
             area->FindFunc(name, nullptr, &args, true, scope, &view);

@@ -22,7 +22,7 @@ The [tags](https://github.com/GregUtas/robust-services-core/tags) page lists
 stable releases. Unless a release only changed documentation, it includes
 executables. However, RSC must be properly installed to run them. The main
 README page has
-[installation instructions](/README.md#Installing-the-Repository).
+[installation instructions](/README.md#Installing-the-repository).
 
 ## Finding Code
 

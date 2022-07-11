@@ -2846,10 +2846,11 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
 
       auto currSpace = (*i)->GetSpace();
       if(currSpace != space) continue;
+
       auto currPos = (*i)->GetPos();
       if(currPos < min) continue;
 
-      attrs.pos_ = min;
+      if(attrs.pos_ == string::npos) attrs.pos_ = min;
       if(currPos > max) return;
 
       auto type = (*i)->Type();

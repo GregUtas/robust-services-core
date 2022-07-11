@@ -65,7 +65,7 @@ namespace SystemTime
    //
    Point GetInvalid();
 
-   //  Returns false if the time is not the value returned by Invalidate.
+   //  Returns false if the time is not the value returned by GetInvalid.
    //
    bool IsValid(const Point& time);
 }

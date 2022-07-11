@@ -49,7 +49,7 @@ namespace SteadyTime
    //
    Point GetInvalid();
 
-   //  Returns true if the timestamp is not the value assigned by Invalidate.
+   //  Returns true if the timestamp is not the value assigned by GetInvalid.
    //
    bool IsValid(const Point& time);
 }

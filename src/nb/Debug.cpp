@@ -52,7 +52,7 @@ fixed_string UnexpectedInvocation = "unexpected invocation";
 static Flags SwFlags_ = Flags();
 
 //  Set to ExitCode_ to suppress logs when the system is exiting.  A simple
-//  is not used in case this gets trampled.
+//  bool is not used in case this gets trampled.
 //
 static uint32_t ExitStatus_ = 0;
 

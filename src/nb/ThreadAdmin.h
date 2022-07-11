@@ -52,7 +52,7 @@ public:
    //
    ThreadAdmin& operator=(const ThreadAdmin& that) = delete;
 
-   //  Returns the time allowed for the system to initialize.
+   //  Returns the time allowed for the system to initialize or restart.
    //
    static msecs_t InitTimeout();
 

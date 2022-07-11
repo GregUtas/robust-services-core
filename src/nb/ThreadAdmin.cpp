@@ -226,7 +226,7 @@ ThreadAdmin::ThreadAdmin()
    auto creg = Singleton<CfgParmRegistry>::Instance();
 
    initTimeoutMsecs_.reset(new CfgIntParm("InitTimeoutMsecs",
-      "10000", 5000, 180000, "restart timeout (msecs)"));
+      "20000", 5000, 180000, "restart timeout (msecs)"));
    creg->BindParm(*initTimeoutMsecs_);
 
    schedTimeoutMsecs_.reset(new CfgIntParm("SchedTimeoutMsecs",
@@ -440,7 +440,8 @@ msecs_t ThreadAdmin::InitTimeout()
    Debug::ft("ThreadAdmin.InitTimeout");
 
    auto self = AccessAdminData();
-   auto msecs = (self != nullptr ? self->initTimeoutMsecs_->CurrValue() : 5000);
+   auto msecs = (self != nullptr ?
+      self->initTimeoutMsecs_->CurrValue() : 20000);
    return msecs_t(msecs << WarpFactor());
 }
 

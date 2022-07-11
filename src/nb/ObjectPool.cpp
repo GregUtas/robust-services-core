@@ -1188,18 +1188,18 @@ void ObjectPool::UpdateAlarm()
 
    //  The alarm level is determined by the number of available blocks
    //  compared to the total number of blocks allocated:
-   //    o critical: less than 1/32nd available
-   //    o major: less than 1/16th available
-   //    o minor: less than 1/8th available
-   //    o none: more than 1/8th available
+   //    o critical: less than 1/64th available
+   //    o major: less than 1/32nd available
+   //    o minor: less than 1/16th available
+   //    o none: more than 1/16th available
    //
    auto status = NoAlarm;
 
-   if(dyn_->availCount_ <= (dyn_->totalCount_ >> 5))
+   if(dyn_->availCount_ <= (dyn_->totalCount_ >> 6))
       status = CriticalAlarm;
-   else if(dyn_->availCount_ <= (dyn_->totalCount_ >> 4))
+   else if(dyn_->availCount_ <= (dyn_->totalCount_ >> 5))
       status = MajorAlarm;
-   else if(dyn_->availCount_ <= (dyn_->totalCount_ >> 3))
+   else if(dyn_->availCount_ <= (dyn_->totalCount_ >> 4))
       status = MinorAlarm;
 
    auto log = alarm_->Create(ObjPoolLogGroup, ObjPoolBlocksInUse, status);
@@ -1208,7 +1208,7 @@ void ObjectPool::UpdateAlarm()
    //  When the number of available blocks drops to a dangerous level,
    //  add another segment to the pool.
    //
-   if(dyn_->availCount_ <= (dyn_->totalCount_ >> 6))
+   if(dyn_->availCount_ <= (dyn_->totalCount_ >> 7))
    {
       RestartLevel level;
       auto size = std::to_string(currSegments_ + 1);

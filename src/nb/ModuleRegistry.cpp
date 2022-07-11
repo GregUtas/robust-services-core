@@ -472,7 +472,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 
       *Stream() << ShutdownStr << setw(36 - strlen(ShutdownStr));
       elapsed = SteadyTime::Now() - point;
-      *Stream() << elapsed.count() / 10000000 << CRLF;
+      *Stream() << elapsed.count() / NS_TO_MS << CRLF;
       Log::Submit(stream_);
    }
 

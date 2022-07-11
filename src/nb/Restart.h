@@ -49,14 +49,10 @@ enum RestartStage
 //
 enum RestartReason
 {
-   NilRestart,                // nil value
    ManualRestart,             // CLI >restart command
    MutexCreationFailed,       // failed to create mutex
    HeapCreationFailed,        // insufficient memory for heap
    ObjectPoolCreationFailed,  // insufficient memory for object pool
-   RestartTimeout,            // restart took too long
-   SchedulingTimeout,         // missed InitThread heartbeat
-   ThreadPauseFailed,         // Thread::Pause failed
    DeathOfCriticalThread,     // irrecoverable exception
    HeapProtectionFailed,      // failed to change memory protection
    HeapCorruption,            // corrupt heap detected
@@ -86,7 +82,7 @@ public:
 
    //  Returns the type of restart currently in progress.
    //
-   static RestartLevel GetLevel() { return Level_; }
+   static RestartLevel GetLevel();
 
    //  Returns true if the heap for memory of TYPE will be freed
    //  and reallocated during any restart that is underway.

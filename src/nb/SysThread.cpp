@@ -49,6 +49,21 @@ static void HandleTerminate()
 }
 
 //------------------------------------------------------------------------------
+//
+//  Invoked to wait on GATE until TIMEOUT.  If TIMEOUT is TIMEOUT_NEVER,
+//  the thread will only resume after GATE is signalled.
+//
+static DelayRc Suspend(Gate& gate, const msecs_t& timeout)
+{
+   Debug::ft("NodeBase.Suspend");
+
+   auto result = gate.WaitFor(timeout);
+
+   return (result == std::cv_status::timeout ?
+      DelayCompleted : DelayInterrupted);
+}
+
+//------------------------------------------------------------------------------
 
 SysThread::SysThread(Thread* client, Priority prio, size_t size) :
    nid_(NIL_ID),
@@ -136,28 +151,6 @@ bool SysThread::ReportError(fn_name function, fixed_string expl, int error)
 {
    Debug::SwLog(function, expl, error);
    return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysThread_Suspend = "SysThread.Suspend";
-
-DelayRc SysThread::Suspend(Gate& gate, const msecs_t& timeout)
-{
-   Debug::ft(SysThread_Suspend);
-
-   //  This operation can only be applied to the running thread.
-   //
-   if(RunningThreadId() != nid_)
-   {
-      Debug::SwLog(SysThread_Suspend, "not running thread", nid_);
-      return DelayError;
-   }
-
-   auto result = gate.WaitFor(timeout);
-
-   return (result == std::cv_status::timeout ?
-      DelayCompleted : DelayInterrupted);
 }
 
 //------------------------------------------------------------------------------

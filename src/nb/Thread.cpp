@@ -225,9 +225,6 @@ bool ThreadTrace::Display(ostream& stream, const string& opts)
 
       switch(info_)
       {
-      case DelayError:
-         stream << "error";
-         break;
       case DelayInterrupted:
          stream << "interrupted";
          break;
@@ -1327,21 +1324,9 @@ MsgBuffer* Thread::DeqMsg(const msecs_t& timeout)
    if(buff == nullptr)
    {
       if(timeout == TIMEOUT_IMMED) return nullptr;
-
-      switch(Pause(timeout))
-      {
-      case DelayError:
-         Restart::Initiate(RestartWarm, ThreadPauseFailed, Tid());
-         return nullptr;
-
-      case DelayCompleted:
-      case DelayInterrupted:
-         buff = msgq_.Deq();
-         if(buff != nullptr) break;
-         [[fallthrough]];
-      default:
-         return nullptr;
-      }
+      Pause(timeout);
+      buff = msgq_.Deq();
+      if(buff == nullptr) return nullptr;
    }
 
    priv_->traceMsg_ = (buff->GetStatus() == TraceIncluded);

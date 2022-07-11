@@ -226,7 +226,6 @@ std::ostream& operator<<(std::ostream& stream, RestartLevel level);
 //
 enum DelayRc
 {
-   DelayError,        // failed to sleep
    DelayInterrupted,  // interrupted before sleep interval expired
    DelayCompleted     // sleep interval expired
 };

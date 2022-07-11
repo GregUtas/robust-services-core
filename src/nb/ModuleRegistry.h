@@ -92,15 +92,19 @@ private:
 
    //  Sets the level for an upcoming restart.
    //
-   void SetLevel(RestartLevel level);
+   static void SetLevel(RestartLevel level);
 
-   //  Returns the current restart level.
+   //  Returns the level for an upcoming restart.
    //
    static RestartLevel GetLevel();
 
    //  Returns the next restart level when a restart fails.
    //
    static RestartLevel NextLevel();
+
+   //  Handles system shutdown.
+   //
+   static void CheckForExit();
 
    //  Overridden to shut down all modules.
    //

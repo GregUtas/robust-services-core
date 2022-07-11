@@ -202,7 +202,11 @@ bool Element::RunningInLab()
    //  create this class until it is required for another purpose.
    //
    auto element = Singleton<Element>::Extant();
-   if(element != nullptr) return element->runningInLabCfg_->CurrValue();
+
+   if((element != nullptr) && (element->runningInLabCfg_ != nullptr))
+   {
+      return element->runningInLabCfg_->CurrValue();
+   }
 
 #ifndef FIELD_LOAD
    return true;

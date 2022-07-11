@@ -43,6 +43,7 @@ class InitThread : public Thread
 {
    friend class Singleton<InitThread>;
    friend class Daemon;
+   friend class ModuleRegistry;
    friend class RootThread;
    friend class Thread;
 public:
@@ -71,8 +72,7 @@ private:
    enum State
    {
       Initializing,  // system is being initialized or restarted
-      Running,       // system is in service
-      Restarting     // internal error: initiating a restart
+      Running        // system is in service
    };
 
    //  Flags used when interrupting InitThread.  RootThread also uses the
@@ -111,10 +111,6 @@ private:
    //
    void HandleInterrupt();
 
-   //  Initiates a restart when a critical thread cannot be recreated.
-   //
-   void CauseRestart();
-
    //  Recreates any critical threads that have exited.
    //
    void RecreateThreads();
@@ -136,10 +132,6 @@ private:
    //  and recreate application threads.
    //
    void Enter() override;
-
-   //  An error value for debugging.
-   //
-   debug64_t errval_;
 
    //  The thread's current state.
    //

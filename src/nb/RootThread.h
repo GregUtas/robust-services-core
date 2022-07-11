@@ -64,6 +64,10 @@ private:
    //
    ~RootThread();
 
+   //  Invoked when InitThread indicates that a restart is required.
+   //
+   void RestartInitiated();
+
    //  Overridden to return a name for the thread.
    //
    c_string AbbrName() const override;

@@ -57,6 +57,15 @@ bool Restart::ClearsMemory(MemoryType type)
 
 //------------------------------------------------------------------------------
 
+RestartLevel Restart::GetLevel()
+{
+   Debug::ft("Restart.GetLevel");
+
+   return (Stage_ == Running ? RestartNone: Level_);
+}
+
+//------------------------------------------------------------------------------
+
 void Restart::Initiate
    (RestartLevel level, RestartReason reason, debug64_t errval)
 {
@@ -91,14 +100,10 @@ RestartLevel Restart::LevelToClear(MemoryType type)
 
 fixed_string RestartReasonStrings[RestartReason_N + 1] =
 {
-   "nil restart",
    "manual restart",
    "mutex creation failed",
    "heap creation failed",
    "object pool creation failed",
-   "restart timeout",
-   "scheduling timeout",
-   "thread pause failed",
    "death of eritical thread",
    "heap protection failed",
    "heap corruption",

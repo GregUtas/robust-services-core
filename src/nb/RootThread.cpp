@@ -21,14 +21,12 @@
 //
 #include "RootThread.h"
 #include <chrono>
-#include <cstdint>
 #include <cstdlib>
 #include <ratio>
 #include <sstream>
 #include <string>
 #include "Debug.h"
 #include "Duration.h"
-#include "Formatters.h"
 #include "Gate.h"
 #include "InitFlags.h"
 #include "InitThread.h"
@@ -38,7 +36,6 @@
 #include "NbAppIds.h"
 #include "NbLogs.h"
 #include "NbSignals.h"
-#include "Restart.h"
 #include "Singleton.h"
 #include "SteadyTime.h"
 #include "SysStackTrace.h"
@@ -113,13 +110,13 @@ void RootThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name RootThread_Enter = "RootThread.Enter";
+
 void RootThread::Enter()
 {
-   Debug::ft("RootThread.Enter");
+   Debug::ft(RootThread_Enter);
 
-   Thread* initThr;
    auto timeout = TIMEOUT_IMMED;
-   auto reason = NilRestart;
    auto lastLog = SteadyTime::TimeZero();
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
@@ -150,45 +147,34 @@ void RootThread::Enter()
 
          timeout = ThreadAdmin::InitTimeout();
 
-         switch(Pause(timeout))
+         if(Pause(timeout) == DelayInterrupted)
          {
-         case DelayInterrupted:
             if(Test(InitThread::Restart))
-               Reset(InitThread::Restart);
+               RestartInitiated();
             else
                state_ = Running;
-            reason = NilRestart;
-            break;
-
-         case DelayCompleted:
-            reason = RestartTimeout;
-            break;
-
-         case DelayError:
-         default:
-            reason = ThreadPauseFailed;
          }
-
-         //  If initialization timed out, generate a log.  If breakpointing
-         //  is enabled, enter the Running state, else shut down InitThread
-         //  and loop around to try again.
-         //
-         if(reason != NilRestart)
+         else
          {
+            //  Initialization timed out, so generate a log.
+            //
             auto log = Log::Create(NodeLogGroup, NodeInitTimeout);
 
             if(log != nullptr)
             {
-               *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
                *log << " timeout=" << to_string(timeout);
                Log::Submit(log);
             }
 
-            reason = NilRestart;
-
+            //  Escalate the restart unless doing so is disabled or breakpoint
+            //  debugging is enabled.
+            //
             if(ThreadAdmin::ReinitOnSchedTimeout() && !InitFlags::AllowBreak())
             {
-               initThr = Singleton<InitThread>::Extant();
+               //  If InitThread exists, shut it down before looping around to
+               //  recreate it.
+               //
+               auto initThr = Singleton<InitThread>::Extant();
 
                if(initThr != nullptr)
                {
@@ -196,15 +182,17 @@ void RootThread::Enter()
                   Pause(msecs_t(100));
                }
             }
-            else
-            {
-               state_ = Running;
-            }
          }
          break;
 
       case Running:
-         //
+      default:
+         if(state_ != Running)
+         {
+            Debug::SwLog(RootThread_Enter, "state corruption", state_);
+            state_ = Running;
+         }
+
          //  The following suspends RootThread during breakpoint debugging,
          //  when it would otherwise appear with annoying regularity.
          //
@@ -217,64 +205,26 @@ void RootThread::Enter()
          //
          timeout = ThreadAdmin::SchedTimeout();
 
-         switch(Pause(timeout))
+         if(Pause(timeout) == DelayInterrupted)
          {
-         case DelayInterrupted:
-            //
             //  This is usually a heartbeat from InitThread.  But it also
             //  occurs when InitThread is initiating a restart.
             //
             if(Test(InitThread::Restart))
             {
-               //  If a reboot or exit was requested, unblock the thread
-               //  that ran main() and created us so that it can exit.
-               //
-               auto level = ModuleRegistry::GetLevel();
-
-               if((level == RestartReboot) || (level == RestartExit))
-               {
-                  ExitCode =
-                     (level == RestartExit ? EXIT_SUCCESS : EXIT_FAILURE);
-                  ExitGate().Notify();
-                  Pause(TIMEOUT_NEVER);
-               }
-
-               //  When restarting, update our state and loop around to run
-               //  a watchdog timer on the restart.
-               //
-               Reset(InitThread::Restart);
-               state_ = Initializing;
+               RestartInitiated();
             }
-            reason = NilRestart;
-            break;
 
-         case DelayCompleted:
-            //
-            //  InitThread failed to respond.  Ignore this if breakpoint
-            //  debugging is enabled.
-            //
-            reason = SchedulingTimeout;
-            if(ThreadAdmin::BreakEnabled()) reason = NilRestart;
             break;
-
-         case DelayError:
-         default:
-            reason = ThreadPauseFailed;
          }
 
-         if(reason == NilRestart) break;
+         //  A scheduling timeout occurred.  Ignore this if breakpoint
+         //  debugging is enabled, else generate a log.  Limit the rate
+         //  at which these logs are generated in case BreakEnabled was
+         //  not set during debugging.
+         //
+         if(ThreadAdmin::BreakEnabled()) break;
 
-         //  Continue into the default clause to initiate a restart.  We also
-         //  end up there if our state somehow gets corrupted.  Note that if
-         //  InitThread interrupts us to initiate a restart, we loop back to
-         //  the Initializing state.
-         //
-         [[fallthrough]];
-      default:
-         //  A restart is necessary.  Generate a log.  If InitThread still
-         //  exists, tell it to initiate a restart.  If it doesn't exist,
-         //  loop around and create it.
-         //
          nsecs_t elapsed = SteadyTime::Now() - lastLog;
 
          if((elapsed.count() / NS_TO_SECS) >= 3)
@@ -283,7 +233,6 @@ void RootThread::Enter()
 
             if(log != nullptr)
             {
-               *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
                *log << " timeout=" << to_string(timeout);
                Log::Submit(log);
             }
@@ -291,11 +240,15 @@ void RootThread::Enter()
             lastLog = SteadyTime::Now();
          }
 
-         reason = NilRestart;
-
+         //  Initiate a restart unless doing so is disabled or breakpoint
+         //  debugging is enabled.
+         //
          if(ThreadAdmin::ReinitOnSchedTimeout() && !InitFlags::AllowBreak())
          {
-            initThr = Singleton<InitThread>::Extant();
+            //  If InitThread exists, tell it to initiate a restart.  If it
+            //  doesn't exist, loop around and create it.
+            //
+            auto initThr = Singleton<InitThread>::Extant();
 
             if(initThr != nullptr)
             {
@@ -355,5 +308,30 @@ main_t RootThread::Main()
 void RootThread::Patch(sel_t selector, void* arguments)
 {
    Thread::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+void RootThread::RestartInitiated()
+{
+   Debug::ft("RootThread.RestartInitiated");
+
+   //  If a reboot or exit was requested, unblock the thread that
+   //  ran main() and created us so that it can exit.
+   //
+   auto level = ModuleRegistry::GetLevel();
+
+   if((level == RestartReboot) || (level == RestartExit))
+   {
+      ExitCode = (level == RestartExit ? EXIT_SUCCESS : EXIT_FAILURE);
+      ExitGate().Notify();
+      Pause(TIMEOUT_NEVER);
+   }
+
+   //  If the system won't exit, just clear the interrupt and let
+   //  InitThread continue with the restart.
+   //
+   Reset(InitThread::Restart);
+   state_ = Initializing;
 }
 }

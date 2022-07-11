@@ -36,6 +36,7 @@
 #include "Element.h"
 #include "Formatters.h"
 #include "InitFlags.h"
+#include "InitThread.h"
 #include "Log.h"
 #include "MainArgs.h"
 #include "Memory.h"
@@ -43,11 +44,11 @@
 #include "NbLogs.h"
 #include "NbSignals.h"
 #include "Restart.h"
+#include "RootThread.h"
 #include "Singleton.h"
 #include "SteadyTime.h"
 #include "SystemTime.h"
 #include "ThisThread.h"
-#include "Thread.h"
 #include "ThreadRegistry.h"
 #include "TraceBuffer.h"
 
@@ -122,10 +123,6 @@ static const FactionFlags& ShutdownFactions()
 
 //==============================================================================
 //
-//  The minimum level specified when a restart was initiated.
-//
-static RestartLevel Level_ = RestartNone;
-
 //  A stream for recording the progress of system initialization.
 //
 static ostringstreamPtr stream_ = nullptr;
@@ -227,6 +224,26 @@ void ModuleRegistry::BindModule(Module& module)
 
 //------------------------------------------------------------------------------
 
+void ModuleRegistry::CheckForExit()
+{
+   Debug::ft("ModuleRegistry.CheckForExit");
+
+   switch(Restart::Level_)
+   {
+   case RestartReboot:
+   case RestartExit:
+      //
+      //  Force the system to exit.  If this occurs during startup, the
+      //  system failed to even boot, so exit without trying to reboot.
+      //
+      if(Restart::Stage_ == StartingUp) Restart::Level_ = RestartExit;
+      Singleton<RootThread>::Instance()->Interrupt(InitThread::Restart);
+      ThisThread::Pause(TIMEOUT_NEVER);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void ModuleRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -244,7 +261,7 @@ void ModuleRegistry::Display(ostream& stream,
 
 RestartLevel ModuleRegistry::GetLevel()
 {
-   return Level_;
+   return Restart::Level_;
 }
 
 //------------------------------------------------------------------------------
@@ -255,15 +272,14 @@ RestartLevel ModuleRegistry::NextLevel()
 
    switch(Restart::Level_)
    {
+   case RestartNone:
+      return RestartWarm;
    case RestartWarm:
       return RestartCold;
-
    case RestartCold:
       return RestartReload;
-
    case RestartReload:
       return RestartReboot;
-
    default:
       return RestartExit;
    }
@@ -300,6 +316,7 @@ void ModuleRegistry::Restart()
          {
             if(reentered)
             {
+               CheckForExit();
                Restart::Stage_ = ShuttingDown;
                break;
             }
@@ -314,7 +331,6 @@ void ModuleRegistry::Restart()
 
       case Running:
          reentered = false;
-         Restart::Level_ = Level_;
          if(Restart::Level_ == RestartNone) return;
          Restart::Stage_ = ShuttingDown;
          break;
@@ -322,6 +338,7 @@ void ModuleRegistry::Restart()
       case ShuttingDown:
          Thread::EnableFactions(NoFactions);
          if(reentered) Restart::Level_ = NextLevel();
+         CheckForExit();
          Shutdown(Restart::Level_);
          reentered = false;
          Restart::Stage_ = StartingUp;
@@ -336,7 +353,7 @@ void ModuleRegistry::SetLevel(RestartLevel level)
 {
    Debug::ft("ModuleRegistry.SetLevel");
 
-   Level_ = level;
+   Restart::Level_ = level;
 }
 
 //------------------------------------------------------------------------------

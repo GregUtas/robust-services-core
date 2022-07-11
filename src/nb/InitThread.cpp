@@ -20,21 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InitThread.h"
+#include <ostream>
 #include <ratio>
 #include <set>
-#include <sstream>
 #include <string>
-#include "Algorithms.h"
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
-#include "Formatters.h"
-#include "Log.h"
 #include "ModuleRegistry.h"
-#include "NbLogs.h"
 #include "NbTracer.h"
 #include "Registry.h"
-#include "Restart.h"
 #include "RootThread.h"
 #include "Singleton.h"
 #include "ThreadAdmin.h"
@@ -52,7 +47,6 @@ static uint64_t RunningTicks_ = 0;
 //------------------------------------------------------------------------------
 
 InitThread::InitThread() : Thread(SystemFaction),
-   errval_(0),
    state_(Initializing),
    timeout_(false)
 {
@@ -113,35 +107,6 @@ msecs_t InitThread::CalculateDelay() const
 
 //------------------------------------------------------------------------------
 
-void InitThread::CauseRestart()
-{
-   Debug::ft("InitThread.CauseRestart");
-
-   //  We get here if
-   //  o our state gets corrupted (unlikely)
-   //  o Delay fails (unlikely)
-   //
-   auto log = Log::Create(NodeLogGroup, NodeRestart);
-
-   if(log != nullptr)
-   {
-      auto prefix = Log::Tab + spaces(2);
-      *log << Log::Tab << "in " << to_str() << CRLF;
-      *log << prefix << "level  : " << RestartWarm << CRLF;
-      *log << prefix << "reason : " << ThreadPauseFailed << CRLF;
-      *log << prefix << "errval : " << strHex(debug64_t(0)) << CRLF;
-      Log::Submit(log);
-   }
-
-   auto reg = Singleton<ModuleRegistry>::Extant();
-   reg->SetLevel(RestartWarm);
-   Singleton<RootThread>::Extant()->Interrupt(Restart);
-   state_ = Initializing;
-   Pause(msecs_t(100));
-}
-
-//------------------------------------------------------------------------------
-
 void InitThread::ContextSwitch()
 {
    Debug::ft("InitThread.ContextSwitch");
@@ -194,7 +159,6 @@ void InitThread::Display(ostream& stream,
 
    stream << prefix << "state   : " << state_ << CRLF;
    stream << prefix << "timeout : " << timeout_ << CRLF;
-   stream << prefix << "errval  : " << errval_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -206,7 +170,6 @@ void InitThread::Enter()
    Debug::ft(InitThread_Enter);
 
    msecs_t delay;
-   DelayRc drc;
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
    //  preemptably so that we don't wait for unpreemptable threads to yield.
@@ -230,29 +193,20 @@ void InitThread::Enter()
          break;
 
       case Running:
+      default:
+         if(state_ != Running)
+         {
+            Debug::SwLog(InitThread_Enter, "state corruption", state_);
+            state_ = Running;
+         }
+
          delay = CalculateDelay();
          timeout_ = false;
-         drc = Pause(delay);
 
-         switch(drc)
-         {
-         case DelayCompleted:
+         if(Pause(delay) == DelayCompleted)
             HandleTimeout();
-            break;
-
-         case DelayInterrupted:
+         else
             HandleInterrupt();
-            break;
-
-         default:
-            state_ = Restarting;
-            errval_ = pack2(Tid(), NativeThreadId());
-         }
-         break;
-
-      case Restarting:
-      default:
-         CauseRestart();
       }
    }
 }
@@ -368,10 +322,10 @@ void InitThread::InitiateRestart(RestartLevel level)
    Debug::ft("InitThread.InitiateRestart");
 
    //  Set the restart's level.  Tell RootThread that a restart is
-   //  occurring so that it can act as a watchdog on its completion and
-   //  then wake up our thread.
+   //  occurring so that it can act as a watchdog on its completion,
+   //  and then wake up our thread to perform the restart.
    //
-   Singleton<ModuleRegistry>::Extant()->SetLevel(level);
+   ModuleRegistry::SetLevel(level);
    Singleton<RootThread>::Extant()->Interrupt(Restart);
    Interrupt(Restart);
 }

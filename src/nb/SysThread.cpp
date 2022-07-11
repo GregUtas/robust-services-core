@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysThread.h"
-#include <chrono>
 #include <condition_variable>
 #include <csignal>
 #include <exception>

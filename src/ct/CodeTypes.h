@@ -549,6 +549,7 @@ enum Warning
    AutoCopiesConstReference, // auto variable copies item returned as const&
    AutoCopiesObject,         // auto variable copies an object
    AutoCopiesConstObject,    // auto variable copies a const object
+   TrailingCommentAlignment, // sequential trailing comments not aligned
    Warning_N                 // number of warnings
 };
 

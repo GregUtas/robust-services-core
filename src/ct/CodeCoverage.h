@@ -167,7 +167,7 @@ private:
    //
    struct FuncInfo
    {
-      const uint32_t hash;            // hash value for function's code
+      const uint32_t hash;          // hash value for function's code
       std::set<std::string> tests;  // tests that invoke the function
 
       explicit FuncInfo(uint32_t hash) : hash(hash) { }

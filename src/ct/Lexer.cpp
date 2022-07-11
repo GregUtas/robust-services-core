@@ -69,7 +69,7 @@ enum LeftBraceRole
 enum IndentRule
 {
    IndentStandard,     // standard rules
-   IndentLiteral,     // numeric/character/string literal
+   IndentLiteral,      // numeric/character/string literal
    IndentArea,         // class/struct/union
    IndentCase,         // case label
    IndentConditional,  // do/for/if/while
@@ -903,6 +903,7 @@ void Lexer::CheckLines()
    Debug::ft("Lexer.CheckLines");
 
    auto last = lines_.size() - 1;
+   auto prev = string::npos;
    string s;
    std::set<Warning> warnings;
 
@@ -914,11 +915,29 @@ void Lexer::CheckLines()
       warnings.clear();
       CheckLine(s, warnings);
 
-      //  Don't report a comment for adjacent spaces.
-      //
-      if(!LineTypeAttr::Attrs[lines_[n].type].isCode)
+      if(LineTypeAttr::Attrs[lines_[n].type].isCode)
       {
+         //  If this line of code has a trailing comment, see if it
+         //  aligns with one immediately above it.
+         //
+         auto curr = FindComment(lines_[n].begin);
+         if(curr != string::npos)
+         {
+            curr -= lines_[n].begin;
+
+            if((prev != string::npos) && (curr != prev))
+            {
+               warnings.insert(TrailingCommentAlignment);
+            }
+         }
+         prev = curr;
+      }
+      else
+      {
+         //  Don't report a comment for adjacent spaces.
+         //
          warnings.erase(AdjacentSpaces);
+         prev = string::npos;
       }
 
       //  Check the line's indentation.

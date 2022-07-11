@@ -36,10 +36,10 @@ namespace SessionBase
 //
 struct LocalAddress
 {
-   NodeBase::PooledObjectId bid : 32;    // object sending or receiving message
+   NodeBase::PooledObjectId bid : 32;    // object sending/receiving message
    NodeBase::PooledObjectSeqNo seq : 8;  // object's incarnation number
    NodeBase::ObjectPoolId pid : 8;       // object pool associated with object
-   FactoryId fid : 16;             // the factory sending/receiving the message
+   FactoryId fid : 16;                   // factory sending/receiving message
 
    //  Constructor.
    //

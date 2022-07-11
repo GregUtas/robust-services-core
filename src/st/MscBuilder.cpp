@@ -51,7 +51,7 @@ fixed_string MscTrailer = "END OF MSC";
 constexpr MscColumn FirstCol = (ColWidth / 2);  // column for 1st vertical line
 constexpr size_t MinMsgLine = 5;  // minimum length of horizontal line
 constexpr size_t TimeGap = 3;     // spacing between event times
-constexpr size_t TimeLen = 9;     // length of an event time (mm:ss.msecs)
+constexpr size_t TimeLen = 9;     // length of event time (mm:ss.ms)
 
 constexpr char IdleCtx   = ':';
 constexpr char ActiveCtx = '|';
@@ -262,7 +262,7 @@ void MscBuilder::Compress()
       //  message labels.  These lengths are further reduced to maintain
       //  a "--" at the sending end and a "->" at the receiving end.
       //
-      leftGap = (ColWidth - MinMsgLine) / 2;  // max value
+      leftGap = (ColWidth - MinMsgLine) / 2;   // max value
       rightGap = (ColWidth - MinMsgLine) / 2;  // max value
 
       for(size_t row = 2; row < nextRow_; ++row)

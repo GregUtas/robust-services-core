@@ -789,10 +789,10 @@ void CodeWarning::Initialize()
       WarningAttrs(true, false,
       "Function at .cpp file scope is neither static nor extern")));
    Attrs_.insert(WarningPair(FunctionCouldBeDemoted,
-      WarningAttrs(false, true,
+      WarningAttrs(false, false,
       "Function could move to a subclass")));
    Attrs_.insert(WarningPair(NoEndlineAtEndOfFile,
-      WarningAttrs(true, true,
+      WarningAttrs(true, false,
       "File does not end with an endline")));
    Attrs_.insert(WarningPair(AutoCopiesReference,
       WarningAttrs(true, true,
@@ -806,6 +806,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(AutoCopiesConstObject,
       WarningAttrs(true, true,
       "Auto variable copies a const object")));
+   Attrs_.insert(WarningPair(TrailingCommentAlignment,
+      WarningAttrs(false, false,
+      "Trailing comment not aligned with one above")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(false, false,
       ERROR_STR)));

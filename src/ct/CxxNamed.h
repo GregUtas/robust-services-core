@@ -404,6 +404,10 @@ public:
    //
    void GetNames(stringVector& names) const;
 
+   //  Erases the name that follows this one, replacing it with NEXT.
+   //
+   void SetNext(TypeNamePtr& next);
+
    //  Overridden to return the name's template arguments.
    //
    const TemplateArgPtrVector* Args() const override;

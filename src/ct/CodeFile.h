@@ -128,7 +128,7 @@ public:
 
    //  Returns the file's code items.
    //
-   const CxxTokenList Items() const { return items_; }
+   const CxxTokenList& Items() const { return items_; }
    const IncludePtrVector& Includes() const { return incls_; }
    const ClassVector* Classes() const { return &classes_; }
 

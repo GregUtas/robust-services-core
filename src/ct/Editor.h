@@ -354,11 +354,12 @@ private:
    //
    void QualifyClassItems(CxxScope* decl, string& code) const;
 
-   //  Updates CODE by going through ITEMS and qualifying each name defined
-   //  in CLS (or one of its base classes).
+   //  QNAME (currently a single name) is an item that is being converted to
+   //  a static item at file scope.  If QNAME appears within a function whose
+   //  class also has a function named QNAME, QNAME must be qualified with its
+   //  namespace.  Returns true if such qualification occurs.
    //
-   static void QualifyClassItems
-      (const Class* cls, const CxxNamedSet& items, string& code);
+   bool QualifyOverload(QualName* qname);
 
    //  A static data or function declaration with NAME is replacing a class
    //  member that resides in SPACE.  Its definition was cut from POS and must

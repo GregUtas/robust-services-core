@@ -2273,8 +2273,6 @@ void QualName::EraseName(const TypeName* name, TypeNamePtr& next)
 {
    Debug::ft(QualName_EraseName);
 
-   //  This should only be invoked on the first name.
-   //
    if(first_.get() == name)
    {
       first_.release();
@@ -2283,7 +2281,9 @@ void QualName::EraseName(const TypeName* name, TypeNamePtr& next)
       return;
    }
 
-   Debug::SwLog(QualName_EraseName, QualifiedName(true, true), 0);
+   auto prev = first_.get();
+   while(prev->Next() != name) prev = prev->Next();
+   prev->SetNext(next);
 }
 
 //------------------------------------------------------------------------------
@@ -3841,6 +3841,16 @@ void TypeName::SetForward(CxxScoped* decl) const
    Debug::ft("TypeName.SetForward");
 
    forw_ = decl;
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::SetNext(TypeNamePtr& next)
+{
+   Debug::ft("TypeName.SetNext");
+
+   next_.release();
+   next_ = std::move(next);
 }
 
 //------------------------------------------------------------------------------

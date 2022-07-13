@@ -386,7 +386,7 @@ void MapAndUnits::delete_clone(MapAndUnits*& clone)
 {
    Debug::ft("MapAndUnits.delete_clone");
 
-   if(clone == instance()) return;  // wanker!
+   if(clone == instance()) return;
    delete clone;
    clone = nullptr;
 }

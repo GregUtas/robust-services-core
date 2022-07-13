@@ -25,7 +25,9 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include "CodeFile.h"
 #include "CxxNamed.h"
+#include "CxxScope.h"
 #include "Debug.h"
 
 using std::ostream;
@@ -77,6 +79,29 @@ string CharString(uint32_t c, bool s)
 }
 
 //------------------------------------------------------------------------------
+//
+//  Erases, from SET, items defined within DEFN.
+//
+static void EraseLocals(const CxxScope* defn, CxxNamedSet& set)
+{
+   Debug::ft("CodeTools.EraseLocals");
+
+   size_t begin, end;
+   defn->GetSpan2(begin, end);
+   auto file = defn->GetFile();
+
+   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
+   {
+      auto pos = (*i)->GetPos();
+
+      if(((*i)->GetFile() == file) && (pos >= begin) && (pos <= end))
+         i = set.erase(i);
+      else
+         ++i;
+   }
+}
+
+//------------------------------------------------------------------------------
 
 fixed_string AccessStrings[Cxx::Access_N + 1] =
 {
@@ -105,6 +130,38 @@ Cxx::Access FindAccessControl(const std::string& s)
    }
 
    return Cxx::Access_N;
+}
+
+//------------------------------------------------------------------------------
+
+CxxUsageSets GetItemUsages(CxxScope* decl, bool extOnly)
+{
+   Debug::ft("CodeTools.GetItemUsages");
+
+   CxxUsageSets usages;
+   decl->GetUsages(*decl->GetFile(), usages);
+
+   auto defn = decl->GetMate();
+   if(defn != nullptr)
+   {
+      auto file = defn->GetFile();
+      defn->GetUsages(*file, usages);
+
+      if(extOnly)
+      {
+         file->EraseInternals(usages.directs);
+         file->EraseInternals(usages.indirects);
+      }
+      else
+      {
+         EraseLocals(defn, usages.directs);
+         EraseLocals(defn, usages.indirects);
+      }
+   }
+
+   usages.directs.erase(decl);
+   usages.indirects.erase(decl);
+   return usages;
 }
 
 //------------------------------------------------------------------------------

@@ -79,13 +79,6 @@ static size_t Commits_ = 0;
 //
 static CliThread* Cli_ = nullptr;
 
-//------------------------------------------------------------------------------
-//
-//  Displays INFO and then prompts for the name of an identifier.  Returns
-//  the name that is entered, or an empty string if the name was invalid.
-//
-static string GetIdentifier(const string& prompt);
-
 //  Writes TEXT to Cli_, adding an endline if one doesn't exist.
 //
 static void Inform(string text);
@@ -156,19 +149,6 @@ enum BlankLocation
 
 //------------------------------------------------------------------------------
 //
-//  Returns the code for a Debug::ft invocation with an inline string
-//  literal (FNAME).
-//
-static string DebugFtCode(const string& fname)
-{
-   Debug::ft("CodeTools.DebugFtCode");
-
-   auto call = string(IndentSize(), SPACE) + "Debug::ft(";
-   call.append(fname);
-   call.append(");");
-   return call;
-}
-
 //  Attributes when declaring a C++ item.
 //
 struct ItemDeclAttrs
@@ -573,6 +553,21 @@ static string CreateSpecialFunctionComment
 
 //------------------------------------------------------------------------------
 //
+//  Returns the code for a Debug::ft invocation with an inline string
+//  literal (FNAME).
+//
+static string DebugFtCode(const string& fname)
+{
+   Debug::ft("CodeTools.DebugFtCode");
+
+   auto call = string(IndentSize(), SPACE) + "Debug::ft(";
+   call.append(fname);
+   call.append(");");
+   return call;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Returns an unquoted string (FLIT) and fn_name identifier (FVAR) that are
 //  suitable for invoking Debug::ft.
 //
@@ -637,29 +632,6 @@ static bool EnsureUniqueDebugFtName
 
 //------------------------------------------------------------------------------
 //
-//  Erases, from SET, items defined within DEFN.
-//
-static void EraseLocals(const CxxScope* defn, CxxNamedSet& set)
-{
-   Debug::ft("CodeTools.EraseLocals");
-
-   size_t begin, end;
-   defn->GetSpan2(begin, end);
-   auto file = defn->GetFile();
-
-   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
-   {
-      auto pos = (*i)->GetPos();
-
-      if(((*i)->GetFile() == file) && (pos >= begin) && (pos <= end))
-         i = set.erase(i);
-      else
-         ++i;
-   }
-}
-
-//------------------------------------------------------------------------------
-//
 //  Returns the file where a class's new function should be defined.  If all of
 //  the its functions are implemented in the same file, returns that file, else
 //  asks the user to specify the file.
@@ -696,28 +668,6 @@ static CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
    }
 
    return file;
-}
-
-//------------------------------------------------------------------------------
-//
-//  Returns the most restrictive access control in ITEMS.
-//
-static Cxx::Access FindMaxAccess(const CxxNamedSet& items)
-{
-   Debug::ft("CodeTools.FindMaxAccess");
-
-   auto access = Cxx::Access_N;
-
-   for(auto i = items.cbegin(); i != items.cend(); ++i)
-   {
-      if(((*i)->GetClass() != nullptr) && !(*i)->IsDeclaredInFunction())
-      {
-         auto a = (*i)->GetAccess();
-         if(a < access) access = a;
-      }
-   }
-
-   return access;
 }
 
 //------------------------------------------------------------------------------
@@ -768,36 +718,6 @@ static string GetComment(const CxxNamed* item, bool unindent)
 
 //------------------------------------------------------------------------------
 //
-//  Checks that the name of member DECL is not in use when planning to convert
-//  DECL to a static namespace item in the FILE that implements the class that
-//  currently declares it.  If the name is in use, prompts for and returns an
-//  alternate name if provided, else returns an empty string.
-//
-static string GetItemName(const CxxScope* decl, CodeFile* file)
-{
-   Debug::ft("CodeTools.GetItemName");
-
-   auto syms = Singleton<CxxSymbols>::Instance();
-   auto space = decl->GetSpace();
-   auto name = decl->Name();
-
-   while(true)
-   {
-      SymbolView view;
-      auto item = syms->FindSymbol(file, space, name, CODE_REFS, view);
-      if(item == nullptr) return name;
-
-      std::ostringstream stream;
-      stream << spaces(2) << name << " is already in use." << CRLF;
-      name = GetIdentifier(NewNamePrompt);
-      if(name.empty()) return name;
-   }
-
-   return name;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Adds DATA and its separate definition, if it exists, to DATAS.
 //
 static void GetDatas(Data* data, DataVector& datas)
@@ -822,42 +742,6 @@ static string GetExpl()
 
 //------------------------------------------------------------------------------
 //
-//  Returns items used by DECL and its separate definition (DEFN), if any.
-//  Excludes DECL itself, items local to DEFN, and items local to DEFN's
-//  entire file if extOnly is set.
-//
-static CxxUsageSets GetItemUsages(CxxScope* decl, bool extOnly)
-{
-   Debug::ft("CodeTools.GetItemUsages");
-
-   CxxUsageSets usages;
-   decl->GetUsages(*decl->GetFile(), usages);
-
-   auto defn = decl->GetMate();
-   if(defn != nullptr)
-   {
-      auto file = defn->GetFile();
-      defn->GetUsages(*file, usages);
-
-      if(extOnly)
-      {
-         file->EraseInternals(usages.directs);
-         file->EraseInternals(usages.indirects);
-      }
-      else
-      {
-         EraseLocals(defn, usages.directs);
-         EraseLocals(defn, usages.indirects);
-      }
-   }
-
-   usages.directs.erase(decl);
-   usages.indirects.erase(decl);
-   return usages;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Writes PROMPT to the CLI to obtain an identifier.  Returns the identifier
 //  if it is valid, else returns an empty string.
 //
@@ -877,6 +761,36 @@ static string GetIdentifier(const string& prompt)
    {
       if(ValidNextChars.find(name[i]) == string::npos) return EMPTY_STR;
       if(name[i] == '#') return EMPTY_STR;
+   }
+
+   return name;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Checks that the name of member DECL is not in use when planning to convert
+//  DECL to a static namespace item in the FILE that implements the class that
+//  currently declares it.  If the name is in use, prompts for and returns an
+//  alternate name if provided, else returns an empty string.
+//
+static string GetItemName(const CxxScope* decl, CodeFile* file)
+{
+   Debug::ft("CodeTools.GetItemName");
+
+   auto syms = Singleton<CxxSymbols>::Instance();
+   auto space = decl->GetSpace();
+   auto name = decl->Name();
+
+   while(true)
+   {
+      SymbolView view;
+      auto item = syms->FindSymbol(file, space, name, CODE_REFS, view);
+      if(item == nullptr) return name;
+
+      std::ostringstream stream;
+      stream << spaces(2) << name << " is already in use." << CRLF;
+      name = GetIdentifier(NewNamePrompt);
+      if(name.empty()) return name;
    }
 
    return name;
@@ -964,25 +878,6 @@ static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
 
 //------------------------------------------------------------------------------
 //
-//  Returns the most restrictive access control of the items used in DECL and
-//  its definition, if distinct.
-//
-static Cxx::Access MaxAccessUsed(CxxScope* decl)
-{
-   Debug::ft("CodeTools.MaxAccessUsed");
-
-   auto usages = GetItemUsages(decl, true);
-   auto max = FindMaxAccess(usages.directs);
-   auto access = FindMaxAccess(usages.indirects);
-   if(access < max) max = access;
-   access = FindMaxAccess(usages.inherits);
-   if(access < max) max = access;
-
-   return max;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Sets Expl_ to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
 //
@@ -997,6 +892,80 @@ static word NotFound(c_string text, bool quotes = false)
    expl += " not found.";
    SetExpl(expl);
    return EditFailed;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Updates CODE by going through ITEMS and qualifying each name defined
+//  in CLS (or one of its base classes).
+//
+static void QualifyClassItems
+(const Class* cls, const CxxNamedSet& items, string& code)
+{
+   Debug::ft("CodeTools.QualifyClassItems");
+
+   const auto& className = cls->Name();
+   Lexer lexer;
+   lexer.Initialize(code);
+   string id;
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      //  Don't qualify a class name.
+      //
+      if((*i)->Type() == Cxx::Class) continue;
+
+      auto icls = (*i)->GetClass();
+
+      if((cls == icls) || cls->DerivesFrom(icls))
+      {
+         //  Don't qualify a class name in the hierarchy, which can appear
+         //  in types and constructor invocations.
+         //
+         auto& name = (*i)->Name();
+         if((name == className) || (name == icls->Name())) continue;
+
+         auto pos = lexer.Find(0, STATIC_STR) + strlen(STATIC_STR) + 1;
+
+         while(lexer.FindIdentifier(pos, id, false) && (pos <= code.size()))
+         {
+            if(id == name)
+            {
+               auto insert = true;
+               auto prev1 = lexer.RfindNonBlank(pos - 1);
+               auto prev2 = lexer.RfindNonBlank(prev1 - 1);
+               auto char1 = code[prev1];
+               auto char2 = code[prev2];
+
+               //  Don't qualify a name that is preceded by a selection or
+               //  scope resolution operator.
+               //
+               if(char1 == '.')
+               {
+                  insert = false;
+               }
+               else if((char2 == '-') && (char1 == '>'))
+               {
+                  insert = false;
+               }
+               else if((char2 == ':') && (char1 == ':'))
+               {
+                  insert = false;
+               }
+
+               if(insert)
+               {
+                  auto qual = icls->Name() + SCOPE_STR;
+                  code.insert(pos, qual);
+                  lexer.Initialize(code);
+                  pos += qual.size();
+               }
+            }
+
+            pos += id.size();
+         }
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1573,24 +1542,7 @@ word Editor::ChangeMemberToFree(const CodeWarning& log)
       return Report("This is not supported unless a .cpp defines the item.");
    }
 
-   auto file = Singleton<Library>::Instance()->FindFile(log.info_);
-   if(file == nullptr)
-   {
-      //  LOG should have provided a valid file.
-      //
-      return NotFound("File for static definition.");
-   }
-
-   auto cpp = defn->GetFile();
-   if(cpp != file)
-   {
-      //  Moving the definition to another .cpp is not yet supported because
-      //  it also involves adjusting the #include directives in both files.
-      //
-      return Report("Moving the definition to another .cpp is not supported.");
-   }
-
-   auto& editor = cpp->GetEditor();
+   auto& editor = defn->GetFile()->GetEditor();
    return editor.ChangeMemberToFree(decl);
 }
 
@@ -1599,13 +1551,6 @@ word Editor::ChangeMemberToFree(const CodeWarning& log)
 word Editor::ChangeMemberToFree(CxxScope* decl)
 {
    Debug::ft("Editor.ChangeMemberToFree(decl)");
-
-   auto access = MaxAccessUsed(decl);
-
-   if(access < Cxx::Public)
-   {
-      return Report("This item uses non-public data, so it cannot be changed.");
-   }
 
    const auto& oldName = decl->Name();
    auto newName = GetItemName(decl, file_);
@@ -1624,7 +1569,8 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
    auto defn = decl->GetMate();
    CxxToken* ftarg = nullptr;
    auto code = GetDefnCode(defn, ftarg);
-   auto qual = decl->GetClass()->Name() + SCOPE_STR;
+   auto cls = decl->GetClass();
+   auto qual = cls->Name() + SCOPE_STR;
    auto lpar = code.find('(');
    auto pos = code.rfind(qual, lpar);
    if(pos == string::npos) return NotFound("Definition's class qualifier");
@@ -1650,12 +1596,9 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
 
    code.push_back(CRLF);
 
-   //  If the item uses public members, their names must now be qualified.
+   //  The names of any public members must now be qualified.
    //
-   if(access == Cxx::Public)
-   {
-      QualifyClassItems(decl, code);
-   }
+   QualifyClassItems(decl, code);
 
    //  If the item's name is changing, replace its occurrences.
    //
@@ -1731,8 +1674,10 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
       return Report("Parsing of new declaration failed.");
    }
 
-   //  For each reference to the previous item, remove any qualified names,
-   //  update the name if it has changed, and update the referent.
+   //  For each reference to the previous item, update the name if it changed,
+   //  qualify the name if an overloaded function with the same name exists in
+   //  the invoking class, remove previous qualified names, and update the
+   //  referent.
    //
    for(auto r = refs.begin(); r != refs.end(); ++r)
    {
@@ -1740,8 +1685,11 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
       {
          auto tname = static_cast<const TypeName*>(*r);
          auto qname = tname->GetQualName();
-         while(qname->Size() > 1) EraseItem(qname->First());
          if(newName != oldName) qname->Rename(newName);
+         auto ovld = QualifyOverload(qname);
+         size_t count = (ovld ? 2 : 1);
+         size_t index = (ovld ? 1 : 0);
+         while(qname->Size() > count) EraseItem(qname->At(index));
          qname->SetReferent(item, nullptr);
          qname->UpdateXref(true);
       }
@@ -1871,7 +1819,7 @@ size_t Editor::CodeBegin() const
    Debug::ft(Editor_CodeBegin);
 
    size_t pos = string::npos;
-   auto items = file_->Items();
+   const auto& items = file_->Items();
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
@@ -2833,7 +2781,7 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
    //
    attrs.pos_ = string::npos;
    attrs.offsets_.below_ = OffsetRule;
-   auto items = file_->Items();
+   const auto& items = file_->Items();
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
@@ -2847,13 +2795,29 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
       auto currSpace = (*i)->GetSpace();
       if(currSpace != space) continue;
 
+      auto type = (*i)->Type();
       auto currPos = (*i)->GetPos();
-      if(currPos < min) continue;
+
+      if(currPos < min)
+      {
+         if(type == Cxx::Class)
+         {
+            //  The item must go after this class definition.  MIN was set
+            //  based on the location of a function in this class that the
+            //  item uses, but bypass the whole class.
+            //
+            if(!(*i)->GetSpan3(begin, left, end)) return;
+            auto next = NextBegin(end);
+            if(next > min) min = next;
+            attrs.offsets_.below_ = OffsetNone;
+            attrs.offsets_.above_ = OffsetRule;
+         }
+
+         continue;
+      }
 
       if(attrs.pos_ == string::npos) attrs.pos_ = min;
       if(currPos > max) return;
-
-      auto type = (*i)->Type();
 
       if(type == Cxx::SpaceDefn)
       {
@@ -5318,79 +5282,67 @@ void Editor::QualifyClassItems(CxxScope* decl, string& code) const
    auto usages = GetItemUsages(decl, true);
    auto cls = decl->GetClass();
 
-   QualifyClassItems(cls, usages.directs, code);
-   QualifyClassItems(cls, usages.indirects, code);
+   CodeTools::QualifyClassItems(cls, usages.directs, code);
+   CodeTools::QualifyClassItems(cls, usages.indirects, code);
 }
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyClassItems
-   (const Class* cls, const CxxNamedSet& items, string& code)
+bool Editor::QualifyOverload(QualName* qname)
 {
-   Debug::ft("Editor.QualifyClassItems(cls)");
+   Debug::ft("Editor.QualifyOverload");
 
-   const auto& className = cls->Name();
-   Lexer lexer;
-   lexer.Initialize(code);
-   string id;
-
+   //  Find the item in which QNAME appears.
+   //
+   CxxToken* item = nullptr;
+   auto pos = qname->GetPos();
+   auto& items = qname->GetFile()->Items();
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      //  Don't qualify a class name.
-      //
-      if((*i)->Type() == Cxx::Class) continue;
+      if((*i)->IsInternal()) continue;
 
-      auto icls = (*i)->GetClass();
+      auto type = (*i)->Type();
+      if((type == Cxx::SpaceDefn) || (type == Cxx::Namespace)) continue;
 
-      if((cls == icls) || cls->DerivesFrom(icls))
+      size_t begin, end;
+      (*i)->GetSpan2(begin, end);
+      if((pos >= begin) && (pos <= end))
       {
-         //  Don't qualify a class name in the hierarchy, which can appear
-         //  in types and constructor invocations.
-         //
-         auto& name = (*i)->Name();
-         if((name == className) || (name == icls->Name())) continue;
-
-         auto pos = lexer.Find(0, STATIC_STR) + strlen(STATIC_STR) + 1;
-
-         while(lexer.FindIdentifier(pos, id, false) && (pos <= code.size()))
-         {
-            if(id == name)
-            {
-               auto insert = true;
-               auto prev1 = lexer.RfindNonBlank(pos - 1);
-               auto prev2 = lexer.RfindNonBlank(prev1 - 1);
-               auto char1 = code[prev1];
-               auto char2 = code[prev2];
-
-               //  Don't qualify a name that is preceded by a selection or
-               //  scope resolution operator.
-               //
-               if(char1 == '.')
-               {
-                  insert = false;
-               }
-               else if((char2 == '-') && (char1 == '>'))
-               {
-                  insert = false;
-               }
-               else if((char2 == ':') && (char1 == ':'))
-               {
-                  insert = false;
-               }
-
-               if(insert)
-               {
-                  auto qual = icls->Name() + SCOPE_STR;
-                  code.insert(pos, qual);
-                  lexer.Initialize(code);
-                  pos += qual.size();
-               }
-            }
-
-            pos += id.size();
-         }
+         item = *i;
+         break;
       }
    }
+
+   if(item == nullptr) return false;
+
+   auto cls = item->GetClass();
+   if(cls == nullptr) return false;
+
+   auto& name = qname->Name();
+   auto funcs = cls->Funcs();
+   auto found = false;
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->Name() == name)
+      {
+         found = true;
+         break;
+      }
+   }
+
+   if(!found) return false;
+
+   //  The class has a function with the same name as the one that is being
+   //  made static, so qualify QNAME with its namespace.
+   //
+   auto space = cls->GetSpace();
+   auto& sname = space->Name();
+   auto code = sname + SCOPE_STR;
+   qname->AddPrefix(sname, space);
+   Insert(pos, code);
+   qname->SetContext(pos);
+   return true;
 }
 
 //------------------------------------------------------------------------------

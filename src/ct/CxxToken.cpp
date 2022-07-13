@@ -2466,6 +2466,10 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    }
 
    if(pod) return;
+
+   //* This needs to record the usage of CLS's destructor against ARG,
+   //  because the destructor might be protected or private.
+   //
    arg.item_->RecordUsage();
 
    auto cls = static_cast<Class*>(arg.item_->Root());

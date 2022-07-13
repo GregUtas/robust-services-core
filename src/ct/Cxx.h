@@ -719,5 +719,11 @@ struct CxxUsageSets
    //
    void Union(const CxxUsageSets& set);
 };
+
+//  Returns items used by DECL and its separate definition, if any.
+//  Excludes DECL itself, items local to DEFN, and items local to
+//  DEFN's entire file if extOnly is set.
+//
+CxxUsageSets GetItemUsages(CxxScope* decl, bool extOnly);
 }
 #endif

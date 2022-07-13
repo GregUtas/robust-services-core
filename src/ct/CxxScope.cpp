@@ -21,7 +21,6 @@
 //
 #include "CxxScope.h"
 #include <iterator>
-#include <set>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
@@ -65,6 +64,28 @@ static bool EraseTemplateArguments(string& prefix)
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the most restrictive access control in ITEMS.
+//
+static Cxx::Access FindNarrowestAccess(const CxxNamedSet& items)
+{
+   Debug::ft("CodeTools.FindNarrowestAccess");
+
+   auto access = Cxx::Access_N;
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      if(((*i)->GetClass() != nullptr) && !(*i)->IsDeclaredInFunction())
+      {
+         auto a = (*i)->GetAccess();
+         if(a < access) access = a;
+      }
+   }
+
+   return access;
 }
 
 //------------------------------------------------------------------------------
@@ -207,6 +228,25 @@ static TypeMatch MatchTemplate(const string& thisType,
    thisArg->SetTemplateRole(TemplateClass);
    return thisArg->MatchTemplate
       (thatArg.get(), tmpltParms, tmpltArgs, argFound);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the most restrictive access control of the items used in DECL and
+//  its definition, if distinct.
+//
+static Cxx::Access NarrowestAccessUsed(CxxScope* decl)
+{
+   Debug::ft("CodeTools.NarrowestAccessUsed");
+
+   auto usages = GetItemUsages(decl, true);
+   auto max = FindNarrowestAccess(usages.directs);
+   auto access = FindNarrowestAccess(usages.indirects);
+   if(access < max) max = access;
+   access = FindNarrowestAccess(usages.inherits);
+   if(access < max) max = access;
+
+   return max;
 }
 
 //==============================================================================
@@ -2969,7 +3009,7 @@ Function* Function::CanInvokeWith(StackArgVector& args,
    //  that this function expects.  Note that a "this" argument is skipped
    //  if thisIncr is 1 instead of 0.
    //
-   //c If an argument is an overloaded function, alternates are not considered.
+   //* If an argument is an overloaded function, alternates are not considered.
    //  This eventually needs to be supported.
    //
    for(size_t i = 0; i < sendSize; ++i)
@@ -3765,16 +3805,17 @@ void Function::CheckMemberUsage() const
 
    if(defn_) return Debug::SwLog(Function_CheckMemberUsage, "defn", 0);
 
-   //  Check if this function could be static or free.  For either to be
-   //  possible, the function cannot be virtual, must not have accessed a
-   //  non-static member, and must be a standard member function that is not
-   //  part of a template.  [A function which accesses a non-static member
+   //  Check if this function could be free or static.  For either to be
+   //  possible, the function cannot be virtual or an override, must not have
+   //  used a non-static member, and must be a standard member function that is
+   //  not part of a template.  [A function which accesses a non-static member
    //  could still be free or static, provided that the member was public.
    //  However, the function would have to add the underlying object as an
    //  argument--essentially a "this" argument.  Some will argue that this
    //  improves encapsulation, but we will demur.]
    //
    if(virtual_) return;
+   if(override_) return;
    if(type_) return;
    if(GetDefn()->nonstatic_) return;
    if(FuncType() != FuncStandard) return;
@@ -3782,24 +3823,35 @@ void Function::CheckMemberUsage() const
    auto cls = GetClass();
    if(cls == nullptr) return;
 
-   //  The function can be free if
-   //  (a) it only accessed public members, and
-   //  (b) it's not tagged inline (which is probably to obey ODR), and
-   //  (c) it doesn't use a template parameter, and
-   //  (d) it is only used in the file that defines it.
-   //  Otherwise it can be static.
+   //  The function can be free (static within a .cpp) if
+   //  (a) it has a separate definition;
+   //  (b) it only accessed public members;
+   //  (c) it's not tagged inline (which is probably to obey ODR);
+   //  (d) it doesn't use a template parameter;
+   //  (e) a different .cpp doesn't invoke it;
+   //  (f) it doesn't use any protected or private members.
+   //  In (a) and (e), the item's definition would have to move to
+   //  another file. This isn't supported because it also involves
+   //  adjusting the #include directives in both files.
    //
-   if(!GetDefn()->nonpublic_ && !inline_ && !tparm_)
+   auto defn = GetDefn();
+
+   if((defn != this) && !defn->nonpublic_ && !inline_ && !tparm_)
    {
       auto file = FindFileForStatic();
 
-      if(file != nullptr)
+      if((file != nullptr) && (defn->GetFile() == file))
       {
-         Log(FunctionCouldBeFree, nullptr, 0, file->Name());
-         return;
+         if(NarrowestAccessUsed(const_cast<Function*>(this)) >= Cxx::Public)
+         {
+            Log(FunctionCouldBeFree, nullptr, 0, file->Name());
+            return;
+         }
       }
    }
 
+   //  The function can probably be a static member.
+   //
    CheckClassStatic();
 }
 

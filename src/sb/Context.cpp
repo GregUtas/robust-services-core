@@ -556,15 +556,6 @@ void Context::HenqPsm(ProtocolSM& psm)
 
 //------------------------------------------------------------------------------
 
-void Context::Kill(debug64_t errval, debug64_t offset)
-{
-   Debug::ft("Context.Kill");
-
-   throw SbException(errval, offset);
-}
-
-//------------------------------------------------------------------------------
-
 void Context::Kill(const string& errstr, debug64_t offset)
 {
    Debug::ft("Context.Kill(string)");

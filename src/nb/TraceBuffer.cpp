@@ -604,7 +604,7 @@ void TraceBuffer::Query(ostream& stream) const
 fixed_string TracingOn = "Tracing is ON.";
 fixed_string TracingOff = "Tracing is OFF.";
 
-void TraceBuffer::QueryTools(ostream& stream) const
+void TraceBuffer::QueryTools(ostream& stream)
 {
    Debug::ft("TraceBuffer.QueryTools");
 

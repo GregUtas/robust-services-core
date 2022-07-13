@@ -102,7 +102,7 @@ public:
    //  Displays, in STREAM, the setting of each tool, and whether tracing
    //  has started.
    //
-   void QueryTools(std::ostream& stream) const;
+   static void QueryTools(std::ostream& stream);
 
    //  Disables all tools.
    //

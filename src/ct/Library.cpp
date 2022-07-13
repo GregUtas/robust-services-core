@@ -644,7 +644,7 @@ word Library::Purge(const string& name, string& expl)
 //------------------------------------------------------------------------------
 
 word Library::Rename(CliThread& cli,
-   const std::string& oldName, const std::string& newName, string& expl) const
+   const std::string& oldName, const std::string& newName, string& expl)
 {
    Debug::ft("Library.Rename");
 

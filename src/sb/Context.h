@@ -117,7 +117,6 @@ public:
    //  error occurs.  ERRSTR/ERRVAL and OFFSET are included in the log.
    //
    static void Kill(const std::string& errstr, NodeBase::debug64_t offset);
-   static void Kill(NodeBase::debug64_t errval, NodeBase::debug64_t offset);
 
    //  Logs the objects in the context for debugging purposes.  FUNC,
    //  ERRSTR, and OFFSET are passed to Debug::SwLog.

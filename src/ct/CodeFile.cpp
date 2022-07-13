@@ -244,6 +244,38 @@ static void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
 
 //------------------------------------------------------------------------------
 
+const stringVector DEFAULT_PROLOG =
+{
+   EMPTY_STR,
+   "Copyright (C) 2013-2022  Greg Utas",
+   EMPTY_STR,
+   "This file is part of the Robust Services Core (RSC).",
+   EMPTY_STR,
+   "RSC is free software: you can redistribute it and/or modify it under the",
+   "terms of the GNU General Public License as published by the Free Software",
+   "Foundation, either version 3 of the License, or (at your option) any later",
+   "version.",
+   EMPTY_STR,
+   "RSC is distributed in the hope that it will be useful, but WITHOUT ANY",
+   "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS",
+   "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more",
+   "details.",
+   EMPTY_STR,
+   "You should have received a copy of the GNU General Public License along",
+   "with RSC.  If not, see <http://www.gnu.org/licenses/>.",
+   EMPTY_STR
+};
+
+//  Returns the file's prolog (comments that should appear at the top
+//  of the file).
+//
+static const stringVector& Prolog()
+{
+   return DEFAULT_PROLOG;
+}
+
+//------------------------------------------------------------------------------
+
 static void RemoveAliasedClasses(CxxNamedSet& inclSet)
 {
    Debug::ft("CodeTools.RemoveAliasedClasses");
@@ -2319,35 +2351,6 @@ CxxToken* CodeFile::PosToItem(size_t pos) const
    }
 
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-const stringVector DEFAULT_PROLOG =
-{
-   EMPTY_STR,
-   "Copyright (C) 2013-2022  Greg Utas",
-   EMPTY_STR,
-   "This file is part of the Robust Services Core (RSC).",
-   EMPTY_STR,
-   "RSC is free software: you can redistribute it and/or modify it under the",
-   "terms of the GNU General Public License as published by the Free Software",
-   "Foundation, either version 3 of the License, or (at your option) any later",
-   "version.",
-   EMPTY_STR,
-   "RSC is distributed in the hope that it will be useful, but WITHOUT ANY",
-   "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS",
-   "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more",
-   "details.",
-   EMPTY_STR,
-   "You should have received a copy of the GNU General Public License along",
-   "with RSC.  If not, see <http://www.gnu.org/licenses/>.",
-   EMPTY_STR
-};
-
-const stringVector& CodeFile::Prolog() const
-{
-   return DEFAULT_PROLOG;
 }
 
 //------------------------------------------------------------------------------

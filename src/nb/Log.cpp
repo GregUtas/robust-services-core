@@ -102,6 +102,22 @@ static bool DisplayStartupLog(ostringstreamPtr& log)
 
 //------------------------------------------------------------------------------
 //
+//  Returns the log associated with groupName and ID.  Updates
+//  GROUP to the log's group.
+//
+static Log* Find(c_string groupName, LogId id, LogGroup*& group)
+{
+   Debug::ftnt("NodeBase.Find");
+
+   auto reg = Singleton<LogGroupRegistry>::Extant();
+   if(reg == nullptr) return nullptr;
+   group = reg->FindGroup(groupName);
+   if(group == nullptr) return nullptr;
+   return group->FindLog(id);
+}
+
+//------------------------------------------------------------------------------
+//
 //  Data that changes too frequently to unprotect and reprotect memory
 //  when it needs to be modified.
 //
@@ -205,7 +221,7 @@ ostringstreamPtr Log::Create(c_string groupName, LogId id)
    //  Find the log's definition.
    //
    LogGroup* group = nullptr;
-   auto log = Find(groupName, id, group);
+   auto log = NodeBase::Find(groupName, id, group);
    if(log == nullptr) return CreateStartupLog();
 
    //  Check if the log is to be suppressed or throttled.
@@ -236,7 +252,7 @@ ostringstreamPtr Log::Create
    //  Find the log's and the alarm's definition.
    //
    LogGroup* group = nullptr;
-   auto log = Find(groupName, id, group);
+   auto log = NodeBase::Find(groupName, id, group);
    if(log == nullptr) return CreateStartupLog();
 
    auto reg = Singleton<AlarmRegistry>::Extant();
@@ -289,19 +305,6 @@ void Log::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-Log* Log::Find(c_string groupName, LogId id, LogGroup*& group)
-{
-   Debug::ftnt("Log.Find");
-
-   auto reg = Singleton<LogGroupRegistry>::Extant();
-   if(reg == nullptr) return nullptr;
-   group = reg->FindGroup(groupName);
-   if(group == nullptr) return nullptr;
-   return group->FindLog(id);
-}
-
-//------------------------------------------------------------------------------
-
 constexpr size_t LogIdSize = 3;
 constexpr size_t NameBegin = 1 + Log::Indent;
 constexpr size_t MinNameSize = LogIdSize + 1;
@@ -333,7 +336,7 @@ Log* Log::Find(c_string log)
    }
 
    LogGroup* group = nullptr;
-   return Find(name.c_str(), id, group);
+   return NodeBase::Find(name.c_str(), id, group);
 }
 
 //------------------------------------------------------------------------------

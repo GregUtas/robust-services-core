@@ -121,11 +121,6 @@ public:
    //
    void SetInterval(uint8_t interval);
 
-   //  Returns the log associated with groupName and ID.  Updates
-   //  GROUP to the log's group.
-   //
-   static Log* Find(c_string groupName, LogId id, LogGroup*& group);
-
    //  Returns the log associated with LOG by extracting the group
    //  name and LogId from the beginning of LOG.
    //

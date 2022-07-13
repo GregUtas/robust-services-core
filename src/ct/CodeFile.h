@@ -357,11 +357,6 @@ private:
    //
    void RemoveUser(CodeFile* file);
 
-   //  Returns the file's prolog (comments that should appear at the top
-   //  of the file).
-   //
-   const stringVector& Prolog() const;
-
    //  Checks the file's prolog.
    //
    void CheckProlog();

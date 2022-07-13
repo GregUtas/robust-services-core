@@ -900,7 +900,7 @@ static word NotFound(c_string text, bool quotes = false)
 //  in CLS (or one of its base classes).
 //
 static void QualifyClassItems
-(const Class* cls, const CxxNamedSet& items, string& code)
+   (const Class* cls, const CxxNamedSet& items, string& code)
 {
    Debug::ft("CodeTools.QualifyClassItems");
 
@@ -1366,14 +1366,18 @@ word Editor::ChangeAuto(const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeAuto");
 
-   //  Add a & tag to the auto variable.  It may also need to be const.
+   //  Add a & tag to the auto variable and/or tag it as const.
    //
    auto begin = CurrBegin(log.Pos());
    auto cpos = FindWord(begin, CONST_STR);
    auto apos = FindWord(begin, AUTO_STR);
 
    if(apos == string::npos) return NotFound("auto");
-   Insert(apos + strlen(AUTO_STR), "&");
+
+   if(log.warning_ != AutoShouldBeConst)
+   {
+      Insert(apos + strlen(AUTO_STR), "&");
+   }
 
    if(cpos > apos)
    {
@@ -1381,6 +1385,7 @@ word Editor::ChangeAuto(const CodeWarning& log)
       {
       case AutoCopiesConstReference:
       case AutoCopiesConstObject:
+      case AutoShouldBeConst:
          Insert(apos, "const ");
       }
    }
@@ -3824,6 +3829,8 @@ word Editor::FixWarning(const CodeWarning& log)
    case AutoCopiesObject:
       return ChangeAuto(log);
    case AutoCopiesConstObject:
+      return ChangeAuto(log);
+   case AutoShouldBeConst:
       return ChangeAuto(log);
    }
 

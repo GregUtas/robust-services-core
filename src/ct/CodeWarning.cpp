@@ -809,6 +809,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(TrailingCommentAlignment,
       WarningAttrs(false, false,
       "Trailing comment not aligned with one above")));
+   Attrs_.insert(WarningPair(AutoShouldBeConst,
+      WarningAttrs(true, true,
+      "Auto variable should be tagged const")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(false, false,
       ERROR_STR)));

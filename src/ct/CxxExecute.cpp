@@ -2121,11 +2121,21 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    if(vautoptr) spec->Tags()->SetVolatilePtr();
 
    //  If the right-hand side was const, it carries over to the auto variable
-   //  if it is a pointer or reference type.
+   //  if it is a pointer or reference type.  If the auto variable is tagged
+   //  as a reference and is not a pointer, it should be tagged const if the
+   //  right-hand side is const.
    //
    if(const_)
    {
-      if((spec->Ptrs(true) > 0) || (refs > 0)) spec->Tags()->SetConst(true);
+      if((refs > 0) || (spec->Ptrs(true) > 0))
+      {
+         spec->Tags()->SetConst(true);
+      }
+
+      if((refs > 0) && (spec->Ptrs(true) == 0))
+      {
+         if(!cauto) data.Log(AutoShouldBeConst);
+      }
    }
 
    Context::Trace(CxxTrace::SET_AUTO, *this);

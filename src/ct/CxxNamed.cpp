@@ -2267,11 +2267,9 @@ void QualName::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_EraseName = "QualName.EraseName";
-
 void QualName::EraseName(const TypeName* name, TypeNamePtr& next)
 {
-   Debug::ft(QualName_EraseName);
+   Debug::ft("QualName.EraseName");
 
    if(first_.get() == name)
    {

@@ -550,6 +550,7 @@ enum Warning
    AutoCopiesObject,         // auto variable copies an object
    AutoCopiesConstObject,    // auto variable copies a const object
    TrailingCommentAlignment, // sequential trailing comments not aligned
+   AutoShouldBeConst,        // auto variable is const but not tagged const
    Warning_N                 // number of warnings
 };
 

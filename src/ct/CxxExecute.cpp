@@ -1057,7 +1057,7 @@ void ParseFrame::InsertLocal(CxxScoped* local)
 
    //  Delete any item with the same name that is defined in the same block.
    //
-   auto& name = local->Name();
+   const auto& name = local->Name();
    auto scope = local->GetScope();
    SymbolVector list;
 

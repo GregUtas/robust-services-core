@@ -3693,7 +3693,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
       //  This is a function type.  Set NAME to the function type's
       //  name, if any, stripping the "(*" prefix and ")" suffix.
       //
-      auto& funcName = func->Name();
+      const auto& funcName = func->Name();
       if(funcName.empty()) return true;
       name = funcName;
       name.erase(0, 2);

@@ -521,7 +521,7 @@ Parameter::TestRc PotsFacilityParameter::VerifyMsg
    Debug::ft("PotsFacilityParameter.VerifyMsg");
 
    TestRc            rc;
-   auto&             pmsg = static_cast<const PotsMessage&>(msg);
+   const auto&       pmsg = static_cast<const PotsMessage&>(msg);
    PotsFacilityInfo* info;
    id_t              index;
    word              sid, ind;
@@ -669,7 +669,7 @@ Parameter::TestRc PotsHeaderParameter::VerifyMsg
    Debug::ft("PotsHeaderParameter.VerifyMsg");
 
    TestRc          rc;
-   auto&           pmsg = static_cast<const PotsMessage&>(msg);
+   const auto&     pmsg = static_cast<const PotsMessage&>(msg);
    word            port;
    PotsHeaderInfo* info;
 
@@ -757,7 +757,7 @@ Parameter::TestRc PotsRingParameter::VerifyMsg
    Debug::ft("PotsRingParameter.VerifyMsg");
 
    TestRc        rc;
-   auto&         pmsg = static_cast<const PotsMessage&>(msg);
+   const auto&   pmsg = static_cast<const PotsMessage&>(msg);
    PotsRingInfo* info;
    bool          ring = false;
    auto          exists = false;
@@ -839,7 +839,7 @@ Parameter::TestRc PotsScanParameter::VerifyMsg
    Debug::ft("PotsScanParameter.VerifyMsg");
 
    TestRc        rc;
-   auto&         pmsg = static_cast<const PotsMessage&>(msg);
+   const auto&   pmsg = static_cast<const PotsMessage&>(msg);
    PotsScanInfo* info;
    string        scan;
    auto          digits = false;

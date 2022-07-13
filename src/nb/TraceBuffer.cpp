@@ -613,7 +613,7 @@ void TraceBuffer::QueryTools(ostream& stream)
    else
       stream << TracingOff << CRLF;
 
-   auto& tools = Singleton<ToolRegistry>::Instance()->Tools();
+   const auto& tools = Singleton<ToolRegistry>::Instance()->Tools();
 
    for(auto t = tools.First(); t != nullptr; tools.Next(t))
    {

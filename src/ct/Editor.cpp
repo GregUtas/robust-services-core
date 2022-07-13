@@ -258,8 +258,9 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
    auto cls = item->GetClass();
    if(cls != nullptr) isstruct_ = (cls->GetClassTag() != Cxx::ClassType);
 
-   auto& lexer = item->GetFile()->GetLexer();
+   const auto& lexer = item->GetFile()->GetLexer();
    size_t begin, end;
+
    if(item->GetSpan2(begin, end))
    {
       indent_ = lexer.LineFindFirst(begin) - lexer.CurrBegin(begin);
@@ -697,7 +698,7 @@ static string GetComment(const CxxNamed* item, bool unindent)
    size_t begin, end;
    if(!item->GetSpan2(begin, end)) return EMPTY_STR;
 
-   auto& lexer = item->GetFile()->GetLexer();
+   const auto& lexer = item->GetFile()->GetLexer();
    begin = lexer.CurrBegin(begin);
    auto start = lexer.IntroStart(begin, false);
 
@@ -804,7 +805,7 @@ static void GetOverrides(Function* func, FunctionVector& funcs)
 {
    Debug::ft("CodeTools.GetOverrides");
 
-   auto& overs = func->GetOverrides();
+   const auto& overs = func->GetOverrides();
 
    for(auto f = overs.cbegin(); f != overs.cend(); ++f)
    {
@@ -922,7 +923,7 @@ static void QualifyClassItems
          //  Don't qualify a class name in the hierarchy, which can appear
          //  in types and constructor invocations.
          //
-         auto& name = (*i)->Name();
+         const auto& name = (*i)->Name();
          if((name == className) || (name == icls->Name())) continue;
 
          auto pos = lexer.Find(0, STATIC_STR) + strlen(STATIC_STR) + 1;
@@ -1133,7 +1134,7 @@ word Editor::AdjustOperator(const CodeWarning& log)
    Debug::ft("Editor.AdjustOperator");
 
    auto oper = static_cast<const Operation*>(log.item_);
-   auto& attrs = CxxOp::Attrs[oper->Op()];
+   const auto& attrs = CxxOp::Attrs[oper->Op()];
 
    if(AdjustHorizontally(oper->GetPos(), attrs.symbol.size(), attrs.spacing))
       return Changed(oper->GetPos());
@@ -3152,7 +3153,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
    auto fixed = false;
    auto first = true;
    auto exit = false;
-   auto& warnings = file_->GetWarnings();
+   const auto& warnings = file_->GetWarnings();
 
    for(auto item = warnings.cbegin(); item != warnings.cend(); ++item)
    {
@@ -3859,7 +3860,7 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
    Debug::ft("Editor.FunctionsWereSorted");
 
    auto area = log.item_->GetArea();
-   auto& warnings = file_->GetWarnings();
+   const auto& warnings = file_->GetWarnings();
 
    for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
    {
@@ -3881,7 +3882,7 @@ string Editor::GetDefnCode(const CxxScope* defn, CxxToken*& ftarg) const
 
    size_t begin, left, end;
    defn->GetSpan3(begin, left, end);
-   auto& lexer = defn->GetFile()->GetLexer();
+   const auto& lexer = defn->GetFile()->GetLexer();
    auto code = lexer.Source().substr(begin, end - begin + 1);
 
    ftarg = nullptr;
@@ -3906,7 +3907,7 @@ CxxItemVector Editor::GetItemsForDefn(const CxxScope* defn) const
    CxxItemVector items;
    if(defn == nullptr) return items;
 
-   auto& fileItems = file_->Items();
+   const auto& fileItems = file_->Items();
 
    //  Return the items above DEFN that are referenced by DEFN.
    //
@@ -4480,7 +4481,7 @@ word Editor::InsertInclude(const CodeWarning& log)
    incl->SetLoc(file_, pos, false);
    incl->CalcGroup();
 
-   auto& incls = file_->Includes();
+   const auto& incls = file_->Includes();
 
    for(auto next = incls.cbegin(); next != incls.cend(); ++next)
    {
@@ -5189,7 +5190,7 @@ bool Editor::OverridesWereSorted(const CodeWarning& log) const
    Debug::ft("Editor.OverridesWereSorted");
 
    auto cls = log.item_->GetClass();
-   auto& warnings = file_->GetWarnings();
+   const auto& warnings = file_->GetWarnings();
 
    for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
    {
@@ -5303,7 +5304,8 @@ bool Editor::QualifyOverload(QualName* qname)
    //
    CxxToken* item = nullptr;
    auto pos = qname->GetPos();
-   auto& items = qname->GetFile()->Items();
+   const auto& items = qname->GetFile()->Items();
+
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
       if((*i)->IsInternal()) continue;
@@ -5325,7 +5327,7 @@ bool Editor::QualifyOverload(QualName* qname)
    auto cls = item->GetClass();
    if(cls == nullptr) return false;
 
-   auto& name = qname->Name();
+   const auto& name = qname->Name();
    auto funcs = cls->Funcs();
    auto found = false;
 
@@ -5344,7 +5346,7 @@ bool Editor::QualifyOverload(QualName* qname)
    //  made static, so qualify QNAME with its namespace.
    //
    auto space = cls->GetSpace();
-   auto& sname = space->Name();
+   const auto& sname = space->Name();
    auto code = sname + SCOPE_STR;
    qname->AddPrefix(sname, space);
    Insert(pos, code);
@@ -5837,7 +5839,7 @@ word Editor::ResolveUsings()
    //
    if(aliased_) return EditSucceeded;
 
-   auto& items = file_->Items();
+   const auto& items = file_->Items();
 
    for(auto i = items.begin(); i != items.end(); ++i)
    {
@@ -5959,7 +5961,7 @@ word Editor::SortIncludes()
    //
    file_->SortIncludes();
 
-   auto& includes = file_->Includes();
+   const auto& includes = file_->Includes();
    auto incl = includes.cbegin();
 
    for(auto pos = IncludesBegin(); pos != string::npos; pos = NextBegin(pos))
@@ -6154,7 +6156,7 @@ word Editor::TagAsConstReference(const Function* func, word offset)
    //  added first so that its position won't change as a result of adding the
    //  "const" earlier in the line.
    //
-   auto& args = func->GetArgs();
+   const auto& args = func->GetArgs();
    auto index = func->LogOffsetToArgIndex(offset);
    auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound("Argument");
@@ -6406,7 +6408,7 @@ void Editor::UpdateDebugFt(Function* func)
    if(pos < end)
    {
       file->LogPos(pos, DebugFtNameMismatch, func);
-      auto& log = file->GetWarnings().back();
+      const auto& log = file->GetWarnings().back();
       auto rc = editor.FixLog(log);
 
       if(rc != EditSucceeded)
@@ -6471,7 +6473,7 @@ word Editor::UpdateItemDeclAttrs
    //  If ITEM is commented, a blank line should also precede or follow it.
    //
    auto type = PosToType(PrevBegin(begin));
-   auto& line = LineTypeAttr::Attrs[type];
+   const auto& line = LineTypeAttr::Attrs[type];
 
    if(!line.isCode && (type != BlankLine))
    {
@@ -6768,7 +6770,7 @@ word Editor::Write() const
       return Report(stream, EditAbort);
    }
 
-   auto& warnings = file_->GetWarnings();
+   const auto& warnings = file_->GetWarnings();
 
    for(auto w = warnings.begin(); w != warnings.end(); ++w)
    {

@@ -74,7 +74,7 @@ void LogStatsGroup::DisplayStats
 
    if(id == 0)
    {
-      auto& groups = reg->Groups();
+      const auto& groups = reg->Groups();
 
       for(auto g = groups.First(); g != nullptr; groups.Next(g))
       {

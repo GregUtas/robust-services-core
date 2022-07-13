@@ -155,7 +155,7 @@ bool Argument::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
    begin = spec_->GetPos();
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    auto prev = lexer.RfindFirstOf(begin, ",(");
    auto next = lexer.FindFirstOf(",)", begin);
 
@@ -192,13 +192,13 @@ bool Argument::IsDummy() const
 {
    Debug::ft("Argument.IsDummy");
 
-   auto& type = GetTypeSpec()->Name();
+   const auto& type = GetTypeSpec()->Name();
 
    if(type == "nothrow_t") return true;
 
    if(type == "int")
    {
-      auto& fname = static_cast<Function*>(GetScope())->Name();
+      const auto& fname = static_cast<Function*>(GetScope())->Name();
       return ((fname == "operator++") || (fname == "operator--"));
    }
 
@@ -464,7 +464,7 @@ bool BaseDecl::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
    begin = GetPos();
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    begin = lexer.RfindFirstOf(begin, ":");
    end = lexer.FindFirstOf("{", begin);
    end = lexer.RfindNonBlank(end - 1);
@@ -735,7 +735,7 @@ bool CxxScoped::GetBracedSpan(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("CxxScoped.GetBracedSpan");
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    begin = GetPos();
    if(begin == string::npos) return false;
    left = lexer.FindFirstOf("{", begin);
@@ -782,7 +782,7 @@ bool CxxScoped::GetTypeSpan(size_t& begin, size_t& end) const
    //  resolution operator shouldn't be encountered here because we're already
    //  at the start of the TypeSpec, which can only be preceded by keywords.
    //
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    auto prev = lexer.RfindFirstOf(begin - 1, ";{}:");
    if(prev != string::npos) begin = lexer.NextPos(prev + 1);
 
@@ -1724,7 +1724,7 @@ bool Enumerator::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
    begin = GetPos();
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    auto prev = lexer.RfindFirstOf(begin, ",{");
    auto next = lexer.FindFirstOf(",}", begin);
 
@@ -2342,7 +2342,7 @@ void Friend::FindReferent()
    ++Depth_;
 
    SymbolView view = DeclaredGlobally;
-   auto& mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
+   const auto& mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
    CxxScoped* ref = nullptr;
 
    if(!searched_)
@@ -2795,7 +2795,7 @@ bool MemberInit::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
    begin = GetPos();
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    auto prev = lexer.RfindFirstOf(begin, ",:");
    auto next = lexer.FindFirstOf(",{", begin);
 

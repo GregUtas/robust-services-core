@@ -468,7 +468,7 @@ string PotsCircuit::strTrace() const
 
    while(true)
    {
-      auto& entry = trace_[i];
+      const auto& entry = trace_[i];
 
       if(entry.signal != 0)
       {

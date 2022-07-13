@@ -339,7 +339,7 @@ void DipInputHandler::ReceiveBuff
    {
       //  ADDR has to be obtained before DIPBUFF becomes nullptr...
       //
-      auto& addr = dipbuff->RxAddr();
+      const auto& addr = dipbuff->RxAddr();
       addr.GetSocket()->SetIcMsg(dipbuff.release());
    }
 }

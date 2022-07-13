@@ -325,7 +325,7 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
    else
    {
       config_.name_specified = SysIpL2Addr::LocalName(config_.server_name);
-      auto& addr = SysIpL2Addr::LoopbackIpAddr();
+      const auto& addr = SysIpL2Addr::LoopbackIpAddr();
       server_addr_ = SysIpL3Addr(addr, config_.server_port);
    }
 
@@ -363,7 +363,7 @@ bool BaseBot::get_reconnect_details(Token& power, int& passcode) const
    //
    if(config_.reconnect)
    {
-      auto& map = TokenTextMap::instance()->text_to_token_map();
+      const auto& map = TokenTextMap::instance()->text_to_token_map();
       power = map.at(config_.power);
       passcode = config_.passcode;
    }
@@ -510,7 +510,7 @@ void BaseBot::process_dm_message(const DipMessage& message)
 {
    Debug::ft("BaseBot.process_dm_message");
 
-   auto& dm = reinterpret_cast<const DM_Message&>(message);
+   const auto& dm = reinterpret_cast<const DM_Message&>(message);
    auto tokens = reinterpret_cast<const Token*>(&dm.tokens);
 
    if(tokens[0] == TOKEN_COMMAND_PRN)
@@ -637,7 +637,7 @@ void BaseBot::process_em_message(const DipMessage& message)
 
    //  The server has closed the connection because of an error.
    //
-   auto& em = reinterpret_cast<const EM_Message&>(message);
+   const auto& em = reinterpret_cast<const EM_Message&>(message);
    delete_socket(em.error);
 }
 
@@ -677,7 +677,7 @@ void BaseBot::process_frm_message(const TokenMessage& message)
          (Token(TOKEN_COMMAND_HUH) & (Token(TOKEN_PARAMETER_ERR) + press));
       send_to_server(huh_message);
 
-      auto& tokens = get_try_tokens();
+      const auto& tokens = get_try_tokens();
       TokenMessage token_msg;
 
       for(auto token = tokens.cbegin(); token != tokens.cend(); ++token)
@@ -1290,7 +1290,7 @@ void BaseBot::process_rm_message(const DipMessage& message)
       //  by a 6-byte parameter in which the first 2 bytes are the token
       //  and the last 4 bytes are its null-terminated name.
       //
-      auto& rm = reinterpret_cast<const RM_Message&>(message);
+      const auto& rm = reinterpret_cast<const RM_Message&>(message);
       auto count = message.header.length / 6;
 
       for(auto i = 0; i < count; ++i)
@@ -1864,7 +1864,7 @@ void BaseBot::report_now() const
 
    for(size_t p = 0; p < units.size(); ++p)
    {
-      auto& entry = units.at(p);
+      const auto& entry = units.at(p);
 
       if(!entry.units.empty())
       {
@@ -2006,7 +2006,7 @@ void BaseBot::report_sco() const
 
    for(size_t p = 0; p < centres.size(); ++p)
    {
-      auto& entry = centres.at(p);
+      const auto& entry = centres.at(p);
 
       if(!entry.centres.empty())
       {

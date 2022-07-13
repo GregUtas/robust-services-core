@@ -294,7 +294,7 @@ EventHandler::Rc PotsCwtInitiator::ProcessEvent
 {
    Debug::ft("PotsCwtInitiator.ProcessEvent");
 
-   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
+   const auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(CWT))
@@ -774,7 +774,7 @@ EventHandler::Rc PotsCwbSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
    //  Set the source and destination addresses in our Facility message.
    //
    auto msg = upsm->AccessOgMsg();
-   auto& self = IpPortRegistry::LocalAddr();
+   const auto& self = IpPortRegistry::LocalAddr();
    GlobalAddress locAddr(self, NilIpPort, PotsCallFactoryId);
    GlobalAddress remAddr(self, NilIpPort, PotsMuxFactoryId);
 

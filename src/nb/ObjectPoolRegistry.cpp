@@ -99,7 +99,7 @@ void ObjectPoolStatsGroup::DisplayStats
 
    if(id == 0)
    {
-      auto& pools = reg->Pools();
+      const auto& pools = reg->Pools();
 
       for(auto p = pools.First(); p != nullptr; pools.Next(p))
       {

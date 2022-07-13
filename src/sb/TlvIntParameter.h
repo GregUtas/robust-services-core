@@ -98,7 +98,7 @@ protected:
       NodeBase::Debug::ft(TlvIntParameter_VerifyMsg());
 
       TestRc rc;
-      auto& tlvmsg = static_cast<const TlvMessage&>(msg);
+      const auto& tlvmsg = static_cast<const TlvMessage&>(msg);
       T* parmval;
       NodeBase::word value;
       auto exists = false;

@@ -62,7 +62,7 @@ size_t CodeDir::CppCount() const
 
    size_t count = 0;
 
-   auto& files = Singleton<Library>::Instance()->Files().Items();
+   const auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
@@ -119,7 +119,7 @@ void CodeDir::GetDecls(CxxNamedSet& items)
 {
    Debug::ft("CodeDir.GetDecls");
 
-   auto& files = Singleton<Library>::Instance()->Files().Items();
+   const auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
@@ -136,7 +136,7 @@ size_t CodeDir::HeaderCount() const
 
    size_t count = 0;
 
-   auto& files = Singleton<Library>::Instance()->Files().Items();
+   const auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {

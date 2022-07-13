@@ -112,7 +112,7 @@ void Singletons::Display(ostream& stream,
 
    for(size_t i = 0; i < registry_.Size(); ++i)
    {
-      auto& entry = registry_[i];
+      const auto& entry = registry_[i];
 
       stream << lead << strIndex(i);
       stream << entry.addr;

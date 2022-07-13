@@ -1255,7 +1255,7 @@ void CxxScope::ReplaceTemplateParms
 
    for(size_t i = 0; i < tmpltParms->size(); ++i)
    {
-      auto& parmName = tmpltParms->at(i)->Name();
+      const auto& parmName = tmpltParms->at(i)->Name();
 
       //  If the instance arguments ran out, use template parameter defaults.
       //
@@ -2169,7 +2169,7 @@ bool FuncData::GetSpan(size_t& begin, size_t& left, size_t& end) const
       return GetTypeSpan(begin, end);
    }
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    auto pos = GetPos();
 
    if(first_ == this)
@@ -2776,7 +2776,7 @@ void Function::AdjustRecvConstness
       auto func = list->at(i).get();
       if(!func->IsConst()) continue;
 
-      auto& temp = func->Name();
+      const auto& temp = func->Name();
 
       if(temp == Name())
       {
@@ -3226,8 +3226,8 @@ void Function::CheckArgs() const
    {
       for(size_t i = 0; i < n; ++i)
       {
-         auto& declName = args_[i]->Name();
-         auto& defnName = mate_->args_[i]->Name();
+         const auto& declName = args_[i]->Name();
+         const auto& defnName = mate_->args_[i]->Name();
 
          if(!declName.empty() && (defnName != declName))
          {
@@ -3407,7 +3407,7 @@ void Function::CheckCtor() const
    //  An empty constructor that neither explicitly invokes a base class
    //  constructor nor explicitly initializes a member can be defaulted.
    //
-   auto& mems = defn->mems_;
+   const auto& mems = defn->mems_;
 
    if((impl != nullptr) && (impl->FirstStatement() == nullptr) &&
       (defn->call_ == nullptr) && mems.empty())
@@ -3513,7 +3513,7 @@ bool Function::CheckDebugName(const string& str) const
    //    order to give a unique name to each of the function's overloads.
    //
    auto name = DebugName();
-   auto& scope = GetScope()->Name();
+   const auto& scope = GetScope()->Name();
 
    if(scope.empty())
    {
@@ -4069,7 +4069,7 @@ void Function::DisplayDefn(ostream& stream,
    }
 
    auto call = defn->call_.get();
-   auto& mems = defn->mems_;
+   const auto& mems = defn->mems_;
    auto inits = mems.size() + (call != nullptr ? 1 : 0);
 
    switch(inits)
@@ -4668,7 +4668,7 @@ bool Function::GetSpan(size_t& begin, size_t& left, size_t& end) const
    GetTypeSpan(begin, end);
    if(impl_ == nullptr) return (end != string::npos);
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    left = impl_->GetPos();
    if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
@@ -5274,7 +5274,7 @@ bool Function::IsTrivial() const
    size_t begin, end;
    if(!defn->GetSpan2(begin, end)) return false;
 
-   auto& lexer = defn->GetFile()->GetLexer();
+   const auto& lexer = defn->GetFile()->GetLexer();
    auto last = lexer.GetLineNum(end);
    auto body = false;
 

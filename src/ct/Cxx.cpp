@@ -662,7 +662,7 @@ string CxxOp::OperatorToName(Cxx::Operator oper)
 {
    Debug::ft("CxxOp.OperatorToName");
 
-   auto& attrs = Attrs[oper];
+   const auto& attrs = Attrs[oper];
    string name(OPERATOR_STR);
    if(isalpha(attrs.symbol.front())) name += SPACE;
    name += attrs.symbol;
@@ -686,15 +686,15 @@ void CxxOp::UpdateOperator(Cxx::Operator& oper, size_t args)
 {
    Debug::ft("CxxOp.UpdateOperator");
 
-   auto& attrs = Attrs[oper];
+   const auto& attrs = Attrs[oper];
 
    if((attrs.arguments == args) || (attrs.arguments == 0)) return;
 
-   auto& token = attrs.symbol;
+   const auto& token = attrs.symbol;
 
    for(size_t i = 0; i <= Cxx::STATEMENT_SEPARATOR; ++i)
    {
-      auto& entry = Attrs[i];
+      const auto& entry = Attrs[i];
 
       if((entry.arguments == args) && (entry.symbol.compare(token) == 0))
       {

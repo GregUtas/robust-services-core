@@ -280,7 +280,7 @@ TokenMessage MapAndUnits::build_sub() const
 
 bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
 {
-   auto& neighbours = game_map[unit.loc.province].neighbours;
+   const auto& neighbours = game_map[unit.loc.province].neighbours;
    auto reachable = neighbours.find(unit.loc.coast);
 
    if(reachable != neighbours.end())
@@ -299,12 +299,12 @@ bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
 bool MapAndUnits::can_move_to_province
    (const UnitOrder& unit, ProvinceId province) const
 {
-   auto& neighbours = game_map[unit.loc.province].neighbours;
+   const auto& neighbours = game_map[unit.loc.province].neighbours;
    auto reachable = neighbours.find(unit.loc.coast);
 
    if(reachable != neighbours.end())
    {
-      auto& adjacencies = reachable->second;
+      const auto& adjacencies = reachable->second;
       Location first_coast(province, 0);
       auto match = adjacencies.lower_bound(first_coast);
 
@@ -1013,7 +1013,7 @@ size_t MapAndUnits::get_adjustment_results(TokenMessage ord_messages[]) const
 
    for(PowerId p = 0; p < number_of_powers; ++p)
    {
-      auto& orders = winter_orders.at(p);
+      const auto& orders = winter_orders.at(p);
 
       for(auto o = orders.adjustments.begin();
          o != orders.adjustments.end(); ++o, ++count)
@@ -1075,11 +1075,11 @@ std::vector<PowerCentres> MapAndUnits::get_centres() const
    //
    for(ProvinceId p = 0; p < number_of_provinces; ++p)
    {
-      auto& province = game_map[p];
+      const auto& province = game_map[p];
 
       if(province.is_supply_centre)
       {
-         auto& owner = province.owner;
+         const auto& owner = province.owner;
          auto index = (owner == TOKEN_PARAMETER_UNO ?
             number_of_powers : owner.power_id());
          owners.at(index).centres.push_back(p);
@@ -1314,7 +1314,7 @@ bool MapAndUnits::has_route_to_province
 
    //  All adjacent provinces are candidates.
    //
-   auto& neighbours1 = game_map[unit.loc.province].neighbours;
+   const auto& neighbours1 = game_map[unit.loc.province].neighbours;
 
    for(auto n = neighbours1.begin(); n != neighbours1.end(); ++n)
    {
@@ -1361,7 +1361,7 @@ bool MapAndUnits::has_route_to_province
             //
             if(units.find(candidate) != units.end())
             {
-               auto& neighbours2 = game_map[candidate].neighbours;
+               const auto& neighbours2 = game_map[candidate].neighbours;
 
                for(auto n = neighbours2.begin(); n != neighbours2.end(); ++n)
                {

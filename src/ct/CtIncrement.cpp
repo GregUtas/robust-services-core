@@ -764,7 +764,7 @@ word ItemsCommand::ProcessCommand(CliThread& cli) const
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
-   auto& lexer = file->GetLexer();
+   const auto& lexer = file->GetLexer();
 
    for(auto p = lexer.NextPos(0); p != string::npos; p = lexer.NextPos(p + 1))
    {
@@ -957,8 +957,7 @@ word RenameCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(newName, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto lib = Singleton<Library>::Instance();
-   auto rc = lib->Rename(cli, oldName, newName, expl);
+   auto rc = Library::Rename(cli, oldName, newName, expl);
    return cli.Report(rc, expl);
 }
 
@@ -1082,7 +1081,7 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
 
       size_t hdrs = 0;
       size_t cpps = 0;
-      auto& dirs = Singleton<Library>::Instance()->Directories().Items();
+      const auto& dirs = Singleton<Library>::Instance()->Directories().Items();
 
       for(auto d = dirs.cbegin(); d != dirs.cend(); ++d)
       {
@@ -1105,7 +1104,7 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
    case FailIndex:
    {
       auto found = false;
-      auto& files = Singleton<Library>::Instance()->Files().Items();
+      const auto& files = Singleton<Library>::Instance()->Files().Items();
 
       for(auto f = files.cbegin(); f != files.cend(); ++f)
       {
@@ -1328,7 +1327,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(0, SuccessExpl);
    }
 
-   auto& lexer = file->GetLexer();
+   const auto& lexer = file->GetLexer();
    auto source = lexer.GetNthLine(line - 1);
    auto type = lexer.LineToType(line - 1);
 

@@ -171,7 +171,7 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       }
       else
       {
-         auto& data = buff->GetInvocations();
+         const auto& data = buff->GetInvocations();
 
          if(data.empty()) return BufferEmpty;
 
@@ -195,7 +195,7 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       buff->Lock();
       {
          TraceRecord* rec = nullptr;
-         auto& mask = FunctionTrace::FTmask;
+         const auto& mask = FunctionTrace::FTmask;
          auto reg = Singleton<ThreadRegistry>::Instance();
 
          for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))

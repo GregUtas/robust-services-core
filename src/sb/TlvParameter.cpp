@@ -64,7 +64,7 @@ Parameter::TestRc TlvParameter::VerifyMsg
 {
    Debug::ft("TlvParameter.VerifyMsg");
 
-   auto& tmsg = static_cast<const TlvMessage&>(msg);
+   const auto& tmsg = static_cast<const TlvMessage&>(msg);
    auto pid = Pid();
    auto pptr = tmsg.FindParm(pid);
 

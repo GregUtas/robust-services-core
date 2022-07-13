@@ -114,7 +114,7 @@ void Library::AddFile(CodeFile& file)
    //  Add the file to the file registry, $files, either $hdrs or $cpps,
    //  $exts if it is unknown, and $subs if it declares external items.
    //
-   auto& name = file.Name();
+   const auto& name = file.Name();
    auto f = files_.cbegin();
    while((f != files_.cend()) && (strCompare((*f)->Name(), name) < 0)) ++f;
    files_.insert(f, CodeFilePtr(&file));
@@ -140,7 +140,7 @@ void Library::AddVar(LibrarySet& var)
 {
    Debug::ft("Library.AddVar");
 
-   auto& name = var.Name();
+   const auto& name = var.Name();
    auto v = vars_.cbegin();
    while((v != vars_.cend()) && (strCompare((*v)->Name(), name) < 0)) ++v;
    vars_.insert(v, &var);

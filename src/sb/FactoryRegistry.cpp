@@ -79,7 +79,7 @@ void FactoryStatsGroup::DisplayStats
 
    if(id == 0)
    {
-      auto& facs = reg->Factories();
+      const auto& facs = reg->Factories();
 
       for(auto f = facs.First(); f != nullptr; facs.Next(f))
       {

@@ -958,7 +958,7 @@ void CodeFile::CheckProlog()
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
 
-   auto& prolog = Prolog();
+   const auto& prolog = Prolog();
    size_t line = 3;
 
    for(size_t i = 0; i < prolog.size(); ++i)
@@ -1984,7 +1984,7 @@ bool CodeFile::IsExcludedTarget() const
 {
    Debug::ft("CodeFile.IsExcludedTarget");
 
-   auto& fn = Name();
+   const auto& fn = Name();
    auto syms = Singleton<CxxSymbols>::Instance();
 
    if(fn.find(".win.cpp") != string::npos)
@@ -2543,7 +2543,7 @@ void CodeFile::RemoveInvalidIncludes(LibItemSet& addSet)
 
       if(file != nullptr)
       {
-         auto& affecters = file->Affecters();
+         const auto& affecters = file->Affecters();
 
          if(file->IsCpp() || (affecters.find(this) != affecters.cend()))
             f = addSet.erase(f);

@@ -1120,7 +1120,7 @@ void OptionalCode::Display(ostream& stream,
       return;
    }
 
-   auto& code = file->GetCode();
+   const auto& code = file->GetCode();
 
    if(code.size() < end_)
    {

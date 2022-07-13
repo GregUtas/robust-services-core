@@ -190,7 +190,7 @@ EventHandler::Rc PotsWmlInitiator::ProcessEvent
 {
    Debug::ft("PotsWmlInitiator.ProcessEvent");
 
-   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
+   const auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
    auto wmlp = static_cast<PotsWmlFeatureProfile*>(prof->FindFeature(WML));
 

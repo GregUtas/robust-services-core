@@ -85,9 +85,9 @@ LibrarySet* CodeDirSet::Files() const
 
    //  Iterate over all code files to find those whose directory is in DIRSET.
    //
-   auto& dirSet = Items();
+   const auto& dirSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& files = Singleton<Library>::Instance()->Files().Items();
+   const auto& files = Singleton<Library>::Instance()->Files().Items();
 
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
@@ -112,7 +112,7 @@ void CodeDirSet::to_str(stringVector& strings, bool verbose) const
 {
    Debug::ft("CodeDirSet.to_str");
 
-   auto& dirSet = Items();
+   const auto& dirSet = Items();
 
    size_t width = 0;
 

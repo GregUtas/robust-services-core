@@ -1061,7 +1061,7 @@ bool Expression::AddItem(TokenPtr& item)
 
    auto oper = static_cast<Operation*>(prev.get());
    auto op = oper->Op();
-   auto& attrs = CxxOp::Attrs[op];
+   const auto& attrs = CxxOp::Attrs[op];
 
    if(oper->ArgsSize() < attrs.arguments)
    {
@@ -1671,7 +1671,7 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 {
    Debug::ft(Operation_AddArg);
 
-   auto& attrs = CxxOp::Attrs[op_];
+   const auto& attrs = CxxOp::Attrs[op_];
 
    if(arg == nullptr)
    {
@@ -1733,7 +1733,7 @@ size_t Operation::ArgCapacity() const
 {
    Debug::ft("Operation.ArgCapacity");
 
-   auto& attrs = CxxOp::Attrs[op_];
+   const auto& attrs = CxxOp::Attrs[op_];
    if(attrs.arguments == 0) return SIZE_MAX;
    auto curr = args_.size();
    if(curr >= attrs.arguments) return 0;
@@ -1749,7 +1749,7 @@ CxxToken* Operation::Back()
    auto size = args_.size();
    if(size == 0) return this;
 
-   auto& attrs = CxxOp::Attrs[op_];
+   const auto& attrs = CxxOp::Attrs[op_];
    if(attrs.arguments == 0) return args_.back().get();
    if(size >= attrs.arguments) return args_.back().get();
    return this;
@@ -1772,8 +1772,8 @@ void Operation::Check() const
       break;
    }
 
-   auto& attrs = CxxOp::Attrs[op_];
-   auto& lexer = GetFile()->GetLexer();
+   const auto& attrs = CxxOp::Attrs[op_];
+   const auto& lexer = GetFile()->GetLexer();
    auto pos = GetPos();
    auto lchar = lexer.At(pos - 1);
    auto rchar = lexer.At(pos + attrs.symbol.size());
@@ -1974,7 +1974,7 @@ void Operation::EnterBlock()
 {
    Debug::ft("Operation.EnterBlock");
 
-   auto& attrs = CxxOp::Attrs[op_];
+   const auto& attrs = CxxOp::Attrs[op_];
 
    switch(attrs.arguments)
    {
@@ -2951,7 +2951,7 @@ fn_name Operation_Print = "Operation.Print";
 
 void Operation::Print(ostream& stream, const Flags& options) const
 {
-   auto& attrs = CxxOp::Attrs[op_];
+   const auto& attrs = CxxOp::Attrs[op_];
    bool space;
 
    switch(op_)
@@ -3071,8 +3071,8 @@ void Operation::Push() const
    //
    for(auto top = Context::TopOp(); top != nullptr; top = Context::TopOp())
    {
-      auto& topAttrs = CxxOp::Attrs[top->op_];
-      auto& thisAttrs = CxxOp::Attrs[this->op_];
+      const auto& topAttrs = CxxOp::Attrs[top->op_];
+      const auto& thisAttrs = CxxOp::Attrs[this->op_];
       if(topAttrs.priority < thisAttrs.priority) break;
       if(thisAttrs.rightToLeft && (topAttrs.priority == thisAttrs.priority))
          break;
@@ -3158,7 +3158,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       Context::SwLog(Operation_PushMember, expl, (op_ << 4) + ptrs);
    }
 
-   auto& name = arg2.item_->Name();
+   const auto& name = arg2.item_->Name();
 
    if(name.empty())
    {

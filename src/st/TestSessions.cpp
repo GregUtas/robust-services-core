@@ -304,8 +304,7 @@ void TestSession::SetAppPsm(ProtocolSM* psm)
    //
    if(psm != nullptr)
    {
-      auto& addr = psm->EnsurePort()->ObjAddr();
-
+      const auto& addr = psm->EnsurePort()->ObjAddr();
       appFid_ = addr.fid;
       appBid_ = addr.bid;
    }
@@ -394,7 +393,7 @@ TestMessage::TestMessage(ProtocolSM* dest) : Message(nullptr, 0),
 
    SetProtocol(TestProtocolId);
 
-   auto& self = IpPortRegistry::LocalAddr();
+   const auto& self = IpPortRegistry::LocalAddr();
    GlobalAddress addr(self, NilIpPort, TestFactoryId);
    SetSender(addr);
 

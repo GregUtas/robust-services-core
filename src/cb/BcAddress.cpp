@@ -152,7 +152,7 @@ Parameter::TestRc AddressParameter::VerifyMsg
    Debug::ft("AddressParameter.VerifyMsg");
 
    TestRc rc;
-   auto& tlvmsg = static_cast<const TlvMessage&>(msg);
+   const auto& tlvmsg = static_cast<const TlvMessage&>(msg);
    DigitString* info;
    string digits;
    DigitString ds;

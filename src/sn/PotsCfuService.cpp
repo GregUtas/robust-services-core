@@ -50,7 +50,7 @@ EventHandler::Rc PotsCfuInitiator::ProcessEvent
 {
    Debug::ft("PotsCfuInitiator.ProcessEvent");
 
-   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
+   const auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
    auto cfup = static_cast<PotsCfuFeatureProfile*>(prof->FindFeature(CFU));
 

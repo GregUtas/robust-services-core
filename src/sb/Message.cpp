@@ -879,7 +879,7 @@ bool Message::SendToSelf()
       //  PSM itself.  The OOB flag must be set so that the message won't
       //  cause ProtocolSM::SetRcvd to be invoked.
       //
-      auto& addr = psm_->EnsurePort()->LocAddr();
+      const auto& addr = psm_->EnsurePort()->LocAddr();
       SetReceiver(addr);
       SetSender(addr);
 

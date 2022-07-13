@@ -2632,7 +2632,7 @@ void Thread::RegisterForSignals()
 {
    Debug::ft("Thread.RegisterForSignals");
 
-   auto& signals = Singleton<PosixSignalRegistry>::Instance()->Signals();
+   const auto& signals = Singleton<PosixSignalRegistry>::Instance()->Signals();
 
    for(auto s = signals.First(); s != nullptr; signals.Next(s))
    {
@@ -2883,7 +2883,7 @@ void Thread::SetTrap(bool on)
       //
       priv_->trap_ = false;
 
-      auto& threads = Singleton<ThreadRegistry>::Instance()->Threads();
+      const auto& threads = Singleton<ThreadRegistry>::Instance()->Threads();
 
       for(auto t = threads.cbegin(); t != threads.cend(); ++t)
       {
@@ -3233,7 +3233,7 @@ void Thread::StartShortInterval()
 {
    Debug::ft("Thread.StartShortInterval");
 
-   auto& threads = Singleton<ThreadRegistry>::Instance()->Threads();
+   const auto& threads = Singleton<ThreadRegistry>::Instance()->Threads();
 
    TimeUsed_ = ZERO_SECS;
 

@@ -84,7 +84,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 
    auto txport = buff.TxAddr().GetPort();
    auto port = Singleton<IpPortRegistry>::Instance()->GetPort(txport);
-   auto& peer = buff.RxAddr();
+   const auto& peer = buff.RxAddr();
    auto data = port->GetHandler()->HostToNetwork(buff, src, size);
    auto sent = SendTo(data, size, peer);
    TracePeer(NwTrace::SendTo, txport, peer, sent);

@@ -145,7 +145,7 @@ void* Base::operator new[](size_t size, void* place)
 
 void Base::Output(ostream& stream, col_t indent, bool verbose) const
 {
-   auto& opts = (verbose ? VerboseOpt : NoFlags);
+   const auto& opts = (verbose ? VerboseOpt : NoFlags);
    Display(stream, spaces(indent), opts);
 }
 

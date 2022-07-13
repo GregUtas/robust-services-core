@@ -2788,7 +2788,7 @@ size_t Lexer::LineFindNonBlank(size_t pos) const
 bool Lexer::LineHasTrailingCommentAt(size_t n, size_t offset) const
 {
    if(n >= lines_.size()) return false;
-   auto& info = lines_[n];
+   const auto& info = lines_[n];
    auto first = LineFindFirst(info.begin);
    auto pos = FindComment(info.begin);
    if(first == pos) return false;

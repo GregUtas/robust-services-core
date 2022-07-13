@@ -490,7 +490,7 @@ Parameter::TestRc CipRouteParameter::VerifyMsg
    Debug::ft("CipRouteParameter.VerifyMsg");
 
    TestRc       rc;
-   auto&        tlvmsg = static_cast<const TlvMessage&>(msg);
+   const auto&        tlvmsg = static_cast<const TlvMessage&>(msg);
    RouteResult* route;
    id_t         idx;
    word         fid, rid;
@@ -1028,8 +1028,8 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& self = IpPortRegistry::LocalAddr();
-      auto& peer = IpPortRegistry::LocalAddr();
+      const auto& self = IpPortRegistry::LocalAddr();
+      const auto& peer = IpPortRegistry::LocalAddr();
       GlobalAddress locAddr(self, CipIpPort, CipObcFactoryId);
       GlobalAddress remAddr(peer, CipIpPort, CipTbcFactoryId);
 
@@ -1255,7 +1255,7 @@ RootServiceSM* CipTbcFactory::AllocRoot
 {
    Debug::ft("CipTbcFactory.AllocRoot");
 
-   auto& tmsg = static_cast<const CipMessage&>(msg);
+   const auto& tmsg = static_cast<const CipMessage&>(msg);
    auto rte = tmsg.FindType<RouteResult>(CipParameter::Route);
    if(rte == nullptr) return nullptr;
 

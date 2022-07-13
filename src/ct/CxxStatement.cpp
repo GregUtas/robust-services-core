@@ -399,7 +399,7 @@ bool CxxStatement::GetParSpan(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("CxxStatement.GetParSpan");
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    begin = GetPos();
    auto lpar = lexer.FindFirstOf("(", begin);
    if(lpar == string::npos) return false;
@@ -414,7 +414,7 @@ bool CxxStatement::GetSeqSpan(size_t begin, size_t& left, size_t& end) const
 {
    Debug::ft("CxxStatement.GetSeqSpan");
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    left = lexer.FindFirstOf(";{", begin);
    if(left == string::npos) return false;
 
@@ -504,7 +504,7 @@ bool Do::GetSpan(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("Do.GetSpan");
 
-   auto& lexer = GetFile()->GetLexer();
+   const auto& lexer = GetFile()->GetLexer();
    begin = GetPos();
    if(!GetSeqSpan(begin, left, end)) return false;
    end = lexer.FindFirstOf(";", end);

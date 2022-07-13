@@ -180,7 +180,7 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
 
    word rc = 0;
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
 
    if(fileSet.empty())
    {
@@ -243,7 +243,7 @@ LibrarySet* CodeFileSet::CommonAffecters() const
    //  The common affecters of this set is the intersection of
    //  each file's affecters.
    //
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& caSet = result->Items();
 
@@ -270,7 +270,7 @@ word CodeFileSet::Countlines(string& result) const
    result = "linecount: ";
 
    size_t count = 0;
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
@@ -298,7 +298,7 @@ LibrarySet* CodeFileSet::DeclaredBy() const
 {
    Debug::ft("CodeFileSet.DeclaredBy");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeItemSet(TemporaryName(), nullptr);
    auto& declSet = result->Items();
 
@@ -325,7 +325,7 @@ LibrarySet* CodeFileSet::Directories() const
 
    //  Iterate over the set of code files to find their directories.
    //
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeDirSet(TemporaryName(), nullptr);
    auto& dirSet = result->Items();
 
@@ -345,12 +345,12 @@ LibrarySet* CodeFileSet::FileName(const LibrarySet* that) const
 {
    Debug::ft("CodeFileSet.FileName");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
 
    //  THAT's name encodes the desired filename (e.g. "Sys").
    //
-   auto& fn = that->Name();
+   const auto& fn = that->Name();
    if(fn.empty()) return result;
 
    //  Iterate over the set of code files to find those that begin with "fn".
@@ -387,7 +387,7 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 {
    Debug::ft("CodeFileSet.FileType");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
 
    //  THAT's name encodes the desired filetype (e.g. "cpp").
@@ -403,7 +403,7 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
       auto file = static_cast<CodeFile*>(*f);
-      auto& name = file->Name();
+      const auto& name = file->Name();
       auto nsize = name.size();
       auto fsize = ft.size();
 
@@ -424,7 +424,7 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 
    static bool invoked = false;
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
 
    if(fileSet.empty())
    {
@@ -472,7 +472,7 @@ word CodeFileSet::Format(string& expl) const
 {
    Debug::ft("CodeFileSet.Format");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    size_t failed = 0;
    string err;
 
@@ -508,8 +508,8 @@ LibrarySet* CodeFileSet::FoundIn(const LibrarySet* that) const
    //  Iterate over the set of code files to find those which appear
    //  in one of THAT's directories.
    //
-   auto& dirSet = static_cast<const CodeDirSet*>(that)->Items();
-   auto& fileSet = Items();
+   const auto& dirSet = static_cast<const CodeDirSet*>(that)->Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& foundSet = result->Items();
 
@@ -549,7 +549,7 @@ LibrarySet* CodeFileSet::Implements() const
    //  Iterate over the set of code files, adding files that implement ones
    //  already in the set.
    //
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& imSet = result->Items();
 
@@ -568,12 +568,12 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 {
    Debug::ft("CodeFileSet.MatchString");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
 
    //  THAT's name is the string to be searched for.
    //
-   auto& s = that->Name();
+   const auto& s = that->Name();
    if(s.empty()) return result;
 
    //  Iterate over the set of code files to find those that contains S.
@@ -583,7 +583,7 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
       auto file = static_cast<CodeFile*>(*f);
-      auto& code = file->GetCode();
+      const auto& code = file->GetCode();
       if(code.find(s) != string::npos) msSet.insert(*f);
    }
 
@@ -652,7 +652,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 {
    Debug::ft("CodeFileSet.Parse");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
 
    if(fileSet.empty())
    {
@@ -731,7 +731,7 @@ LibrarySet* CodeFileSet::ReferencedBy() const
 {
    Debug::ft("CodeFileSet.ReferencedBy");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeItemSet(TemporaryName(), nullptr);
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
@@ -752,7 +752,7 @@ word CodeFileSet::Scan
 {
    Debug::ft("CodeFileSet.Scan");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
 
    if(fileSet.empty())
    {
@@ -765,7 +765,7 @@ word CodeFileSet::Scan
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
       auto file = static_cast<CodeFile*>(*f);
-      auto& code = file->GetCode();
+      const auto& code = file->GetCode();
 
       auto pos = code.find(pattern);
       auto shown = false;
@@ -810,7 +810,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
    auto heading = false;
    word room = 65;
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    size_t shown = 0;
    size_t level = order.front().level + 1;  // to cause mismatch
 
@@ -839,7 +839,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
          stream << ',';
       }
 
-      auto& name = f->file->Name();
+      const auto& name = f->file->Name();
       auto size = name.size();
 
       if(room - size < 2)
@@ -868,7 +868,7 @@ std::vector<CodeFile*> CodeFileSet::SortInAlphaOrder() const
 {
    Debug::ft("CodeFileSet.SortInAlphaOrder");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    std::vector<CodeFile*> files;
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
@@ -892,8 +892,8 @@ BuildOrder CodeFileSet::SortInBuildOrder() const
    //  The parallel vector FIDS contains the file associated with each entry
    //  in INCLS.
    //
-   auto& fileSet = Items();
-   auto& fullSet = Singleton<Library>::Instance()->Files().Items();
+   const auto& fileSet = Items();
+   const auto& fullSet = Singleton<Library>::Instance()->Files().Items();
    auto size = fullSet.size();
    std::vector<LibItemSet> incls;
    std::vector<CodeFile*> files;
@@ -976,7 +976,7 @@ void CodeFileSet::to_str(stringVector& strings, bool verbose) const
 {
    Debug::ft("CodeFileSet.to_str");
 
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
@@ -997,7 +997,7 @@ LibrarySet* CodeFileSet::UsedBy(bool self) const
 
    //  Iterate over this set of code files to find what they include.
    //
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& usedSet = result->Items();
 
@@ -1008,7 +1008,7 @@ LibrarySet* CodeFileSet::UsedBy(bool self) const
       if(self) usedSet.insert(*f);
 
       auto file = static_cast<CodeFile*>(*f);
-      auto& used = file->InclList();
+      const auto& used = file->InclList();
 
       for(auto u = used.cbegin(); u != used.cend(); ++u)
       {
@@ -1027,7 +1027,7 @@ LibrarySet* CodeFileSet::Users(bool self) const
 
    //  Iterate over this set of code files to find those that include them.
    //
-   auto& fileSet = Items();
+   const auto& fileSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& userSet = result->Items();
 
@@ -1038,7 +1038,7 @@ LibrarySet* CodeFileSet::Users(bool self) const
       if(self) userSet.insert(*f);
 
       auto file = static_cast<CodeFile*>(*f);
-      auto& users = file->UserList();
+      const auto& users = file->UserList();
 
       for(auto u = users.cbegin(); u != users.cend(); ++u)
       {

@@ -1394,7 +1394,7 @@ size_t MapAndUnits::distance_from_home(const UnitOrder& unit) const
             //  Province P is at distance D, so it was reached during the
             //  previous iteration.  Now look at its unreached neighbours.
             //
-            auto& neighbours = game_map[p].neighbours;
+            const auto& neighbours = game_map[p].neighbours;
 
             for(auto n = neighbours.begin(); n != neighbours.end(); ++n)
             {

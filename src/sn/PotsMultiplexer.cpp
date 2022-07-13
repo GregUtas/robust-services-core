@@ -180,7 +180,7 @@ ProtocolSM* PotsMuxFactory::AllocIcPsm
 {
    Debug::ft("PotsMuxFactory.AllocIcPsm");
 
-   auto& pmsg = static_cast<const PotsMessage&>(msg);
+   const auto& pmsg = static_cast<const PotsMessage&>(msg);
    auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    return new PotsMuxPsm(phi->port);
@@ -226,7 +226,7 @@ SsmContext* PotsMuxFactory::FindContext(const Message& msg) const
    //  Find the root SSM for this POTS subscriber.  If it's the POTS
    //  multiplexer, then join its context.
    //
-   auto& pmsg = static_cast<const PotsMessage&>(msg);
+   const auto& pmsg = static_cast<const PotsMessage&>(msg);
    auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
    auto tsw = Singleton<Switch>::Instance();
    auto cct = static_cast<PotsCircuit*>(tsw->GetCircuit(phi->port));
@@ -450,7 +450,7 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& self = IpPortRegistry::LocalAddr();
+      const auto& self = IpPortRegistry::LocalAddr();
       GlobalAddress locAddr(self, NilIpPort, PotsMuxFactoryId);
       GlobalAddress remAddr(self, NilIpPort, PotsCallFactoryId);
 
@@ -862,8 +862,8 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
    //
    if((ogPsm == uPsm_) && ogPsm->AddressesUnknown(nullptr))
    {
-      auto& self = IpPortRegistry::LocalAddr();
-      auto& peer = IpPortRegistry::LocalAddr();
+      const auto& self = IpPortRegistry::LocalAddr();
+      const auto& peer = IpPortRegistry::LocalAddr();
       GlobalAddress locAddr(self, PotsCallIpPort, PotsCallFactoryId);
       GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 

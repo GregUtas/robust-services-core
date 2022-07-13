@@ -77,7 +77,7 @@ EventHandler::Rc PotsBicInitiator::ProcessEvent
 {
    Debug::ft("PotsBicInitiator.ProcessEvent");
 
-   auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
+   const auto& pssm = static_cast<const PotsBcSsm&>(parentSsm);
    auto prof = pssm.Profile();
 
    if(prof->HasFeature(BIC))

@@ -345,7 +345,7 @@ void InitThread::RecreateThreads()
 
    //  Invoke daemons with missing threads.
    //
-   auto& daemons = Singleton<DaemonRegistry>::Instance()->Daemons();
+   const auto& daemons = Singleton<DaemonRegistry>::Instance()->Daemons();
 
    for(auto d = daemons.First(); d != nullptr; daemons.Next(d))
    {

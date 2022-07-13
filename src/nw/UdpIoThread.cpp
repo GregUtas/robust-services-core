@@ -121,7 +121,7 @@ void UdpIoThread::Enter()
    //  port, regardless of how they were actually addressed.  Clear any
    //  alarm that indicates our service is unavailable.
    //
-   auto& self = IpPortRegistry::LocalAddr();
+   const auto& self = IpPortRegistry::LocalAddr();
    rxAddr_ = SysIpL3Addr(self, port_, IpUdp, nullptr);
    ipPort_->ClearAlarm();
 

@@ -397,7 +397,7 @@ bool MsgPort::SendMsg(Message& msg)
       //  but provide our local address, which the PSM did not know.  Set
       //  our peer's address from the message.
       //
-      auto& txaddr = msg.TxIpAddr();
+      const auto& txaddr = msg.TxIpAddr();
       locAddr_ = GlobalAddress(txaddr, locAddr_.sbAddr_);
       remAddr_ = msg.GetReceiver();
       msg.Header()->txAddr = locAddr_.sbAddr_;

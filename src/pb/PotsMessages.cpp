@@ -119,8 +119,8 @@ Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, size_t size) :
    //
    if(psm == nullptr)
    {
-      auto& self = IpPortRegistry::LocalAddr();
-      auto& peer = IpPortRegistry::LocalAddr();
+      const auto& self = IpPortRegistry::LocalAddr();
+      const auto& peer = IpPortRegistry::LocalAddr();
 
       SetProtocol(PotsProtocolId);
       GlobalAddress addr(self, PotsShelfIpPort, PotsShelfFactoryId);
@@ -165,8 +165,8 @@ Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, size_t size) :
    //
    if(psm == nullptr)
    {
-      auto& self = IpPortRegistry::LocalAddr();
-      auto& peer = IpPortRegistry::LocalAddr();
+      const auto& self = IpPortRegistry::LocalAddr();
+      const auto& peer = IpPortRegistry::LocalAddr();
 
       SetProtocol(PotsProtocolId);
       GlobalAddress addr(self, PotsCallIpPort, PotsCallFactoryId);

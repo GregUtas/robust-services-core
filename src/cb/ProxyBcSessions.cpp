@@ -513,7 +513,7 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& self = IpPortRegistry::LocalAddr();
+      const auto& self = IpPortRegistry::LocalAddr();
       GlobalAddress addr(self, NilIpPort, ProxyCallFactoryId);
 
       msg.SetSender(addr);
@@ -907,7 +907,7 @@ RootServiceSM* ProxyBcFactory::AllocRoot
 {
    Debug::ft("ProxyBcFactory.AllocRoot");
 
-   auto& tmsg = static_cast<const CipMessage&>(msg);
+   const auto& tmsg = static_cast<const CipMessage&>(msg);
    auto rte = tmsg.FindType<RouteResult>(CipParameter::Route);
    if(rte == nullptr) return nullptr;
 

@@ -325,7 +325,7 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
    //
    auto file1 = this->GetFile();
    auto file2 = item->GetFile();
-   auto& affecters = file2->Affecters();
+   const auto& affecters = file2->Affecters();
    auto iter = affecters.find(file1);
    return (iter != affecters.cend());
 }
@@ -1498,7 +1498,7 @@ bool DataSpec::NamesReferToArgs(const NameVector& names,
    //
    if(index >= names.size()) return false;
 
-   auto& element = names.at(index);
+   const auto& element = names.at(index);
    auto name = element.name;
 
    auto readonly = IsConst();
@@ -2187,7 +2187,7 @@ void QualName::CheckForRedundantScope() const
    //  is further out, then FIRST is redundant if INNER does not also declare
    //  an ITEM (e.g. Namespace::ITEM when no ambiguous Class::ITEM exists).
    //
-   auto& first = At(0)->Name();
+   const auto& first = At(0)->Name();
    auto scope = GetScope();
    if(scope == nullptr) return;
    auto inner = scope->GetArea();
@@ -3531,7 +3531,7 @@ bool TypeName::GetSpan(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("TypeName.GetSpan");
 
-   auto& source = GetFile()->GetLexer().Source();
+   const auto& source = GetFile()->GetLexer().Source();
 
    begin = GetPos();
 

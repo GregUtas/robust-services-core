@@ -886,7 +886,7 @@ string Context::strTrace() const
 
    while(true)
    {
-      auto& entry = trace_[i];
+      const auto& entry = trace_[i];
 
       if(entry.sid != NIL_ID)
       {

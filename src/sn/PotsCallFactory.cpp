@@ -46,7 +46,7 @@ static void SendRelease(const Message& msg1)
 {
    Debug::ft("PotsBase.SendRelease");
 
-   auto& icmsg = static_cast<const PotsMessage&>(msg1);
+   const auto& icmsg = static_cast<const PotsMessage&>(msg1);
    auto icphi = icmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
    auto ogmsg = new Pots_NU_Message(nullptr, 20);
 
@@ -113,7 +113,7 @@ ProtocolSM* PotsCallFactory::AllocIcPsm
 {
    Debug::ft("PotsCallFactory.AllocIcPsm");
 
-   auto& pmsg = static_cast<const Pots_UN_Message&>(msg);
+   const auto& pmsg = static_cast<const Pots_UN_Message&>(msg);
    auto phi = pmsg.FindType<PotsHeaderInfo>(PotsParameter::Header);
 
    return new PotsCallPsm(lower, false, phi->port);

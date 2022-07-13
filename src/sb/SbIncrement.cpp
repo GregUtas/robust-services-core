@@ -512,7 +512,7 @@ word HandlersCommand::ProcessCommand(CliThread& cli) const
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
-   auto& handlers = svc->Handlers();
+   const auto& handlers = svc->Handlers();
    auto size = handlers.Size();
 
    if(disp == 'c')
@@ -919,7 +919,7 @@ word ParametersCommand::ProcessCommand(CliThread& cli) const
 
    auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
    if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
-   auto& parms = pro->Parameters();
+   const auto& parms = pro->Parameters();
    auto size = parms.Size();
 
    if(disp == 'c')
@@ -1067,7 +1067,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      const auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
       if(count == 0) return cli.Report(0, NoPsmsExpl);
    }
@@ -1187,7 +1187,7 @@ word SignalsCommand::ProcessCommand(CliThread& cli) const
 
    auto pro = Singleton<ProtocolRegistry>::Instance()->Protocols().At(prid);
    if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
-   auto& signals = pro->Signals();
+   const auto& signals = pro->Signals();
    auto size = signals.Size();
 
    if(disp == 'c')
@@ -1278,7 +1278,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      const auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, sid);
       if(count == 0) return cli.Report(0, NoSsmsExpl);
    }
@@ -1322,7 +1322,7 @@ word StatesCommand::ProcessCommand(CliThread& cli) const
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
-   auto& states = svc->States();
+   const auto& states = svc->States();
    auto size = states.Size();
 
    if(disp == 'c')
@@ -1372,7 +1372,7 @@ word SbStatusCommand::ProcessCommand(CliThread& cli) const
    *cli.obuf << "    Curr     Max     Max" << CRLF;
    *cli.obuf << "  Length  Length   Delay   Faction" << CRLF;
 
-   auto& pools = Singleton<InvokerPoolRegistry>::Instance()->Pools();
+   const auto& pools = Singleton<InvokerPoolRegistry>::Instance()->Pools();
 
    for(auto p = pools.First(); p != nullptr; pools.Next(p))
    {
@@ -1387,7 +1387,7 @@ word SbStatusCommand::ProcessCommand(CliThread& cli) const
 
    bool one = false;
 
-   auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
+   const auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
 
    for(auto f = facs.First(); f != nullptr; facs.Next(f))
    {
@@ -1458,7 +1458,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    }
    else
    {
-      auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
+      const auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
       count = pool->DisplayUsed(*cli.obuf, spaces(2), opts, fid);
       if(count == 0) return cli.Report(0, NoTimersExpl);
    }
@@ -1502,7 +1502,7 @@ word TriggersCommand::ProcessCommand(CliThread& cli) const
 
    auto svc = Singleton<ServiceRegistry>::Instance()->Services().At(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
-   auto& triggers = svc->Triggers();
+   const auto& triggers = svc->Triggers();
    auto size = triggers.Size();
 
    if(disp == 'c')

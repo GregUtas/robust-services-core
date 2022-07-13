@@ -149,7 +149,7 @@ void IpPortStatsGroup::DisplayStats
 
    if(id == 0)
    {
-      auto& ports = reg->Ports();
+      const auto& ports = reg->Ports();
 
       for(auto p = ports.First(); p != nullptr; ports.Next(p))
       {

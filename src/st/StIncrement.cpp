@@ -146,7 +146,7 @@ InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
 {
    Debug::ft("InjectCommand.ctor");
 
-   auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
+   const auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
    auto preg = Singleton<ProtocolRegistry>::Instance();
 
    //  Add the parameter that will contain the factories that support this
@@ -496,7 +496,7 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
 {
    Debug::ft("VerifyCommand.ctor");
 
-   auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
+   const auto& facs = Singleton<FactoryRegistry>::Instance()->Factories();
    auto preg = Singleton<ProtocolRegistry>::Instance();
 
    //  Add the parameter that will contain the factories that support this

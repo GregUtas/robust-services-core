@@ -183,7 +183,7 @@ bool CodeCoverage::Commit(const Functions& funcs)
    {
       *stream << f->first << SPACE << std::hex << f->second.hash << std::dec;
 
-      auto& tests = f->second.tests;
+      const auto& tests = f->second.tests;
 
       if(!tests.empty())
       {
@@ -479,7 +479,7 @@ word CodeCoverage::Merge(std::ostringstream& expl)
       auto cf = currFuncs_.find(pf->first);
       if(cf == currFuncs_.cend()) continue;
 
-      auto& tests = pf->second.tests;
+      const auto& tests = pf->second.tests;
 
       for(auto pt = tests.cbegin(); pt != tests.cend(); ++pt)
       {
@@ -594,7 +594,7 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
 
    for(auto f = modified.cbegin(); f != modified.cend(); ++f)
    {
-      auto& ft = (*f)->second.tests;
+      const auto& ft = (*f)->second.tests;
 
       if(ft.empty())
          uncovered.insert((*f)->first);

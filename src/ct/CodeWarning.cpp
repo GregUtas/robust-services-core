@@ -133,7 +133,7 @@ const CodeWarning* CodeWarning::FindWarning(const CodeFile* file,
 {
    Debug::ft("CodeWarning.FindWarning");
 
-   auto& warnings = file->GetWarnings();
+   const auto& warnings = file->GetWarnings();
 
    for(auto w = warnings.begin(); w != warnings.end(); ++w)
    {
@@ -204,11 +204,11 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
       auto file = static_cast<CodeFile*>(*f);
-      auto& logs = file->GetWarnings();
+      const auto& logs = file->GetWarnings();
 
       for(size_t i = 0; i < logs.size(); ++i)
       {
-         auto& log = logs[i];
+         const auto& log = logs[i];
          if(log.WasResolved()) continue;
 
          if(log.Revoke())
@@ -1020,7 +1020,7 @@ bool CodeWarning::Suppress() const
    //  Suppress warnings in targeted files whose code wasn't compiled.
    //
    auto file = File();
-   auto& fn = file->Name();
+   const auto& fn = file->Name();
 
    if(file->IsExcludedTarget()) return true;
 
@@ -1124,7 +1124,7 @@ bool CodeWarning::Suppress() const
       auto dir = func->GetImplFile()->Dir();
       if(dir->Name() == "launcher") return true;
 
-      auto& name = func->Name();
+      const auto& name = func->Name();
       if(name.find("Display") == 0) return true;
       if(name.find("Print") == 0) return true;
       if(name.find("Output") == 0) return true;
@@ -1209,7 +1209,7 @@ bool CodeWarning::Suppress() const
       //  Classes in example applications do not need to override Patch.
       //
       auto cls = static_cast<const Class*>(item_);
-      auto& sname = cls->GetSpace()->Name();
+      const auto& sname = cls->GetSpace()->Name();
 
       if((sname != "NodeBase") &&
          (sname != "NetworkBase") &&
@@ -1261,7 +1261,7 @@ bool CodeWarning::Suppress() const
    case PunctuationSpacing:
       if(fn == "Cxx.cpp")
       {
-         auto& lexer = loc_.GetFile()->GetLexer();
+         const auto& lexer = loc_.GetFile()->GetLexer();
          auto size = strlen("CxxOp");
          auto code = lexer.Substr(loc_.GetPos() - size, size);
          if(code == "CxxOp") return true;

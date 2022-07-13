@@ -925,7 +925,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
    //  If this is a class template, get its source code.
    //
-   auto& tmpltName = Name();
+   const auto& tmpltName = Name();
    if(!IsTemplate()) return CreateCodeError(tmpltName, 0);
 
    if(code_ == nullptr)
@@ -987,7 +987,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    //  length of CODE, which changes because of symbol substitution.
    //
    Lexer lexer;
-   auto& instName = inst->Name();
+   const auto& instName = inst->Name();
    auto begin = code->find(tmpltName);
 
    while(true)
@@ -2653,7 +2653,7 @@ void ClassInst::Display(ostream& stream,
    else
    {
       auto lead = prefix + spaces(IndentSize());
-      auto& opts = options;
+      const auto& opts = options;
       auto qual = options;
       qual.set(DispFQ);
 
@@ -3230,7 +3230,7 @@ Function* CxxArea::FindFunc(const string& name,
    for(size_t i = 0; i < list->size(); ++i)
    {
       auto func = list->at(i).get();
-      auto& temp = func->Name();
+      const auto& temp = func->Name();
 
       if(temp == name)
       {

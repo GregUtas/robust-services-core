@@ -114,7 +114,7 @@ bool FileSystem::ListFiles(const string& dir, std::set<string>& names)
 
    for(NO_OP; fit != std::filesystem::end(fit); ++fit)
    {
-      auto& filepath = fit->path();
+      const auto& filepath = fit->path();
 
       if(!std::filesystem::is_directory(filepath, err))
       {

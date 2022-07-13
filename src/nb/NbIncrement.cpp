@@ -1226,7 +1226,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       }
       else if(id == NIL_ID)
       {
-         auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
+         const auto& opts = (disp == 'v' ? VerboseOpt : NoFlags);
          Memory::Display(*cli.obuf, spaces(2), opts);
       }
       else
@@ -2001,7 +2001,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
       if(buff != nullptr)
       {
-         auto& file = buff->FileName();
+         const auto& file = buff->FileName();
          word size = buff->Count(true, true);
          size_t targ = (count < size ? size - count : 0);
          if(count == 0) targ = 0;
@@ -2321,7 +2321,7 @@ word QueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       Singleton<TraceBuffer>::Instance()->Query(*cli.obuf);
       break;
    case ToolsIndex:
-      Singleton<TraceBuffer>::Instance()->QueryTools(*cli.obuf);
+      TraceBuffer::QueryTools(*cli.obuf);
       break;
    case SelectionsIndex:
       Singleton<NbTracer>::Instance()->QuerySelections(*cli.obuf);
@@ -3333,7 +3333,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    *cli.obuf << "OBJECT POOLS" << CRLF;
    *cli.obuf << PoolsHeader << CRLF;
 
-   auto& objpools = Singleton<ObjectPoolRegistry>::Instance()->Pools();
+   const auto& objpools = Singleton<ObjectPoolRegistry>::Instance()->Pools();
 
    for(auto p = objpools.First(); p != nullptr; objpools.Next(p))
    {
@@ -3362,7 +3362,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
    auto prefix = spaces(2);
    auto active = false;
-   auto& alarms = Singleton<AlarmRegistry>::Instance()->Alarms();
+   const auto& alarms = Singleton<AlarmRegistry>::Instance()->Alarms();
 
    for(auto a = alarms.First(); a != nullptr; alarms.Next(a))
    {
@@ -3501,7 +3501,7 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
    bool all, del;
    auto preg = Singleton<CfgParmRegistry>::Instance();
    auto sreg = Singleton<SymbolRegistry>::Instance();
-   auto& syms = sreg->Symbols();
+   const auto& syms = sreg->Symbols();
    Symbol* sym;
    size_t count = 0;
 

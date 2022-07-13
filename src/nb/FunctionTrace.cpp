@@ -808,7 +808,7 @@ void FunctionTrace::FindInvokerDepths()
 {
    auto buff = Singleton<TraceBuffer>::Instance();
    TraceRecord* rec = nullptr;
-   auto& mask = FTmask;
+   const auto& mask = FTmask;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {

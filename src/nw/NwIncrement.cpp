@@ -547,7 +547,7 @@ word NwStatusCommand::ProcessCommand(CliThread& cli) const
 
    bool one = false;
 
-   auto& ports = Singleton<IpPortRegistry>::Instance()->Ports();
+   const auto& ports = Singleton<IpPortRegistry>::Instance()->Ports();
 
    for(auto p = ports.First(); p != nullptr; ports.Next(p))
    {

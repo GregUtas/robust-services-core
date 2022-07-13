@@ -60,7 +60,7 @@ void LibraryVarSet::to_str(stringVector& strings, bool verbose) const
 {
    Debug::ft("LibraryVarSet.to_str");
 
-   auto& vars = Singleton<Library>::Instance()->Variables();
+   const auto& vars = Singleton<Library>::Instance()->Variables();
 
    for(auto v = vars.cbegin(); v != vars.cend(); ++v)
    {

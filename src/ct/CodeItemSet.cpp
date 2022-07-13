@@ -89,7 +89,7 @@ LibrarySet* CodeItemSet::DeclaredBy() const
 {
    Debug::ft("CodeItemSet.DeclaredBy");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeItemSet(TemporaryName(), nullptr);
    auto& declSet = result->Items();
 
@@ -113,7 +113,7 @@ LibrarySet* CodeItemSet::Declarers() const
 {
    Debug::ft("CodeItemSet.Declarers");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& declSet = result->Items();
 
@@ -139,7 +139,7 @@ LibrarySet* CodeItemSet::Definitions() const
 {
    Debug::ft("CodeItemSet.Definitions");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeItemSet(TemporaryName(), nullptr);
    auto& defSet = result->Items();
 
@@ -167,7 +167,7 @@ LibrarySet* CodeItemSet::Directories() const
 {
    Debug::ft("CodeItemSet.Directories");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeDirSet(TemporaryName(), nullptr);
    auto& dirSet = result->Items();
 
@@ -189,7 +189,7 @@ LibrarySet* CodeItemSet::Files() const
 {
    Debug::ft("CodeItemSet.Files");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& fileSet = result->Items();
 
@@ -209,7 +209,7 @@ LibrarySet* CodeItemSet::ReferencedBy() const
 {
    Debug::ft("CodeItemSet.ReferencedBy");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeItemSet(TemporaryName(), nullptr);
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
@@ -229,7 +229,7 @@ LibrarySet* CodeItemSet::Referencers() const
 {
    Debug::ft("CodeItemSet.Referencers");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
    auto& refSet = result->Items();
 
@@ -253,7 +253,7 @@ void CodeItemSet::to_str(stringVector& strings, bool verbose) const
 {
    Debug::ft("CodeItemSet.to_str");
 
-   auto& itemSet = Items();
+   const auto& itemSet = Items();
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {

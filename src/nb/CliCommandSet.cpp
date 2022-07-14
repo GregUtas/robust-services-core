@@ -170,7 +170,8 @@ word CliCommandSet::ProcessCommand(CliThread& cli) const
    //  only CliCommands.  If it is found, invoke it after updating the
    //  parser so that its parameters can be read.
    //
-   const auto& commands = reinterpret_cast<const Registry<CliCommand>& >(Parms());
+   const auto& commands =
+      reinterpret_cast<const Registry<CliCommand>& >(Parms());
 
    for(auto c = commands.First(); c != nullptr; c = commands.Next(*c))
    {

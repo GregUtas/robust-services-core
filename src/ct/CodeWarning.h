@@ -49,19 +49,13 @@ struct WarningAttrs
    //
    const bool fixable_;
 
-   //  Set if the warning should be retained when >check is re-executed.  This
-   //  is true for warnings detected during compilation, because they cannot
-   //  be regenerated without recompiling.
-   //
-   const bool preserve_;
-
    //  A string that explains the warning.
    //
    NodeBase::fixed_string expl_;
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fixable, bool preserve, NodeBase::c_string expl);
+   WarningAttrs(bool fixable, NodeBase::c_string expl);
 };
 
 //------------------------------------------------------------------------------
@@ -252,6 +246,12 @@ private:
    //  Warning specific.
    //
    std::string info_;
+
+   //  Set for a log generated during compilation.  It is then preserved
+   //  if >check is re-executed, because it cannot be regenerated without
+   //  recompiling.
+   //
+   bool preserve_;
 
    //  Whether a warning can be, or has been, fixed by the Editor.
    //

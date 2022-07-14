@@ -490,7 +490,7 @@ Parameter::TestRc CipRouteParameter::VerifyMsg
    Debug::ft("CipRouteParameter.VerifyMsg");
 
    TestRc       rc;
-   const auto&        tlvmsg = static_cast<const TlvMessage&>(msg);
+   const auto&  tlvmsg = static_cast<const TlvMessage&>(msg);
    RouteResult* route;
    id_t         idx;
    word         fid, rid;

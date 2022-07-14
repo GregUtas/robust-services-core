@@ -371,6 +371,13 @@ void Context::InsertTracepoint
 
 //------------------------------------------------------------------------------
 
+bool Context::IsCompiling()
+{
+   return (Scope() != nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Context::Log(Warning warning, const CxxNamed* item, word offset)
 {
    Debug::ft("Context.Log");

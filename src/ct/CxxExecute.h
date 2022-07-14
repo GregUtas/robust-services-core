@@ -717,6 +717,10 @@ public:
    //
    Context() = delete;
 
+   //  Returns true if code is currently being compiled.
+   //
+   static bool IsCompiling();
+
    //  Sets the options for the duration of the current >parse command.
    //
    static void SetOptions(const std::string& opts);

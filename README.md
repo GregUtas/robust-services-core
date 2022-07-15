@@ -81,11 +81,8 @@ Code checked since the latest release is work in progress and may be unstable
 or incomplete, so downloading from the green "Code" dropdown menu on the home
 page is not recommended.
 
-After you download and extract the repository, do not alter its directory
-structure. This is because, when the executable starts, it looks for its
-[configuration file](input/element.config.txt) on the path
-_../&lt;dir>/input/element.config.txt_, where _&lt;dir>_ is the directory
-immediately above the [_src_](src) directory that contains the code.
+For proper operation, RSC must be launched from a directory below the
+[_src_](src) directory. See the [installation guide](docs/Installing.md).
 
 ## Building an executable
 
@@ -152,13 +149,13 @@ _log_ file).
 The easiest way to use RSC as a framework is to create a static library below
 RSC's _src_ directory. Simply use whatever subset of RSC that your application
 needs. This will always include the namespace `NodeBase` (in the [_nb_](src/nb)
-directory). It might also include `NetworkBase` (in the [_nw_](src/nw) directory)
-and `SessionBase` (in the [_sb_](src/sb) directory). Using a new namespace for
-your application is recommended.
+directory). It might also include `NetworkBase` (in the [_nw_](src/nw)
+directory) and `SessionBase` (in the [_sb_](src/sb) directory). Using a new
+namespace for your application is recommended.
 
-If you put your code elsewhere, RSC will be unable to find its configuration
-file when you launch it, as described in
-[Installing the Repository](#installing-the-repository). You will then need
+If you put your code elsewhere, RSC will be unable to find important
+directories when you launch it, as described in the
+[installation guide](docs/Installing.md). You will then need
 to modify the function [`Element::RscPath`](src/nb/Element.cpp) so that it
 can find the directory that contains the [_input_](input) directory. You
 should also add RSC's [_help_](help) directory to that directory.

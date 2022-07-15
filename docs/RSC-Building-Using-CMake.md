@@ -56,6 +56,9 @@ Debugging_ is greyed out, use the _Select Startup Item..._ drop-down
 menu, located to the right of the Configuration drop-down menu, to set
 the _.exe_ that should be launched.
 
+Make sure that RSC is launched from a directory below the [_src_](/src)
+directory, as described in the [installation guide](/docs/Installing.md).
+
 ## CMakeConverter
 
 The tool [CMakeConverter](https://github.com/pavelliavonau/cmakeconverter)

@@ -14,14 +14,9 @@ yourself. They are _not_ installers, so you must still have the full
 repository installed, along with the Visual Studio components that an
 _.exe_ requires (VS2022, although earlier versions may also work).
 
-Download an executable to the [_src_](/src) directory or one below
-it. This allows RSC to locate its
-[configuration file](/input/element.config.txt). When it starts, RSC
-searches upward on the path to its executable to find the directory
-_\<dir>_, the directory immediately above _src_. The configuration
-file must then appear as _.../\<dir>/input/element.config.txt_. If
-it isn't found, a warning appears on the console and default values
-are used for all configuration parameters.
+After downloading an executable, move it to the [_exe_](/src/exe)
+directory before launching it, as described in the
+[installation guide](/docs/Installing.md).
 
 A release build disables a number of optimizations so that it can
 actually be debugged. It runs about 3&#189; times as fast as a debug

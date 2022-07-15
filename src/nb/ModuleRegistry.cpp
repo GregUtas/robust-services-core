@@ -82,8 +82,8 @@ static const FactionFlags& AllFactions()
 
 //------------------------------------------------------------------------------
 
-fixed_string ReadMe =
-   "https://github.com/GregUtas/robust-services-core/blob/master/README.md";
+fixed_string InstallationGuide =
+   "https://github.com/GregUtas/robust-services-core/blob/master/docs/Installing.md";
 
 static void OutputNodeRunningLog()
 {
@@ -97,7 +97,7 @@ static void OutputNodeRunningLog()
       {
          *log << CRLF;
          *log << "CONFIGURATION FILE NOT FOUND. See" << CRLF;
-         *log << spaces(2) << ReadMe << CRLF;
+         *log << spaces(2) << InstallationGuide << CRLF;
          *log << "for instructions on how to install RSC." << CRLF;
       }
 

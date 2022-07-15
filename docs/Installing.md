@@ -8,7 +8,7 @@ launch RSC from a directory below the [_src_](/src) directory:
   [_exe_](/src/exe) directory before launching it.
 
 - If you built RSC yourself, your executable probably ended up in a directory
-  that was created below the [_src_](/src) directory.  If it didn't, move it
+  that was created below the _src_] directory.  If it didn't, move it
   to the _exe_ directory mentioned above before launching it.
 
 When you launch RSC, it searches upward on the path to its executable to

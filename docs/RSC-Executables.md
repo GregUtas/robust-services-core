@@ -15,13 +15,13 @@ repository installed, along with the Visual Studio components that an
 _.exe_ requires (VS2022, although earlier versions may also work).
 
 Download an executable to the [_src_](/src) directory or one below
-it. This will allow the executable to locate its
-[configuration file](/input/element.config.txt). When RSC starts, it
-notes the path from which it was launched and searches for _rsc/_
-upwards on that path. The configuration file must then appear as
-_.../rsc/input/element.config.txt_. If it isn't found, a warning
-appears on the console and default values are used for all
-configuration parameters.
+it. This allows RSC to locate its
+[configuration file](/input/element.config.txt). When it starts, RSC
+searches upward on the path to its executable to find the directory
+_\<dir>_, the directory immediately above _src_. The configuration
+file must then appear as _.../\<dir>/input/element.config.txt_. If
+it isn't found, a warning appears on the console and default values
+are used for all configuration parameters.
 
 A release build disables a number of optimizations so that it can
 actually be debugged. It runs about 3&#189; times as fast as a debug

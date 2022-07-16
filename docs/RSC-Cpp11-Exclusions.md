@@ -47,8 +47,7 @@ even gathers information that a regular compiler would not.
 
 ## Not Supported
 The following is a list of things (through C++11) that are known to _not_ be
-supported. In some cases, functions that would need to be enhanced to support
-them are noted.
+supported.
 
 ### Character Sets
 All source code is assumed to be of type `char`.  `char8_t`, `char16_t`,
@@ -77,7 +76,7 @@ the parser and other `CodeTools` classes.
   
   `#undef` could be supported but, given that all files are compiled together,
   would require checking as to whether it appeared in the transitive `#include`
-  of the file currently being compiled.
+  of the file currently being compiled. In any case, it's a total hack.
 
 There are no plans to support the following, which are odious and which would
 force the introduction of a true preprocessing phase:
@@ -103,7 +102,7 @@ RSC's use of the preprocessor is restricted to
   using `constexpr`.
 
 ### Identifiers
-- [ ] elaborated type specifiers may not act as inline forward declarations
+- [ ] elaborated type specifiers cannot act as forward declarations
 - [ ] unnecessary name qualification
 
   Declaring a function as `Class::Function` causes the the parser to fail
@@ -113,9 +112,6 @@ RSC's use of the preprocessor is restricted to
 - [ ] raw string literals (`R` prefix)
 - [ ] multi-character literals (e.g. `'AB'`)
 - [ ] user-defined literals
-
-See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and
-`Parser.GetStr`.
 
 ### Declarations and Definitions
 - [ ] identical declarations of data or functions
@@ -132,23 +128,23 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and
 - [ ] unnamed namespaces
 - [ ] inline namespaces
 
-See `Parser.GetNamespace`. Supporting any of these would also affect symbol
-resolution. An unnamed namespace can be removed by defining data and functions
-that appear within it as `static`.
+Supporting any of these would also affect symbol resolution. An unnamed namespace
+can be removed by defining data and functions that appear within it as `static`.
 
 ### Classes
-- [ ] multiple inheritance (`Parser.GetBaseDecl`)
-- [ ] tagging a base class as virtual (`Parser.GetBaseDecl`)
-- [ ] non-public base class (allowed by parser, but accessibility checking does
-  not enforce it)
+- [ ] multiple inheritance
+- [ ] a base class that is `virtual`
+- [ ] a base class that is `private` or `protected`
+
+  The parser allows this, but accessibility checking does not enforce it.
 - [ ] local classes (defining a class within a function)
-- [ ] anonymous structs (`Parser.GetClassDecl`)
-- [ ] an `enum`, `typedef`, or function in an anonymous union (allowed by
-  parser, but `CxxArea.FindEnum`, `CxxArea.FindFunc`, and `CxxArea.FindType`
-  do not look for them)
-- [ ] including a `class`/`struct`/`union`/`enum` instance immediately before
-  the semicolon at the end of its definition (`Parser.GetClassDecl`)
-- [ ] pointer-to-member (the type _\<class>_`::*` and operators `.*` and `->*`)
+- [ ] anonymous structs
+- [ ] an enum, typedef, or function in an anonymous union
+
+  The parser allows this, but symbol lookup functions do not search for them.
+- [ ] including a class/struct/union/enum instance immediately before the
+  semicolon at the end of its definition
+- [ ] pointer-to-membe (the type _\<class>_`::*` and operators `.*` and `->*`)
 
 ### Functions
 - [ ] function matching based on `volatile` (only `const` affects matching)
@@ -159,7 +155,7 @@ that appear within it as `static`.
 - [ ] `noexcept(`_\<expr>_`)` as a function tag (only a bare `noexcept` is
   supported)
 - [ ] using a different type (an alias) for an argument in the definition of a
-  previously declared function (`DataSpec.MatchesExactly`)
+  previously declared function
 - [ ] argument-dependent lookup of regular functions (only done for operator
   overloads)
   - `getline` requires a `std::` prefix to be resolved but should find the
@@ -167,28 +163,26 @@ that appear within it as `static`.
   - `next` shouldn’t need a `std::` prefix (`iterator` is in `std`)
   - `end` shouldn't need a `std::filesystem::` prefix (`directory_iterator`
     is in `std::filesystem`)
-- [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and
-  others)
-- [ ] range-based `for` loops (`Parser.GetFor`, `Parser.GetTypeSpec`, and
-  `Operation.Execute`)
+- [ ] constructor inheritance
+- [ ] range-based `for` loops
 - [ ] overloading the function call or comma operator
 
   The parser allows this, but calls to the overload won't be registered because
-  `Operation.Execute` doesn't look for it.
+  overloads of these operators are not searched for.
 - [ ] variadic argument lists
-- [ ] lambdas (`Parser.GetArgument` and many others)
+- [ ] lambdas
 - [ ] dynamic exception specifications
 - [ ] deduced return type (`auto`)
 - [ ] trailing return type (after `->`)
 
 ### Data
 - [ ] declaring more than one data instance in the same statement, either at file
-  scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
+  scope or within a class
 
-  Note that `FuncData` supports this _within_ a function (for example,
+  Note that this is supported _within_ a function (for example,
   `int i = 0, *pi = nullptr`).
 - [ ] type matching based on `volatile` (only `const` affects matching)
-- [ ] unnamed bit fields (`Parser.GetClassData`)
+- [ ] unnamed bit fields
 
 ### Enumerations
 - [ ] accessing an enumeration or enumerator using `.` or `->` instead of `::`
@@ -203,8 +197,8 @@ that appear within it as `static`.
 - [ ] argument-dependent lookup in an enumeration's scope
 
 ### Typedefs
-- [ ] `typedef enum` (`Parser.GetTypedef`)
-- [ ] `typedef struct` (`Parser.GetTypedef`)
+- [ ] `typedef enum` (common in pure C)
+- [ ] `typedef struct` (common in pure C)
 
 ### Templates
 - [ ] a constructor call that requires template argument deduction when a
@@ -222,18 +216,13 @@ that appear within it as `static`.
   same name and the wrong template gets selected, two workarounds are to (a)
   adopt unique names or (b) specify the template argument explicitly.
 - [ ] explicit instantiation
-- [ ] `using` for alias templates (`Parser.GetUsing` and others)
+- [ ] `using` for alias templates
 - [ ] `extern template`
 - [ ] `std::list::sort`: The _subs_ file for `list` declares the sort function
   as `bool (*sorted)(T& first, T& second)`. Therefore, if its parameters
   differ from the `list` template arguments, a log occurs during function
   matching. For example, the log occurs if the sort function uses a base class
   of `T` rather than `T` itself.
-
-### Parser
-- [ ] `Parser.Punt` causes a software log on argument overflow
-- [ ] `Scope` and `clear` are repeated in pseudo-code generated when `>parse`
-  is used with the `x` option
 
 ## False Positives and Negatives from `>check`
 
@@ -243,10 +232,17 @@ code.
 
 - [ ] `IncludeRemove`
 
-  - **Templates**. Because external headers in the [_subs_](/src/subs) directory
+  Because external headers in the [_subs_](/src/subs) directory
   do not provide function implementations for templates, `>check` can incorrectly
   suggest removing an `#include` that is needed to make a destructor visible to
   a `std::unique_ptr` template instance.
+  
+- [ ] `UsingRemove`
+
+  _SbIpBuffer.cpp_ is told to remove `using NetworkBase`. However, it is needed
+  for the `IpBuffer*` returned by `SbIpBuffer.Clone`. The logs occurs because the
+  return type is considered to be in a function's scope, whereas the scope should
+  not begin until the function's arguments.
 
 - [ ] `ArgumentCouldBeConst` and `DataCouldBeConst`
 
@@ -294,10 +290,22 @@ code.
   - **Only invoked through base**. If a derived class implements `operator
   delete` but is only deleted through a pointer to its base class, its version
   of `operator delete` will be flagged as unused.
+  
+- [ ] `FunctionCouldBeFree`
+
+  This is logged on `MapAndUnits::delete_clone`. However, it invokes a private
+  destructor, so it cannot be a free function without also being a friend of
+  the class that it deletes. The log occurs because the destructor isn't the
+  referent of either component in the expression `delete clone`: the referent
+  of `delete` is the appropriate `operator delete`, and the referent of `clone`
+  is the function's argument. Somehow, the destructor also needs to be recorded
+  as a usage. An invocation is registered on it, but there is currently no item
+  against which to record its usage. Effectively, the problem is that `delete`
+  invokes _two_ functions.
 
 - [ ] `RedundantScope`
 
-  - **`using` statement**. A redundant scope warning is not generated when a
+  A redundant scope warning is not generated when a
   scope is prefixed to a symbol that is also declared in an outer namespace or
   outer class of the current scope. But if the symbol is ambiguous only because
   of a `using` statement, the warning will be incorrectly generated.

@@ -40,8 +40,8 @@ even gathers information that a regular compiler would not.
   data declarations/definitions
 - [x] character escape sequences (`\`, `u8`, `u`, `U`)
 - [x] prefixes for character and string literals (`u8`, `u`, `U`, `L`)
-- [x] `= delete` and `= default` for constructor, destructor, and assignment
-  operator
+- [x] `= delete` and `= default` for constructors, destructors, and assignment
+  operators
 - [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation
   of a string literal
 
@@ -76,7 +76,8 @@ the parser and other `CodeTools` classes.
   
   `#undef` could be supported but, given that all files are compiled together,
   would require checking as to whether it appeared in the transitive `#include`
-  of the file currently being compiled. In any case, it's a total hack.
+  of the file currently being compiled. In any case, code should be refactored
+  to eliminate it.
 
 There are no plans to support the following, which are odious and which would
 force the introduction of a true preprocessing phase:
@@ -87,7 +88,7 @@ force the introduction of a true preprocessing phase:
 - [ ] code aliases (_\<identifier> \<code>_)
 
 The _only_ preprocessing that currently occurs before parsing is to
-- analyze `#include` relationships to calculate a global parse order
+- analyze `#include` relationships to calculate a global compile order
 - find and erase any macro name that is defined as an empty string
 
 RSC's use of the preprocessor is restricted to
@@ -128,8 +129,8 @@ RSC's use of the preprocessor is restricted to
 - [ ] unnamed namespaces
 - [ ] inline namespaces
 
-Supporting any of these would also affect symbol resolution. An unnamed namespace
-can be removed by defining data and functions that appear within it as `static`.
+An unnamed namespace can be removed by defining data and functions that appear
+within it as `static`.
 
 ### Classes
 - [ ] multiple inheritance
@@ -141,17 +142,18 @@ can be removed by defining data and functions that appear within it as `static`.
 - [ ] anonymous structs
 - [ ] an enum, typedef, or function in an anonymous union
 
-  The parser allows this, but symbol lookup functions do not search for them.
+  The parser allows this, but symbol lookup functions do not include them when
+  searching.
 - [ ] including a class/struct/union/enum instance immediately before the
   semicolon at the end of its definition
-- [ ] pointer-to-membe (the type _\<class>_`::*` and operators `.*` and `->*`)
+- [ ] pointer-to-member (the type _\<class>_`::*` and operators `.*` and `->*`)
 
 ### Functions
 - [ ] function matching based on `volatile` (only `const` affects matching)
 - [ ] member function suffix tags:
-  - `const&`: equivalent to `const`
-  - `&`: `this` must be non-const
-  - `&&`: `this` must be an rvalue
+  - `const&` (equivalent to `const`)
+  - `&` (`this` must be non-const)
+  - `&&` (`this` must be an rvalue)
 - [ ] `noexcept(`_\<expr>_`)` as a function tag (only a bare `noexcept` is
   supported)
 - [ ] using a different type (an alias) for an argument in the definition of a
@@ -160,15 +162,15 @@ can be removed by defining data and functions that appear within it as `static`.
   overloads)
   - `getline` requires a `std::` prefix to be resolved but should find the
      version in `<string>`
-  - `next` shouldn’t need a `std::` prefix (`iterator` is in `std`)
-  - `end` shouldn't need a `std::filesystem::` prefix (`directory_iterator`
-    is in `std::filesystem`)
+  - `next` needs a `std::` prefix even though `iterator` is in `std`
+  - `end` needs a `std::filesystem::` prefix even though `directory_iterator`
+    is in `std::filesystem`
 - [ ] constructor inheritance
 - [ ] range-based `for` loops
 - [ ] overloading the function call or comma operator
 
   The parser allows this, but calls to the overload won't be registered because
-  overloads of these operators are not searched for.
+  no search for overloads of these operators occurs.
 - [ ] variadic argument lists
 - [ ] lambdas
 - [ ] dynamic exception specifications
@@ -226,9 +228,7 @@ can be removed by defining data and functions that appear within it as `static`.
 
 ## False Positives and Negatives from `>check`
 
-The `>check` command sometimes produces erroneous warnings. Some of them occur
-because of how the `StackArg` class tracks the use of variables in executable
-code.
+The `>check` command sometimes produces erroneous warnings.
 
 - [ ] `IncludeRemove`
 
@@ -239,10 +239,10 @@ code.
   
 - [ ] `UsingRemove`
 
-  _SbIpBuffer.cpp_ is told to remove `using NetworkBase`. However, it is needed
-  for the `IpBuffer*` returned by `SbIpBuffer.Clone`. The logs occurs because the
-  return type is considered to be in a function's scope, whereas the scope should
-  not begin until the function's arguments.
+  _SbIpBuffer.cpp_ is told to remove `using NetworkBase` even though it is needed
+  for the `IpBuffer*` returned by `SbIpBuffer.Clone`. The log occurs because the
+  return type is included in a function's scope, whereas the scope should only
+  begin at the function's arguments.
 
 - [ ] `ArgumentCouldBeConst` and `DataCouldBeConst`
 
@@ -277,9 +277,9 @@ code.
 
 - [ ] `FunctionIsUnused`
 
-  - **lvalues and rvalues**. `StackArg` does not distinguish these.
-  Consequently, `Function.CanInvokeWith` cannot choose between two functions
-  that are identical except for the use of _\<argument-type>_`&` and
+  - **rvalues**. `StackArg` tracks lvalues but does not distinguish prvalues
+  and rvalues. Consequently, `Function.CanInvokeWith` cannot choose between two
+  functions that are identical except for the use of _\<argument-type>_`&` and
   _\<argument-type>_`&&`. Functions with the latter signature are therefore
   flagged as unused.
 
@@ -289,18 +289,19 @@ code.
 
   - **Only invoked through base**. If a derived class implements `operator
   delete` but is only deleted through a pointer to its base class, its version
-  of `operator delete` will be flagged as unused.
+  of `operator delete` will be flagged as unused. The fact that it is actually
+  invoked is hard to determine before run-time.
   
 - [ ] `FunctionCouldBeFree`
 
   This is logged on `MapAndUnits::delete_clone`. However, it invokes a private
   destructor, so it cannot be a free function without also being a friend of
   the class that it deletes. The log occurs because the destructor isn't the
-  referent of either component in the expression `delete clone`: the referent
+  referent of either element in the expression `delete clone`: the referent
   of `delete` is the appropriate `operator delete`, and the referent of `clone`
   is the function's argument. Somehow, the destructor also needs to be recorded
   as a usage. An invocation is registered on it, but there is currently no item
-  against which to record its usage. Effectively, the problem is that `delete`
+  against which to record its usage. Essentially, the problem is that `delete`
   invokes _two_ functions.
 
 - [ ] `RedundantScope`
@@ -308,4 +309,4 @@ code.
   A redundant scope warning is not generated when a
   scope is prefixed to a symbol that is also declared in an outer namespace or
   outer class of the current scope. But if the symbol is ambiguous only because
-  of a `using` statement, the warning will be incorrectly generated.
+  of a `using` statement, the warning is incorrectly generated.

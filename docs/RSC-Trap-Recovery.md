@@ -54,7 +54,7 @@ raise `SIGILL` | SIGILL | trap.06 | pass | pass | pass
 raise `SIGTERM` | SIGTERM | trap.07 | pass | pass | pass
 raise `SIGBREAK` | SIGBREAK | trap.08 | pass | pass | n/a
 call `abort` | abort | trap.09 | pass | pass | pass
-call `std::terminate` | terminate | trap.10 | **fail<sup>3</sup>** | pass | **fail<sup>4</sup>**
+call `std::terminate` | terminate | trap.10 | **fail<sup>3</sup>** :red_circle: | pass | **fail<sup>4</sup>** :red_circle:
 call `Thread::Kill` on another thread | KillRemote | trap.11 | pass | pass | pass
 call `Thread::Kill` on running thread | KillLocal | trap.12 | pass | pass | pass
 cause an infinite loop and be killed by `InitThread` | InfiniteLoop | trap.13 | pass | pass | pass
@@ -62,7 +62,7 @@ cause a stack overflow and be killed by `Thread::StackCheck` | StackOverflow | t
 trap, and trap again in `Thread::Recover` | TrapInRecover | trap.15 | pass | pass | pass
 delete `Thread` object of another thread | DeleteRemote | trap.16 | pass | pass | pass
 delete `Thread` object of running thread | DeleteLocal | trap.17 | pass | pass | pass
-cause an infinite loop and be killed by **ctrl-C** | Ctrl-C  | trap.18 | pass | pass | **pass<sup>6</sup>**
+cause an infinite loop and be killed by **ctrl-C** | Ctrl-C  | trap.18 | pass | pass | **pass<sup>6</sup>** :yellow_circle:
 call `Thread::EnterBlockingOperation` while holding a mutex | MutexBlock | trap.19 | pass | pass | pass
 trap, and constructor traps first time thread is recreated | ThreadCtorTrap | trap.20 | pass | pass | pass
 exit thread while holding a mutex | MutexExit | trap.21 | pass | pass | pass
@@ -71,9 +71,9 @@ trap, and trap once more during trap recovery | Retrap | trap.23 | pass | pass |
 trap and allow thread to exit | BadPtrExit | trap.24 | pass | pass | pass
 disable [`Daemon`](/src/nb/Daemon.h); kill thread; reenable `Daemon`; thread recreated | DaemonReenable | trap.25 | pass | pass | pass
 exit thread; constructor traps first time `Daemon` recreates thread, so `Daemon` is disabled; reenable `Daemon`; thread recreated | DaemonTrap | trap.26 | pass | pass | pass
-trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail<sup>4</sup>** | **fail<sup>4</sup>**
+trap in destructor when exiting thread | ThreadDtorTrap | trap.27 | pass | **fail<sup>4</sup>** :red_circle: | **fail<sup>4</sup>** :red_circle:
 raise `SIGBUS` | SIGBUS | trap.28 | n/a | n/a | pass
-write to protected memory | SIGWRITE | trap.29 | pass | **fail<sup>5</sup>** | pass
+write to protected memory | SIGWRITE | trap.29 | pass | **fail<sup>5</sup>** :yellow_circle: | pass
 
   1. file name in [_output_](/output) directory
   2. file name in [_input_](/input) directory

@@ -81,8 +81,8 @@ Code checked since the latest release is work in progress and may be unstable
 or incomplete, so downloading from the green "Code" dropdown menu on the home
 page is not recommended.
 
-For proper operation, RSC must be launched from a directory below the
-[_src_](src) directory. See the [installation guide](docs/Installing.md).
+:warning: For proper operation, RSC must be launched from a directory below
+the [_src_](src) directory. See the [installation guide](docs/Installing.md).
 
 ## Building an executable
 

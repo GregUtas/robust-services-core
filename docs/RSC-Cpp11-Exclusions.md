@@ -53,8 +53,7 @@ supported.
 All source code is assumed to be of type `char`.  `char8_t`, `char16_t`,
 `char32_t`, and `wchar_t` are supported via escape codes and literal
 prefixes (`u8`, `u`, `U`, `L`) but significant changes would be needed to
-support them in identifiers, such as replacing uses of `std::string` in
-the parser and other `CodeTools` classes.
+support them in identifiers.
 
 ### Reserved Words
 - [ ] `decltype`
@@ -118,13 +117,13 @@ RSC's use of the preprocessor is restricted to
 - [ ] identical declarations of data or functions
 
   Note that `Forward` supports multiple declarations of a class.
-- [ ] identical definitions of anything, _even in separate translation units_
+- [ ] identical definitions of anything
 
   All of the code is compiled together after calculating a global compile order,
   which makes the One Definition Rule global.
 
 ### Namespaces
-- [ ] `using` statements in namespaces (currently treated as if at file scope)
+- [ ] `using` statements in namespaces (treated as if at file scope)
 - [ ] namespace aliases (with `using`)
 - [ ] unnamed namespaces
 - [ ] inline namespaces
@@ -142,7 +141,7 @@ within it as `static`.
 - [ ] anonymous structs
 - [ ] an enum, typedef, or function in an anonymous union
 
-  The parser allows this, but symbol lookup functions do not include them when
+  The parser allows this, but symbol lookup functions will not find them when
   searching.
 - [ ] including a class/struct/union/enum instance immediately before the
   semicolon at the end of its definition
@@ -150,7 +149,7 @@ within it as `static`.
 
 ### Functions
 - [ ] function matching based on `volatile` (only `const` affects matching)
-- [ ] member function suffix tags:
+- [ ] member function suffix tags
   - `const&` (equivalent to `const`)
   - `&` (`this` must be non-const)
   - `&&` (`this` must be an rvalue)
@@ -181,7 +180,7 @@ within it as `static`.
 - [ ] declaring more than one data instance in the same statement, either at file
   scope or within a class
 
-  Note that this is supported _within_ a function (for example,
+  This is only supported _within_ a function (for example,
   `int i = 0, *pi = nullptr`).
 - [ ] type matching based on `volatile` (only `const` affects matching)
 - [ ] unnamed bit fields
@@ -290,7 +289,7 @@ The `>check` command sometimes produces erroneous warnings.
   - **Only invoked through base**. If a derived class implements `operator
   delete` but is only deleted through a pointer to its base class, its version
   of `operator delete` will be flagged as unused. The fact that it is actually
-  invoked is hard to determine before run-time.
+  invoked is hard to determine before runtime.
   
 - [ ] `FunctionCouldBeFree`
 

@@ -35,8 +35,8 @@ The development of RSC has been somewhat sidetracked by the development of C++
 static analysis tools. These tools detect violations of various C++ design
 guidelines, such as those found in Scott Meyers' _Effective C++_. They also
 analyze `#include` directives to determine which ones to add or delete. Their
-editor then allows you to easily and interactively fix (as of release v0.30.0)
-100 of the 146 warning types. Even if you're not developing applications with
+editor then allows you to easily and interactively fix many of the warnings
+that the tool generates. Even if you're not developing applications with
 RSC, you might find these tools useful. An overview of them is provided
 [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
@@ -56,33 +56,33 @@ specification. An overview of the POTS application is provided
 
 In 2002, a group in the UK began to design a protocol that allows software
 bots to play the board game
-[_Diplomacy_](https://en.wikipedia.org/wiki/Diplomacy_(game)). See their
-[website](http://www.daide.org.uk) for various useful links and downloads,
+[_Diplomacy_](https://en.wikipedia.org/wiki/Diplomacy_(game)). Their
+[website](http://www.daide.org.uk) has various useful links and downloads,
 amongst which is the executable for a Diplomacy server. Bots log into this
 server, which sends them the state of the game, allows them to communicate with
 one another using the protocol, and adjudicates the moves that they submit.
-Their website also provides base software for developing bots. It seemed that
-it would be interesting to refactor this software while decoupling it from
-Windows and bringing it more in line with C++11. This would help RSC evolve
+Their website also provides software for developing bots. I decided to
+refactor this software, decouple it from
+Windows, and bring it more in line with C++11. This helped RSC evolve
 to better support standalone clients that use IP (TCP, in this case). The
 resulting software is available in the [_dip_](src/dip) directory and is
 described in some further detail [here](docs/RSC-Diplomacy.md).
 
 ## Documentation
 
-This page provides an overview of RSC. There is also a page which lists
+This page provides an overview of RSC. Aanother page lists
 [documents](docs/README.md) that go into far more depth on many topics.
 
 ## Installing the repository
 
 Download one of the
 [releases](https://github.com/GregUtas/robust-services-core/releases/latest).
-Code checked since the latest release is work in progress and may be unstable
-or incomplete, so downloading from the green "Code" dropdown menu on the home
+Code committed since the latest release is work in progress and may be unstable
+or incomplete, so downloading from the green "Code" dropdown menu on the main
 page is not recommended.
 
 :warning: For proper operation, RSC must be launched from a directory below
-the [_src_](src) directory. See the [installation guide](docs/Installing.md).
+its [_src_](src) directory. See the [installation guide](docs/Installing.md).
 
 ## Building an executable
 
@@ -102,12 +102,11 @@ them, are listed in the comments that precede the implementation of
 [`main`](src/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
-RSC is developed using Visual Studio 2022. The Windows build options that RSC
-uses are described [here](docs/RSC-Windows-Build-Options.md).
-
-RSC is built using CMake, as described [here](docs/RSC-Building-Using-CMake.md).
-Because Visual Studio's _.vcxproj_ files are no longer modified as part of the
-build process, they have been removed from the repository.
+RSC is developed using Visual Studio 2022 and is built using CMake, as described
+[here](docs/RSC-Building-Using-CMake.md). The Windows build options that RSC
+uses are described [here](docs/RSC-Windows-Build-Options.md). Because Visual
+Studio's _.vcxproj_ files are no longer used during the build process,
+they have been removed from the repository.
 
 ## Running the executable
 
@@ -132,7 +131,7 @@ can see how function calls were nested
   * the net time spent in the function (in microseconds)
 
 All output appears in the directory _../&lt;dir>/excluded/output_, where
-_&lt;dir>_ is, again, the directory immediately above the _src_ directory.
+_&lt;dir>_ is the directory immediately above the _src_ directory.
 In addition to any specific output that you request, such as the initialization
 trace, every CLI session produces
   * a _console_ file (a transcript of the CLI commands that you entered and
@@ -141,13 +140,14 @@ what was written to the console)
 
 The numeric string _yymmdd-hhmmss_ is appended to the names of these files
 to record the time when the system initialized (for the _console_ file and
-initial _log_ file) or the time of the preceding restart (for a subsequent
+initial _log_ file) or the time of the most recent restart (for a subsequent
 _log_ file).
 
 ## Developing an application
 
 The easiest way to use RSC as a framework is to create a static library below
-RSC's _src_ directory. Simply use whatever subset of RSC that your application
+RSC's _src_ directory. The [_app_](src/app) directory has been provided for
+this purpose. Simply use whatever subset of RSC that your application
 needs. This will always include the namespace `NodeBase` (in the [_nb_](src/nb)
 directory). It might also include `NetworkBase` (in the [_nw_](src/nw)
 directory) and `SessionBase` (in the [_sb_](src/sb) directory). Using a new
@@ -164,7 +164,7 @@ To initialize your application, derive from [`Module`](src/nb/Module.h).
 For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes
 `NodeBase`. Change [`CreateModules`](src/rsc/main.cpp) so that it also
 instantiates your module, and comment out its instantiation of modules that
-you don't want in your build. If you prefer not to change RSC's `main()`,
+you don't want in your build. If you prefer not to change RSC's `main`,
 you can change the copy in the [_app_](src/app) directory, as described
 [here](src/app/README.md).
 
@@ -182,13 +182,13 @@ constructor.
 Most of the files in the [_input_](input) directory are test scripts. The
 document that describes the [POTS application](docs/RSC-POTS-Application.md)
 also discusses its tests, which exercise a considerable portion of the RSC
-software. The tests described below are rather tactical by comparison.
+software. There are also some other tests that are more tactical in nature:
 
-Twenty-nine scripts test the _Safety Net_ capability of the `Thread` class.
+- Varoius scripts test the Safety Net capability of the `Thread` class.
 A dedicated [page](docs/RSC-Trap-Recovery.md) describes these tests and the
 current status of each one.
  
-Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
+- Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
 commands). It provides sets of commands for testing functions in the
 [`BuddyHeap`](src/nb/BuddyHeap.h),
 [`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),

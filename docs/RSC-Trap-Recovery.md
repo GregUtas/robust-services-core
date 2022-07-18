@@ -14,7 +14,7 @@ for a signal handler to try to do almost anything useful in C++, so how well
 this strategy works depends on the compiler that was used and the platform
 for which it targeted the executable.
 
-RSC has 29 tests that tell [`RecoveryThread`](/src/nt/NtIncrement.cpp)
+RSC has 29 tests that tell [`RecoveryThread`](/src/nt/RecoveryThread.h)
 to cause traps in various ways. Getting the safety net to work can be
 challenging when porting RSC to another platform, which is one reason
 why these tests are provided. The entire set can be run with the command

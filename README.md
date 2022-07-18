@@ -70,7 +70,7 @@ described in some further detail [here](docs/RSC-Diplomacy.md).
 
 ## Documentation
 
-This page provides an overview of RSC. Aanother page lists
+This page provides an overview of RSC. Another page lists
 [documents](docs/README.md) that go into far more depth on many topics.
 
 ## Installing the repository

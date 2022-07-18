@@ -1,4 +1,4 @@
-# app directory
+# _app_ directory
 
 This directory contains a copy of _rsc/main.cpp_ that you can use for 
 your application if you prefer not to change _main.cpp_. It has been

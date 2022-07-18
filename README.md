@@ -191,6 +191,7 @@ current status of each one.
 - Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
 commands). It provides sets of commands for testing functions in the
 [`BuddyHeap`](src/nb/BuddyHeap.h),
+[`SlabHeap`](src/nb/SlabHeap.h),
 [`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),
 [`Q1Way`](src/nb/Q1Way.h), [`Q2Way`](src/nb/Q2Way.h), and
 [`Registry`](src/nb/Registry.h) interfaces.

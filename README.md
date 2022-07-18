@@ -165,7 +165,7 @@ For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes
 `NodeBase`. Change [`CreateModules`](src/rsc/main.cpp) so that it also
 instantiates your module, and comment out its instantiation of modules that
 you don't want in your build. If you prefer not to change RSC's `main`,
-you can change the copy in the [_app_](src/app) directory, as described
+you can change the copy in the _app_ directory, as described
 [here](src/app/README.md).
 
 To interact with your application, derive from
@@ -184,7 +184,7 @@ document that describes the [POTS application](docs/RSC-POTS-Application.md)
 also discusses its tests, which exercise a considerable portion of the RSC
 software. There are also some other tests that are more tactical in nature:
 
-- Varoius scripts test the Safety Net capability of the `Thread` class.
+- Various scripts test the Safety Net capability of the `Thread` class.
 A dedicated [page](docs/RSC-Trap-Recovery.md) describes these tests and the
 current status of each one.
  

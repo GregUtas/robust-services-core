@@ -23,18 +23,12 @@
 #include "BuddyHeap.h"
 #include "CliCommandSet.h"
 #include "CliText.h"
-#include "Daemon.h"
-#include "Protected.h"
 #include "SlabHeap.h"
 #include "Temporary.h"
-#include "Thread.h"
 #include <cctype>
-#include <csignal>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <cstdlib>
-#include <exception>
 #include <istream>
 #include <map>
 #include <memory>
@@ -46,7 +40,6 @@
 #include "CliPtrParm.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "Element.h"
 #include "FileSystem.h"
 #include "Formatters.h"
@@ -54,8 +47,6 @@
 #include "FunctionProfiler.h"
 #include "FunctionTrace.h"
 #include "LeakyBucketCounter.h"
-#include "Mutex.h"
-#include "NbAppIds.h"
 #include "NbCliParms.h"
 #include "NbSignals.h"
 #include "NtTestData.h"
@@ -67,11 +58,10 @@
 #include "Q1Way.h"
 #include "Q2Link.h"
 #include "Q2Way.h"
+#include "RecoveryThread.h"
 #include "RegCell.h"
 #include "Registry.h"
 #include "Singleton.h"
-#include "SoftwareException.h"
-#include "SymbolRegistry.h"
 #include "TestDatabase.h"
 #include "ToolTypes.h"
 
@@ -2995,558 +2985,84 @@ word CountCommand::ProcessCommand(CliThread& cli) const
    return 0;
 }
 
-//==============================================================================
-//
-//  Protected data for testing the mapping of SIGSEGV to SIGWRITE.
-//
-class ReadOnlyData : public Protected
-{
-public:
-   ReadOnlyData() : data_(0) { }
-   void SetData(int value) { data_ = value; }
-private:
-   int data_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  Daemon for testing the safety net.
-//
-class RecoveryDaemon : public Daemon
-{
-   friend class Singleton<RecoveryDaemon>;
-
-   RecoveryDaemon();
-   ~RecoveryDaemon();
-   Thread* CreateThread() override;
-   AlarmStatus GetAlarmLevel() const override;
-};
-
-//------------------------------------------------------------------------------
-//
-//  Thread for testing the safety net.
-//
-class RecoveryThread : public Thread
-{
-   friend class Singleton<RecoveryThread>;
-public:
-   enum Test
-   {
-      Sleep,
-      Abort,
-      Create,
-      CtorTrap,
-      DtorTrap,
-      Delete,
-      DerefenceBadPtr,
-      DivideByZero,
-      Exception,
-      InfiniteLoop,
-      MutexBlock,
-      MutexExit,
-      MutexTrap,
-      OverflowStack,
-      RaiseSignal,
-      Return,
-      Terminate,
-      Trap,
-      Write
-   };
-
-   void SetTest(Test test) { test_ = test; }
-   void SetTestSignal(signal_t signal) { signal_ = signal; }
-   void Display(ostream& stream,
-      const string& prefix, const Flags& options) const override;
-private:
-   RecoveryThread();
-   ~RecoveryThread();
-   static void AcquireMutex();
-   static void DoAbort();
-   static void DoDelete();
-   static int DoDivide(int dividend, int divisor);
-   static void DoException();
-   static void DoTerminate();
-   static void LoopForever();
-   static void RecurseForever(size_t depth);
-   static void UseBadPointer();
-   void WriteToReadOnly();
-   void DoRaise() const;
-   void DoTrap();
-   c_string AbbrName() const override;
-   void Destroy() override;
-   void Enter() override;
-   bool Recover() override;
-
-   Test test_;
-   signal_t signal_;
-   ReadOnlyData* prot_;
-};
-
-static Mutex RecoveryMutex_("RecoveryTestMutex");
-
-//------------------------------------------------------------------------------
-
-fixed_string RecoveryDaemonName = "recover";
-
-RecoveryDaemon::RecoveryDaemon() : Daemon(RecoveryDaemonName, 1)
-{
-   Debug::ft("RecoveryDaemon.ctor");
-
-   auto reg = Singleton<SymbolRegistry>::Instance();
-   reg->BindSymbol("recovery.daemon", Did(), false);
-}
-
-RecoveryDaemon::~RecoveryDaemon()
-{
-   Debug::ftnt("RecoveryDaemon.dtor");
-}
-
-Thread* RecoveryDaemon::CreateThread()
-{
-   Debug::ft("RecoveryDaemon.CreateThread");
-   return Singleton<RecoveryThread>::Instance();
-}
-
-AlarmStatus RecoveryDaemon::GetAlarmLevel() const
-{
-   Debug::ft("RecoveryDaemon.GetAlarmLevel");
-   return MinorAlarm;
-}
-
-//------------------------------------------------------------------------------
-
-RecoveryThread::RecoveryThread() :
-   Thread(LoadTestFaction, Singleton<RecoveryDaemon>::Instance()),
-   test_(Sleep),
-   signal_(0),
-   prot_(nullptr)
-{
-   Debug::ft("RecoveryThread.ctor");
-
-   auto reg = Singleton<SymbolRegistry>::Instance();
-   reg->BindSymbol("recovery.thread", Tid(), false);
-
-   //  Set ThreadCtorTrapFlag to cause a trap during thread creation.  This
-   //  tests orphan recovery and a single daemon trap.  If ThreadCtorRetrapFlag
-   //  is also set, it tests a double daemon trap, which should disable the
-   //  daemon.  Reenabling the daemon will then recreate this thread.
-   //
-   if(Debug::SwFlagOn(ThreadCtorTrapFlag))
-   {
-      Debug::SetSwFlag(ThreadCtorTrapFlag, false);
-      UseBadPointer();
-   }
-
-   if(Debug::SwFlagOn(ThreadCtorRetrapFlag))
-   {
-      Debug::SetSwFlag(ThreadCtorRetrapFlag, false);
-      UseBadPointer();
-   }
-
-   SetInitialized();
-}
-
-//------------------------------------------------------------------------------
-
-RecoveryThread::~RecoveryThread()
-{
-   Debug::ftnt("RecoveryThread.dtor");
-
-   if(prot_ != nullptr)
-   {
-      FunctionGuard guard(Guard_MemUnprotect);
-      delete prot_;
-      prot_ = nullptr;
-   }
-
-   if(Debug::SwFlagOn(ThreadDtorTrapFlag))
-   {
-      Debug::SetSwFlag(ThreadDtorTrapFlag, false);
-      UseBadPointer();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-c_string RecoveryThread::AbbrName() const
-{
-   return RecoveryDaemonName;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name RecoveryThread_AcquireMutex = "RecoveryThread.AcquireMutex";
-
-void RecoveryThread::AcquireMutex()
-{
-   Debug::ft(RecoveryThread_AcquireMutex);
-
-   if(RecoveryMutex_.Acquire(TIMEOUT_IMMED))
-   {
-      Debug::SwLog(RecoveryThread_AcquireMutex, "acquire failed", 0);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::Destroy()
-{
-   Debug::ft("RecoveryThread.Destroy");
-
-   Singleton<RecoveryThread>::Destroy();
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::Display(ostream& stream,
-   const string& prefix, const Flags& options) const
-{
-   Thread::Display(stream, prefix, options);
-
-   stream << prefix << "test   : " << int(test_) << CRLF;
-   stream << prefix << "signal : " << signal_ << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoAbort()
-{
-   Debug::ft("RecoveryThread.DoAbort");
-
-   std::abort();
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoDelete()
-{
-   Debug::ft("RecoveryThread.DoDelete");
-
-   Singleton<RecoveryThread>::Destroy();
-}
-
-//------------------------------------------------------------------------------
-
-int RecoveryThread::DoDivide(int dividend, int divisor)
-{
-   Debug::ft("RecoveryThread.DoDivide");
-
-   return (dividend / divisor);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoException()
-{
-   Debug::ft("RecoveryThread.DoException");
-
-   throw SoftwareException("software exception test", 1);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoRaise() const
-{
-   Debug::ft("RecoveryThread.DoRaise");
-
-   raise(signal_);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoTerminate()
-{
-   Debug::ft("RecoveryThread.DoTerminate");
-
-   std::terminate();
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoTrap()
-{
-   Debug::ft("RecoveryThread.DoTrap");
-   Raise(signal_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name RecoveryThread_Enter = "RecoveryThread.Enter";
-
-void RecoveryThread::Enter()
-{
-   while(true)
-   {
-      Debug::ft(RecoveryThread_Enter);
-
-      //  Save and reset the test to be performed.  Otherwise, it will be
-      //  immediately repeated upon reentering the thread after recovery.
-      //
-      auto test = test_;
-      test_ = Sleep;
-
-      //  Execute the requested test.
-      //
-      switch(test)
-      {
-      case Abort:
-         DoAbort();
-         break;
-      case CtorTrap:
-         Debug::SetSwFlag(ThreadCtorTrapFlag, true);
-         return;
-      case Delete:
-         DoDelete();
-         break;
-      case DerefenceBadPtr:
-         UseBadPointer();
-         break;
-      case DivideByZero:
-         DoDivide(1, 0);
-         break;
-      case DtorTrap:
-         Debug::SetSwFlag(ThreadDtorTrapFlag, true);
-         return;
-      case Exception:
-         DoException();
-         break;
-      case InfiniteLoop:
-         LoopForever();
-         break;
-      case MutexBlock:
-         AcquireMutex();
-         Pause(msecs_t(100));
-         RecoveryMutex_.Release();
-         break;
-      case MutexExit:
-         AcquireMutex();
-         return;
-      case MutexTrap:
-         AcquireMutex();
-         UseBadPointer();
-         break;
-      case OverflowStack:
-         RecurseForever(1);
-         break;
-      case RaiseSignal:
-         DoRaise();
-         break;
-      case Return:
-         return;
-      case Sleep:
-         break;
-      case Terminate:
-         DoTerminate();
-         break;
-      case Trap:
-         DoTrap();
-         break;
-      case Write:
-         WriteToReadOnly();
-         break;
-      default:
-         Debug::SwLog(RecoveryThread_Enter, "unexpected test", test);
-      }
-
-      //  Sleep until interrupted to perform the next test.  There is a timeout
-      //  so that the thread will resume execution after it is deleted remotely
-      //  (>recover delete f), after which it should exit.
-      //
-      Pause(msecs_t(5000));
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name RecoveryThread_LoopForever = "RecoveryThread.LoopForever";
-
-void RecoveryThread::LoopForever()
-{
-   Debug::ft(RecoveryThread_LoopForever);
-
-   while(true)
-   {
-      for(auto i = 0; i < 0x1000; ++i)
-      {
-         for(auto j = 0; j < 0x1000; ++j);
-      }
-
-      Debug::ft(RecoveryThread_LoopForever);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-bool RecoveryThread::Recover()
-{
-   Debug::ft("RecoveryThread.Recover");
-
-   if(Debug::SwFlagOn(ThreadRecoverTrapFlag)) UseBadPointer();
-   return Debug::SwFlagOn(ThreadReenterFlag);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::RecurseForever(size_t depth)
-{
-   Debug::ft("RecoveryThread.RecurseForever");
-
-   RecurseForever(depth + 1);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::UseBadPointer()
-{
-   Debug::ft("RecoveryThread.UseBadPointer");
-
-   CauseTrap();
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::WriteToReadOnly()
-{
-   Debug::ft("RecoveryThread.WriteToReadOnly");
-
-   if(prot_ == nullptr)
-   {
-      FunctionGuard guard(Guard_MemUnprotect);
-      prot_ = new ReadOnlyData;
-   }
-
-   prot_->SetData(1);
-}
-
 //------------------------------------------------------------------------------
 //
 //  The RECOVER command, for testing the Thread safety net.
 //
+fixed_string AbortTextStr = "abort";
+fixed_string AbortTextExpl = "call abort()";
+
+fixed_string BadPtrTextStr = "badptr";
+fixed_string BadPtrTextExpl = "dereference an invalid pointer";
+
+fixed_string CtorTrapTextStr = "ctortrap";
+fixed_string CtorTrapTextExpl = "trap in recovery thread constructor";
+
+fixed_string CreateTextStr = "create";
+fixed_string CreateTextExpl = "create the recovery thread";
+
 class DeleteText : public CliText
 {
 public: DeleteText();
 };
 
-class RaiseText : public CliText
-{
-public: RaiseText();
-};
-
-class TrapText : public CliText
-{
-public: TrapText();
-};
-
-class RecoverWhatParm : public CliTextParm
-{
-public: RecoverWhatParm();
-};
-
-class RecoverCommand : public CliCommand
-{
-public:
-   RecoverCommand();
-private:
-   static RecoveryThread* EnsureThread(id_t subcommand);
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-//------------------------------------------------------------------------------
-
-fixed_string SignalParmExpl = "signal's name ('SIG...')";
-
-//------------------------------------------------------------------------------
-
-fixed_string AbortTextStr = "abort";
-fixed_string AbortTextExpl = "call abort()";
-
-//------------------------------------------------------------------------------
-
-fixed_string BadPtrTextStr = "badptr";
-fixed_string BadPtrTextExpl = "dereference an invalid pointer";
-
-//------------------------------------------------------------------------------
-
-fixed_string CtorTrapTextStr = "ctortrap";
-fixed_string CtorTrapTextExpl = "trap in recovery thread constructor";
-
-//------------------------------------------------------------------------------
-
-fixed_string CreateTextStr = "create";
-fixed_string CreateTextExpl = "create the recovery thread";
-
-//------------------------------------------------------------------------------
-
-fixed_string ThisParmExpl = "perform by 'this' (t) or by another thread (f)";
 fixed_string DeleteTextStr = "delete";
 fixed_string DeleteTextExpl = "delete the recovery thread";
+fixed_string ThisParmExpl = "perform by 'this' (t) or by another thread (f)";
 
 DeleteText::DeleteText() : CliText(DeleteTextExpl, DeleteTextStr)
 {
    BindParm(*new CliBoolParm(ThisParmExpl));
 }
 
-//------------------------------------------------------------------------------
-
 fixed_string DivideTextStr = "divide";
 fixed_string DivideTextExpl = "divide by zero";
-
-//------------------------------------------------------------------------------
 
 fixed_string DtorTrapTextStr = "dtortrap";
 fixed_string DtorTrapTextExpl = "trap in recovery thread destructor";
 
-//------------------------------------------------------------------------------
-
 fixed_string ExceptionTextStr = "exception";
 fixed_string ExceptionTextExpl = "raise a software exception";
-
-//------------------------------------------------------------------------------
 
 fixed_string LoopTextStr = "loop";
 fixed_string LoopTextExpl = "enter an infinite loop";
 
-//------------------------------------------------------------------------------
-
 fixed_string MutexBlockStr = "mutexblock";
 fixed_string MutexBlockExpl = "block while holding a mutex";
-
-//------------------------------------------------------------------------------
 
 fixed_string MutexExitStr = "mutexexit";
 fixed_string MutexExitExpl = "exit while holding a mutex";
 
-//------------------------------------------------------------------------------
-
 fixed_string MutexTrapStr = "mutextrap";
 fixed_string MutexTrapExpl = "trap while holding a mutex";
 
-//------------------------------------------------------------------------------
+class RaiseText : public CliText
+{
+public: RaiseText();
+};
 
 fixed_string RaiseTextStr = "raise";
 fixed_string RaiseTextExpl = "raise a signal";
+fixed_string SignalParmExpl = "signal's name ('SIG...')";
 
 RaiseText::RaiseText() : CliText(RaiseTextExpl, RaiseTextStr)
 {
    BindParm(*new CliTextParm(SignalParmExpl, false, 0));
 }
 
-//------------------------------------------------------------------------------
-
 fixed_string ReturnTextStr = "return";
 fixed_string ReturnTextExpl = "return from the recovery thread";
-
-//------------------------------------------------------------------------------
 
 fixed_string StackTextStr = "stack";
 fixed_string StackTextExpl = "cause a stack overflow";
 
-//------------------------------------------------------------------------------
-
 fixed_string TerminateTextStr = "terminate";
 fixed_string TerminateTextExpl = "call terminate()";
 
-//------------------------------------------------------------------------------
+class TrapText : public CliText
+{
+public: TrapText();
+};
 
 fixed_string TrapTextStr = "trap";
 fixed_string TrapTextExpl = "cause a trap";
@@ -3557,12 +3073,15 @@ TrapText::TrapText() : CliText(TrapTextExpl, TrapTextStr)
    BindParm(*new CliTextParm(SignalParmExpl, false, 0));
 }
 
-//------------------------------------------------------------------------------
-
 fixed_string WriteTextStr = "write";
 fixed_string WriteTextExpl = "write to read-only data";
 
 //------------------------------------------------------------------------------
+
+class RecoverWhatParm : public CliTextParm
+{
+public: RecoverWhatParm();
+};
 
 fixed_string RecoverWhatExpl = "what to recover from...";
 
@@ -3606,10 +3125,23 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
 fixed_string RecoverStr = "recover";
 fixed_string RecoverExpl = "Tests thread recovery.";
 
+class RecoverCommand : public CliCommand
+{
+public:
+   RecoverCommand();
+private:
+   static RecoveryThread* EnsureThread(id_t subcommand);
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+//------------------------------------------------------------------------------
+
 RecoverCommand::RecoverCommand() : CliCommand(RecoverStr, RecoverExpl)
 {
    BindParm(*new RecoverWhatParm);
 }
+
+//------------------------------------------------------------------------------
 
 fn_name RecoverCommand_EnsureThread = "RecoverCommand.EnsureThread";
 
@@ -3626,6 +3158,8 @@ RecoveryThread* RecoverCommand::EnsureThread(id_t subcommand)
    Debug::SwLog(RecoverCommand_EnsureThread, "recovery thread created", 0);
    return thr;
 }
+
+//------------------------------------------------------------------------------
 
 fn_name RecoverCommand_ProcessCommand = "RecoverCommand.ProcessCommand";
 

@@ -9,6 +9,7 @@ set(Header_Files
     "NtIncrement.h"
     "NtModule.h"
     "NtTestData.h"
+    "RecoveryThread.h"
     "TestDatabase.h"
 )
 source_group("Header Files" FILES ${Header_Files})
@@ -19,6 +20,7 @@ set(Source_Files
     "NtIncrement.cpp"
     "NtModule.cpp"
     "NtTestData.cpp"
+    "RecoveryThread.cpp"
     "TestDatabase.cpp"
 )
 source_group("Source Files" FILES ${Source_Files})

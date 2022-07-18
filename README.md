@@ -78,10 +78,11 @@ This page provides an overview of RSC. Another page lists
 Download one of the
 [releases](https://github.com/GregUtas/robust-services-core/releases/latest).
 Code committed since the latest release is work in progress and may be unstable
-or incomplete, so downloading from the green "Code" dropdown menu on the main
-page is not recommended.
+or incomplete, so downloading from the green Code&#9662; dropdown menu on the
+main page is not recommended.
 
-:warning: For proper operation, RSC must be launched from a directory below
+> **Warning**
+> For proper operation, RSC must be launched from a directory below
 its [_src_](src) directory. See the [installation guide](docs/Installing.md).
 
 ## Building an executable

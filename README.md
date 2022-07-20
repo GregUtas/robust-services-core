@@ -9,7 +9,7 @@ This repository contains
 
 ## Robust Services Core
 
-The framework that supports robust applications is referred to as the _Robust
+The framework for robust C++ applications is referred to as the _Robust
 Services Core_ (RSC). RSC will put your project on the right path and jump-start
 it if you're developing or reengineering a system whose requirements can be
 characterized as
@@ -78,7 +78,7 @@ This page provides an overview of RSC. Another page lists
 Download one of the
 [releases](https://github.com/GregUtas/robust-services-core/releases/latest).
 Code committed since the latest release is work in progress and may be unstable
-or incomplete, so downloading from the green Code&#9662; dropdown menu on the
+or incomplete, so downloading from the **Code&#9662;** dropdown menu on the
 main page is not recommended.
 
 > **Warning**
@@ -103,18 +103,18 @@ them, are listed in the comments that precede the implementation of
 [`main`](src/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
-RSC is developed using Visual Studio 2022 and is built using CMake, as described
-[here](docs/RSC-Building-Using-CMake.md). The Windows build options that RSC
-uses are described [here](docs/RSC-Windows-Build-Options.md). Because Visual
-Studio's _.vcxproj_ files are no longer used during the build process,
-they have been removed from the repository.
+RSC is developed using Visual Studio 2022 and built using CMake, as described
+[here](docs/RSC-Building-Using-CMake.md). Windows build options for RSC
+are described [here](docs/RSC-Windows-Build-Options.md). Visual
+Studio's _.vcxproj_ files are no longer used during builds, so
+they were removed from the repository.
 
 ## Running the executable
 
 During initialization, RSC displays each module as it is initialized.
 (A _module_ is equivalent to a static library.)  After all modules
 have initialized, the CLI prompt `nb>` appears to indicate that CLI commands
-in the _nb_ directory are available. The information written to the console
+in the _nb_ directory are available. What is written to the console
 during startup is shown [here](output/init.console.txt), and a list of all
 CLI commands is provided [here](docs/help.cli.txt).
 
@@ -147,11 +147,11 @@ _log_ file).
 ## Developing an application
 
 The easiest way to use RSC as a framework is to create a static library below
-RSC's _src_ directory. The [_app_](src/app) directory has been provided for
+RSC's _src_ directory. The [_app_](src/app) directory is provided for
 this purpose. Simply use whatever subset of RSC that your application
-needs. This will always include the namespace `NodeBase` (in the [_nb_](src/nb)
-directory). It might also include `NetworkBase` (in the [_nw_](src/nw)
-directory) and `SessionBase` (in the [_sb_](src/sb) directory). Using a new
+needs. This will always include the namespace `NodeBase` (the [_nb_](src/nb)
+directory). It might also include `NetworkBase` (the [_nw_](src/nw)
+directory) and `SessionBase` (the [_sb_](src/sb) directory). Using a new
 namespace for your application is recommended.
 
 If you put your code elsewhere, RSC will be unable to find important
@@ -163,11 +163,9 @@ should also add RSC's [_help_](help) directory to that directory.
 
 To initialize your application, derive from [`Module`](src/nb/Module.h).
 For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes
-`NodeBase`. Change [`CreateModules`](src/rsc/main.cpp) so that it also
-instantiates your module, and comment out its instantiation of modules that
-you don't want in your build. If you prefer not to change RSC's `main`,
-you can change the copy in the _app_ directory, as described
-[here](src/app/README.md).
+`NodeBase`. Change [`CreateModules`](src/app/rscapp.cpp) so that it also
+instantiates your module, as well as the other modules that you need in
+your build.
 
 To interact with your application, derive from
 [`CliIncrement`](src/nb/CliIncrement.h).
@@ -182,15 +180,15 @@ constructor.
 
 Most of the files in the [_input_](input) directory are test scripts. The
 document that describes the [POTS application](docs/RSC-POTS-Application.md)
-also discusses its tests, which exercise a considerable portion of the RSC
-software. There are also some other tests that are more tactical in nature:
+also discusses its tests, which exercise a considerable portion of RSC's
+software. Some other tests are more tactical in nature:
 
-- Various scripts test the Safety Net capability of the `Thread` class.
+- A set of scripts tests the Safety Net capability of the `Thread` class.
 A dedicated [page](docs/RSC-Trap-Recovery.md) describes these tests and the
 current status of each one.
  
 - Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
-commands). It provides sets of commands for testing functions in the
+commands). It provides commands for testing functions in the
 [`BuddyHeap`](src/nb/BuddyHeap.h),
 [`SlabHeap`](src/nb/SlabHeap.h),
 [`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),
@@ -201,10 +199,11 @@ commands). It provides sets of commands for testing functions in the
 
 RSC is freely available under the terms of the [GNU General Public License,
 version 3](LICENSE.txt), which basically says that you must also publish your
-own software, as well as your changes to RSC. If you are developing software
-that you want to keep proprietary, the GPLv3 license also allows RSC to be
-licensed under the terms of another license approved by the [Free Software
-Foundation](https://www.gnu.org/licenses/license-list.html). Some of those
+own software, as well as your changes to RSC. If you are developing commercial
+software that you want to keep proprietary, the GPLv3 license also allows RSC
+to be licensed under the terms of another license approved by the
+[Free Software Foundation](https://www.gnu.org/licenses/license-list.html).
+Some of those
 licenses allow your software to remain proprietary. However, compensation
 would be required, and any changes that you make to RSC itself (bug fixes
 and enhancements) would still have to be published.

@@ -420,7 +420,7 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to support the deletion of a redundant scope.
+   //  Overridden to support the deletion of a name.
    //
    void Delete() override;
 
@@ -457,6 +457,10 @@ public:
    //  Overridden to forward to each template argument.
    //
    void Instantiating(CxxScopedVector& locals) const override;
+
+   //  Overridden to clear ref_ when it is deleted.
+   //
+   void ItemDeleted(const CxxScoped* item) const override;
 
    //  Overridden to return true if ITEM is the referent of a template argument.
    //
@@ -615,10 +619,9 @@ public:
    //
    void SetSpecifier(Cxx::Specifier specifier) { specifier_ = specifier; }
 
-   //  Removes NAME from the qualified name when NAME is being deleted.
-   //  NEXT is the name that follows NAME.
+   //  Deletes NAME from the qualified name.  NEXT is the name after NAME.
    //
-   void EraseName(const TypeName* name, TypeNamePtr& next);
+   void DeleteName(const TypeName* name, TypeNamePtr& next);
 
    //  Marks a data item's name used to initialize it at file scope.
    //

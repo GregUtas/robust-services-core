@@ -1031,6 +1031,33 @@ void CodeFile::CheckVerticalSpacing()
 
 //------------------------------------------------------------------------------
 
+void CodeFile::DeleteInclude(const Include* incl)
+{
+   Debug::ft("CodeFile.DeleteInclude");
+
+   //  Don't invoke IncludeRemoved if INCL was a redundant #include.
+   //
+   auto remove = true;
+
+   for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
+   {
+      if((i->get() != incl) && ((*i)->Name() == incl->Name()))
+      {
+         remove = false;
+      }
+   }
+
+   if(remove)
+   {
+      IncludeRemoved(incl);
+   }
+
+   DeleteItemPtr(incls_, incl);
+   EraseItem(incl);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -1156,25 +1183,6 @@ void CodeFile::EraseFunc(const Function* func)
 {
    CodeTools::EraseItem(funcs_, func);
    EraseItem(func);
-}
-
-//------------------------------------------------------------------------------
-
-void CodeFile::EraseInclude(const Include* incl)
-{
-   Debug::ft("CodeFile.EraseInclude");
-
-   EraseItemPtr(incls_, incl);
-   EraseItem(incl);
-
-   //  Don't invoke IncludeRemoved if INCL was a redundant #include.
-   //
-   for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
-   {
-      if((*i)->Name() == incl->Name()) return;
-   }
-
-   IncludeRemoved(incl);
 }
 
 //------------------------------------------------------------------------------

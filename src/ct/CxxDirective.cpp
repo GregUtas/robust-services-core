@@ -754,8 +754,6 @@ Include::Include(string& name, bool angle) : SymbolDirective(name),
 Include::~Include()
 {
    Debug::ft("Include.dtor");
-
-   GetFile()->EraseInclude(this);
 }
 
 //------------------------------------------------------------------------------
@@ -765,6 +763,15 @@ void Include::CalcGroup()
    Debug::ft("Include.CalcGroup");
 
    group_ = GetFile()->CalcGroup(*this);
+}
+
+//------------------------------------------------------------------------------
+
+void Include::Delete()
+{
+   Debug::ft("Include.Delete");
+
+   GetFile()->DeleteInclude(this);
 }
 
 //------------------------------------------------------------------------------
@@ -983,6 +990,16 @@ void MacroName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
    //  Add our referent as a direct usage.
    //
    if(ref_ != nullptr) symbols.AddDirect(ref_);
+}
+
+//------------------------------------------------------------------------------
+
+void MacroName::ItemDeleted(const CxxScoped* item) const
+{
+   if(ref_ == item)
+   {
+      ref_ = nullptr;
+   }
 }
 
 //------------------------------------------------------------------------------

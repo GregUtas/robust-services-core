@@ -129,6 +129,10 @@ public:
    //
    IncludeGroup Group() const { return group_; }
 
+   //  Overridden to support the deletion of an #include directive.
+   //
+   void Delete() override;
+
    //  Overridden to display the directive.
    //
    void Display(std::ostream& stream,
@@ -206,6 +210,10 @@ public:
    //  Overridden to update SYMBOLS with the name's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to clear ref_ when it is deleted.
+   //
+   void ItemDeleted(const CxxScoped* item) const override;
 
    //  Overridden to return the macro's name.
    //

@@ -551,8 +551,8 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       cli.SendToFile(filename, true);
    }
 
-   if((opts.find(CrossReferenceVerbose) != string::npos) ||
-      (opts.find(CanonicalFileView) != string::npos))
+   if((opts.find(CrossReferenceBrief) != string::npos) ||
+      (opts.find(CrossReferenceVerbose) != string::npos))
    {
       Debug::Progress(string("Exporting cross-reference...") + CRLF);
       auto stream = cli.FileStream();

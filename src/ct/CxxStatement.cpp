@@ -368,8 +368,7 @@ void CxxStatement::Delete()
 {
    Debug::ft("CxxStatement.Delete");
 
-   static_cast<Block*>(GetScope())->EraseItem(this);
-   delete this;
+   static_cast<Block*>(GetScope())->DeleteItem(this);
 }
 
 //------------------------------------------------------------------------------

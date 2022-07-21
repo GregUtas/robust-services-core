@@ -118,15 +118,15 @@ public:
    //
    CxxToken* NewestItem();
 
-   //  Removes an item from the area when the item is being deleted.
+   //  Deletes an item from the area.
    //
-   void EraseClass(const Class* cls);
-   void EraseData(const Data* data);
-   void EraseEnum(const Enum* decl);
-   void EraseForw(const Forward* forw);
-   void EraseFunc(const Function* func);
-   void EraseType(const Typedef* type);
-   void EraseUsing(const Using* use);
+   void DeleteClass(const Class* cls);
+   void DeleteData(const Data* data);
+   void DeleteEnum(const Enum* decl);
+   void DeleteForw(const Forward* forw);
+   void DeleteFunc(const Function* func);
+   void DeleteType(const Typedef* type);
+   void DeleteUsing(const Using* use);
 
    //  Overridden to log warnings associated with the area's declarations.
    //
@@ -328,9 +328,9 @@ public:
    //
    const FriendPtrVector* Friends() const { return &friends_; }
 
-   //  Removes DECL as a friend of the class.
+   //  Deletes DECL as a friend of the class.
    //
-   void EraseFriend(const Friend* decl);
+   void DeleteFriend(const Friend* decl);
 
    //  Removes CLS as a direct subclass of the class.
    //
@@ -696,9 +696,9 @@ private:
    //
    ClassInst* CreateInstance(const std::string& name, const TypeName* type);
 
-   //  Supports class template argument deduction.  If a class template has a
-   //  function with NAME that can be invoked with ARGS, instantiate the class
-   //  and return the function.  (Not yet implemented.)
+   //c Supports class template argument deduction (not yet implemented.).
+   //  If aclass template has a function with NAME that can be invoked with
+   //  ARGS, instantiate the class and return the function.
    //
    Function* InstantiateFunction
       (const std::string& name, StackArgVector* args, SymbolView* view) const;
@@ -986,7 +986,7 @@ public:
 
    //  Removes DEFN, one of the namespace's definitions.
    //
-   void EraseDefn(const SpaceDefn* defn);
+   void DeleteDefn(const SpaceDefn* defn);
 
    //  Returns the namespace's outer namespace.
    //

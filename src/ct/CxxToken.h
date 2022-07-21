@@ -49,10 +49,9 @@ class CxxToken : public LibraryItem
 public:
    //  Virtual to allow subclassing.
    //    Most items are owned in a unique_ptr, so if the owner is deleted, the
-   //  item is deleted before the owner's destructor runs.  The item need not
-   //  inform its owner of its deletion in this case.  But if the item is being
-   //  deleted on its own, the owner needs to be informed.  The two scenarios
-   //  are distinguished by invoking Delete (below) in the latter case.
+   //  item is deleted before the owner's destructor runs.  But if the item is
+   //  deleted on its own, the deletion must occur through its owner.  In that
+   //  case, Delete (below) must be invoked.
    //    An item can be deleted when the parser backs up or when code is edited.
    //  Destructors are written assuming that items are deleted in the reverse
    //  order of how they were encountered in code.  References to an item must
@@ -64,12 +63,16 @@ public:
    //
    virtual ~CxxToken();
 
-   //  Deletes the item and informs its owner of its deletion.  The default
-   //  version simply deletes the item and must be overridden by an item that
-   //  the Editor can delete separately from its owner (e.g. when deleting an
-   //  unused item from its class or namespace).
+   //  Invokes a function provided by the owner to delete the item.  The default
+   //  version generates a log before deleting the item and must be overridden
+   //  by an item that the Editor can delete independent of its owner (e.g. when
+   //  deleting an unused item from its class or namespace).
    //
    virtual void Delete();
+
+   //  Notifies an entry in ITEM's cross-reference that ITEM was deleted.
+   //
+   virtual void ItemDeleted(const CxxScoped* item) const { }
 
    //  Sets the file and offset at which this item was found.
    //

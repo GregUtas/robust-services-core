@@ -588,10 +588,14 @@ void CxxToken::CopyContext(const CxxToken* that, bool internal)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxToken_Delete = "CxxToken.Delete";
+
 void CxxToken::Delete()
 {
-   Debug::ftnt("CxxToken.Delete");
+   Debug::ftnt(CxxToken_Delete);
 
+   auto expl = strClass(this) + " needs to override Delete";
+   Context::SwLog(CxxToken_Delete, expl, 0);
    delete this;
 }
 
@@ -2467,7 +2471,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
 
    if(pod) return;
 
-   //* This needs to record the usage of CLS's destructor against ARG,
+   //c This needs to record the usage of CLS's destructor against ARG,
    //  because the destructor might be protected or private.
    //
    arg.item_->RecordUsage();

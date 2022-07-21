@@ -595,9 +595,9 @@ public:
    //
    Enumerator* FindEnumerator(const std::string& name) const;
 
-   //  Removes ETOR from the enumeration when ETOR is being deleted.
+   //  Deletes ETOR from the enumeration.
    //
-   void EraseEnumerator(const Enumerator* etor);
+   void DeleteEnumerator(const Enumerator* etor);
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1273,6 +1273,10 @@ public:
    //  Overridden to update SYMBOLS with the statement's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to clear ref_ when it is deleted.
+   //
+   void ItemDeleted(const CxxScoped* item) const override;
 
    //  Overridden to return the member's name.
    //

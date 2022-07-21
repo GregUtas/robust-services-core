@@ -335,6 +335,15 @@ bool Block::CrlfOver(Form form) const
 
 //------------------------------------------------------------------------------
 
+void Block::DeleteItem(const CxxToken* item)
+{
+   Debug::ft("Block.DeleteItem");
+
+   DeleteItemPtr(statements_, item);
+}
+
+//------------------------------------------------------------------------------
+
 void Block::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -417,15 +426,6 @@ void Block::EnterBlock()
    }
 
    Context::PopScope();
-}
-
-//------------------------------------------------------------------------------
-
-void Block::EraseItem(const CxxToken* item)
-{
-   Debug::ft("Block.EraseItem");
-
-   EraseItemPtr(statements_, item);
 }
 
 //------------------------------------------------------------------------------
@@ -657,6 +657,7 @@ ClassData::~ClassData()
 {
    Debug::ftnt("ClassData.dtor");
 
+   ClearMate();
    GetFile()->EraseData(this);
    Singleton<CxxSymbols>::Extant()->EraseData(this);
 }
@@ -740,11 +741,24 @@ void ClassData::CheckIfRelocatable() const
 {
    Debug::ft("ClassData.CheckIfRelocatable");
 
-   if(IsStatic())
-   {
-      auto file = FindFileForStatic();
+   //  The data can be free (static within a .cpp) if
+   //  (a) it has a separate definition;
+   //  (b) its definition wouldn't move into a different .cpp;
+   //  (c) it doesn't use any protected or private members.
+   //  In (a) and (b), the definition would have to move to another file.
+   //  This isn't supported because it would mean adjusting the #include
+   //  directives of both files.
+   //
+   auto defn = GetDefn();
+   if(defn == this) return;
 
-      if(file != nullptr)
+   if(!IsStatic()) return;
+
+   auto file = FindFileForStatic();
+
+   if((file != nullptr) && (defn->GetFile() == file))
+   {
+      if(NarrowestAccessUsed(const_cast<ClassData*>(this)) >= Cxx::Public)
       {
          Log(DataCouldBeFree, nullptr, 0, file->Name());
       }
@@ -757,9 +771,7 @@ void ClassData::Delete()
 {
    Debug::ftnt("ClassData.Delete");
 
-   ClearMate();
-   GetArea()->EraseData(this);
-   delete this;
+   GetArea()->DeleteData(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2026,7 +2038,8 @@ void FuncData::Delete()
       {
          //  Delete this item, which appears alone.
          //
-         static_cast<Block*>(GetScope())->EraseItem(this);
+         static_cast<Block*>(GetScope())->DeleteItem(this);
+         return;
       }
       else
       {
@@ -2649,6 +2662,8 @@ Function::~Function()
 
    if(type_) return;
 
+   if(mate_ != nullptr) mate_->mate_ = nullptr;
+
    if(base_ != nullptr)
    {
       base_->EraseOverride(this);
@@ -3009,7 +3024,7 @@ Function* Function::CanInvokeWith(StackArgVector& args,
    //  that this function expects.  Note that a "this" argument is skipped
    //  if thisIncr is 1 instead of 0.
    //
-   //* If an argument is an overloaded function, alternates are not considered.
+   //c If an argument is an overloaded function, alternates are not considered.
    //  This eventually needs to be supported.
    //
    for(size_t i = 0; i < sendSize; ++i)
@@ -3830,9 +3845,9 @@ void Function::CheckMemberUsage() const
    //  (d) it doesn't use a template parameter;
    //  (e) a different .cpp doesn't invoke it;
    //  (f) it doesn't use any protected or private members.
-   //  In (a) and (e), the item's definition would have to move to
-   //  another file. This isn't supported because it also involves
-   //  adjusting the #include directives in both files.
+   //  In (a) and (e), the definition would have to move to another file.
+   //  This isn't supported because it would mean adjusting the #include
+   //  directives of both files.
    //
    auto defn = GetDefn();
 
@@ -3928,9 +3943,25 @@ void Function::Delete()
 {
    Debug::ftnt("Function.Delete");
 
-   if(mate_ != nullptr) mate_->mate_ = nullptr;
-   GetArea()->EraseFunc(this);
-   delete this;
+   GetArea()->DeleteFunc(this);
+}
+
+//------------------------------------------------------------------------------
+
+void Function::DeleteArg(const Argument* arg)
+{
+   Debug::ft("Function.DeleteArg");
+
+   DeleteItemPtr(args_, arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Function::DeleteMemberInit(const MemberInit* init)
+{
+   Debug::ft("Function.DeleteMemberInit");
+
+   DeleteItemPtr(mems_, init);
 }
 
 //------------------------------------------------------------------------------
@@ -4313,24 +4344,6 @@ void Function::EnterSignature()
    //  DeleteVoidArg, because this would cause the above iterator to fail.
    //
    if(!args_.empty() && (args_.back() == nullptr)) args_.pop_back();
-}
-
-//------------------------------------------------------------------------------
-
-void Function::EraseArg(const Argument* arg)
-{
-   Debug::ft("Function.EraseArg");
-
-   EraseItemPtr(args_, arg);
-}
-
-//------------------------------------------------------------------------------
-
-void Function::EraseMemberInit(const MemberInit* init)
-{
-   Debug::ft("Function.EraseMemberInit");
-
-   EraseItemPtr(mems_, init);
 }
 
 //------------------------------------------------------------------------------
@@ -6187,6 +6200,7 @@ SpaceData::~SpaceData()
 {
    Debug::ftnt("SpaceData.dtor");
 
+   ClearMate();
    GetFile()->EraseData(this);
    Singleton<CxxSymbols>::Extant()->EraseData(this);
 }
@@ -6228,8 +6242,8 @@ void SpaceData::CheckIfStatic() const
    Debug::ft("SpaceData.CheckIfStatic");
 
    //  Data declared at file scope in a header has static linkage (that is,
-   //  will have a separate instance for each user of the header) unless it
-   //  is defined using constexpr or extern.  This is rarely desirable.
+   //  will have a separate instance for each user of the header) unless it is
+   //  defined using constexpr or extern.  Static linkage is rarely desirable.
    //
    //  Data declared at file scope in a .cpp has external linkage (that is,
    //  can be made visible by an extern declaration in a header) unless it
@@ -6260,9 +6274,15 @@ void SpaceData::Delete()
 {
    Debug::ftnt("SpaceData.Delete");
 
-   ClearMate();
-   GetArea()->EraseData(this);
-   delete this;
+   //  A separate definition of class static data is owned
+   //  by the namespace in which it appeared.
+   //
+   auto mate = GetMate();
+
+   if((mate != nullptr) && (mate->GetClass() != nullptr))
+      GetSpace()->DeleteData(this);
+   else
+      GetArea()->DeleteData(this);
 }
 
 //------------------------------------------------------------------------------
@@ -6412,6 +6432,7 @@ SpaceDefn::~SpaceDefn()
 {
    Debug::ft("SpaceDefn.dtor");
 
+   space_->UpdateReference(this, false);
    GetFile()->EraseSpace(this);
 }
 
@@ -6421,9 +6442,7 @@ void SpaceDefn::Delete()
 {
    Debug::ft("SpaceDefn.Delete");
 
-   space_->UpdateReference(this, false);
-   space_->EraseDefn(this);
-   delete this;
+   space_->DeleteDefn(this);
 }
 
 //------------------------------------------------------------------------------

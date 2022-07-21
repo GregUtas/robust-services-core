@@ -2238,6 +2238,30 @@ void QualName::CopyContext(const CxxToken* that, bool internal)
 
 //------------------------------------------------------------------------------
 
+void QualName::DeleteName(const TypeName* name, TypeNamePtr& next)
+{
+   Debug::ft("QualName.DeleteName");
+
+   if(first_.get() == name)
+   {
+      first_.release();
+      first_ = std::move(next);
+      if(first_ != nullptr) first_->SetScoped(false);
+      return;
+   }
+
+   for(auto prev = first_.get(); prev != nullptr; prev = prev->Next())
+   {
+      if(prev->Next() == name)
+      {
+         prev->SetNext(next);
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void QualName::EnterBlock()
 {
    Debug::ft("QualName.EnterBlock");
@@ -2263,25 +2287,6 @@ void QualName::EnterBlock()
 
    auto ref = Referent();
    if(ref != nullptr) Context::PushArg(ref->NameToArg(op, Last()));
-}
-
-//------------------------------------------------------------------------------
-
-void QualName::EraseName(const TypeName* name, TypeNamePtr& next)
-{
-   Debug::ft("QualName.EraseName");
-
-   if(first_.get() == name)
-   {
-      first_.release();
-      first_ = std::move(next);
-      if(first_ != nullptr) first_->SetScoped(false);
-      return;
-   }
-
-   auto prev = first_.get();
-   while(prev->Next() != name) prev = prev->Next();
-   prev->SetNext(next);
 }
 
 //------------------------------------------------------------------------------
@@ -3343,6 +3348,8 @@ TypeName::TypeName(string& name) :
 TypeName::~TypeName()
 {
    Debug::ftnt("TypeName.dtor");
+
+   UpdateXref(false);
 }
 
 //------------------------------------------------------------------------------
@@ -3447,11 +3454,9 @@ void TypeName::Check() const
 
 void TypeName::Delete()
 {
-   Debug::ftnt("TypeName.Delete");
+   Debug::ft("TypeName.Delete");
 
-   UpdateXref(false);
-   if(qname_ != nullptr) qname_->EraseName(this, next_);
-   delete this;
+   qname_->DeleteName(this, next_);
 }
 
 //------------------------------------------------------------------------------
@@ -3630,6 +3635,21 @@ void TypeName::Instantiating(CxxScopedVector& locals) const
       {
          (*a)->Instantiating(locals);
       }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::ItemDeleted(const CxxScoped* item) const
+{
+   if(ref_ == item)
+   {
+      ref_ = nullptr;
+   }
+
+   if(type_ == item)
+   {
+      type_ = nullptr;
    }
 }
 

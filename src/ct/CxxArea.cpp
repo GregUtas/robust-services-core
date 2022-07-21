@@ -1050,8 +1050,16 @@ void Class::Delete()
 {
    Debug::ftnt("Class.Delete");
 
-   GetArea()->EraseClass(this);
-   delete this;
+   GetArea()->DeleteClass(this);
+}
+
+//------------------------------------------------------------------------------
+
+void Class::DeleteFriend(const Friend* decl)
+{
+   Debug::ft("Class.DeleteFriend");
+
+   DeleteItemPtr(friends_, decl);
 }
 
 //------------------------------------------------------------------------------
@@ -1300,15 +1308,6 @@ bool Class::EnterScope()
       InvokeDefaultBaseCtor();
    }
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void Class::EraseFriend(const Friend* decl)
-{
-   Debug::ft("Class.EraseFriend");
-
-   EraseItemPtr(friends_, decl);
 }
 
 //------------------------------------------------------------------------------
@@ -1998,8 +1997,6 @@ Function* Class::InstantiateFunction
    (const string& name, StackArgVector* args, SymbolView* view) const
 {
    Debug::ft("Class.InstantiateFunction");
-
-   //c Support class template argument deduction.
 
    return nullptr;
 }
@@ -3060,82 +3057,82 @@ void CxxArea::Check() const
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseClass(const Class* cls)
+void CxxArea::DeleteClass(const Class* cls)
 {
-   Debug::ft("CxxArea.EraseClass");
+   Debug::ft("CxxArea.DeleteClass");
 
-   EraseItemPtr(classes_, cls);
+   DeleteItemPtr(classes_, cls);
 }
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseData(const Data* data)
+void CxxArea::DeleteData(const Data* data)
 {
-   Debug::ft("CxxArea.EraseData");
+   Debug::ft("CxxArea.DeleteData");
 
    if(data->IsDecl())
    {
-      EraseItemPtr(data_, data);
+      DeleteItemPtr(data_, data);
    }
    else
    {
-      EraseItemPtr<CxxScope>(defns_, data);
+      DeleteItemPtr<CxxScope>(defns_, data);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseEnum(const Enum* decl)
+void CxxArea::DeleteEnum(const Enum* decl)
 {
-   Debug::ft("CxxArea.EraseEnum");
+   Debug::ft("CxxArea.DeleteEnum");
 
-   EraseItemPtr(enums_, decl);
+   DeleteItemPtr(enums_, decl);
 }
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseForw(const Forward* forw)
+void CxxArea::DeleteForw(const Forward* forw)
 {
-   Debug::ft("CxxArea.EraseForw");
+   Debug::ft("CxxArea.DeleteForw");
 
-   EraseItemPtr(forws_, forw);
+   DeleteItemPtr(forws_, forw);
 }
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseFunc(const Function* func)
+void CxxArea::DeleteFunc(const Function* func)
 {
-   Debug::ft("CxxArea.EraseFunc");
+   Debug::ft("CxxArea.DeleteFunc");
 
    if(func->IsDecl())
    {
       if(func->FuncType() == FuncOperator)
-         EraseItemPtr(opers_, func);
+         DeleteItemPtr(opers_, func);
       else
-         EraseItemPtr(funcs_, func);
+         DeleteItemPtr(funcs_, func);
    }
    else
    {
-      EraseItemPtr<CxxScope>(defns_, func);
+      DeleteItemPtr<CxxScope>(defns_, func);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseType(const Typedef* type)
+void CxxArea::DeleteType(const Typedef* type)
 {
-   Debug::ft("CxxArea.EraseType");
+   Debug::ft("CxxArea.DeleteType");
 
-   EraseItemPtr(types_, type);
+   DeleteItemPtr(types_, type);
 }
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseUsing(const Using* use)
+void CxxArea::DeleteUsing(const Using* use)
 {
-   Debug::ft("CxxArea.EraseUsing");
+   Debug::ft("CxxArea.DeleteUsing");
 
-   EraseItemPtr(usings_, use);
+   DeleteItemPtr(usings_, use);
 }
 
 //------------------------------------------------------------------------------
@@ -3757,6 +3754,15 @@ void Namespace::Check() const
 
 //------------------------------------------------------------------------------
 
+void Namespace::DeleteDefn(const SpaceDefn* defn)
+{
+   Debug::ft("Namespace.DeleteDefn");
+
+   DeleteItemPtr(defns_, defn);
+}
+
+//------------------------------------------------------------------------------
+
 void Namespace::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -3802,15 +3808,6 @@ Namespace* Namespace::EnsureNamespace(const string& name)
    NamespacePtr space(new Namespace(name, this));
    spaces_.push_back(std::move(space));
    return spaces_.back().get();
-}
-
-//------------------------------------------------------------------------------
-
-void Namespace::EraseDefn(const SpaceDefn* defn)
-{
-   Debug::ft("Namespace.EraseDefn");
-
-   EraseItemPtr(defns_, defn);
 }
 
 //------------------------------------------------------------------------------

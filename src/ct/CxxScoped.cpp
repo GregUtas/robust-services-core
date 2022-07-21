@@ -103,8 +103,7 @@ void Argument::Delete()
    Debug::ft("Argument.Delete");
 
    auto func = GetFunction();
-   if(func != nullptr) func->EraseArg(this);
-   delete this;
+   if(func != nullptr) func->DeleteArg(this);
 }
 
 //------------------------------------------------------------------------------
@@ -562,6 +561,11 @@ CxxScoped::CxxScoped() :
 CxxScoped::~CxxScoped()
 {
    Debug::ftnt("CxxScoped.dtor");
+
+   for(auto r = xref_.cbegin(); r != xref_.cend(); ++r)
+   {
+      (*r)->ItemDeleted(this);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1308,8 +1312,16 @@ void Enum::Delete()
 {
    Debug::ftnt("Enum.Delete");
 
-   GetArea()->EraseEnum(this);
-   delete this;
+   GetArea()->DeleteEnum(this);
+}
+
+//------------------------------------------------------------------------------
+
+void Enum::DeleteEnumerator(const Enumerator* etor)
+{
+   Debug::ft("Enum.DeleteEnumerator");
+
+   DeleteItemPtr(etors_, etor);
 }
 
 //------------------------------------------------------------------------------
@@ -1389,15 +1401,6 @@ bool Enum::EnterScope()
    if(IsAtFileScope()) GetFile()->InsertEnum(this);
    EnterBlock();
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void Enum::EraseEnumerator(const Enumerator* etor)
-{
-   Debug::ft("Enum.EraseEnumerator");
-
-   EraseItemPtr(etors_, etor);
 }
 
 //------------------------------------------------------------------------------
@@ -1615,8 +1618,7 @@ void Enumerator::Delete()
 {
    Debug::ftnt("Enumerator.Delete");
 
-   enum_->EraseEnumerator(this);
-   delete this;
+   enum_->DeleteEnumerator(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1897,8 +1899,7 @@ void Forward::Delete()
 {
    Debug::ftnt("Forward.Delete");
 
-   GetArea()->EraseForw(this);
-   delete this;
+   GetArea()->DeleteForw(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2149,8 +2150,7 @@ void Friend::Delete()
 {
    Debug::ftnt("Friend.Delete");
 
-   static_cast<Class*>(grantor_)->EraseFriend(this);
-   delete this;
+   static_cast<Class*>(grantor_)->DeleteFriend(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2745,6 +2745,8 @@ MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
 MemberInit::~MemberInit()
 {
    Debug::ft("MemberInit.dtor");
+
+   if(ref_ != nullptr) ref_->UpdateReference(this, false);
 }
 
 //------------------------------------------------------------------------------
@@ -2760,10 +2762,8 @@ void MemberInit::Delete()
 {
    Debug::ft("MemberInit.Delete");
 
-   if(ref_ != nullptr) ref_->UpdateReference(this, false);
    auto func = static_cast<Function*>(GetScope());
-   if(func != nullptr) func->EraseMemberInit(this);
-   delete this;
+   if(func != nullptr) func->DeleteMemberInit(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2818,6 +2818,16 @@ bool MemberInit::GetSpan(size_t& begin, size_t& left, size_t& end) const
 void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    init_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::ItemDeleted(const CxxScoped* item) const
+{
+   if(ref_ == item)
+   {
+      ref_ = nullptr;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3340,8 +3350,7 @@ void Typedef::Delete()
 {
    Debug::ftnt("Typedef.Delete");
 
-   GetArea()->EraseType(this);
-   delete this;
+   GetArea()->DeleteType(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3656,8 +3665,7 @@ void Using::Delete()
 {
    Debug::ft("Using.Delete");
 
-   GetArea()->EraseUsing(this);
-   delete this;
+   GetArea()->DeleteUsing(this);
 }
 
 //------------------------------------------------------------------------------

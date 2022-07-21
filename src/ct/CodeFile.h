@@ -137,6 +137,10 @@ public:
    //
    Include* InsertInclude(size_t pos, const std::string& fn);
 
+   //  Deletes INCL from the file.
+   //
+   void DeleteInclude(const Include* incl);
+
    //  Adds the item to those defined in this file.
    //
    bool InsertDirective(DirectivePtr& dir);
@@ -154,7 +158,6 @@ public:
 
    //  Removes the item from those defined in this file.
    //
-   void EraseInclude(const Include* incl);
    void EraseSpace(const SpaceDefn* space);
    void EraseClass(const Class* cls);
    void EraseData(const Data* data);

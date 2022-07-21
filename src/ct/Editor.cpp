@@ -1697,7 +1697,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
          size_t index = (ovld ? 1 : 0);
          while(qname->Size() > count) EraseItem(qname->At(index));
          qname->SetReferent(item, nullptr);
-         qname->UpdateXref(true);
+         qname->UpdateXref(false);
       }
    }
 

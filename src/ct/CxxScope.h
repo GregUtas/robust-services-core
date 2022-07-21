@@ -185,9 +185,9 @@ public:
    //
    static void ResetUsings();
 
-   //  Removes ITEM from the block's statements when ITEM is being deleted.
+   //  Deletes ITEM from the block's statements.
    //
-   void EraseItem(const CxxToken* item);
+   void DeleteItem(const CxxToken* item);
 
    //  Replaces CURR with NEXT in the block's statements when CURR is being
    //  deleted.
@@ -861,8 +861,8 @@ private:
    //
    void CheckIfInitialized() const;
 
-   //  Checks if static data could be free (i.e. moved out of the class and
-   //  into the .cpp that initializes it).
+   //  Checks if static data could be free (that is, moved out of the class
+   //  and to the .cpp that initializes it).
    //
    void CheckIfRelocatable() const;
 
@@ -1033,9 +1033,9 @@ public:
    //
    void AddArg(ArgumentPtr& arg);
 
-   //  Removes ARG from the function when ARG is being deleted.
+   //  Deletes ARG from the function.
    //
-   void EraseArg(const Argument* arg);
+   void DeleteArg(const Argument* arg);
 
    //  Specifies whether the function is tagged as extern.
    //
@@ -1114,9 +1114,9 @@ public:
    //
    void AddMemberInit(MemberInitPtr& init);
 
-   //  Removes INIT from the function when INIT is being deleted.
+   //  Deletes INIT from the function.
    //
-   void EraseMemberInit(const MemberInit* init);
+   void DeleteMemberInit(const MemberInit* init);
 
    //  Sets the starting location (opening brace) of an inline function.
    //

@@ -143,16 +143,16 @@ template<class T> void EraseItem(std::vector<T*>& vec, const T* item)
 
 //------------------------------------------------------------------------------
 //
-//  Removes ITEM from VEC and shifts the following items up.
+//  Deletes ITEM from VEC and shifts the following items up.
 //
-template<class T> void EraseItemPtr
+template<class T> void DeleteItemPtr
    (std::vector< std::unique_ptr<T>>& vec, const T* item)
 {
    for(size_t i = 0; i < vec.size(); ++i)
    {
       if(vec[i].get() == item)
       {
-         vec[i].release();
+         vec[i].reset();
 
          if(i < vec.size() - 1)
          {

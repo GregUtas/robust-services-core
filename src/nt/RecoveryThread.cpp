@@ -43,6 +43,90 @@ using std::string;
 
 namespace NodeTools
 {
+//  Mutex for testing bad things occurring while holding a mutex.
+//
+static Mutex RecoveryMutex_("RecoveryTestMutex");
+
+//------------------------------------------------------------------------------
+
+fn_name NodeTools_AcquireMutex = "NodeTools.AcquireMutex";
+
+static void AcquireMutex()
+{
+   Debug::ft(NodeTools_AcquireMutex);
+
+   if(RecoveryMutex_.Acquire(TIMEOUT_IMMED))
+   {
+      Debug::SwLog(NodeTools_AcquireMutex, "acquire failed", 0);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+static void DoAbort()
+{
+   Debug::ft("NodeTools.DoAbort");
+
+   std::abort();
+}
+
+//------------------------------------------------------------------------------
+
+static void DoDelete()
+{
+   Debug::ft("NodeTools.DoDelete");
+
+   Singleton<RecoveryThread>::Destroy();
+}
+
+//------------------------------------------------------------------------------
+
+static int DoDivide(int dividend, int divisor)
+{
+   Debug::ft("NodeTools.DoDivide");
+
+   return (dividend / divisor);
+}
+
+//------------------------------------------------------------------------------
+
+static void DoException()
+{
+   Debug::ft("NodeTools.DoException");
+
+   throw SoftwareException("software exception test", 1);
+}
+
+//------------------------------------------------------------------------------
+
+static void DoTerminate()
+{
+   Debug::ft("NodeTools.DoTerminate");
+
+   std::terminate();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NodeTools_LoopForever = "NodeTools.LoopForever";
+
+static void LoopForever()
+{
+   Debug::ft(NodeTools_LoopForever);
+
+   while(true)
+   {
+      for(auto i = 0; i < 0x1000; ++i)
+      {
+         for(auto j = 0; j < 0x1000; ++j);
+      }
+
+      Debug::ft(NodeTools_LoopForever);
+   }
+}
+
+//------------------------------------------------------------------------------
+//
 //  Daemon for recreating RecoveryThread.
 //
 class RecoveryDaemon : public Daemon
@@ -102,12 +186,6 @@ public:
 private:
    int data_;
 };
-
-//------------------------------------------------------------------------------
-//
-//  Mutex for testing bad things occurring while holding a mutex.
-//
-static Mutex RecoveryMutex_("RecoveryTestMutex");
 
 //==============================================================================
 
@@ -171,20 +249,6 @@ c_string RecoveryThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_AcquireMutex = "RecoveryThread.AcquireMutex";
-
-void RecoveryThread::AcquireMutex()
-{
-   Debug::ft(RecoveryThread_AcquireMutex);
-
-   if(RecoveryMutex_.Acquire(TIMEOUT_IMMED))
-   {
-      Debug::SwLog(RecoveryThread_AcquireMutex, "acquire failed", 0);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void RecoveryThread::Destroy()
 {
    Debug::ft("RecoveryThread.Destroy");
@@ -205,56 +269,11 @@ void RecoveryThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void RecoveryThread::DoAbort()
-{
-   Debug::ft("RecoveryThread.DoAbort");
-
-   std::abort();
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoDelete()
-{
-   Debug::ft("RecoveryThread.DoDelete");
-
-   Singleton<RecoveryThread>::Destroy();
-}
-
-//------------------------------------------------------------------------------
-
-int RecoveryThread::DoDivide(int dividend, int divisor)
-{
-   Debug::ft("RecoveryThread.DoDivide");
-
-   return (dividend / divisor);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoException()
-{
-   Debug::ft("RecoveryThread.DoException");
-
-   throw SoftwareException("software exception test", 1);
-}
-
-//------------------------------------------------------------------------------
-
 void RecoveryThread::DoRaise() const
 {
    Debug::ft("RecoveryThread.DoRaise");
 
    raise(signal_);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoTerminate()
-{
-   Debug::ft("RecoveryThread.DoTerminate");
-
-   std::terminate();
 }
 
 //------------------------------------------------------------------------------
@@ -349,25 +368,6 @@ void RecoveryThread::Enter()
       //  (>recover delete f), after which it should exit.
       //
       Pause(msecs_t(5000));
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name RecoveryThread_LoopForever = "RecoveryThread.LoopForever";
-
-void RecoveryThread::LoopForever()
-{
-   Debug::ft(RecoveryThread_LoopForever);
-
-   while(true)
-   {
-      for(auto i = 0; i < 0x1000; ++i)
-      {
-         for(auto j = 0; j < 0x1000; ++j);
-      }
-
-      Debug::ft(RecoveryThread_LoopForever);
    }
 }
 

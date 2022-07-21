@@ -92,13 +92,6 @@ private:
 
    //  Functions that perform specific tests.
    //
-   static void AcquireMutex();
-   static void DoAbort();
-   static void DoDelete();
-   static int DoDivide(int dividend, int divisor);
-   static void DoException();
-   static void DoTerminate();
-   static void LoopForever();
    static void RecurseForever(size_t depth);
    static void UseBadPointer();
    void WriteToReadOnly();

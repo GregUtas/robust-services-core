@@ -9,7 +9,8 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
-      "ctestCommandArgs": ""
+      "ctestCommandArgs": "",
+      "enableMicrosoftCodeAnalysis": true
     },
     {
       "name": "x64-Release",
@@ -20,7 +21,8 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "enableMicrosoftCodeAnalysis": true
     },
     {
       "name": "x86-Debug",
@@ -30,7 +32,8 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "enableMicrosoftCodeAnalysis": true
     },
     {
       "name": "x86-Release",
@@ -40,7 +43,8 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "enableMicrosoftCodeAnalysis": true
     },
     {
       "name": "x64-Clang-Debug",
@@ -51,7 +55,8 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x64_x64" ]
+      "inheritEnvironments": [ "clang_cl_x64_x64" ],
+      "enableClangTidyCodeAnalysis": true
     },
     {
       "name": "WSL-GCC-Debug",
@@ -64,7 +69,8 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "linux_x64" ],
-      "wslPath": "${defaultWSLPath}"
+      "wslPath": "${defaultWSLPath}",
+      "enableClangTidyCodeAnalysis": true
     }
   ]
 }

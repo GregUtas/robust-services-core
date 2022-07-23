@@ -174,6 +174,7 @@ private:
    static word ChangeMemberToFree(const CodeWarning& log);
    word ChangeOperator(const CodeWarning& log);
    word ChangeStructToClass(const CodeWarning& log);
+   word DemoteFunction(const CodeWarning& log);
    word EraseAdjacentSpaces(const CodeWarning& log);
    word EraseAccessControl(const CodeWarning& log);
    word EraseBlankLine(const CodeWarning& log);

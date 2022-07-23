@@ -2103,6 +2103,17 @@ word Editor::DeleteSpecialFunction(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+word Editor::DemoteFunction(const CodeWarning& log)
+{
+   Debug::ft("Editor.DemoteFunction");
+
+   //  Move the function to the derived class specified in the log.
+   //
+   return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
 void Editor::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -3821,6 +3832,8 @@ word Editor::FixWarning(const CodeWarning& log)
       return FixDatas(log);
    case FunctionShouldBeStatic:
       return FixFunctions(log);
+   case FunctionCouldBeDemoted:
+      return DemoteFunction(log);
    case NoEndlineAtEndOfFile:
       return AppendEndline();
    case AutoCopiesReference:

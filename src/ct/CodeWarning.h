@@ -49,13 +49,17 @@ struct WarningAttrs
    //
    const bool fixable_;
 
+   //  Set to prevent the warning from being generated.
+   //
+   const bool disabled_;
+
    //  A string that explains the warning.
    //
    NodeBase::fixed_string expl_;
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fixable, NodeBase::c_string expl);
+   WarningAttrs(bool fixable, bool disabled, NodeBase::c_string expl);
 };
 
 //------------------------------------------------------------------------------
@@ -69,9 +73,10 @@ std::ostream& operator<<(std::ostream& stream, Warning warning);
 enum WarningStatus
 {
    NotSupported,  // editor does not support fixing this warning
+   Disabled,      // warning is not to be reported
    Revoked,       // warning was cancelled because of subsequent findings
-   Deleted,       // item associated with warning was deleted
-   NotFixed,      // code not changed
+   Deleted,       // code associated with the warning was deleted
+   NotFixed,      // code not yet changed
    Pending,       // code changed but not written to file
    Fixed          // code changed and written to file
 };
@@ -111,16 +116,12 @@ public:
    //
    static void Initialize();
 
-   //  Adds N to the number of line types of type T.
-   //
-   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
-
    //  Unless the warning is suppressed, adds it to the file where it occurred.
    //
    void Insert() const;
 
-   //  Generates a report in STREAM for FILES.  The report includes line
-   //  type counts and warnings found during parsing and compilation.
+   //  Displays, in STREAM, the code warnings that were found in FILES during
+   //  parsing and compilation.
    //
    static void GenerateReport(std::ostream* stream, const LibItemSet& files);
 
@@ -260,10 +261,6 @@ private:
    //  Maps a warning to its attributes.
    //
    static AttrsMap Attrs_;
-
-   //  The number of lines of each type, globally.
-   //
-   static size_t LineTypeCounts_[LineType_N];
 };
 }
 #endif

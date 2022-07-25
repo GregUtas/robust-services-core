@@ -110,6 +110,12 @@ public:
    //
    virtual NodeBase::word Format(std::string& expl) const;
 
+   //  On success, returns 0 after displaying the number of lines of each
+   //  type in the set.
+   //
+   virtual NodeBase::word LineTypes(NodeBase::CliThread& cli,
+      std::ostream* stream, std::string& expl) const;
+
    //  On success, returns 0 after parsing items in the set.  EXPL describes
    //  the outcome.  The first character in TRACE indicates whether to create
    //  a parse file never ('n'), on failures only ('f'), or always ('a').

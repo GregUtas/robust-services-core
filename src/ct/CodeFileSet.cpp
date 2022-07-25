@@ -564,6 +564,41 @@ LibrarySet* CodeFileSet::Implements() const
 
 //------------------------------------------------------------------------------
 
+word CodeFileSet::LineTypes(CliThread& cli, ostream* stream, string& expl) const
+{
+   Debug::ft("CodeFileSet.LineTypes");
+
+   word rc = 0;
+
+   const auto& fileSet = Items();
+
+   if(fileSet.empty())
+   {
+      expl = EmptySet;
+      return rc;
+   }
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      auto file = static_cast<CodeFile*>(*f);
+
+      if(file->ParseStatus() != CodeFile::Passed)
+      {
+         expl = "Files to be included must first be successfully parsed.";
+         return rc;
+      }
+   }
+
+   CodeFile::DisplayLineTypes(stream, fileSet);
+
+   std::ostringstream summary;
+   summary << fileSet.size() << " file(s) counted.";
+   expl = summary.str();
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+
 LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 {
    Debug::ft("CodeFileSet.MatchString");

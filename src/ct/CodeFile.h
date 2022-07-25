@@ -265,6 +265,10 @@ public:
    //
    void GetLineCounts() const;
 
+   //  Displays, in STREAM, the number of lines of each type found in FILES.
+   //
+   static void DisplayLineTypes(std::ostream* stream, const LibItemSet& files);
+
    //  Displays the file's C++ items in STREAM.  The characters in OPTS control
    //  formatting options.
    //

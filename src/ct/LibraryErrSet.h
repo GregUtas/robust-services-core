@@ -84,6 +84,11 @@ private:
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
+   NodeBase::word LineTypes(NodeBase::CliThread& cli,
+      std::ostream* stream, std::string& expl) const override;
+
+   //  Returns a non-zero value and updates EXPL with an explanation.
+   //
    NodeBase::word Parse
       (std::string& expl, const std::string& opts) const override;
 

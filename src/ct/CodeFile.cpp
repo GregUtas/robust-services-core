@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
+#include <iomanip>
 #include <istream>
 #include <iterator>
 #include <sstream>
@@ -59,6 +60,12 @@ using std::string;
 
 namespace CodeTools
 {
+//  The number of lines of each type, globally.
+//
+static size_t LineTypeCounts_[LineType_N] = { 0 };
+
+//------------------------------------------------------------------------------
+
 static void AddForwardDependencies
    (const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 {
@@ -1147,6 +1154,38 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 
 //------------------------------------------------------------------------------
 
+void CodeFile::DisplayLineTypes(ostream* stream, const LibItemSet& files)
+{
+   Debug::ft("CodeFile.DisplayLineTypes");
+
+   //  Clear any previous report's global counts.
+   //
+   for(auto t = 0; t < LineType_N; ++t) LineTypeCounts_[t] = 0;
+
+   //  Return if a report is not required.
+   //
+   if(stream == nullptr) return;
+
+   //  Count the lines of each type.
+   //
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
+   {
+      static_cast<const CodeFile*>(*f)->GetLineCounts();
+   }
+
+   //  Display the total number of lines of each type.
+   //
+   *stream << "LINE COUNTS" << CRLF;
+
+   for(auto t = 0; t < LineType_N; ++t)
+   {
+      *stream << std::setw(8) << LineTypeCounts_[t]
+         << spaces(3) << LineType(t) << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::EraseClass(const Class* cls)
 {
    CodeTools::EraseItem(classes_, cls);
@@ -1605,11 +1644,11 @@ void CodeFile::GetLineCounts() const
 
    const auto& lines = editor_.GetLinesInfo();
 
-   CodeWarning::AddLineType(AnyLine, lines.size());
+   LineTypeCounts_[AnyLine] += lines.size();
 
    for(size_t n = 0; n < lines.size(); ++n)
    {
-      CodeWarning::AddLineType(lines[n].type, 1);
+      ++LineTypeCounts_[lines[n].type];
    }
 }
 

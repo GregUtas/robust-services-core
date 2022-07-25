@@ -2387,7 +2387,8 @@ word Editor::EraseClass(const CodeWarning& log)
    Debug::ft("Editor.EraseClass");
 
    //  Erase the class's definition and the definitions of its functions
-   //  and static data.
+   //  and static data.  Erase definitions before declarations to avoid
+   //  having definitions without declarations.
    //
    return Unimplemented();
 }
@@ -3192,6 +3193,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
          fixed = true;
          continue;
 
+      case Disabled:
       case Revoked:
          //
          //  This log wasn't even reported, so ignore it.
@@ -3860,7 +3862,6 @@ word Editor::Format(string& expl)
    AppendEndline();
    EraseTrailingBlanks();
    AdjustVertically();
-   ConvertTabsToBlanks();
    auto rc = Write();
    expl = GetExpl();
    return rc;

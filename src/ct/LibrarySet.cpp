@@ -313,6 +313,15 @@ bool LibrarySet::IsTemporary() const
 
 //------------------------------------------------------------------------------
 
+word LibrarySet::LineTypes(CliThread& cli, ostream* stream, string& expl) const
+{
+   Debug::ft("LibrarySet.LineTypes");
+
+   return NotImplemented(expl);
+}
+
+//------------------------------------------------------------------------------
+
 word LibrarySet::List(ostream& stream) const
 {
    Debug::ft("LibrarySet.List");

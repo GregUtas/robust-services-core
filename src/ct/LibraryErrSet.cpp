@@ -131,6 +131,16 @@ word LibraryErrSet::Format(string& expl) const
 
 //------------------------------------------------------------------------------
 
+word LibraryErrSet::LineTypes
+   (CliThread& cli, ostream* stream, string& expl) const
+{
+   Debug::ft("LibraryErrSet.LineTypes");
+
+   return Error(expl);
+}
+
+//------------------------------------------------------------------------------
+
 word LibraryErrSet::Parse(string& expl, const string& opts) const
 {
    Debug::ft("LibraryErrSet.Parse");

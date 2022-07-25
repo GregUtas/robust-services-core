@@ -86,6 +86,11 @@ public:
    //
    LibSetType GetType() const override { return FILE_SET; }
 
+   //  Displays the count of line types in the set's files.
+   //
+   NodeBase::word LineTypes(NodeBase::CliThread& cli,
+      std::ostream* stream, std::string& expl) const override;
+
    //  Parses the code files in the set.
    //
    NodeBase::word Parse

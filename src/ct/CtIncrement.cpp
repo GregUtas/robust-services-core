@@ -785,6 +785,55 @@ word ItemsCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
+//  The LINETYPES command.
+//
+class LineTypesCommand : public LibraryCommand
+{
+public:
+   LineTypesCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string LineTypesStr = "linetypes";
+fixed_string LineTypesExpl =
+   "Displays the count of line types in the specified files.";
+
+LineTypesCommand::LineTypesCommand() :
+   LibraryCommand(LineTypesStr, LineTypesExpl)
+{
+   BindParm(*new OstreamMandParm);
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
+}
+
+word LineTypesCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("LineTypesCommand.ProcessCommand");
+
+   string title;
+
+   if(!GetFileName(title, cli)) return -1;
+
+   auto set = LibraryCommand::Evaluate(cli);
+   if(set == nullptr) return -1;
+
+   auto stream = cli.FileStream();
+   if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+
+   string expl;
+   auto rc = set->LineTypes(cli, stream, expl);
+
+   if(rc == 0)
+   {
+      title += ".lines.txt";
+      cli.SendToFile(title, true);
+   }
+
+   return cli.Report(rc, expl);
+}
+
+//------------------------------------------------------------------------------
+//
 //  The LIST command.
 //
 class ListCommand : public LibraryCommand
@@ -1432,6 +1481,7 @@ CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new FormatCommand);
    BindCommand(*new ExportCommand);
    BindCommand(*new RenameCommand);
+   BindCommand(*new LineTypesCommand);
    BindCommand(*new CoverageCommand);
    BindCommand(*new ItemsCommand);
    BindCommand(*new ExpCommand);

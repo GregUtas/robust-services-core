@@ -1,33 +1,16 @@
-LINE COUNTS
-   82817   source code not in one of the categories below
-   42869   blank line
-   19033   blank comment
-   10652   comment at the top of a file (e.g. for the file's name or license info)
-    8285   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   22036   comment not in one of the categories above (e.g. //  <text>)
-   16914   bare left brace
-   15321   bare right brace
-    1594   bare right brace with semicolon
-    1792   access control
-    5202   invocation of Debug::ft
-     668   definition of an fn_name
-    6573   #include directive
-    1172   preprocessor directive other than #include
-     980   using statement
-  235908   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   140  C-style cast
   W005    58  Functional cast
   W006   120  reinterpret_cast
-  W007   660  Cast down the inheritance hierarchy
+  W007   662  Cast down the inheritance hierarchy
   W008    50  Cast removes const qualification
   W009    15  Pointer arithmetic
 * W015     3  #include not sorted in standard order
 * W020   171  Using statement in header
 * W022   203  Add using statement
 * W023     1  Remove using statement
-  W026    68  Unused argument
+  W026    70  Unused argument
   W027     6  Unused class
 * W028    39  Unused data
 * W029     1  Unused enum
@@ -36,7 +19,7 @@ WARNING COUNTS (* if supported by >fix)
 * W033     1  Unused typedef
   W037    15  Member hides inherited name
   W038     1  Class could be namespace
-* W042   156  Member could be private
+* W042   157  Member could be private
 * W043    74  Member could be protected
   W044     8  Typedef of pointer type
 * W047     1  Data is init-only
@@ -48,13 +31,13 @@ WARNING COUNTS (* if supported by >fix)
   W056     5  Implicit constructor invoked: POD members not initialized
 * W060    58  Base class constructor is public
 * W065    10  Base class virtual destructor is not public
-  W075   405  Virtual function is public
+  W075   406  Virtual function is public
 * W077    58  Virtual function has no overrides
-  W082   115  Adjacent arguments have the same type
+  W082   116  Adjacent arguments have the same type
 * W088    15  Argument could be const
 * W090    99  Function could be const
 * W091     1  Function could be static
-* W092    41  Function could be free
+* W092    42  Function could be free
 * W099   293  Line contains adjacent spaces
 * W100     1  Insertion of blank line recommended
   W102     4  Line length exceeds the standard maximum
@@ -80,8 +63,8 @@ WARNINGS SORTED BY TYPE/FILE/LINE (i = informational)
 W004 C-style cast
   an/PotsTrafficThread.cpp(493):    Singleton<TrafficCallPool>::Extant()->Enq((TrafficCall*) addr);
   an/PotsTrafficThread.cpp(1053):    timewheel_ = (Q1Way<TrafficCall>*) Memory::Alloc(size, MemDynamic);
-  ct/CodeFileSet.cpp(606):    LibrarySet* nbSet = (LibrarySet*) this;
-  ct/CodeFileSet.cpp(634):    LibrarySet* nsSet = (LibrarySet*) this;
+  ct/CodeFileSet.cpp(641):    LibrarySet* nbSet = (LibrarySet*) this;
+  ct/CodeFileSet.cpp(669):    LibrarySet* nsSet = (LibrarySet*) this;
   ct/CxxArea.h(529):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   ct/CxxArea.h(901):    CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
   ct/CxxNamed.h(1266):    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -222,13 +205,13 @@ W005 Functional cast
   cb/BcProtocol.cpp(509):    if(route->identifier != RouteResult::Id(rid)) return ParmValueMismatch;
   cb/DigitString.cpp(137):       auto rc = AddDigit(Digit(ds.digits_[i]));
   cb/DigitString.cpp(148):    if(i < Size()) return Digit(digits_[i]);
-  ct/CodeWarning.cpp(233):          << spaces(3) << LineType(t) << CRLF;
-  ct/CodeWarning.cpp(244):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
-  ct/CodeWarning.cpp(245):          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
-  ct/CodeWarning.cpp(246):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
-  ct/CodeWarning.cpp(305):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
-  ct/CtIncrement.cpp(1326):       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
-  ct/CtIncrement.cpp(1341):    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
+  ct/CodeFile.cpp(1183):          << spaces(3) << LineType(t) << CRLF;
+  ct/CodeWarning.cpp(230):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+  ct/CodeWarning.cpp(231):          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
+  ct/CodeWarning.cpp(232):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+  ct/CodeWarning.cpp(291):          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+  ct/CtIncrement.cpp(1375):       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
+  ct/CtIncrement.cpp(1390):    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
   ct/Cxx.cpp(653):       if(Attrs[i].symbol.compare(sym) == 0) return Cxx::Operator(i);
   ct/Cxx.cpp(701):          oper = Cxx::Operator(i);
   ct/Cxx.cpp(750):       Attrs[ValidIntDigits[i]].intValue = int8_t(i);
@@ -240,7 +223,7 @@ W005 Functional cast
   ct/CxxNamed.cpp(4450):    if(TagCount(n) >= ptrs_) return false;
   ct/CxxNamed.cpp(4521):       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
   ct/Editor.cpp(1077):       if(int(begin) < info->depth) begin = info->depth;
-  ct/Editor.cpp(2132):    *Cli_->obuf << ": " << Warning(log.warning_);
+  ct/Editor.cpp(2143):    *Cli_->obuf << ": " << Warning(log.warning_);
   ct/Interpreter.cpp(147):          type = LibTokenType(i);
   ct/Lexer.cpp(2366):          fp *= std::pow(10.0, int(num));
   ct/Lexer.cpp(2473):          oper = Cxx::Operator(match->second);
@@ -447,20 +430,21 @@ W007 Cast down the inheritance hierarchy
   ct/CodeDirSet.cpp(94):       auto file = static_cast<CodeFile*>(*f);
   ct/CodeDirSet.cpp(121):       auto dir = static_cast<CodeDir*>(*d);
   ct/CodeDirSet.cpp(130):       auto dir = static_cast<CodeDir*>(*d);
-  ct/CodeFile.cpp(80):          auto base = static_cast<const Class*>(*b);
-  ct/CodeFile.cpp(236):       auto base = static_cast<const Class*>(*b);
-  ct/CodeFile.cpp(298):                auto type = static_cast<const Typedef*>(*item2);
-  ct/CodeFile.cpp(321):          auto type = static_cast<const Typedef*>(*item1);
-  ct/CodeFile.cpp(1081):       auto f = static_cast<const CodeFile*>(*i);
-  ct/CodeFile.cpp(1089):       auto f = static_cast<const CodeFile*>(*u);
-  ct/CodeFile.cpp(1470):       auto file = static_cast<const CodeFile*>(*f);
-  ct/CodeFile.cpp(1672):          auto file = static_cast<const CodeFile*>(*d);
-  ct/CodeFile.cpp(2091):       auto file = static_cast<const CodeFile*>(*f);
-  ct/CodeFile.cpp(2255):       const auto& name = static_cast<const CodeFile*>(*f)->Name();
-  ct/CodeFile.cpp(2413):                auto incl = static_cast<const CodeFile*>(*a);
-  ct/CodeFile.cpp(2521):          auto file = static_cast<const CodeFile*>(*d);
-  ct/CodeFile.cpp(2550):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFile.cpp(2581):       auto base = static_cast<const Class*>(*b);
+  ct/CodeFile.cpp(87):          auto base = static_cast<const Class*>(*b);
+  ct/CodeFile.cpp(243):       auto base = static_cast<const Class*>(*b);
+  ct/CodeFile.cpp(305):                auto type = static_cast<const Typedef*>(*item2);
+  ct/CodeFile.cpp(328):          auto type = static_cast<const Typedef*>(*item1);
+  ct/CodeFile.cpp(1088):       auto f = static_cast<const CodeFile*>(*i);
+  ct/CodeFile.cpp(1096):       auto f = static_cast<const CodeFile*>(*u);
+  ct/CodeFile.cpp(1173):       static_cast<const CodeFile*>(*f)->GetLineCounts();
+  ct/CodeFile.cpp(1509):       auto file = static_cast<const CodeFile*>(*f);
+  ct/CodeFile.cpp(1711):          auto file = static_cast<const CodeFile*>(*d);
+  ct/CodeFile.cpp(2130):       auto file = static_cast<const CodeFile*>(*f);
+  ct/CodeFile.cpp(2294):       const auto& name = static_cast<const CodeFile*>(*f)->Name();
+  ct/CodeFile.cpp(2452):                auto incl = static_cast<const CodeFile*>(*a);
+  ct/CodeFile.cpp(2560):          auto file = static_cast<const CodeFile*>(*d);
+  ct/CodeFile.cpp(2589):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFile.cpp(2620):       auto base = static_cast<const Class*>(*b);
   ct/CodeFileSet.cpp(80):       auto file = static_cast<CodeFile*>(*f);
   ct/CodeFileSet.cpp(193):       auto file = static_cast<CodeFile*>(*f);
   ct/CodeFileSet.cpp(252):       auto file = static_cast<CodeFile*>(*f);
@@ -474,14 +458,15 @@ W007 Cast down the inheritance hierarchy
   ct/CodeFileSet.cpp(511):    const auto& dirSet = static_cast<const CodeDirSet*>(that)->Items();
   ct/CodeFileSet.cpp(518):       auto file = static_cast<CodeFile*>(*f);
   ct/CodeFileSet.cpp(558):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(585):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(739):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(767):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(876):       files.push_back(static_cast<CodeFile*>(*f));
-  ct/CodeFileSet.cpp(903):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(983):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(1010):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeFileSet.cpp(1040):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(583):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(620):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(774):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(802):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(911):       files.push_back(static_cast<CodeFile*>(*f));
+  ct/CodeFileSet.cpp(938):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(1018):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(1045):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeFileSet.cpp(1075):       auto file = static_cast<CodeFile*>(*f);
   ct/CodeItemSet.cpp(122):       auto item = static_cast<CxxNamed*>(*i);
   ct/CodeItemSet.cpp(148):       auto item = static_cast<CxxNamed*>(*i);
   ct/CodeItemSet.cpp(176):       auto item = static_cast<CxxNamed*>(*i);
@@ -489,16 +474,16 @@ W007 Cast down the inheritance hierarchy
   ct/CodeItemSet.cpp(217):       auto item = static_cast<CxxScoped*>(*i);
   ct/CodeItemSet.cpp(238):       auto item = static_cast<CxxScoped*>(*i);
   ct/CodeItemSet.cpp(260):       auto item = static_cast<CxxNamed*>(*i);
-  ct/CodeWarning.cpp(207):       auto file = static_cast<CodeFile*>(*f);
-  ct/CodeWarning.cpp(1010):       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
-  ct/CodeWarning.cpp(1043):       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
-  ct/CodeWarning.cpp(1065):       auto data = static_cast<const Data*>(item_);
-  ct/CodeWarning.cpp(1107):       auto func = static_cast<Function*>(item_);
-  ct/CodeWarning.cpp(1188):       auto cls = static_cast<const Class*>(item_);
-  ct/CodeWarning.cpp(1212):       auto cls = static_cast<const Class*>(item_);
-  ct/CodeWarning.cpp(1247):          auto func = static_cast<const Function*>(item_);
-  ct/CtIncrement.cpp(1088):          auto dir = static_cast<CodeDir*>(*d);
-  ct/CtIncrement.cpp(1111):          auto file = static_cast<CodeFile*>(*f);
+  ct/CodeWarning.cpp(203):       auto file = static_cast<CodeFile*>(*f);
+  ct/CodeWarning.cpp(996):       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
+  ct/CodeWarning.cpp(1029):       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+  ct/CodeWarning.cpp(1051):       auto data = static_cast<const Data*>(item_);
+  ct/CodeWarning.cpp(1093):       auto func = static_cast<Function*>(item_);
+  ct/CodeWarning.cpp(1174):       auto cls = static_cast<const Class*>(item_);
+  ct/CodeWarning.cpp(1198):       auto cls = static_cast<const Class*>(item_);
+  ct/CodeWarning.cpp(1233):          auto func = static_cast<const Function*>(item_);
+  ct/CtIncrement.cpp(1137):          auto dir = static_cast<CodeDir*>(*d);
+  ct/CtIncrement.cpp(1160):          auto file = static_cast<CodeFile*>(*f);
   ct/CxxArea.cpp(108):       auto cls = static_cast<Class*>(call->Via()->Root());
   ct/CxxArea.cpp(281):          static_cast<const Function*>(item)->IsInline())
   ct/CxxArea.cpp(1249):       return static_cast<ClassInst*>(list.front());
@@ -621,37 +606,37 @@ W007 Cast down the inheritance hierarchy
   ct/Editor.cpp(1745):    auto func = static_cast<const Function*>(log.item_);
   ct/Editor.cpp(1815):    static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
   ct/Editor.cpp(2074):    auto decl = static_cast<Function*>(log.item_);
-  ct/Editor.cpp(2467):    static_cast<Function*>(log.item_)->SetExplicit(false);
-  ct/Editor.cpp(2563):    static_cast<ClassData*>(log.item_)->SetMutable(false);
-  ct/Editor.cpp(2599):    static_cast<Function*>(log.item_)->SetOverride(false);
-  ct/Editor.cpp(2620):    auto qname = static_cast<const QualName*>(log.item_);
-  ct/Editor.cpp(2684):    static_cast<Function*>(log.item_)->SetVirtual(false);
-  ct/Editor.cpp(2754):       usages.directs.erase(static_cast<CxxNamed*>(*i));
-  ct/Editor.cpp(2755):       usages.indirects.erase(static_cast<CxxNamed*>(*i));
-  ct/Editor.cpp(2843):          auto data = static_cast<const Data*>(*i);
-  ct/Editor.cpp(2857):             auto func = static_cast<const Function*>(*i);
-  ct/Editor.cpp(2871):             auto data = static_cast<const Data*>(*i);
-  ct/Editor.cpp(3021):    return FindSigEnd(static_cast<const Function*>(log.item_));
-  ct/Editor.cpp(3341):    auto data = static_cast<Data*>(log.item_);
-  ct/Editor.cpp(3408):    auto func = static_cast<Function*>(log.item_);
-  ct/Editor.cpp(3510):    auto data = static_cast<Data*>(log.item_);
-  ct/Editor.cpp(4131):    auto data = static_cast<Data*>(aref);
-  ct/Editor.cpp(4138):    ReplaceImpl(static_cast<Function*>(log.item_));
-  ct/Editor.cpp(4289):    auto func = static_cast<Function*>(log.item_);
-  ct/Editor.cpp(4640):    auto cls = static_cast<Class*>(log.item_);
-  ct/Editor.cpp(4941):    auto cls = static_cast<Class*>(item);
-  ct/Editor.cpp(5371):       ns = static_cast<Namespace*>(ref)->OuterSpace();
-  ct/Editor.cpp(5447):    auto func = static_cast<const Function*>(log.item_);
-  ct/Editor.cpp(5528):    auto func = static_cast<const Function*>(log.item_);
-  ct/Editor.cpp(5538):       auto slit = static_cast<StrLiteral*>(arg);
-  ct/Editor.cpp(5552):    auto data = static_cast<SpaceData*>(arg->Referent());
-  ct/Editor.cpp(5559):    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
-  ct/Editor.cpp(5586):    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
-  ct/Editor.cpp(5651):    auto type = static_cast<TypeName*>(log.item_);
-  ct/Editor.cpp(6218):    static_cast<Function*>(log.item_)->SetExplicit(true);
-  ct/Editor.cpp(6266):    static_cast<Function*>(log.item_)->SetOverride(true);
-  ct/Editor.cpp(6370):    static_cast<Function*>(log.item_)->SetVirtual(true);
-  ct/Editor.cpp(6658):       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
+  ct/Editor.cpp(2479):    static_cast<Function*>(log.item_)->SetExplicit(false);
+  ct/Editor.cpp(2575):    static_cast<ClassData*>(log.item_)->SetMutable(false);
+  ct/Editor.cpp(2611):    static_cast<Function*>(log.item_)->SetOverride(false);
+  ct/Editor.cpp(2632):    auto qname = static_cast<const QualName*>(log.item_);
+  ct/Editor.cpp(2696):    static_cast<Function*>(log.item_)->SetVirtual(false);
+  ct/Editor.cpp(2766):       usages.directs.erase(static_cast<CxxNamed*>(*i));
+  ct/Editor.cpp(2767):       usages.indirects.erase(static_cast<CxxNamed*>(*i));
+  ct/Editor.cpp(2855):          auto data = static_cast<const Data*>(*i);
+  ct/Editor.cpp(2869):             auto func = static_cast<const Function*>(*i);
+  ct/Editor.cpp(2883):             auto data = static_cast<const Data*>(*i);
+  ct/Editor.cpp(3033):    return FindSigEnd(static_cast<const Function*>(log.item_));
+  ct/Editor.cpp(3354):    auto data = static_cast<Data*>(log.item_);
+  ct/Editor.cpp(3421):    auto func = static_cast<Function*>(log.item_);
+  ct/Editor.cpp(3523):    auto data = static_cast<Data*>(log.item_);
+  ct/Editor.cpp(4145):    auto data = static_cast<Data*>(aref);
+  ct/Editor.cpp(4152):    ReplaceImpl(static_cast<Function*>(log.item_));
+  ct/Editor.cpp(4303):    auto func = static_cast<Function*>(log.item_);
+  ct/Editor.cpp(4654):    auto cls = static_cast<Class*>(log.item_);
+  ct/Editor.cpp(4955):    auto cls = static_cast<Class*>(item);
+  ct/Editor.cpp(5385):       ns = static_cast<Namespace*>(ref)->OuterSpace();
+  ct/Editor.cpp(5461):    auto func = static_cast<const Function*>(log.item_);
+  ct/Editor.cpp(5542):    auto func = static_cast<const Function*>(log.item_);
+  ct/Editor.cpp(5552):       auto slit = static_cast<StrLiteral*>(arg);
+  ct/Editor.cpp(5566):    auto data = static_cast<SpaceData*>(arg->Referent());
+  ct/Editor.cpp(5573):    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
+  ct/Editor.cpp(5600):    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
+  ct/Editor.cpp(5665):    auto type = static_cast<TypeName*>(log.item_);
+  ct/Editor.cpp(6232):    static_cast<Function*>(log.item_)->SetExplicit(true);
+  ct/Editor.cpp(6280):    static_cast<Function*>(log.item_)->SetOverride(true);
+  ct/Editor.cpp(6384):    static_cast<Function*>(log.item_)->SetVirtual(true);
+  ct/Editor.cpp(6672):       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
   ct/Lexer.cpp(3255):          auto def = static_cast<Define*>(item);
   ct/Library.cpp(679):             auto f = static_cast<const Function*>(elem);
   ct/Parser.cpp(455):    auto op = static_cast<Operation*>(token.get());
@@ -1060,9 +1045,9 @@ W007 Cast down the inheritance hierarchy
   st/TestSessions.cpp(975):    auto tmsg = static_cast<TestMessage*>(Context::ContextMsg());
   st/TestSessions.cpp(976):    auto& tssm = static_cast<TestSsm&>(ssm);
 W008 Cast removes const qualification
-  ct/CodeFileSet.cpp(606):    LibrarySet* nbSet = (LibrarySet*) this;
-  ct/CodeFileSet.cpp(634):    LibrarySet* nsSet = (LibrarySet*) this;
-  ct/CodeWarning.cpp(95):    item_(const_cast<CxxToken*>(item)),
+  ct/CodeFileSet.cpp(641):    LibrarySet* nbSet = (LibrarySet*) this;
+  ct/CodeFileSet.cpp(669):    LibrarySet* nsSet = (LibrarySet*) this;
+  ct/CodeWarning.cpp(94):    item_(const_cast<CxxToken*>(item)),
   ct/CxxArea.cpp(1362):       auto self = const_cast<Class*>(this);
   ct/CxxArea.cpp(1568):    return const_cast<Class*>(this);
   ct/CxxArea.cpp(1732):    return const_cast<Class*>(this);
@@ -1509,7 +1494,7 @@ W022 Add using statement
 W023 Remove using statement
   sb/SbIpBuffer.cpp(38): using namespace NetworkBase;
 W026 Unused argument
-  ct/CodeFile.h(423/3):       const CxxNamed* item, const CxxScope* scope) const;
+  ct/CodeFile.h(427/3):       const CxxNamed* item, const CxxScope* scope) const;
   ct/CxxArea.h(704/1):       (const std::string& name, StackArgVector* args, SymbolView* view) const;
   ct/CxxArea.h(704/2):       (const std::string& name, StackArgVector* args, SymbolView* view) const;
   ct/CxxArea.h(704/3):       (const std::string& name, StackArgVector* args, SymbolView* view) const;
@@ -1520,34 +1505,36 @@ W026 Unused argument
   ct/Editor.h(171/1):    word ChangeCast(const CodeWarning& log);
   ct/Editor.h(172/1):    word ChangeClassToNamespace(const CodeWarning& log);
   ct/Editor.h(175/1):    word ChangeOperator(const CodeWarning& log);
-  ct/Editor.h(180/1):    word EraseCast(const CodeWarning& log);
-  ct/Editor.h(181/1):    word EraseClass(const CodeWarning& log);
-  ct/Editor.h(194/1):    word InsertCopyCtorCall(const CodeWarning& log);
-  ct/Editor.h(195/1):    word InsertDataInit(const CodeWarning& log);
-  ct/Editor.h(197/1):    word InsertDisplay(const CodeWarning& log);
-  ct/Editor.h(198/1):    word InsertEnumName(const CodeWarning& log);
-  ct/Editor.h(199/1):    word InsertFallthrough(const CodeWarning& log);
-  ct/Editor.h(204/1):    word InsertMemberInit(const CodeWarning& log);
-  ct/Editor.h(206/1):    word InsertPODCtor(const CodeWarning& log);
-  ct/Editor.h(207/1):    word InsertPureVirtual(const CodeWarning& log);
-  ct/Editor.h(209/1):    word MoveDefine(const CodeWarning& log);
-  ct/Editor.h(210/1):    word MoveMemberInit(const CodeWarning& log);
-  ct/Editor.h(214/1):    word ReplaceHeading(const CodeWarning& log);
-  ct/Editor.h(215/1):    word ReplaceName(const CodeWarning& log);
-  ct/Editor.h(420/1):    word FixInvokers(const CodeWarning& log);
-  ct/Editor.h(429/1):    word ChangeFunctionToMember(const Function* func, word offset);
-  ct/Editor.h(429/2):    word ChangeFunctionToMember(const Function* func, word offset);
-  ct/Editor.h(430/1):    word ChangeInvokerToMember(const Function* func, word offset);
-  ct/Editor.h(430/2):    word ChangeInvokerToMember(const Function* func, word offset);
-  ct/Editor.h(431/1):    word EraseArgument(const Function* func, word offset);
-  ct/Editor.h(431/2):    word EraseArgument(const Function* func, word offset);
-  ct/Editor.h(432/1):    word EraseDefaultValue(const Function* func, word offset);
-  ct/Editor.h(432/2):    word EraseDefaultValue(const Function* func, word offset);
-  ct/Editor.h(433/1):    word EraseParameter(const Function* func, word offset);
-  ct/Editor.h(433/2):    word EraseParameter(const Function* func, word offset);
-  ct/Editor.h(435/1):    word InsertArgument(const Function* func, word offset);
-  ct/Editor.h(435/2):    word InsertArgument(const Function* func, word offset);
-  ct/Editor.h(436/1):    word SplitVirtualFunction(const Function* func);
+  ct/Editor.h(177/1):    word DemoteFunction(const CodeWarning& log);
+  ct/Editor.h(181/1):    word EraseCast(const CodeWarning& log);
+  ct/Editor.h(182/1):    word EraseClass(const CodeWarning& log);
+  ct/Editor.h(195/1):    word InsertCopyCtorCall(const CodeWarning& log);
+  ct/Editor.h(196/1):    word InsertDataInit(const CodeWarning& log);
+  ct/Editor.h(198/1):    word InsertDisplay(const CodeWarning& log);
+  ct/Editor.h(199/1):    word InsertEnumName(const CodeWarning& log);
+  ct/Editor.h(200/1):    word InsertFallthrough(const CodeWarning& log);
+  ct/Editor.h(205/1):    word InsertMemberInit(const CodeWarning& log);
+  ct/Editor.h(207/1):    word InsertPODCtor(const CodeWarning& log);
+  ct/Editor.h(208/1):    word InsertPureVirtual(const CodeWarning& log);
+  ct/Editor.h(210/1):    word MoveDefine(const CodeWarning& log);
+  ct/Editor.h(211/1):    word MoveMemberInit(const CodeWarning& log);
+  ct/Editor.h(215/1):    word ReplaceHeading(const CodeWarning& log);
+  ct/Editor.h(216/1):    word ReplaceName(const CodeWarning& log);
+  ct/Editor.h(421/1):    word FixInvokers(const CodeWarning& log);
+  ct/Editor.h(430/1):    word ChangeFunctionToMember(const Function* func, word offset);
+  ct/Editor.h(430/2):    word ChangeFunctionToMember(const Function* func, word offset);
+  ct/Editor.h(431/1):    word ChangeInvokerToMember(const Function* func, word offset);
+  ct/Editor.h(431/2):    word ChangeInvokerToMember(const Function* func, word offset);
+  ct/Editor.h(432/1):    word EraseArgument(const Function* func, word offset);
+  ct/Editor.h(432/2):    word EraseArgument(const Function* func, word offset);
+  ct/Editor.h(433/1):    word EraseDefaultValue(const Function* func, word offset);
+  ct/Editor.h(433/2):    word EraseDefaultValue(const Function* func, word offset);
+  ct/Editor.h(434/1):    word EraseParameter(const Function* func, word offset);
+  ct/Editor.h(434/2):    word EraseParameter(const Function* func, word offset);
+  ct/Editor.h(436/1):    word InsertArgument(const Function* func, word offset);
+  ct/Editor.h(436/2):    word InsertArgument(const Function* func, word offset);
+  ct/Editor.h(437/1):    word SplitVirtualFunction(const Function* func);
+  ct/LibrarySet.h(116/1):    virtual NodeBase::word LineTypes(NodeBase::CliThread& cli,
   mb/MediaEndpt.h(113/1):    virtual void ProcessIcMsg(Message& msg);
   nb/BuddyHeap.cpp(77/3):       const string& prefix, const Flags& options) const;
   nb/Debug.h(118/1):    static void noop(debug64_t info = 0);
@@ -1655,7 +1642,7 @@ W032 Unused function
   ct/CxxScope.h(1216):    bool IsFinal() const { return GetDecl()->final_; }
   ct/CxxString.h(46):    size_t rfind_first_of
   ct/CxxString.h(114):    std::string& Prefix(std::string&& scope,
-  ct/Editor.h(424):    word FixInvoker(const Function* func, const CodeWarning& log);
+  ct/Editor.h(425):    word FixInvoker(const Function* func, const CodeWarning& log);
   ct/Lexer.h(457):    size_t LineFindFirstOf(size_t pos, const std::string& chars) const;
   dip/BotTrace.h(72):    DipHeader* Header() const;
   dip/TokenMessage.h(48):    explicit TokenMessage(const Token* stream);
@@ -1806,9 +1793,10 @@ W042 Member could be private
   ct/CodeDirSet.h(54):    void to_str(stringVector& strings, bool verbose) const override;
   ct/CodeFile.h(131):    const CxxTokenList& Items() const { return items_; }
   ct/CodeFile.h(132):    const IncludePtrVector& Includes() const { return incls_; }
-  ct/CodeFile.h(292):    size_t FindFirstReference(const CxxTokenVector& refs) const;
-  ct/CodeFile.h(297):    size_t FindLastUsage(const CxxNamedSet& usages) const;
-  ct/CodeFileSet.h(109):    void to_str(stringVector& strings, bool verbose) const override;
+  ct/CodeFile.h(266):    void GetLineCounts() const;
+  ct/CodeFile.h(296):    size_t FindFirstReference(const CxxTokenVector& refs) const;
+  ct/CodeFile.h(301):    size_t FindLastUsage(const CxxNamedSet& usages) const;
+  ct/CodeFileSet.h(114):    void to_str(stringVector& strings, bool verbose) const override;
   ct/CodeItemSet.h(64):    void to_str(stringVector& strings, bool verbose) const override;
   ct/Cxx.h(558):    Numeric(NumericType type, size_t width, bool sign) :
   ct/CxxArea.h(92):    Typedef* FindType(const std::string& name) const;
@@ -2210,7 +2198,7 @@ W060 Base class constructor is public
   sb/TlvMessage.h(50):    TlvMessage(ProtocolSM* psm, size_t size);
   sb/TlvMessage.h(58):    TlvMessage(const TlvParm& parm, ProtocolSM* psm);
 W065 Base class virtual destructor is not public
-  ct/LibrarySet.h(196):    virtual ~LibrarySet();
+  ct/LibrarySet.h(202):    virtual ~LibrarySet();
   nb/CliAppData.h(82):    virtual ~CliAppData();
   nb/Exception.h(69):    virtual ~Exception();
   nb/Thread.h(280):    virtual ~Thread();
@@ -2269,7 +2257,7 @@ W075 Virtual function is public
   cb/ProxyBcSessions.h(470):    virtual EventHandler::Rc RaiseProxyRelease
   cb/ProxyBcSessions.h(510):    void SetUPsm(MediaPsm& psm) override;
   ct/CodeDirSet.h(54):    void to_str(stringVector& strings, bool verbose) const override;
-  ct/CodeFileSet.h(109):    void to_str(stringVector& strings, bool verbose) const override;
+  ct/CodeFileSet.h(114):    void to_str(stringVector& strings, bool verbose) const override;
   ct/CodeItemSet.h(64):    void to_str(stringVector& strings, bool verbose) const override;
   ct/CxxArea.h(102):    virtual Function* FindFunc(const std::string& name,
   ct/CxxArea.h(110):    virtual Function* MatchFunc(const Function* curr, bool base) const;
@@ -2436,33 +2424,34 @@ W075 Virtual function is public
   ct/LibrarySet.h(99):    virtual NodeBase::word Countlines(std::string& result) const;
   ct/LibrarySet.h(105):    virtual NodeBase::word Fix(NodeBase::CliThread& cli,
   ct/LibrarySet.h(111):    virtual NodeBase::word Format(std::string& expl) const;
-  ct/LibrarySet.h(119):    virtual NodeBase::word Parse
-  ct/LibrarySet.h(126):    virtual NodeBase::word Scan(std::ostream& stream,
-  ct/LibrarySet.h(133):    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
-  ct/LibrarySet.h(137):    virtual BuildOrder SortInBuildOrder() const;
-  ct/LibrarySet.h(142):    virtual LibrarySet* Assign(LibrarySet* that);
-  ct/LibrarySet.h(143):    virtual LibrarySet* Intersection(const LibrarySet* that) const;
-  ct/LibrarySet.h(144):    virtual LibrarySet* Difference(const LibrarySet* that) const;
-  ct/LibrarySet.h(145):    virtual LibrarySet* Union(const LibrarySet* that) const;
-  ct/LibrarySet.h(146):    virtual LibrarySet* Directories() const;
-  ct/LibrarySet.h(147):    virtual LibrarySet* Files() const;
-  ct/LibrarySet.h(148):    virtual LibrarySet* FileName(const LibrarySet* that) const;
-  ct/LibrarySet.h(149):    virtual LibrarySet* FileType(const LibrarySet* that) const;
-  ct/LibrarySet.h(150):    virtual LibrarySet* MatchString(const LibrarySet* that) const;
-  ct/LibrarySet.h(151):    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
-  ct/LibrarySet.h(152):    virtual LibrarySet* Implements() const;
-  ct/LibrarySet.h(153):    virtual LibrarySet* UsedBy(bool self) const;
-  ct/LibrarySet.h(154):    virtual LibrarySet* Users(bool self) const;
-  ct/LibrarySet.h(155):    virtual LibrarySet* AffectedBy() const;
-  ct/LibrarySet.h(156):    virtual LibrarySet* Affecters() const;
-  ct/LibrarySet.h(157):    virtual LibrarySet* CommonAffecters() const;
-  ct/LibrarySet.h(158):    virtual LibrarySet* NeededBy() const;
-  ct/LibrarySet.h(159):    virtual LibrarySet* Needers() const;
-  ct/LibrarySet.h(160):    virtual LibrarySet* DeclaredBy() const;
-  ct/LibrarySet.h(161):    virtual LibrarySet* Declarers() const;
-  ct/LibrarySet.h(162):    virtual LibrarySet* Definitions() const;
-  ct/LibrarySet.h(163):    virtual LibrarySet* ReferencedBy() const;
-  ct/LibrarySet.h(164):    virtual LibrarySet* Referencers() const;
+  ct/LibrarySet.h(116):    virtual NodeBase::word LineTypes(NodeBase::CliThread& cli,
+  ct/LibrarySet.h(125):    virtual NodeBase::word Parse
+  ct/LibrarySet.h(132):    virtual NodeBase::word Scan(std::ostream& stream,
+  ct/LibrarySet.h(139):    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
+  ct/LibrarySet.h(143):    virtual BuildOrder SortInBuildOrder() const;
+  ct/LibrarySet.h(148):    virtual LibrarySet* Assign(LibrarySet* that);
+  ct/LibrarySet.h(149):    virtual LibrarySet* Intersection(const LibrarySet* that) const;
+  ct/LibrarySet.h(150):    virtual LibrarySet* Difference(const LibrarySet* that) const;
+  ct/LibrarySet.h(151):    virtual LibrarySet* Union(const LibrarySet* that) const;
+  ct/LibrarySet.h(152):    virtual LibrarySet* Directories() const;
+  ct/LibrarySet.h(153):    virtual LibrarySet* Files() const;
+  ct/LibrarySet.h(154):    virtual LibrarySet* FileName(const LibrarySet* that) const;
+  ct/LibrarySet.h(155):    virtual LibrarySet* FileType(const LibrarySet* that) const;
+  ct/LibrarySet.h(156):    virtual LibrarySet* MatchString(const LibrarySet* that) const;
+  ct/LibrarySet.h(157):    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
+  ct/LibrarySet.h(158):    virtual LibrarySet* Implements() const;
+  ct/LibrarySet.h(159):    virtual LibrarySet* UsedBy(bool self) const;
+  ct/LibrarySet.h(160):    virtual LibrarySet* Users(bool self) const;
+  ct/LibrarySet.h(161):    virtual LibrarySet* AffectedBy() const;
+  ct/LibrarySet.h(162):    virtual LibrarySet* Affecters() const;
+  ct/LibrarySet.h(163):    virtual LibrarySet* CommonAffecters() const;
+  ct/LibrarySet.h(164):    virtual LibrarySet* NeededBy() const;
+  ct/LibrarySet.h(165):    virtual LibrarySet* Needers() const;
+  ct/LibrarySet.h(166):    virtual LibrarySet* DeclaredBy() const;
+  ct/LibrarySet.h(167):    virtual LibrarySet* Declarers() const;
+  ct/LibrarySet.h(168):    virtual LibrarySet* Definitions() const;
+  ct/LibrarySet.h(169):    virtual LibrarySet* ReferencedBy() const;
+  ct/LibrarySet.h(170):    virtual LibrarySet* Referencers() const;
   ct/LibraryVarSet.h(53):    void to_str(stringVector& strings, bool verbose) const override;
   dip/BaseBot.h(90):    virtual bool process_command_line_parameter(char token, std::string& value);
   dip/BaseBot.h(96):    virtual std::string report_command_line_parameters();
@@ -2687,8 +2676,9 @@ W077 Virtual function has no overrides
   sb/TlvMessage.h(276):    virtual void AddFence();
 W082 Adjacent arguments have the same type
   cb/BcSessions.h(1212):    BcFactory(Id fid, ProtocolId prid, c_string name);
-  ct/CodeFile.h(539):    void UpdatePos(EditorAction action,
-  ct/CodeWarning.h(138):    void UpdatePos(EditorAction action,
+  ct/CodeFile.h(543):    void UpdatePos(EditorAction action,
+  ct/CodeWarning.h(62):    WarningAttrs(bool fixable, bool disabled, NodeBase::c_string expl);
+  ct/CodeWarning.h(139):    void UpdatePos(EditorAction action,
   ct/Cxx.h(634):    SymbolView(Accessibility a, TypeMatch m, Cxx::Access c,
   ct/CxxExecute.h(96):    StackArg(CxxToken* t, TagCount p, bool lvalue, bool ctor);
   ct/CxxExecute.h(291):    TypeMatch CalcMatchWith(const StackArg& that,
@@ -2719,17 +2709,17 @@ W082 Adjacent arguments have the same type
   ct/Editor.cpp(864): static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
   ct/Editor.cpp(976): static void Rename(string& code, const string& oldName, const string& newName)
   ct/Editor.h(106):    void Rename(size_t pos, const string& oldName, const string& newName);
-  ct/Editor.h(263):    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
-  ct/Editor.h(299):    word InsertForward(size_t pos, const string& nspace, const string& forward);
-  ct/Editor.h(304):    word InsertNamespaceForward(size_t pos,
-  ct/Editor.h(321):    static void ChangeForwards
-  ct/Editor.h(369):    void FindFreeItemPos(const Namespace* space, const string& name,
-  ct/Editor.h(379):    CxxItemVector FindDeclRange
-  ct/Editor.h(508):    void UpdateItemDefnAttrs(const CxxToken* prev,
-  ct/Editor.h(514):    word UpdateItemDefnLoc(const CxxToken* prev,
-  ct/Editor.h(569):    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
-  ct/Editor.h(597):    size_t Replace(size_t pos, size_t count, const string& code);
-  ct/Editor.h(644):    void UpdatePos(EditorAction action,
+  ct/Editor.h(264):    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
+  ct/Editor.h(300):    word InsertForward(size_t pos, const string& nspace, const string& forward);
+  ct/Editor.h(305):    word InsertNamespaceForward(size_t pos,
+  ct/Editor.h(322):    static void ChangeForwards
+  ct/Editor.h(370):    void FindFreeItemPos(const Namespace* space, const string& name,
+  ct/Editor.h(380):    CxxItemVector FindDeclRange
+  ct/Editor.h(509):    void UpdateItemDefnAttrs(const CxxToken* prev,
+  ct/Editor.h(515):    word UpdateItemDefnLoc(const CxxToken* prev,
+  ct/Editor.h(570):    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
+  ct/Editor.h(598):    size_t Replace(size_t pos, size_t count, const string& code);
+  ct/Editor.h(645):    void UpdatePos(EditorAction action,
   ct/Lexer.h(257):    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   ct/Lexer.h(587):    LineType CalcLineType(size_t n, bool& cont, bool& c_comment);
   ct/Lexer.h(665):    void SetDepth(int8_t depth1, int8_t depth2, bool merge = true);
@@ -2802,7 +2792,7 @@ W082 Adjacent arguments have the same type
   st/StTestData.h(78):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
   st/TestSessions.h(354):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 W088 Argument could be const
-  ct/Editor.h(509/4):       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
+  ct/Editor.h(510/4):       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
   nb/Object.h(67/2):    virtual void Patch(sel_t selector, void* arguments) { }
   nb/Q1Way.h(90/1):    bool Enq(T& elem)
   nb/Q1Way.h(114/1):    bool Henq(T& elem)
@@ -2926,29 +2916,30 @@ W092 Function could be free
   ct/Editor.h(171):    word ChangeCast(const CodeWarning& log); // Editor.cpp
   ct/Editor.h(172):    word ChangeClassToNamespace(const CodeWarning& log); // Editor.cpp
   ct/Editor.h(175):    word ChangeOperator(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(180):    word EraseCast(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(181):    word EraseClass(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(194):    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(195):    word InsertDataInit(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(197):    word InsertDisplay(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(198):    word InsertEnumName(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(199):    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(204):    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(206):    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(207):    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(209):    word MoveDefine(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(210):    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(214):    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(215):    word ReplaceName(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(355):    void QualifyClassItems(CxxScope* decl, string& code) const; // Editor.cpp
-  ct/Editor.h(420):    word FixInvokers(const CodeWarning& log); // Editor.cpp
-  ct/Editor.h(429):    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(430):    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(431):    word EraseArgument(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(432):    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(433):    word EraseParameter(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(435):    word InsertArgument(const Function* func, word offset); // Editor.cpp
-  ct/Editor.h(436):    word SplitVirtualFunction(const Function* func); // Editor.cpp
+  ct/Editor.h(177):    word DemoteFunction(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(181):    word EraseCast(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(182):    word EraseClass(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(195):    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(196):    word InsertDataInit(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(198):    word InsertDisplay(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(199):    word InsertEnumName(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(200):    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(205):    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(207):    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(208):    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(210):    word MoveDefine(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(211):    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(215):    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(216):    word ReplaceName(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(356):    void QualifyClassItems(CxxScope* decl, string& code) const; // Editor.cpp
+  ct/Editor.h(421):    word FixInvokers(const CodeWarning& log); // Editor.cpp
+  ct/Editor.h(430):    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(431):    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(432):    word EraseArgument(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(433):    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(434):    word EraseParameter(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(436):    word InsertArgument(const Function* func, word offset); // Editor.cpp
+  ct/Editor.h(437):    word SplitVirtualFunction(const Function* func); // Editor.cpp
   ct/Parser.h(606):    static bool Backup(size_t cause); // Parser.cpp
   dip/BaseBot.h(178):    void cancel_event(BotEvent event); // BaseBot.cpp
   dip/BaseBot.h(523):    static void report_ccd(const Token& power, bool disorder); // BaseBot.cpp
@@ -3267,48 +3258,48 @@ W106 Function does not invoke Debug::ft
   cb/BcProtocol.cpp(226): bool CipUdpService::Enabled() const
   cb/BcProtocol.cpp(302): bool CipTcpService::Enabled() const
   cb/DigitString.cpp(146): Digit DigitString::At(DigitCount i) const
-  ct/CodeFile.cpp(1150): void CodeFile::EraseClass(const Class* cls)
-  ct/CodeFile.cpp(1158): void CodeFile::EraseData(const Data* data)
-  ct/CodeFile.cpp(1166): void CodeFile::EraseEnum(const Enum* item)
-  ct/CodeFile.cpp(1174): void CodeFile::EraseForw(const Forward* forw)
-  ct/CodeFile.cpp(1182): void CodeFile::EraseFunc(const Function* func)
-  ct/CodeFile.cpp(1205): void CodeFile::EraseItem(const CxxToken* item)
-  ct/CodeFile.cpp(1219): void CodeFile::EraseSpace(const SpaceDefn* space)
-  ct/CodeFile.cpp(1227): void CodeFile::EraseType(const Typedef* type)
-  ct/CodeFile.cpp(1235): void CodeFile::EraseUsing(const Using* use)
-  ct/CodeFile.cpp(1600): void CodeFile::GetLineCounts() const
-  ct/CodeFile.cpp(1810): void CodeFile::InsertAsm(Asm* code)
-  ct/CodeFile.cpp(1818): void CodeFile::InsertClass(Class* cls)
-  ct/CodeFile.cpp(1826): void CodeFile::InsertData(Data* data)
-  ct/CodeFile.cpp(1834): bool CodeFile::InsertDirective(DirectivePtr& dir)
-  ct/CodeFile.cpp(1843): void CodeFile::InsertEnum(Enum* item)
-  ct/CodeFile.cpp(1851): void CodeFile::InsertForw(Forward* forw)
-  ct/CodeFile.cpp(1859): void CodeFile::InsertFunc(Function* func)
-  ct/CodeFile.cpp(1867): void CodeFile::InsertInclude(IncludePtr& incl)
-  ct/CodeFile.cpp(1910): void CodeFile::InsertItem(CxxToken* item)
-  ct/CodeFile.cpp(1935): void CodeFile::InsertMacro(Macro* macro)
-  ct/CodeFile.cpp(1943): void CodeFile::InsertSpace(SpaceDefn* space)
-  ct/CodeFile.cpp(1951): void CodeFile::InsertStaticAssert(StaticAssert* assert)
-  ct/CodeFile.cpp(1959): void CodeFile::InsertType(Typedef* type)
-  ct/CodeFile.cpp(1967): void CodeFile::InsertUsing(Using* use)
+  ct/CodeFile.cpp(1189): void CodeFile::EraseClass(const Class* cls)
+  ct/CodeFile.cpp(1197): void CodeFile::EraseData(const Data* data)
+  ct/CodeFile.cpp(1205): void CodeFile::EraseEnum(const Enum* item)
+  ct/CodeFile.cpp(1213): void CodeFile::EraseForw(const Forward* forw)
+  ct/CodeFile.cpp(1221): void CodeFile::EraseFunc(const Function* func)
+  ct/CodeFile.cpp(1244): void CodeFile::EraseItem(const CxxToken* item)
+  ct/CodeFile.cpp(1258): void CodeFile::EraseSpace(const SpaceDefn* space)
+  ct/CodeFile.cpp(1266): void CodeFile::EraseType(const Typedef* type)
+  ct/CodeFile.cpp(1274): void CodeFile::EraseUsing(const Using* use)
+  ct/CodeFile.cpp(1639): void CodeFile::GetLineCounts() const
+  ct/CodeFile.cpp(1849): void CodeFile::InsertAsm(Asm* code)
+  ct/CodeFile.cpp(1857): void CodeFile::InsertClass(Class* cls)
+  ct/CodeFile.cpp(1865): void CodeFile::InsertData(Data* data)
+  ct/CodeFile.cpp(1873): bool CodeFile::InsertDirective(DirectivePtr& dir)
+  ct/CodeFile.cpp(1882): void CodeFile::InsertEnum(Enum* item)
+  ct/CodeFile.cpp(1890): void CodeFile::InsertForw(Forward* forw)
+  ct/CodeFile.cpp(1898): void CodeFile::InsertFunc(Function* func)
+  ct/CodeFile.cpp(1906): void CodeFile::InsertInclude(IncludePtr& incl)
+  ct/CodeFile.cpp(1949): void CodeFile::InsertItem(CxxToken* item)
+  ct/CodeFile.cpp(1974): void CodeFile::InsertMacro(Macro* macro)
+  ct/CodeFile.cpp(1982): void CodeFile::InsertSpace(SpaceDefn* space)
+  ct/CodeFile.cpp(1990): void CodeFile::InsertStaticAssert(StaticAssert* assert)
+  ct/CodeFile.cpp(1998): void CodeFile::InsertType(Typedef* type)
+  ct/CodeFile.cpp(2006): void CodeFile::InsertUsing(Using* use)
   ct/CodeFileSet.cpp(93): static bool IsSortedByFileLevel(const FileLevel& item1, const FileLevel& item2)
   ct/CodeItemSet.cpp(55): void CodeItemSet::CopyItems(const CxxNamedSet& items)
   ct/CodeItemSet.cpp(67): void CodeItemSet::CopyUsages(const CxxUsageSets& usages)
   ct/CodeTypes.cpp(406): size_t IndentSize()
   ct/CodeTypes.cpp(413): bool IsAccessControl(const std::string& s)
   ct/CodeTypes.cpp(426): size_t LineLengthMax()
-  ct/CodeWarning.cpp(351): bool CodeWarning::HasCodeToDisplay() const
-  ct/CodeWarning.cpp(358): bool CodeWarning::HasInfoToDisplay() const
-  ct/CodeWarning.cpp(835): bool CodeWarning::IsInformational() const
-  ct/CodeWarning.cpp(842): bool CodeWarning::IsSortedByFile
-  ct/CodeWarning.cpp(861): bool CodeWarning::IsSortedByType
-  ct/CodeWarning.cpp(880): bool CodeWarning::IsSortedToFix
-  ct/CodeWarning.cpp(899): void CodeWarning::ItemDeleted(const CxxToken* item) const
-  ct/CodeWarning.cpp(909): size_t CodeWarning::Line() const
-  ct/CodeWarning.cpp(977): bool CodeWarning::Preserve() const
-  ct/CodeWarning.cpp(1004): bool CodeWarning::Revoke() const
-  ct/CodeWarning.cpp(1019): bool CodeWarning::Suppress() const
-  ct/CodeWarning.cpp(1286): bool CodeWarning::WasResolved() const
+  ct/CodeWarning.cpp(337): bool CodeWarning::HasCodeToDisplay() const
+  ct/CodeWarning.cpp(344): bool CodeWarning::HasInfoToDisplay() const
+  ct/CodeWarning.cpp(821): bool CodeWarning::IsInformational() const
+  ct/CodeWarning.cpp(828): bool CodeWarning::IsSortedByFile
+  ct/CodeWarning.cpp(847): bool CodeWarning::IsSortedByType
+  ct/CodeWarning.cpp(866): bool CodeWarning::IsSortedToFix
+  ct/CodeWarning.cpp(885): void CodeWarning::ItemDeleted(const CxxToken* item) const
+  ct/CodeWarning.cpp(895): size_t CodeWarning::Line() const
+  ct/CodeWarning.cpp(963): bool CodeWarning::Preserve() const
+  ct/CodeWarning.cpp(990): bool CodeWarning::Revoke() const
+  ct/CodeWarning.cpp(1005): bool CodeWarning::Suppress() const
+  ct/CodeWarning.cpp(1272): bool CodeWarning::WasResolved() const
   ct/Cxx.cpp(114): Cxx::Access FindAccessControl(const std::string& s)
   ct/Cxx.cpp(888): static void EraseTemplateArgs
   ct/Cxx.cpp(920): static void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
@@ -3525,7 +3516,7 @@ W106 Function does not invoke Debug::ft
   ct/CxxVector.h(124): template<class T> void EraseItem(std::vector<T*>& vec, const T* item)
   ct/CxxVector.h(148): template<class T> void DeleteItemPtr
   ct/Editor.cpp(1972): size_t Editor::CommitCount() { return Commits_; }
-  ct/Editor.cpp(4921): static FunctionRole WarningToRole(Warning log)
+  ct/Editor.cpp(4935): static FunctionRole WarningToRole(Warning log)
   ct/Interpreter.cpp(133): const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
   ct/Interpreter.cpp(141): bool OperatorInfo::GetType(const string& op, LibTokenType& type)
   ct/Lexer.cpp(87): static IndentRule ClassifyIndent(string& id)
@@ -3564,16 +3555,16 @@ W106 Function does not invoke Debug::ft
   ct/LibrarySet.cpp(295): LibrarySet* LibrarySet::Intersection(const LibrarySet* that) const
   ct/LibrarySet.cpp(302): bool LibrarySet::IsReadOnly() const
   ct/LibrarySet.cpp(309): bool LibrarySet::IsTemporary() const
-  ct/LibrarySet.cpp(341): LibrarySet* LibrarySet::MatchString(const LibrarySet* that) const
-  ct/LibrarySet.cpp(348): LibrarySet* LibrarySet::NeededBy() const
-  ct/LibrarySet.cpp(355): LibrarySet* LibrarySet::Needers() const
-  ct/LibrarySet.cpp(372): word LibrarySet::NotImplemented(string& expl) const
-  ct/LibrarySet.cpp(384): LibrarySet* LibrarySet::OpError(c_string op) const
-  ct/LibrarySet.cpp(412): LibrarySet* LibrarySet::ReferencedBy() const
-  ct/LibrarySet.cpp(419): LibrarySet* LibrarySet::Referencers() const
-  ct/LibrarySet.cpp(516): LibrarySet* LibrarySet::Union(const LibrarySet* that) const
-  ct/LibrarySet.cpp(523): LibrarySet* LibrarySet::UsedBy(bool self) const
-  ct/LibrarySet.cpp(530): LibrarySet* LibrarySet::Users(bool self) const
+  ct/LibrarySet.cpp(350): LibrarySet* LibrarySet::MatchString(const LibrarySet* that) const
+  ct/LibrarySet.cpp(357): LibrarySet* LibrarySet::NeededBy() const
+  ct/LibrarySet.cpp(364): LibrarySet* LibrarySet::Needers() const
+  ct/LibrarySet.cpp(381): word LibrarySet::NotImplemented(string& expl) const
+  ct/LibrarySet.cpp(393): LibrarySet* LibrarySet::OpError(c_string op) const
+  ct/LibrarySet.cpp(421): LibrarySet* LibrarySet::ReferencedBy() const
+  ct/LibrarySet.cpp(428): LibrarySet* LibrarySet::Referencers() const
+  ct/LibrarySet.cpp(525): LibrarySet* LibrarySet::Union(const LibrarySet* that) const
+  ct/LibrarySet.cpp(532): LibrarySet* LibrarySet::UsedBy(bool self) const
+  ct/LibrarySet.cpp(539): LibrarySet* LibrarySet::Users(bool self) const
   ct/Parser.cpp(301): size_t Parser::CurrPos() const
   dip/BaseBot.cpp(431): BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
   dip/BaseBot.cpp(438): BaseBot* BaseBot::instance()
@@ -3922,7 +3913,7 @@ W106 Function does not invoke Debug::ft
   st/MscContext.cpp(81): bool MscContext::IsEqualTo(const void* rcvr, uint16_t cid) const
   st/MscContextPair.cpp(53): void MscContextPair::Contexts(MscContext*& ctx1, MscContext*& ctx2) const
 W107 Function does not invoke Debug::ft as first statement
-  ct/CodeFile.cpp(518):    Debug::ft("CodeFile.Affecters");
+  ct/CodeFile.cpp(525):    Debug::ft("CodeFile.Affecters");
   ct/CxxExecute.cpp(2377):    Debug::ft("Tracepoint.OnLine");
   nb/CinThread.cpp(104):       Debug::ft(CinThread_Enter);
   nb/Exception.cpp(42):    Debug::ft("Exception.ctor");  //@
@@ -4043,12 +4034,12 @@ W119 Argument passed by value is modified
   ct/CxxToken.cpp(729/2):    const CxxToken* item, word offset, const string& info) const
   ct/Editor.cpp(1915/1): bool Editor::CodeFollowsImmediately(size_t pos) const
   ct/Editor.cpp(1930/1): bool Editor::CommentFollows(size_t pos) const
-  ct/Editor.cpp(2768/4):    size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const
-  ct/Editor.cpp(4440/1): word Editor::InsertForward(size_t pos,
-  ct/Editor.cpp(4608/1):    (size_t pos, const string& nspace, const string& forward)
-  ct/Editor.cpp(5234/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
-  ct/Editor.cpp(5416/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-  ct/Editor.cpp(6648/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+  ct/Editor.cpp(2780/4):    size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const
+  ct/Editor.cpp(4454/1): word Editor::InsertForward(size_t pos,
+  ct/Editor.cpp(4622/1):    (size_t pos, const string& nspace, const string& forward)
+  ct/Editor.cpp(5248/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
+  ct/Editor.cpp(5430/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+  ct/Editor.cpp(6662/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
   ct/Interpreter.cpp(488/1): LibExprErr Interpreter::ApplyOperator(bool operand)
   ct/Interpreter.cpp(599/1): LibrarySet* Interpreter::Error(LibExprErr err) const
   ct/Lexer.cpp(1304/1): size_t Lexer::CurrBegin(size_t pos) const
@@ -4124,7 +4115,7 @@ W119 Argument passed by value is modified
   st/MscBuilder.cpp(1025/1):    (const MscContext* active, const MsgTrace& mt, const TransTrace* tt)
 W120 Function returns non-const reference or pointer to member data
   cb/BcSessions.h(1000):    DigitString& DialedDigits() { return dialed_; }
-  ct/CodeFile.h(301):    Editor& GetEditor() { return editor_; }
+  ct/CodeFile.h(305):    Editor& GetEditor() { return editor_; }
   ct/LibrarySet.h(76):    LibItemSet& Items() { return items_; }
   nb/CliText.h(82):    Registry<CliParm>& Parms() { return parms_; }
   nb/CliThread.h(190):    CliCookie& Cookie() { return cookie_; }
@@ -4585,64 +4576,68 @@ ct/CodeDirSet.h
   W075 Virtual function is public
     54:    void to_str(stringVector& strings, bool verbose) const override;
 ct/CodeFile.cpp
+  W005 Functional cast
+    1183:          << spaces(3) << LineType(t) << CRLF;
   W007 Cast down the inheritance hierarchy
-    80:          auto base = static_cast<const Class*>(*b);
-    236:       auto base = static_cast<const Class*>(*b);
-    298:                auto type = static_cast<const Typedef*>(*item2);
-    321:          auto type = static_cast<const Typedef*>(*item1);
-    1081:       auto f = static_cast<const CodeFile*>(*i);
-    1089:       auto f = static_cast<const CodeFile*>(*u);
-    1470:       auto file = static_cast<const CodeFile*>(*f);
-    1672:          auto file = static_cast<const CodeFile*>(*d);
-    2091:       auto file = static_cast<const CodeFile*>(*f);
-    2255:       const auto& name = static_cast<const CodeFile*>(*f)->Name();
-    2413:                auto incl = static_cast<const CodeFile*>(*a);
-    2521:          auto file = static_cast<const CodeFile*>(*d);
-    2550:       auto file = static_cast<CodeFile*>(*f);
-    2581:       auto base = static_cast<const Class*>(*b);
+    87:          auto base = static_cast<const Class*>(*b);
+    243:       auto base = static_cast<const Class*>(*b);
+    305:                auto type = static_cast<const Typedef*>(*item2);
+    328:          auto type = static_cast<const Typedef*>(*item1);
+    1088:       auto f = static_cast<const CodeFile*>(*i);
+    1096:       auto f = static_cast<const CodeFile*>(*u);
+    1173:       static_cast<const CodeFile*>(*f)->GetLineCounts();
+    1509:       auto file = static_cast<const CodeFile*>(*f);
+    1711:          auto file = static_cast<const CodeFile*>(*d);
+    2130:       auto file = static_cast<const CodeFile*>(*f);
+    2294:       const auto& name = static_cast<const CodeFile*>(*f)->Name();
+    2452:                auto incl = static_cast<const CodeFile*>(*a);
+    2560:          auto file = static_cast<const CodeFile*>(*d);
+    2589:       auto file = static_cast<CodeFile*>(*f);
+    2620:       auto base = static_cast<const Class*>(*b);
 * W106 Function does not invoke Debug::ft
-    1150: void CodeFile::EraseClass(const Class* cls)
-    1158: void CodeFile::EraseData(const Data* data)
-    1166: void CodeFile::EraseEnum(const Enum* item)
-    1174: void CodeFile::EraseForw(const Forward* forw)
-    1182: void CodeFile::EraseFunc(const Function* func)
-    1205: void CodeFile::EraseItem(const CxxToken* item)
-    1219: void CodeFile::EraseSpace(const SpaceDefn* space)
-    1227: void CodeFile::EraseType(const Typedef* type)
-    1235: void CodeFile::EraseUsing(const Using* use)
-    1600: void CodeFile::GetLineCounts() const
-    1810: void CodeFile::InsertAsm(Asm* code)
-    1818: void CodeFile::InsertClass(Class* cls)
-    1826: void CodeFile::InsertData(Data* data)
-    1834: bool CodeFile::InsertDirective(DirectivePtr& dir)
-    1843: void CodeFile::InsertEnum(Enum* item)
-    1851: void CodeFile::InsertForw(Forward* forw)
-    1859: void CodeFile::InsertFunc(Function* func)
-    1867: void CodeFile::InsertInclude(IncludePtr& incl)
-    1910: void CodeFile::InsertItem(CxxToken* item)
-    1935: void CodeFile::InsertMacro(Macro* macro)
-    1943: void CodeFile::InsertSpace(SpaceDefn* space)
-    1951: void CodeFile::InsertStaticAssert(StaticAssert* assert)
-    1959: void CodeFile::InsertType(Typedef* type)
-    1967: void CodeFile::InsertUsing(Using* use)
+    1189: void CodeFile::EraseClass(const Class* cls)
+    1197: void CodeFile::EraseData(const Data* data)
+    1205: void CodeFile::EraseEnum(const Enum* item)
+    1213: void CodeFile::EraseForw(const Forward* forw)
+    1221: void CodeFile::EraseFunc(const Function* func)
+    1244: void CodeFile::EraseItem(const CxxToken* item)
+    1258: void CodeFile::EraseSpace(const SpaceDefn* space)
+    1266: void CodeFile::EraseType(const Typedef* type)
+    1274: void CodeFile::EraseUsing(const Using* use)
+    1639: void CodeFile::GetLineCounts() const
+    1849: void CodeFile::InsertAsm(Asm* code)
+    1857: void CodeFile::InsertClass(Class* cls)
+    1865: void CodeFile::InsertData(Data* data)
+    1873: bool CodeFile::InsertDirective(DirectivePtr& dir)
+    1882: void CodeFile::InsertEnum(Enum* item)
+    1890: void CodeFile::InsertForw(Forward* forw)
+    1898: void CodeFile::InsertFunc(Function* func)
+    1906: void CodeFile::InsertInclude(IncludePtr& incl)
+    1949: void CodeFile::InsertItem(CxxToken* item)
+    1974: void CodeFile::InsertMacro(Macro* macro)
+    1982: void CodeFile::InsertSpace(SpaceDefn* space)
+    1990: void CodeFile::InsertStaticAssert(StaticAssert* assert)
+    1998: void CodeFile::InsertType(Typedef* type)
+    2006: void CodeFile::InsertUsing(Using* use)
   W107 Function does not invoke Debug::ft as first statement
-    518:    Debug::ft("CodeFile.Affecters");
+    525:    Debug::ft("CodeFile.Affecters");
 ct/CodeFile.h
   W026 Unused argument
-    423/3:       const CxxNamed* item, const CxxScope* scope) const;
+    427/3:       const CxxNamed* item, const CxxScope* scope) const;
 * W042 Member could be private
     131:    const CxxTokenList& Items() const { return items_; }
     132:    const IncludePtrVector& Includes() const { return incls_; }
-    292:    size_t FindFirstReference(const CxxTokenVector& refs) const;
-    297:    size_t FindLastUsage(const CxxNamedSet& usages) const;
+    266:    void GetLineCounts() const;
+    296:    size_t FindFirstReference(const CxxTokenVector& refs) const;
+    301:    size_t FindLastUsage(const CxxNamedSet& usages) const;
   W082 Adjacent arguments have the same type
-    539:    void UpdatePos(EditorAction action,
+    543:    void UpdatePos(EditorAction action,
   W120 Function returns non-const reference or pointer to member data
-    301:    Editor& GetEditor() { return editor_; }
+    305:    Editor& GetEditor() { return editor_; }
 ct/CodeFileSet.cpp
   W004 C-style cast
-    606:    LibrarySet* nbSet = (LibrarySet*) this;
-    634:    LibrarySet* nsSet = (LibrarySet*) this;
+    641:    LibrarySet* nbSet = (LibrarySet*) this;
+    669:    LibrarySet* nsSet = (LibrarySet*) this;
   W007 Cast down the inheritance hierarchy
     80:       auto file = static_cast<CodeFile*>(*f);
     193:       auto file = static_cast<CodeFile*>(*f);
@@ -4657,24 +4652,25 @@ ct/CodeFileSet.cpp
     511:    const auto& dirSet = static_cast<const CodeDirSet*>(that)->Items();
     518:       auto file = static_cast<CodeFile*>(*f);
     558:       auto file = static_cast<CodeFile*>(*f);
-    585:       auto file = static_cast<CodeFile*>(*f);
-    739:       auto file = static_cast<CodeFile*>(*f);
-    767:       auto file = static_cast<CodeFile*>(*f);
-    876:       files.push_back(static_cast<CodeFile*>(*f));
-    903:       auto file = static_cast<CodeFile*>(*f);
-    983:       auto file = static_cast<CodeFile*>(*f);
-    1010:       auto file = static_cast<CodeFile*>(*f);
-    1040:       auto file = static_cast<CodeFile*>(*f);
+    583:       auto file = static_cast<CodeFile*>(*f);
+    620:       auto file = static_cast<CodeFile*>(*f);
+    774:       auto file = static_cast<CodeFile*>(*f);
+    802:       auto file = static_cast<CodeFile*>(*f);
+    911:       files.push_back(static_cast<CodeFile*>(*f));
+    938:       auto file = static_cast<CodeFile*>(*f);
+    1018:       auto file = static_cast<CodeFile*>(*f);
+    1045:       auto file = static_cast<CodeFile*>(*f);
+    1075:       auto file = static_cast<CodeFile*>(*f);
   W008 Cast removes const qualification
-    606:    LibrarySet* nbSet = (LibrarySet*) this;
-    634:    LibrarySet* nsSet = (LibrarySet*) this;
+    641:    LibrarySet* nbSet = (LibrarySet*) this;
+    669:    LibrarySet* nsSet = (LibrarySet*) this;
 * W106 Function does not invoke Debug::ft
     93: static bool IsSortedByFileLevel(const FileLevel& item1, const FileLevel& item2)
 ct/CodeFileSet.h
 * W042 Member could be private
-    109:    void to_str(stringVector& strings, bool verbose) const override;
+    114:    void to_str(stringVector& strings, bool verbose) const override;
   W075 Virtual function is public
-    109:    void to_str(stringVector& strings, bool verbose) const override;
+    114:    void to_str(stringVector& strings, bool verbose) const override;
 ct/CodeItemSet.cpp
   W007 Cast down the inheritance hierarchy
     122:       auto item = static_cast<CxxNamed*>(*i);
@@ -4705,47 +4701,47 @@ ct/CodeTypes.h
     489:    OverrideRenamesArgument,  // names in override and root base class differ
 ct/CodeWarning.cpp
   W005 Functional cast
-    233:          << spaces(3) << LineType(t) << CRLF;
-    244:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
-    245:          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
-    246:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
-    305:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+    230:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
+    231:          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
+    232:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+    291:          *stream << (Attrs_.at(Warning(w)).fixable_ ? '*' : SPACE);
   W007 Cast down the inheritance hierarchy
-    207:       auto file = static_cast<CodeFile*>(*f);
-    1010:       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
-    1043:       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
-    1065:       auto data = static_cast<const Data*>(item_);
-    1107:       auto func = static_cast<Function*>(item_);
-    1188:       auto cls = static_cast<const Class*>(item_);
-    1212:       auto cls = static_cast<const Class*>(item_);
-    1247:          auto func = static_cast<const Function*>(item_);
+    203:       auto file = static_cast<CodeFile*>(*f);
+    996:       if(static_cast<const Data*>(item_)->CannotBeConst()) return true;
+    1029:       auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+    1051:       auto data = static_cast<const Data*>(item_);
+    1093:       auto func = static_cast<Function*>(item_);
+    1174:       auto cls = static_cast<const Class*>(item_);
+    1198:       auto cls = static_cast<const Class*>(item_);
+    1233:          auto func = static_cast<const Function*>(item_);
   W008 Cast removes const qualification
-    95:    item_(const_cast<CxxToken*>(item)),
+    94:    item_(const_cast<CxxToken*>(item)),
 * W106 Function does not invoke Debug::ft
-    351: bool CodeWarning::HasCodeToDisplay() const
-    358: bool CodeWarning::HasInfoToDisplay() const
-    835: bool CodeWarning::IsInformational() const
-    842: bool CodeWarning::IsSortedByFile
-    861: bool CodeWarning::IsSortedByType
-    880: bool CodeWarning::IsSortedToFix
-    899: void CodeWarning::ItemDeleted(const CxxToken* item) const
-    909: size_t CodeWarning::Line() const
-    977: bool CodeWarning::Preserve() const
-    1004: bool CodeWarning::Revoke() const
-    1019: bool CodeWarning::Suppress() const
-    1286: bool CodeWarning::WasResolved() const
+    337: bool CodeWarning::HasCodeToDisplay() const
+    344: bool CodeWarning::HasInfoToDisplay() const
+    821: bool CodeWarning::IsInformational() const
+    828: bool CodeWarning::IsSortedByFile
+    847: bool CodeWarning::IsSortedByType
+    866: bool CodeWarning::IsSortedToFix
+    885: void CodeWarning::ItemDeleted(const CxxToken* item) const
+    895: size_t CodeWarning::Line() const
+    963: bool CodeWarning::Preserve() const
+    990: bool CodeWarning::Revoke() const
+    1005: bool CodeWarning::Suppress() const
+    1272: bool CodeWarning::WasResolved() const
 ct/CodeWarning.h
 * W020 Using statement in header
     38: using NodeBase::word;
   W082 Adjacent arguments have the same type
-    138:    void UpdatePos(EditorAction action,
+    62:    WarningAttrs(bool fixable, bool disabled, NodeBase::c_string expl);
+    139:    void UpdatePos(EditorAction action,
 ct/CtIncrement.cpp
   W005 Functional cast
-    1326:       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
-    1341:    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
+    1375:       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
+    1390:    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
   W007 Cast down the inheritance hierarchy
-    1088:          auto dir = static_cast<CodeDir*>(*d);
-    1111:          auto file = static_cast<CodeFile*>(*f);
+    1137:          auto dir = static_cast<CodeDir*>(*d);
+    1160:          auto file = static_cast<CodeFile*>(*f);
 * W043 Member could be protected
     91:    static LibrarySet* Evaluate(CliThread& cli);
 ct/Cxx.cpp
@@ -5692,7 +5688,7 @@ ct/CxxVector.h
 ct/Editor.cpp
   W005 Functional cast
     1077:       if(int(begin) < info->depth) begin = info->depth;
-    2132:    *Cli_->obuf << ": " << Warning(log.warning_);
+    2143:    *Cli_->obuf << ": " << Warning(log.warning_);
   W007 Cast down the inheritance hierarchy
     246:       auto func = static_cast<const Function*>(item);
     686:    return static_cast<Namespace*>(scope);
@@ -5709,53 +5705,53 @@ ct/Editor.cpp
     1745:    auto func = static_cast<const Function*>(log.item_);
     1815:    static_cast<Class*>(log.item_)->SetClassTag(Cxx::ClassType);
     2074:    auto decl = static_cast<Function*>(log.item_);
-    2467:    static_cast<Function*>(log.item_)->SetExplicit(false);
-    2563:    static_cast<ClassData*>(log.item_)->SetMutable(false);
-    2599:    static_cast<Function*>(log.item_)->SetOverride(false);
-    2620:    auto qname = static_cast<const QualName*>(log.item_);
-    2684:    static_cast<Function*>(log.item_)->SetVirtual(false);
-    2754:       usages.directs.erase(static_cast<CxxNamed*>(*i));
-    2755:       usages.indirects.erase(static_cast<CxxNamed*>(*i));
-    2843:          auto data = static_cast<const Data*>(*i);
-    2857:             auto func = static_cast<const Function*>(*i);
-    2871:             auto data = static_cast<const Data*>(*i);
-    3021:    return FindSigEnd(static_cast<const Function*>(log.item_));
-    3341:    auto data = static_cast<Data*>(log.item_);
-    3408:    auto func = static_cast<Function*>(log.item_);
-    3510:    auto data = static_cast<Data*>(log.item_);
-    4131:    auto data = static_cast<Data*>(aref);
-    4138:    ReplaceImpl(static_cast<Function*>(log.item_));
-    4289:    auto func = static_cast<Function*>(log.item_);
-    4640:    auto cls = static_cast<Class*>(log.item_);
-    4941:    auto cls = static_cast<Class*>(item);
-    5371:       ns = static_cast<Namespace*>(ref)->OuterSpace();
-    5447:    auto func = static_cast<const Function*>(log.item_);
-    5528:    auto func = static_cast<const Function*>(log.item_);
-    5538:       auto slit = static_cast<StrLiteral*>(arg);
-    5552:    auto data = static_cast<SpaceData*>(arg->Referent());
-    5559:    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
-    5586:    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
-    5651:    auto type = static_cast<TypeName*>(log.item_);
-    6218:    static_cast<Function*>(log.item_)->SetExplicit(true);
-    6266:    static_cast<Function*>(log.item_)->SetOverride(true);
-    6370:    static_cast<Function*>(log.item_)->SetVirtual(true);
-    6658:       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
+    2479:    static_cast<Function*>(log.item_)->SetExplicit(false);
+    2575:    static_cast<ClassData*>(log.item_)->SetMutable(false);
+    2611:    static_cast<Function*>(log.item_)->SetOverride(false);
+    2632:    auto qname = static_cast<const QualName*>(log.item_);
+    2696:    static_cast<Function*>(log.item_)->SetVirtual(false);
+    2766:       usages.directs.erase(static_cast<CxxNamed*>(*i));
+    2767:       usages.indirects.erase(static_cast<CxxNamed*>(*i));
+    2855:          auto data = static_cast<const Data*>(*i);
+    2869:             auto func = static_cast<const Function*>(*i);
+    2883:             auto data = static_cast<const Data*>(*i);
+    3033:    return FindSigEnd(static_cast<const Function*>(log.item_));
+    3354:    auto data = static_cast<Data*>(log.item_);
+    3421:    auto func = static_cast<Function*>(log.item_);
+    3523:    auto data = static_cast<Data*>(log.item_);
+    4145:    auto data = static_cast<Data*>(aref);
+    4152:    ReplaceImpl(static_cast<Function*>(log.item_));
+    4303:    auto func = static_cast<Function*>(log.item_);
+    4654:    auto cls = static_cast<Class*>(log.item_);
+    4955:    auto cls = static_cast<Class*>(item);
+    5385:       ns = static_cast<Namespace*>(ref)->OuterSpace();
+    5461:    auto func = static_cast<const Function*>(log.item_);
+    5542:    auto func = static_cast<const Function*>(log.item_);
+    5552:       auto slit = static_cast<StrLiteral*>(arg);
+    5566:    auto data = static_cast<SpaceData*>(arg->Referent());
+    5573:    auto slit = static_cast<StrLiteral*>(file_->PosToItem(lpos));
+    5600:    static_cast<Ifndef*>(log.item_)->ChangeName(guard);
+    5665:    auto type = static_cast<TypeName*>(log.item_);
+    6232:    static_cast<Function*>(log.item_)->SetExplicit(true);
+    6280:    static_cast<Function*>(log.item_)->SetOverride(true);
+    6384:    static_cast<Function*>(log.item_)->SetVirtual(true);
+    6672:       auto items = GetItemsForDefn(static_cast<const CxxScope*>(next));
   W082 Adjacent arguments have the same type
     575: static void DebugFtNames(const Function* func, string& flit, string& fvar)
     864: static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
     976: static void Rename(string& code, const string& oldName, const string& newName)
 * W106 Function does not invoke Debug::ft
     1972: size_t Editor::CommitCount() { return Commits_; }
-    4921: static FunctionRole WarningToRole(Warning log)
+    4935: static FunctionRole WarningToRole(Warning log)
   W119 Argument passed by value is modified
     1915/1: bool Editor::CodeFollowsImmediately(size_t pos) const
     1930/1: bool Editor::CommentFollows(size_t pos) const
-    2768/4:    size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const
-    4440/1: word Editor::InsertForward(size_t pos,
-    4608/1:    (size_t pos, const string& nspace, const string& forward)
-    5234/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
-    5416/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-    6648/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+    2780/4:    size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const
+    4454/1: word Editor::InsertForward(size_t pos,
+    4622/1:    (size_t pos, const string& nspace, const string& forward)
+    5248/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
+    5430/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+    6662/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
 * W145 Auto variable copies an object
     739:    auto expl = Expl_;
 ct/Editor.h
@@ -5766,78 +5762,80 @@ ct/Editor.h
     171/1:    word ChangeCast(const CodeWarning& log);
     172/1:    word ChangeClassToNamespace(const CodeWarning& log);
     175/1:    word ChangeOperator(const CodeWarning& log);
-    180/1:    word EraseCast(const CodeWarning& log);
-    181/1:    word EraseClass(const CodeWarning& log);
-    194/1:    word InsertCopyCtorCall(const CodeWarning& log);
-    195/1:    word InsertDataInit(const CodeWarning& log);
-    197/1:    word InsertDisplay(const CodeWarning& log);
-    198/1:    word InsertEnumName(const CodeWarning& log);
-    199/1:    word InsertFallthrough(const CodeWarning& log);
-    204/1:    word InsertMemberInit(const CodeWarning& log);
-    206/1:    word InsertPODCtor(const CodeWarning& log);
-    207/1:    word InsertPureVirtual(const CodeWarning& log);
-    209/1:    word MoveDefine(const CodeWarning& log);
-    210/1:    word MoveMemberInit(const CodeWarning& log);
-    214/1:    word ReplaceHeading(const CodeWarning& log);
-    215/1:    word ReplaceName(const CodeWarning& log);
-    420/1:    word FixInvokers(const CodeWarning& log);
-    429/1:    word ChangeFunctionToMember(const Function* func, word offset);
-    429/2:    word ChangeFunctionToMember(const Function* func, word offset);
-    430/1:    word ChangeInvokerToMember(const Function* func, word offset);
-    430/2:    word ChangeInvokerToMember(const Function* func, word offset);
-    431/1:    word EraseArgument(const Function* func, word offset);
-    431/2:    word EraseArgument(const Function* func, word offset);
-    432/1:    word EraseDefaultValue(const Function* func, word offset);
-    432/2:    word EraseDefaultValue(const Function* func, word offset);
-    433/1:    word EraseParameter(const Function* func, word offset);
-    433/2:    word EraseParameter(const Function* func, word offset);
-    435/1:    word InsertArgument(const Function* func, word offset);
-    435/2:    word InsertArgument(const Function* func, word offset);
-    436/1:    word SplitVirtualFunction(const Function* func);
+    177/1:    word DemoteFunction(const CodeWarning& log);
+    181/1:    word EraseCast(const CodeWarning& log);
+    182/1:    word EraseClass(const CodeWarning& log);
+    195/1:    word InsertCopyCtorCall(const CodeWarning& log);
+    196/1:    word InsertDataInit(const CodeWarning& log);
+    198/1:    word InsertDisplay(const CodeWarning& log);
+    199/1:    word InsertEnumName(const CodeWarning& log);
+    200/1:    word InsertFallthrough(const CodeWarning& log);
+    205/1:    word InsertMemberInit(const CodeWarning& log);
+    207/1:    word InsertPODCtor(const CodeWarning& log);
+    208/1:    word InsertPureVirtual(const CodeWarning& log);
+    210/1:    word MoveDefine(const CodeWarning& log);
+    211/1:    word MoveMemberInit(const CodeWarning& log);
+    215/1:    word ReplaceHeading(const CodeWarning& log);
+    216/1:    word ReplaceName(const CodeWarning& log);
+    421/1:    word FixInvokers(const CodeWarning& log);
+    430/1:    word ChangeFunctionToMember(const Function* func, word offset);
+    430/2:    word ChangeFunctionToMember(const Function* func, word offset);
+    431/1:    word ChangeInvokerToMember(const Function* func, word offset);
+    431/2:    word ChangeInvokerToMember(const Function* func, word offset);
+    432/1:    word EraseArgument(const Function* func, word offset);
+    432/2:    word EraseArgument(const Function* func, word offset);
+    433/1:    word EraseDefaultValue(const Function* func, word offset);
+    433/2:    word EraseDefaultValue(const Function* func, word offset);
+    434/1:    word EraseParameter(const Function* func, word offset);
+    434/2:    word EraseParameter(const Function* func, word offset);
+    436/1:    word InsertArgument(const Function* func, word offset);
+    436/2:    word InsertArgument(const Function* func, word offset);
+    437/1:    word SplitVirtualFunction(const Function* func);
 * W032 Unused function
-    424:    word FixInvoker(const Function* func, const CodeWarning& log);
+    425:    word FixInvoker(const Function* func, const CodeWarning& log);
   W082 Adjacent arguments have the same type
     106:    void Rename(size_t pos, const string& oldName, const string& newName);
-    263:    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
-    299:    word InsertForward(size_t pos, const string& nspace, const string& forward);
-    304:    word InsertNamespaceForward(size_t pos,
-    321:    static void ChangeForwards
-    369:    void FindFreeItemPos(const Namespace* space, const string& name,
-    379:    CxxItemVector FindDeclRange
-    508:    void UpdateItemDefnAttrs(const CxxToken* prev,
-    514:    word UpdateItemDefnLoc(const CxxToken* prev,
-    569:    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
-    597:    size_t Replace(size_t pos, size_t count, const string& code);
-    644:    void UpdatePos(EditorAction action,
+    264:    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
+    300:    word InsertForward(size_t pos, const string& nspace, const string& forward);
+    305:    word InsertNamespaceForward(size_t pos,
+    322:    static void ChangeForwards
+    370:    void FindFreeItemPos(const Namespace* space, const string& name,
+    380:    CxxItemVector FindDeclRange
+    509:    void UpdateItemDefnAttrs(const CxxToken* prev,
+    515:    word UpdateItemDefnLoc(const CxxToken* prev,
+    570:    bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
+    598:    size_t Replace(size_t pos, size_t count, const string& code);
+    645:    void UpdatePos(EditorAction action,
 * W088 Argument could be const
-    509/4:       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
+    510/4:       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
 * W092 Function could be free
     171:    word ChangeCast(const CodeWarning& log); // Editor.cpp
     172:    word ChangeClassToNamespace(const CodeWarning& log); // Editor.cpp
     175:    word ChangeOperator(const CodeWarning& log); // Editor.cpp
-    180:    word EraseCast(const CodeWarning& log); // Editor.cpp
-    181:    word EraseClass(const CodeWarning& log); // Editor.cpp
-    194:    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
-    195:    word InsertDataInit(const CodeWarning& log); // Editor.cpp
-    197:    word InsertDisplay(const CodeWarning& log); // Editor.cpp
-    198:    word InsertEnumName(const CodeWarning& log); // Editor.cpp
-    199:    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
-    204:    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
-    206:    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
-    207:    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
-    209:    word MoveDefine(const CodeWarning& log); // Editor.cpp
-    210:    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
-    214:    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
-    215:    word ReplaceName(const CodeWarning& log); // Editor.cpp
-    355:    void QualifyClassItems(CxxScope* decl, string& code) const; // Editor.cpp
-    420:    word FixInvokers(const CodeWarning& log); // Editor.cpp
-    429:    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
-    430:    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
-    431:    word EraseArgument(const Function* func, word offset); // Editor.cpp
-    432:    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
-    433:    word EraseParameter(const Function* func, word offset); // Editor.cpp
-    435:    word InsertArgument(const Function* func, word offset); // Editor.cpp
-    436:    word SplitVirtualFunction(const Function* func); // Editor.cpp
+    177:    word DemoteFunction(const CodeWarning& log); // Editor.cpp
+    181:    word EraseCast(const CodeWarning& log); // Editor.cpp
+    182:    word EraseClass(const CodeWarning& log); // Editor.cpp
+    195:    word InsertCopyCtorCall(const CodeWarning& log); // Editor.cpp
+    196:    word InsertDataInit(const CodeWarning& log); // Editor.cpp
+    198:    word InsertDisplay(const CodeWarning& log); // Editor.cpp
+    199:    word InsertEnumName(const CodeWarning& log); // Editor.cpp
+    200:    word InsertFallthrough(const CodeWarning& log); // Editor.cpp
+    205:    word InsertMemberInit(const CodeWarning& log); // Editor.cpp
+    207:    word InsertPODCtor(const CodeWarning& log); // Editor.cpp
+    208:    word InsertPureVirtual(const CodeWarning& log); // Editor.cpp
+    210:    word MoveDefine(const CodeWarning& log); // Editor.cpp
+    211:    word MoveMemberInit(const CodeWarning& log); // Editor.cpp
+    215:    word ReplaceHeading(const CodeWarning& log); // Editor.cpp
+    216:    word ReplaceName(const CodeWarning& log); // Editor.cpp
+    356:    void QualifyClassItems(CxxScope* decl, string& code) const; // Editor.cpp
+    421:    word FixInvokers(const CodeWarning& log); // Editor.cpp
+    430:    word ChangeFunctionToMember(const Function* func, word offset); // Editor.cpp
+    431:    word ChangeInvokerToMember(const Function* func, word offset); // Editor.cpp
+    432:    word EraseArgument(const Function* func, word offset); // Editor.cpp
+    433:    word EraseDefaultValue(const Function* func, word offset); // Editor.cpp
+    434:    word EraseParameter(const Function* func, word offset); // Editor.cpp
+    436:    word InsertArgument(const Function* func, word offset); // Editor.cpp
+    437:    word SplitVirtualFunction(const Function* func); // Editor.cpp
 ct/Interpreter.cpp
   W005 Functional cast
     147:          type = LibTokenType(i);
@@ -5991,19 +5989,21 @@ ct/LibrarySet.cpp
     295: LibrarySet* LibrarySet::Intersection(const LibrarySet* that) const
     302: bool LibrarySet::IsReadOnly() const
     309: bool LibrarySet::IsTemporary() const
-    341: LibrarySet* LibrarySet::MatchString(const LibrarySet* that) const
-    348: LibrarySet* LibrarySet::NeededBy() const
-    355: LibrarySet* LibrarySet::Needers() const
-    372: word LibrarySet::NotImplemented(string& expl) const
-    384: LibrarySet* LibrarySet::OpError(c_string op) const
-    412: LibrarySet* LibrarySet::ReferencedBy() const
-    419: LibrarySet* LibrarySet::Referencers() const
-    516: LibrarySet* LibrarySet::Union(const LibrarySet* that) const
-    523: LibrarySet* LibrarySet::UsedBy(bool self) const
-    530: LibrarySet* LibrarySet::Users(bool self) const
+    350: LibrarySet* LibrarySet::MatchString(const LibrarySet* that) const
+    357: LibrarySet* LibrarySet::NeededBy() const
+    364: LibrarySet* LibrarySet::Needers() const
+    381: word LibrarySet::NotImplemented(string& expl) const
+    393: LibrarySet* LibrarySet::OpError(c_string op) const
+    421: LibrarySet* LibrarySet::ReferencedBy() const
+    428: LibrarySet* LibrarySet::Referencers() const
+    525: LibrarySet* LibrarySet::Union(const LibrarySet* that) const
+    532: LibrarySet* LibrarySet::UsedBy(bool self) const
+    539: LibrarySet* LibrarySet::Users(bool self) const
 ct/LibrarySet.h
+  W026 Unused argument
+    116/1:    virtual NodeBase::word LineTypes(NodeBase::CliThread& cli,
 * W065 Base class virtual destructor is not public
-    196:    virtual ~LibrarySet();
+    202:    virtual ~LibrarySet();
   W075 Virtual function is public
     80:    virtual LibSetType GetType() const;
     86:    virtual NodeBase::word Check(NodeBase::CliThread& cli,
@@ -6011,33 +6011,34 @@ ct/LibrarySet.h
     99:    virtual NodeBase::word Countlines(std::string& result) const;
     105:    virtual NodeBase::word Fix(NodeBase::CliThread& cli,
     111:    virtual NodeBase::word Format(std::string& expl) const;
-    119:    virtual NodeBase::word Parse
-    126:    virtual NodeBase::word Scan(std::ostream& stream,
-    133:    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
-    137:    virtual BuildOrder SortInBuildOrder() const;
-    142:    virtual LibrarySet* Assign(LibrarySet* that);
-    143:    virtual LibrarySet* Intersection(const LibrarySet* that) const;
-    144:    virtual LibrarySet* Difference(const LibrarySet* that) const;
-    145:    virtual LibrarySet* Union(const LibrarySet* that) const;
-    146:    virtual LibrarySet* Directories() const;
-    147:    virtual LibrarySet* Files() const;
-    148:    virtual LibrarySet* FileName(const LibrarySet* that) const;
-    149:    virtual LibrarySet* FileType(const LibrarySet* that) const;
-    150:    virtual LibrarySet* MatchString(const LibrarySet* that) const;
-    151:    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
-    152:    virtual LibrarySet* Implements() const;
-    153:    virtual LibrarySet* UsedBy(bool self) const;
-    154:    virtual LibrarySet* Users(bool self) const;
-    155:    virtual LibrarySet* AffectedBy() const;
-    156:    virtual LibrarySet* Affecters() const;
-    157:    virtual LibrarySet* CommonAffecters() const;
-    158:    virtual LibrarySet* NeededBy() const;
-    159:    virtual LibrarySet* Needers() const;
-    160:    virtual LibrarySet* DeclaredBy() const;
-    161:    virtual LibrarySet* Declarers() const;
-    162:    virtual LibrarySet* Definitions() const;
-    163:    virtual LibrarySet* ReferencedBy() const;
-    164:    virtual LibrarySet* Referencers() const;
+    116:    virtual NodeBase::word LineTypes(NodeBase::CliThread& cli,
+    125:    virtual NodeBase::word Parse
+    132:    virtual NodeBase::word Scan(std::ostream& stream,
+    139:    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
+    143:    virtual BuildOrder SortInBuildOrder() const;
+    148:    virtual LibrarySet* Assign(LibrarySet* that);
+    149:    virtual LibrarySet* Intersection(const LibrarySet* that) const;
+    150:    virtual LibrarySet* Difference(const LibrarySet* that) const;
+    151:    virtual LibrarySet* Union(const LibrarySet* that) const;
+    152:    virtual LibrarySet* Directories() const;
+    153:    virtual LibrarySet* Files() const;
+    154:    virtual LibrarySet* FileName(const LibrarySet* that) const;
+    155:    virtual LibrarySet* FileType(const LibrarySet* that) const;
+    156:    virtual LibrarySet* MatchString(const LibrarySet* that) const;
+    157:    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
+    158:    virtual LibrarySet* Implements() const;
+    159:    virtual LibrarySet* UsedBy(bool self) const;
+    160:    virtual LibrarySet* Users(bool self) const;
+    161:    virtual LibrarySet* AffectedBy() const;
+    162:    virtual LibrarySet* Affecters() const;
+    163:    virtual LibrarySet* CommonAffecters() const;
+    164:    virtual LibrarySet* NeededBy() const;
+    165:    virtual LibrarySet* Needers() const;
+    166:    virtual LibrarySet* DeclaredBy() const;
+    167:    virtual LibrarySet* Declarers() const;
+    168:    virtual LibrarySet* Definitions() const;
+    169:    virtual LibrarySet* ReferencedBy() const;
+    170:    virtual LibrarySet* Referencers() const;
   W120 Function returns non-const reference or pointer to member data
     76:    LibItemSet& Items() { return items_; }
 ct/LibraryTypes.h

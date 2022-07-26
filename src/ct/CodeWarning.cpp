@@ -307,7 +307,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
             if((*item)->HasInfoToDisplay()) *stream << " // " << (*item)->info_;
             *stream << CRLF;
             ++item;
-         } 
+         }
          while((item != last) &&
             ((*item)->warning_ == w) && ((*item)->File() == f));
       }

@@ -221,7 +221,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 
    //  Display the total number of warnings of each type.
    //
-   *stream << CRLF << "WARNING COUNTS (* if supported by >fix)" << CRLF;
+   *stream << "WARNING COUNTS (* if supported by >fix)" << CRLF;
 
    for(auto w = 0; w < Warning_N; ++w)
    {

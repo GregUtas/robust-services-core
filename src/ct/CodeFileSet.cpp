@@ -440,7 +440,7 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
       *cli.obuf << "The following is also automatic in modified files:" << CRLF;
       *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
       *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
-      *cli.obuf << "  o Spaces replace tabs based on IndentSize()." << CRLF;
+      *cli.obuf << "  o If absent, an endline is appended to the file." << CRLF;
       invoked = true;
    }
 

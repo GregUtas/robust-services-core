@@ -18,8 +18,8 @@ are generated when running tests.
 An article's _.zip_ file seldom contains RSC's latest release. It is usually
 updated only when the code that it discusses has evolved.
 
-The [tags](https://github.com/GregUtas/robust-services-core/tags) page lists
-stable releases. Unless a release only changed documentation, it includes
+The [Releases](https://github.com/GregUtas/robust-services-core/releases) page
+lists stable releases. Unless a release only changed documentation, it includes
 executables. However, RSC must be properly installed to run them. See the
 [installation guide](/docs/Installing.md).
 

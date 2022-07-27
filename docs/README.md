@@ -7,7 +7,7 @@ These documents describe RSC's primary capabilities.
 Document | Description
 -------- | -----------
 ![pdf](images/pdf24.png) [RSC Software Overview](/docs/RSC-Software-Overview.pdf) | roadmap for the Robust Services Core
-<img src="images/md.png" alt="markdown" height="30"> [Installation](/docs/Installing.md) :warning: | installation guide
+<img src="images/md.png" alt="markdown" height="30"> [Installation](/docs/Installing.md) :warning: | installation guide :warning:
 <img src="images/md.png" alt="markdown" height="30"> [Preface](/docs/RSC-Articles.md) | preface to the CodeProject articles
 ![CodeProject](images/cp100x30.gif) [Software Techniques for Lemmings](https://www.codeproject.com/Articles/5258540/Software-Techniques-for-Lemmings) | article on popular but dubious techniques and RSC's alternatives
 ![CodeProject](images/cp100x30.gif) [Robust C++ : P and V Considered Harmful](https://www.codeproject.com/Articles/5246597/Robust-Cplusplus-P-and-V-Considered-Harmful) | article on cooperative/proportional scheduling

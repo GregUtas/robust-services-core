@@ -462,7 +462,7 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
    }
 
    auto changed = Editor::CommitCount() - prev;
-   *cli.obuf << changed << " file(s) were changed." << CRLF;
+   *cli.obuf << changed << " file(s) changed." << CRLF;
    return 0;
 }
 

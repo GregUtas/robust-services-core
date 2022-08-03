@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  RscLauncher.linux.cpp
+//  Launcher.linux.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -23,7 +23,7 @@
 
 #ifdef OS_LINUX
 
-#include "RscLauncher.h"
+#include "Launcher.h"
 #include <cstdio>
 #include <cstring>
 #include <iostream>

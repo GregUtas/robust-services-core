@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  RscLauncher.win.cpp
+//  Launcher.win.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -23,7 +23,7 @@
 
 #ifdef OS_WIN
 
-#include "RscLauncher.h"
+#include "Launcher.h"
 #include <cstring>
 #include <iostream>
 #include <ostream>

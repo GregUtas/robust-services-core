@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  RscLauncher.cpp
+//  Launcher.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -29,7 +29,7 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-#include "RscLauncher.h"
+#include "Launcher.h"
 
 using std::cin;
 using std::cout;

@@ -4,14 +4,14 @@ set(PROJECT_NAME launcher)
 # Source groups
 ################################################################################
 set(Headers
-    "RscLauncher.h"
+    "Launcher.h"
 )
 source_group("Headers" FILES ${Headers})
 
 set(Sources
-    "RscLauncher.cpp"
-    "RscLauncher.linux.cpp"
-    "RscLauncher.win.cpp"
+    "Launcher.cpp"
+    "Launcher.linux.cpp"
+    "Launcher.win.cpp"
 )
 source_group("Sources" FILES ${Sources})
 

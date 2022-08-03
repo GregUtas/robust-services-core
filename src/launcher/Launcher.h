@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  RscLauncher.h
+//  Launcher.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef RSCLAUNCHER_H_INCLUDED
-#define RSCLAUNCHER_H_INCLUDED
+#ifndef LAUNCHER_H_INCLUDED
+#define LAUNCHER_H_INCLUDED
 
 #include <string>
 

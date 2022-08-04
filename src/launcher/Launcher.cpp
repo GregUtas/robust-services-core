@@ -122,7 +122,7 @@ static bool GetParameters(string& parms)
 {
    cout << "Enter extra command line parameters. Hit the 'enter' key if \n";
    cout << "there are no command line parameters (if that does nothing, \n";
-   cout << "enter a space first): \n";
+   cout << "enter a space first): \n  ";
 
    parms = GetInput();
    return true;

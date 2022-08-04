@@ -31,6 +31,7 @@
 #include "FileSystem.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "MainArgs.h"
 #include "NbLogs.h"
 #include "Restart.h"
 #include "SysTypes.h"
@@ -66,6 +67,46 @@ static void BadLine(LogId id, const string& input)
       *log << Log::Tab << "errval=" << input << " line=" << CurrLine_;
       Log::Submit(log);
    }
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the path to the default configuration file.
+//
+static string DefaultConfigFile()
+{
+   Debug::ft("NodeBase.DefaultConfigFile");
+
+   string filename(Element::InputPath().c_str());
+   filename.push_back(PATH_SEPARATOR);
+   filename.append("element.config.txt");
+   return filename;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the path to the configuration file, if any, specified by a command
+//  line parameter.
+//
+static string ExplicitConfigFile()
+{
+   Debug::ft("NodeBase.ExplicitConfigFile");
+
+   return MainArgs::Find("c=");
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the path to the configuration file, if any, specified by a command
+//  line parameter, else the path to the default configuration file.
+//
+static string ConfigFile()
+{
+   Debug::ft("NodeBase.ConfigFile");
+
+   auto filename = ExplicitConfigFile();
+   if(!filename.empty()) return filename;
+   return DefaultConfigFile();
 }
 
 //------------------------------------------------------------------------------
@@ -156,6 +197,27 @@ static bool LoadNextTuple(string& key, string& value)
    return false;
 }
 
+//------------------------------------------------------------------------------
+//
+//  Opens the configuration file.
+//
+static istreamPtr OpenConfigFile()
+{
+   Debug::ft("NodeBase.OpenConfigFile");
+
+   auto filename = ExplicitConfigFile();
+
+   if(!filename.empty())
+   {
+      auto file = FileSystem::CreateIstream(filename.c_str());
+      if(file != nullptr) return file;
+   }
+
+   filename = DefaultConfigFile();
+   auto file = FileSystem::CreateIstream(filename.c_str());
+   return file;
+}
+
 //==============================================================================
 
 CfgParmRegistry::CfgParmRegistry()
@@ -164,10 +226,6 @@ CfgParmRegistry::CfgParmRegistry()
 
    tupleq_.Init(CfgTuple::LinkDiff());
    parmq_.Init(CfgParm::LinkDiff());
-
-   configFileName_ = Element::InputPath().c_str();
-   configFileName_.push_back(PATH_SEPARATOR);
-   configFileName_.append("element.config.txt");
 }
 
 //------------------------------------------------------------------------------
@@ -259,7 +317,7 @@ void CfgParmRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "configFileName : " << configFileName_ << CRLF;
+   stream << prefix << "configFileName : " << ConfigFile() << CRLF;
    stream << prefix << "tupleq : " << CRLF;
    tupleq_.Display(stream, prefix + spaces(2), options);
    stream << prefix << "parmq : " << CRLF;
@@ -347,7 +405,7 @@ void CfgParmRegistry::LoadTuples()
    //  with that key already exists, update its value so that the parameter
    //  can later be set to the value specified in the configuration file.
    //
-   Stream_ = FileSystem::CreateIstream(configFileName_.c_str());
+   Stream_ = OpenConfigFile();
 
    if(Stream_ == nullptr)
    {
@@ -355,7 +413,7 @@ void CfgParmRegistry::LoadTuples()
 
       if(log != nullptr)
       {
-         *log << Log::Tab << "path=" << configFileName_;
+         *log << Log::Tab << "path=" << ConfigFile();
          Log::Submit(log);
       }
 

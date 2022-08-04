@@ -118,10 +118,6 @@ private:
    //
    void LoadTuples();
 
-   //  The file from which tuples are read during system initialization.
-   //
-   ProtectedStr configFileName_;
-
    //  The tuples (key-value pairs) in the registry.  They are kept
    //  in a queue that is sorted in alphabetical order, by key.
    //

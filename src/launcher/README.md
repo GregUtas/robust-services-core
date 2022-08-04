@@ -14,8 +14,13 @@ if you built for Linux).
 
 To run `Launcher`, right-click on the _launcher_ directory and select
 _Debug > Start New Instance_. `Launcher` prompts for the path to your
-executable, followed by its command line parameters. Currently, RSC
-itself does not use any additional command line parameters.
+executable, followed by its command line parameters. Currently, the
+only command line parameter that RSC looks for is `c=<path>`, which
+allows the path to the configuration file to be explicitly specified
+to override the default (`.../input/element.config.txt`). So if your
+application uses a command line parameter, it must be prefixed with a
+tag other than `c=`. [`MainArgs.h`](/nb/MainArgs.h) provides access
+to command line parameters.
 
 When the executable starts, it runs in the same console window as
 `Launcher`.

@@ -41,6 +41,7 @@ Document | Description
 <img src="images/md.png" alt="markdown" height="30"> [RSC C++ Static Analysis Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of the C++ static analysis tools
 <img src="images/md.png" alt="markdown" height="30"> [RSC C++11 Exclusions](/docs/RSC-Cpp11-Exclusions.md) | C++11 language features not supported by the static analysis tools
 ![CodeProject](images/cp100x30.gif) [A Static Analysis Tool for C++](https://www.codeproject.com/Articles/5246833/A-Static-Analysis-Tool-for-Cplusplus) | article on the static analysis tools
+<img src="images/md.png" alt="markdown" height="30"> [Writing An Open-Source C++ Static Analysis Tool ](https://www.cppstories.com/2022/rsc-static-analysis/) | article on Bartek's C++ Stories site
 
 ## RSC Session Processing and Applications
 

@@ -5,10 +5,10 @@ static analysis tools. Because these tools were developed to analyze RSC, the
 parser only supports some C++ features that RSC does not use.  In fact, RSC's
 source code is the only test suite for the `>parse` command.
 
-Except for C\++17's `<filesystem>` and `[[fallthrough]]`, RSC uses a subset
-of C\++11. This document therefore describes features, through C\++11,
-that the parser does not support. You can also assume that more recent C++
-features are not supported, at least if they involve new syntax.
+Except for C\++17's `<filesystem>`, `inline` data, and `[[fallthrough]]`, RSC
+uses a subset of C\++11. This document therefore describes features, through
+C\++11, that the parser does not support. You can also assume that more recent
+C++ features are not supported, at least if they involve new syntax.
 
 Before RSC can use anything that `>parse` does not support, the parser
 must be enhanced so that analyzing RSC's code is still possible. However,
@@ -26,6 +26,7 @@ static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
 ### Recently Implemented
+- [x] `inline` data
 - [x] elaborated type specifiers (`class`, `struct`, `union`, or `enum`
   prefixed to an identifier to resolve an ambiguity caused by overloading
   a symbol)

@@ -1,9 +1,9 @@
 # Documentation for CLI increments, logs, alarms, and static analysis warnings
 
-This directory contains additional help for CLI increments. Only the CLI
-itself, as well as the `>ct` increment and a handful of commands, currently
-have additional help. However, the CLI framework ensures that each command
-provides help for each of its parameters.
+This directory contains additional help that can be displayed when RSC is
+running. Only the CLI itself, as well as the `>ct` increment and a handful of
+commands, currently have additional help. However, the CLI framework ensures
+that each command provides help for each of its parameters.
 
 * `>help full` provides an overview of the CLI.
 * `>help <incr> full` provides additional help for a specific increment.

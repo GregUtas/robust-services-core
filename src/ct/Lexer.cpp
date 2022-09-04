@@ -1940,6 +1940,7 @@ void Lexer::GetDataTags(KeywordSet& tags)
       case Cxx::CONSTEXPR:
       case Cxx::EXTERN:
       case Cxx::STATIC:
+      case Cxx::INLINE:
       case Cxx::MUTABLE:
       case Cxx::THREAD_LOCAL:
       case Cxx::VOLATILE:

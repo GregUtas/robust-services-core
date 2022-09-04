@@ -985,6 +985,7 @@ bool Parser::GetClassData(DataPtr& data)
 
    if(!GetAlignAs(align)) return Backup(start, 251);
    lexer_.GetDataTags(attrs);
+   auto inln = (attrs.find(Cxx::INLINE) != attrs.cend());
    auto stat = (attrs.find(Cxx::STATIC) != attrs.cend());
    auto tloc = (attrs.find(Cxx::THREAD_LOCAL) != attrs.cend());
    auto cexp = (attrs.find(Cxx::CONSTEXPR) != attrs.cend());
@@ -1023,6 +1024,7 @@ bool Parser::GetClassData(DataPtr& data)
    data.reset(new ClassData(dataName, typeSpec));
    data->SetContext(pos);
    data->SetAlignment(align);
+   data->SetInline(inln);
    data->SetStatic(stat);
    data->SetThreadLocal(tloc);
    data->SetConstexpr(cexp);
@@ -3082,6 +3084,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    if(!GetAlignAs(align)) return Backup(start, 255);
    lexer_.GetDataTags(attrs);
    auto extn = (attrs.find(Cxx::EXTERN) != attrs.cend());
+   auto inln = (attrs.find(Cxx::INLINE) != attrs.cend());
    auto stat = (attrs.find(Cxx::STATIC) != attrs.cend());
    auto tloc = (attrs.find(Cxx::THREAD_LOCAL) != attrs.cend());
    auto cexp = (attrs.find(Cxx::CONSTEXPR) != attrs.cend());
@@ -3123,6 +3126,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    data->SetTemplateParms(parms);
    data->SetAlignment(align);
    data->SetExtern(extn);
+   data->SetInline(inln);
    data->SetStatic(stat);
    data->SetThreadLocal(tloc);
    data->SetConstexpr(cexp);

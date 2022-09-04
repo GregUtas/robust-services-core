@@ -59,6 +59,10 @@ public:
    virtual bool NameRefersToItem(const std::string& name,
       const CxxScope* scope, CodeFile* file, SymbolView& view) const;
 
+   //  Returns true if the item's definition can be repeated.
+   //
+   virtual bool IsInline() const { return false; }
+
    //  Returns true if the item was declared at file scope.
    //
    bool IsAtFileScope() const;

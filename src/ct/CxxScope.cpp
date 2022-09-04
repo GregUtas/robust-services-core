@@ -803,6 +803,7 @@ void ClassData::Display(ostream& stream,
 
    stream << prefix << access << ": ";
    DisplayAlignment(stream, options);
+   if(IsInline()) stream << INLINE_STR << SPACE;
    if(IsStatic()) stream << STATIC_STR << SPACE;
    if(IsThreadLocal()) stream << THREAD_LOCAL_STR << SPACE;
    if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
@@ -912,11 +913,15 @@ bool ClassData::EnterScope()
    //  they are included because they help to verify that *this* software
    //  is correct.  The same is true for most of the checks on type
    //  restrictions or type compatibility, such as the one above for field
-   //  width.
+   //  width.  --As of C++17, inline static data can be initialized at the
+   //  point of declaration.
    //
-   if(IsStatic() && IsConst() && IsPOD() && !IsPointer(true))
+   if(IsStatic())
    {
-      ExecuteInit(false);
+      if(IsInline() || (IsConst() && IsPOD() && !IsPointer(true)))
+      {
+         ExecuteInit(false);
+      }
    }
 
    CloseScope();
@@ -1338,6 +1343,7 @@ Distance CxxScope::ScopeDistance(const CxxScope* scope) const
 
 Data::Data(TypeSpecPtr& spec) :
    extern_(false),
+   inline_(false),
    static_(false),
    thread_local_(false),
    constexpr_(false),
@@ -6295,6 +6301,7 @@ void SpaceData::Display(ostream& stream,
    stream << prefix;
    DisplayAlignment(stream, options);
    if(IsExtern()) stream << EXTERN_STR << SPACE;
+   if(IsInline()) stream << INLINE_STR << SPACE;
    if(IsStatic()) stream << STATIC_STR << SPACE;
    if(IsThreadLocal()) stream << THREAD_LOCAL_STR << SPACE;
    if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;

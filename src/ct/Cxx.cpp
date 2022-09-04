@@ -495,7 +495,7 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
    CxxWord("-",   "-",    "g",   T),  // GOTO
    CxxWord("H",   "H",    "H",   F),  // HASH
    CxxWord("-",   "-",    "i",   T),  // IF
-   CxxWord("P",   "P",    "-",   F),  // INLINE
+   CxxWord("DP",  "DP",   "-",   F),  // INLINE
    CxxWord("-",   "D",    "-",   F),  // MUTABLE
    CxxWord("N",   "-",    "-",   T),  // NAMESPACE
    CxxWord("-",   "P",    "-",   F),  // OPERATOR

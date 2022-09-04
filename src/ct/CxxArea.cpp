@@ -274,11 +274,10 @@ void Class::AccessibilityOf
          return;
       }
 
-      //  If ITEM is an inline function in a class template, SCOPE can see
+      //  If ITEM is an inline member in a class template, SCOPE can see
       //  ITEM if userClass is an instance of the class template.
       //
-      if((itemType == Cxx::Function) && (userClass->GetTemplate() == this) &&
-         static_cast<const Function*>(item)->IsInline())
+      if(item->IsInline() && (userClass->GetTemplate() == this))
       {
          view.distance_ = 1;
          view.accessibility_ = Declared;
@@ -2888,6 +2887,15 @@ bool CxxArea::AddClass(ClassPtr& cls)
 bool CxxArea::AddData(DataPtr& data)
 {
    Debug::ft("CxxArea.AddData");
+
+   //  If this is inline data, do not add it to a template instance.
+   //  Simply returning results in DATA being deleted.
+   //
+   if(data->IsInline())
+   {
+      auto cls = GetClass();
+      if((cls != nullptr) && cls->IsInTemplateInstance()) return true;
+   }
 
    if(!data->IsInternal()) newest_ = data.get();
 

@@ -308,6 +308,10 @@ public:
    //
    void SetExtern(bool extn) { extern_ = extn; }
 
+   //  Specifies whether the data is inline.
+   //
+   void SetInline(bool inln) { inline_ = inln; }
+
    //  Specifies whether the data is static.
    //
    void SetStatic(bool stat) { static_ = stat; }
@@ -440,6 +444,10 @@ public:
    //  Returns true if the data's initialization is currently being compiled.
    //
    bool IsInitializing() const override { return initing_; }
+
+   //  Returns true if the data is inline.
+   //
+   bool IsInline() const override { return inline_; }
 
    //  Overridden to use the data's type to determine if it is POD.
    //
@@ -582,6 +590,10 @@ private:
    //  Set for extern data.
    //
    bool extern_ : 1;
+
+   //  Set for inline data.
+   //
+   bool inline_ : 1;
 
    //  Set for static data.
    //
@@ -1138,10 +1150,6 @@ public:
    //
    void SetTemplateParm() { tparm_ = true; }
 
-   //  Returns true if the function was explicitly inlined.
-   //
-   bool IsInline() const { return inline_; }
-
    //  Returns the function's operator (Cxx::NIL_OPERATOR if not an operator).
    //
    Cxx::Operator Operator() const { return name_->Operator(); }
@@ -1217,6 +1225,7 @@ public:
    Cxx::Access GetAccess() const override;
    bool IsExtern() const override { return GetDecl()->extern_; }
    bool IsStatic() const override { return GetDecl()->static_; }
+   bool IsInline() const override { return GetDecl()->inline_; }
 
    //  Deletes the single argument "(void)", which simplifies the comparison
    //  of function signatures.

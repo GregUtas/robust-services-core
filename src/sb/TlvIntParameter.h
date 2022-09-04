@@ -51,7 +51,7 @@ protected:
    //
    TlvIntParameter(ProtocolId prid, Id pid) : TlvParameter(prid, pid)
    {
-      NodeBase::Debug::ft(TlvIntParameter_ctor());
+      NodeBase::Debug::ft(TlvIntParameter_ctor);
    }
 
    //  Protected because subclasses should be singletons.
@@ -63,7 +63,7 @@ protected:
    TestRc InjectMsg
       (NodeBase::CliThread& cli, Message& msg, Usage use) const override
    {
-      NodeBase::Debug::ft(TlvIntParameter_InjectMsg());
+      NodeBase::Debug::ft(TlvIntParameter_InjectMsg);
 
       NodeBase::word value;
       auto& tlvmsg = static_cast<TlvMessage&>(msg);
@@ -95,7 +95,7 @@ protected:
    TestRc VerifyMsg
       (NodeBase::CliThread& cli, const Message& msg, Usage use) const override
    {
-      NodeBase::Debug::ft(TlvIntParameter_VerifyMsg());
+      NodeBase::Debug::ft(TlvIntParameter_VerifyMsg);
 
       TestRc rc;
       const auto& tlvmsg = static_cast<const TlvMessage&>(msg);
@@ -133,14 +133,14 @@ protected:
       return Ok;
    }
 private:
-   //  See the comment in Singleton.h about fn_name's in a template header.
+   //  Function names.
    //
-   inline static NodeBase::fn_name TlvIntParameter_ctor()
-      { return "TlvIntParameter.ctor"; }
-   inline static NodeBase::fn_name TlvIntParameter_InjectMsg()
-      { return "TlvIntParameter.InjectMsg"; }
-   inline static NodeBase::fn_name TlvIntParameter_VerifyMsg()
-      { return "TlvIntParameter.VerifyMsg"; }
+   inline static NodeBase::fn_name
+      TlvIntParameter_ctor = "TlvIntParameter.ctor";
+   inline static NodeBase::fn_name
+      TlvIntParameter_InjectMsg = "TlvIntParameter.InjectMsg";
+   inline static NodeBase::fn_name
+      TlvIntParameter_VerifyMsg = "TlvIntParameter.VerifyMsg";
 };
 }
 #endif

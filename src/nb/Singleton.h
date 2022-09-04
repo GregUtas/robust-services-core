@@ -77,7 +77,7 @@ public:
       //  for the singleton.
       //
       if(Instance_ != nullptr) return Instance_;
-      Debug::ft(Singleton_Instance());
+      Debug::ft(Singleton_Instance);
       if(Instance_ != nullptr) return Instance_;
       Instance_ = new T;
       auto reg = Singletons::Instance();
@@ -97,7 +97,7 @@ public:
    //
    static void Destroy()
    {
-      Debug::ft(Singleton_Destroy());
+      Debug::ft(Singleton_Destroy);
       if(Instance_ == nullptr) return;
       auto singleton = Instance_;
       auto reg = Singletons::Instance();
@@ -120,13 +120,10 @@ private:
    //
    ~Singleton() { Destroy(); }
 
-   //  Declaring an fn_name at file scope in a template header causes an
-   //  avalanche of link errors for multiply defined symbols.  Returning
-   //  an fn_name from an inline function limits the string constant to a
-   //  single occurrence, no matter how many template instances exist.
+   //  Function names.
    //
-   inline static fn_name Singleton_Instance() { return "Singleton.Instance"; }
-   inline static fn_name Singleton_Destroy()  { return "Singleton.Destroy"; }
+   inline static fn_name Singleton_Instance = "Singleton.Instance";
+   inline static fn_name Singleton_Destroy = "Singleton.Destroy";
 
    //  Pointer to the singleton instance.
    //

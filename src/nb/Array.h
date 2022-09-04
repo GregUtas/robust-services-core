@@ -44,14 +44,14 @@ public:
    //
    Array() : max_(0)
    {
-      Debug::ft(Array_ctor());
+      Debug::ft(Array_ctor);
    }
 
    //  Deletes the array.
    //
    ~Array()
    {
-      Debug::ftnt(Array_dtor());
+      Debug::ftnt(Array_dtor);
    }
 
    //  Deleted to prohibit copying.
@@ -66,7 +66,7 @@ public:
    //
    void Init(size_t max)
    {
-      Debug::ft(Array_Init());
+      Debug::ft(Array_Init);
       max_ = (max < 2 ? 2 : max);
    }
 
@@ -74,7 +74,7 @@ public:
    //
    bool Reserve(size_t capacity)
    {
-      Debug::ft(Array_Reserve());
+      Debug::ft(Array_Reserve);
       if(capacity > max_) return false;
       vector_.reserve(capacity);
       return true;
@@ -203,12 +203,12 @@ public:
       return vector_.data();
    }
 private:
-   //  See the comment in Singleton.h about fn_name's in a template header.
+   //  Function names.
    //
-   inline static fn_name Array_ctor()    { return "Array.ctor"; }
-   inline static fn_name Array_dtor()    { return "Array.dtor"; }
-   inline static fn_name Array_Init()    { return "Array.Init"; }
-   inline static fn_name Array_Reserve() { return "Array.Reserve"; }
+   inline static fn_name Array_ctor = "Array.ctor";
+   inline static fn_name Array_dtor = "Array.dtor";
+   inline static fn_name Array_Init = "Array.Init";
+   inline static fn_name Array_Reserve = "Array.Reserve";
 
    //  The maximum size allowed for the array.
    //

@@ -73,7 +73,7 @@ public:
    //
    template<class T> T* FindType(ParameterId pid) const
    {
-      NodeBase::Debug::ft(TlvMessage_FindType());
+      NodeBase::Debug::ft(TlvMessage_FindType);
       auto pptr = FindParm(pid);
       if(pptr == nullptr) return nullptr;
       return reinterpret_cast<T*>(pptr->bytes);
@@ -87,7 +87,7 @@ public:
    //
    template<class T> T* AddType(const T& parm, ParameterId pid)
    {
-      NodeBase::Debug::ft(TlvMessage_AddType());
+      NodeBase::Debug::ft(TlvMessage_AddType);
       auto pptr = AddParm(pid, sizeof(T));
       if(pptr == nullptr) return nullptr;
       auto dest = reinterpret_cast<T*>(pptr->bytes);
@@ -104,7 +104,7 @@ public:
    template<class T> T* CopyType
       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
    {
-      NodeBase::Debug::ft(TlvMessage_CopyType());
+      NodeBase::Debug::ft(TlvMessage_CopyType);
       if(ogPid == NodeBase::NIL_ID) ogPid = icPid;
       auto pptr = icMsg.FindType<T>(icPid);
       if(pptr != nullptr) return AddType(*pptr, ogPid);
@@ -122,7 +122,7 @@ public:
    template<class T> Parameter::TestRc VerifyParm
       (ParameterId pid, Parameter::Usage use, T*& parm) const
    {
-      NodeBase::Debug::ft(TlvMessage_VerifyParm());
+      NodeBase::Debug::ft(TlvMessage_VerifyParm);
 
       auto pptr = FindParm(pid);
       parm = (pptr == nullptr ? nullptr : reinterpret_cast<T*>(pptr->bytes));
@@ -306,16 +306,13 @@ protected:
    //
    static const Fence ParmDeathPattern = 0xdead;
 private:
-   //  See the comment in Singleton.h about an fn_name in a template header.
+   //  Function names.
    //
-   inline static NodeBase::fn_name TlvMessage_FindType()
-      { return "TlvMessage.FindType"; }
-   inline static NodeBase::fn_name TlvMessage_AddType()
-      { return "TlvMessage.AddType"; }
-   inline static NodeBase::fn_name TlvMessage_CopyType()
-      { return "TlvMessage.CopyType"; }
-   inline static NodeBase::fn_name TlvMessage_VerifyParm()
-      { return "TlvMessage.VerifyParm"; }
+   inline static NodeBase::fn_name TlvMessage_FindType = "TlvMessage.FindType";
+   inline static NodeBase::fn_name TlvMessage_AddType = "TlvMessage.AddType";
+   inline static NodeBase::fn_name TlvMessage_CopyType = "TlvMessage.CopyType";
+   inline static NodeBase::fn_name
+      TlvMessage_VerifyParm = "TlvMessage.VerifyParm";
 
    //  Overridden to change the message's direction.
    //

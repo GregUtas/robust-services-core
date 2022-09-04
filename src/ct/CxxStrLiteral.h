@@ -66,7 +66,7 @@ public:
 
    static CxxScoped* GetReferent()
    {
-      Debug::ft(CxxStrLiteral_GetReferent());
+      Debug::ft(CxxStrLiteral_GetReferent);
       return Ref_[E].get();
    }
 
@@ -77,7 +77,7 @@ public:
    //
    static DataPtr CreateRef()
    {
-      Debug::ft(CxxStrLiteral_CreateRef());
+      Debug::ft(CxxStrLiteral_CreateRef);
 
       DataPtr data;
       auto ctype = CxxCharLiteral<C, E>::TypeStr();
@@ -95,12 +95,11 @@ public:
 
    void PushBack(uint32_t c) override { str_.push_back(c); }
 private:
-   //  See the comment in Singleton.h about fn_name's in a template header.
+   //  Function names.
    //
-   inline static fn_name CxxStrLiteral_CreateRef()
-      { return "CxxStrLiteral.CreateRef"; }
-   inline static fn_name CxxStrLiteral_GetReferent()
-      { return "CxxStrLiteral.GetReferent"; }
+   inline static fn_name CxxStrLiteral_CreateRef = "CxxStrLiteral.CreateRef";
+   inline static fn_name
+      CxxStrLiteral_GetReferent = "CxxStrLiteral.GetReferent";
 
    Numeric GetNumeric() const override { return Numeric::Pointer; }
 

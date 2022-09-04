@@ -61,7 +61,7 @@ public:
       if(head_.next == nullptr) return;  // Init never invoked
       if(head_.next != &head_)
       {
-         Debug::ftnt(Q2Way_dtor());        // queue isn't empty
+         Debug::ftnt(Q2Way_dtor);        // queue isn't empty
          Purge();
       }
       head_.prev = nullptr;              // expected by Q2Link destructor
@@ -82,7 +82,7 @@ public:
    {
       if(Restart::GetStage() == Running)
       {
-         Debug::ft(Q2Way_Init());
+         Debug::ft(Q2Way_Init);
       }
       head_.next = &head_;  // head_ points to queue header
       head_.prev = &head_;  // tail points to queue header
@@ -95,7 +95,7 @@ public:
    {
       if(Restart::GetStage() == Running)
       {
-         Debug::ft(Q2Way_Enq());
+         Debug::ft(Q2Way_Enq);
       }
       auto item = Item(elem);
       if(item == nullptr) return false;     // error
@@ -111,7 +111,7 @@ public:
    //
    bool Henq(T& elem)
    {
-      Debug::ft(Q2Way_Henq());
+      Debug::ft(Q2Way_Henq);
       auto item = Item(elem);
       if(item == nullptr) return false;     // error
       if(item->next != nullptr) Exq(elem);  // if item is queued, exqueue it
@@ -128,11 +128,11 @@ public:
    {
       if(Restart::GetStage() == Running)
       {
-         Debug::ft(Q2Way_Deq());
+         Debug::ft(Q2Way_Deq);
       }
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Deq(), "queue not intitialized", 0);
+         Debug::SwLog(Q2Way_Deq, "queue not intitialized", 0);
          return nullptr;
       }
       if(head_.next == &head_)             // if head points to itself
@@ -151,7 +151,7 @@ public:
    {
       if(Restart::GetStage() == Running)
       {
-         Debug::ft(Q2Way_Exq());
+         Debug::ft(Q2Way_Exq);
       }
       auto item = Item(elem);
       if(item == nullptr) return false;  // error
@@ -181,7 +181,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Next(), "queue not initialized", 0);
+         Debug::SwLog(Q2Way_Next, "queue not initialized", 0);
          return false;
       }
       const Q2Link* item;                   // item will hold result
@@ -225,7 +225,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Prev(), "queue not initialized", 0);
+         Debug::SwLog(Q2Way_Prev, "queue not initialized", 0);
          return false;
       }
       const Q2Link* item;                   // item will hold result
@@ -264,7 +264,7 @@ public:
    //
    size_t Size() const
    {
-      Debug::ft(Q2Way_Size());
+      Debug::ft(Q2Way_Size);
       if(diff_ == NilDiff) return 0;  // queue is not initialized
       size_t count = 0;               // initialize count
       Q2Link* item = head_.next;      // start at first item
@@ -280,10 +280,10 @@ public:
    //
    void Purge()
    {
-      Debug::ftnt(Q2Way_Purge());
+      Debug::ftnt(Q2Way_Purge);
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Purge(), "queue not initialized", 0);
+         Debug::SwLog(Q2Way_Purge, "queue not initialized", 0);
          return;
       }
       while(head_.next != &head_)
@@ -324,12 +324,12 @@ private:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Item(), "queue not initialized", 0);
+         Debug::SwLog(Q2Way_Item, "queue not initialized", 0);
          return nullptr;
       }
       if(&elem == nullptr)
       {
-         Debug::SwLog(Q2Way_Item(), "invalid element", 0);
+         Debug::SwLog(Q2Way_Item, "invalid element", 0);
          return nullptr;
       }
 
@@ -361,19 +361,19 @@ private:
       }
    }
 
-   //  See the comment in Singleton.h about fn_name's in a template header.
+   //  Function names.
    //
-   inline static fn_name Q2Way_dtor()  { return "Q2Way.dtor"; }
-   inline static fn_name Q2Way_Init()  { return "Q2Way.Init"; }
-   inline static fn_name Q2Way_Enq()   { return "Q2Way.Enq"; }
-   inline static fn_name Q2Way_Henq()  { return "Q2Way.Henq"; }
-   inline static fn_name Q2Way_Deq()   { return "Q2Way.Deq"; }
-   inline static fn_name Q2Way_Exq()   { return "Q2Way.Exq"; }
-   inline static fn_name Q2Way_Next()  { return "Q2Way.Next"; }
-   inline static fn_name Q2Way_Prev()  { return "Q2Way.Prev"; }
-   inline static fn_name Q2Way_Size()  { return "Q2Way.Size"; }
-   inline static fn_name Q2Way_Purge() { return "Q2Way.Purge"; }
-   inline static fn_name Q2Way_Item()  { return "Q2Way.Item"; }
+   inline static fn_name Q2Way_dtor = "Q2Way.dtor";
+   inline static fn_name Q2Way_Init = "Q2Way.Init";
+   inline static fn_name Q2Way_Enq = "Q2Way.Enq";
+   inline static fn_name Q2Way_Henq = "Q2Way.Henq";
+   inline static fn_name Q2Way_Deq = "Q2Way.Deq";
+   inline static fn_name Q2Way_Exq = "Q2Way.Exq";
+   inline static fn_name Q2Way_Next = "Q2Way.Next";
+   inline static fn_name Q2Way_Prev = "Q2Way.Prev";
+   inline static fn_name Q2Way_Size = "Q2Way.Size";
+   inline static fn_name Q2Way_Purge = "Q2Way.Purge";
+   inline static fn_name Q2Way_Item = "Q2Way.Item";
 
    //  For initializing diff_.
    //

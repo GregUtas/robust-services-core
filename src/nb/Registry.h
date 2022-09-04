@@ -61,7 +61,7 @@ public:
       delete_(false),
       registry_(nullptr)
    {
-      Debug::ft(Registry_ctor());
+      Debug::ft(Registry_ctor);
    }
 
    //  Deletes the objects in the registry (unless this action was not
@@ -69,7 +69,7 @@ public:
    //
    ~Registry()
    {
-      Debug::ftnt(Registry_dtor());
+      Debug::ftnt(Registry_dtor);
       if((delete_) && (capacity_ > 0)) Purge();
       Memory::Free(registry_, mem_);
       registry_ = nullptr;
@@ -96,15 +96,15 @@ public:
    //
    bool Init(id_t max, ptrdiff_t diff, MemoryType mem, bool del = true)
    {
-      Debug::ft(Registry_Init());
+      Debug::ft(Registry_Init);
       if(registry_ != nullptr)
       {
-         Debug::SwLog(Registry_Init(), "already initialized", max_);
+         Debug::SwLog(Registry_Init, "already initialized", max_);
          return false;
       }
       if(diff < 0)
       {
-         Debug::SwLog(Registry_Init(), "no cell offset", diff);
+         Debug::SwLog(Registry_Init, "no cell offset", diff);
          return false;
       }
       max_ = (max == 0 ? 0 : max + 1);
@@ -125,7 +125,7 @@ public:
    {
       if(Restart::GetStage() == Running)
       {
-         Debug::ft(Registry_Insert());
+         Debug::ft(Registry_Insert);
       }
       //  Ensure that ITEM has not already been registered.
       //
@@ -133,7 +133,7 @@ public:
       if(cell == nullptr) return false;
       if(cell->bound)
       {
-         Debug::SwLog(Registry_Insert(), "already registered", cell->id);
+         Debug::SwLog(Registry_Insert, "already registered", cell->id);
          if((cell->id == NIL_ID) || (cell->id >= capacity_)) return false;
          return (registry_[cell->id] == &item);
       }
@@ -176,7 +176,7 @@ public:
          {
             if(delete_)
             {
-               Debug::SwLog(Registry_Insert(), "identifier in use", cell->id);
+               Debug::SwLog(Registry_Insert, "identifier in use", cell->id);
                delete registry_[cell->id];
             }
             else
@@ -203,18 +203,18 @@ public:
    {
       if(Restart::GetStage() == Running)
       {
-         Debug::ft(Registry_Insert());
+         Debug::ft(Registry_Insert);
       }
       //  Ensure that ITEM and ID are valid.
       //
       if(&item == nullptr)
       {
-         Debug::SwLog(Registry_Insert(), "invalid item", 0);
+         Debug::SwLog(Registry_Insert, "invalid item", 0);
          return false;
       }
       if(id > max_)
       {
-         Debug::SwLog(Registry_Insert(), "invalid identifier", id);
+         Debug::SwLog(Registry_Insert, "invalid identifier", id);
          return false;
       }
       //  If ID is the nil identifier, assign ITEM to any available slot.
@@ -254,7 +254,7 @@ public:
          {
             if(delete_)
             {
-               Debug::SwLog(Registry_Insert(), "identifier in use", id);
+               Debug::SwLog(Registry_Insert, "identifier in use", id);
                delete registry_[id];
             }
             else
@@ -276,7 +276,7 @@ public:
    //
    bool Erase(T& item)
    {
-      Debug::ftnt(Registry_Erase());
+      Debug::ftnt(Registry_Erase);
       //
       //  If ITEM has been registered, remove it from the registry.
       //
@@ -285,12 +285,12 @@ public:
       if(cell->id == NIL_ID) return false;
       if(cell->id >= capacity_)
       {
-         Debug::SwLog(Registry_Erase(), "invalid cell", cell->id);
+         Debug::SwLog(Registry_Erase, "invalid cell", cell->id);
          return false;
       }
       if(registry_[cell->id] != &item)
       {
-         Debug::SwLog(Registry_Erase(), "incorrect item", cell->id);
+         Debug::SwLog(Registry_Erase, "incorrect item", cell->id);
          return false;
       }
       registry_[cell->id] = nullptr;
@@ -305,20 +305,20 @@ public:
    //
    bool Erase(const T& item, id_t id)
    {
-      Debug::ftnt(Registry_Erase());
+      Debug::ftnt(Registry_Erase);
       if(&item == nullptr)
       {
-         Debug::SwLog(Registry_Erase(), "invalid item", 0);
+         Debug::SwLog(Registry_Erase, "invalid item", 0);
          return false;
       }
       if((id == NIL_ID) || (id >= capacity_))
       {
-         Debug::SwLog(Registry_Erase(), "invalid identifier", id);
+         Debug::SwLog(Registry_Erase, "invalid identifier", id);
          return false;
       }
       if(registry_[id] != &item)
       {
-         Debug::SwLog(Registry_Erase(), "incorrect item", id);
+         Debug::SwLog(Registry_Erase, "incorrect item", id);
          return false;
       }
       registry_[id] = nullptr;
@@ -370,7 +370,7 @@ public:
       if(cell == nullptr) return;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwLog(Registry_Next(), "invalid cell", cell->id);
+         Debug::SwLog(Registry_Next, "invalid cell", cell->id);
          return;
       }
       for(auto i = cell->id + 1; i < capacity_; ++i)
@@ -391,7 +391,7 @@ public:
       if(cell == nullptr) return nullptr;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwLog(Registry_Next(), "invalid cell", cell->id);
+         Debug::SwLog(Registry_Next, "invalid cell", cell->id);
          return nullptr;
       }
       for(auto i = cell->id + 1; i < capacity_; ++i)
@@ -407,7 +407,7 @@ public:
    {
       if((id == NIL_ID) || (id >= capacity_))
       {
-         Debug::SwLog(Registry_Next(), "invalid identifier", id);
+         Debug::SwLog(Registry_Next, "invalid identifier", id);
          return nullptr;
       }
       for(auto i = id + 1; i < capacity_; ++i)
@@ -443,7 +443,7 @@ public:
       if(cell == nullptr) return;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwLog(Registry_Prev(), "invalid cell", cell->id);
+         Debug::SwLog(Registry_Prev, "invalid cell", cell->id);
          return;
       }
       for(auto i = cell->id - 1; i > 0; --i)
@@ -464,7 +464,7 @@ public:
       if(cell == nullptr) return nullptr;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwLog(Registry_Prev(), "invalid cell", cell->id);
+         Debug::SwLog(Registry_Prev, "invalid cell", cell->id);
          return nullptr;
       }
       for(auto i = cell->id - 1; i > 0; --i)
@@ -478,7 +478,7 @@ public:
    //
    id_t Size() const
    {
-      Debug::ft(Registry_Size());
+      Debug::ft(Registry_Size);
       return size_;
    }
 
@@ -486,13 +486,13 @@ public:
    //
    bool Empty() const
    {
-      Debug::ft(Registry_Empty());
+      Debug::ft(Registry_Empty);
       return (size_ == 0);
    }
 
    void Purge()
    {
-      Debug::ftnt(Registry_Purge());
+      Debug::ftnt(Registry_Purge);
       for(id_t i = capacity_ - 1; i > 0; --i)
       {
          //  Clear the RegCell's bound flag so that its destructor won't
@@ -551,14 +551,14 @@ private:
       //
       if(diff_ <= 0)
       {
-         Debug::SwLog(Registry_Cell(), "no cell offset", 0);
+         Debug::SwLog(Registry_Cell, "no cell offset", 0);
          return nullptr;
       }
       //  Ensure that ITEM is valid.
       //
       if(&item == nullptr)
       {
-         Debug::SwLog(Registry_Cell(), "invalid item", 0);
+         Debug::SwLog(Registry_Cell, "invalid item", 0);
          return nullptr;
       }
       return (RegCell*) getptr2(&item, diff_);
@@ -569,7 +569,7 @@ private:
    //
    bool Extend(id_t min)
    {
-      Debug::ft(Registry_Extend());
+      Debug::ft(Registry_Extend);
       if(capacity_ >= max_) return false;
       if(min > max_) return false;
       auto count = 2 * capacity_;
@@ -621,20 +621,20 @@ private:
       }
    }
 
-   //  See the comment in Singleton.h about fn_name's in a template header.
+   //  Function names.
    //
-   inline static fn_name Registry_ctor()   { return "Registry.ctor"; }
-   inline static fn_name Registry_dtor()   { return "Registry.dtor"; }
-   inline static fn_name Registry_Init()   { return "Registry.Init"; }
-   inline static fn_name Registry_Insert() { return "Registry.Insert"; }
-   inline static fn_name Registry_Erase()  { return "Registry.Erase"; }
-   inline static fn_name Registry_Next()   { return "Registry.Next"; }
-   inline static fn_name Registry_Prev()   { return "Registry.Prev"; }
-   inline static fn_name Registry_Size()   { return "Registry.Size"; }
-   inline static fn_name Registry_Empty()  { return "Registry.Empty"; }
-   inline static fn_name Registry_Purge()  { return "Registry.Purge"; }
-   inline static fn_name Registry_Cell()   { return "Registry.Cell"; }
-   inline static fn_name Registry_Extend() { return "Registry.Extend"; }
+   inline static fn_name Registry_ctor = "Registry.ctor";
+   inline static fn_name Registry_dtor = "Registry.dtor";
+   inline static fn_name Registry_Init = "Registry.Init";
+   inline static fn_name Registry_Insert = "Registry.Insert";
+   inline static fn_name Registry_Erase = "Registry.Erase";
+   inline static fn_name Registry_Next = "Registry.Next";
+   inline static fn_name Registry_Prev = "Registry.Prev";
+   inline static fn_name Registry_Size = "Registry.Size";
+   inline static fn_name Registry_Empty = "Registry.Empty";
+   inline static fn_name Registry_Purge = "Registry.Purge";
+   inline static fn_name Registry_Cell = "Registry.Cell";
+   inline static fn_name Registry_Extend = "Registry.Extend";
 
    //  For initializing diff_.
    //

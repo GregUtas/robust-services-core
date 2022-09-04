@@ -21,7 +21,7 @@ Document | Description
 ![CodeProject](images/cp100x30.gif) [Robust C++: Queue Templates](https://www.codeproject.com/Articles/5271081/Robust-Cplusplus-Queue-Templates) | article on the `Q1Way` and `Q2Way` templates
 ![CodeProject](images/cp100x30.gif) [Robust C++: Singletons](https://www.codeproject.com/Articles/5286932/Robust-Cplusplus-Singletons) | article on the `Singleton` template
 ![CodeProject](images/cp100x30.gif) [A Wrapper for `std::vector`](https://www.codeproject.com/Tips/5271013/A-Wrapper-for-std-vector) | article on the `Array` template
-![CodeProject](images/cp100x30.gif) [Porting a Large Project from Windows to Linux](https://www.codeproject.com/Articles/5336369/Porting-a-Large-Project-from-Windows-to-Linux) | article on porting RSC to Linux
+![CodeProject](images/cp100x30.gif) [Porting a Large Project from Windows to Linux](https://www.codeproject.com/Articles/5336369/Porting-a-Large-Project-from-Windows-to-Linux) | article on how RSC was ported to Linux
 <img src="images/md.png" alt="markdown" height="30"> [Executables](/docs/RSC-Executables.md) | executables provided with each release
 <img src="images/md.png" alt="markdown" height="30"> [Building Using CMake](/docs/RSC-Building-Using-CMake.md) | how to build RSC using CMake
 <img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2022
@@ -41,7 +41,7 @@ Document | Description
 <img src="images/md.png" alt="markdown" height="30"> [RSC C++ Static Analysis Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of the C++ static analysis tools
 <img src="images/md.png" alt="markdown" height="30"> [RSC C++11 Exclusions](/docs/RSC-Cpp11-Exclusions.md) | C++11 language features not supported by the static analysis tools
 ![CodeProject](images/cp100x30.gif) [A Static Analysis Tool for C++](https://www.codeproject.com/Articles/5246833/A-Static-Analysis-Tool-for-Cplusplus) | article on the static analysis tools
-<img src="images/md.png" alt="markdown" height="30"> [Writing An Open-Source C++ Static Analysis Tool ](https://www.cppstories.com/2022/rsc-static-analysis/) | article on Bartek's C++ Stories site
+<img src="images/md.png" alt="markdown" height="30"> [Writing An Open-Source C++ Static Analysis Tool ](https://www.cppstories.com/2022/rsc-static-analysis/) | article on Bartek's _C++ Stories_ site
 
 ## RSC Session Processing and Applications
 

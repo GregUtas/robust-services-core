@@ -23,6 +23,8 @@
 #define MODULEREGISTRY_H_INCLUDED
 
 #include "Immutable.h"
+#include <memory>
+#include <string>
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SysTypes.h"
@@ -30,6 +32,7 @@
 namespace NodeBase
 {
    class Module;
+   class ModulesCfg;
 }
 
 //------------------------------------------------------------------------------
@@ -42,6 +45,7 @@ class ModuleRegistry : public Immutable
 {
    friend class Singleton<ModuleRegistry>;
    friend class Module;
+   friend class NbModule;
    friend class InitThread;
    friend class RootThread;
 public:
@@ -106,6 +110,15 @@ private:
    //
    static void CheckForExit();
 
+   //  Enables modules from the OptionalModules configuration parameter
+   //  when the system first initializes.
+   //
+   void EnableModules() const;
+
+   //  Returns the module identified by SYMBOL.
+   //
+   Module* FindModule(const std::string& symbol) const;
+
    //  Overridden to shut down all modules.
    //
    void Shutdown(RestartLevel level) override;
@@ -117,6 +130,10 @@ private:
    //  The global registry of modules.
    //
    Registry<Module> modules_;
+
+   //  The configuration parameter for the optional modules to be enabled.
+   //
+   std::unique_ptr<ModulesCfg> modulesCfg_;
 };
 }
 #endif

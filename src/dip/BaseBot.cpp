@@ -1629,7 +1629,7 @@ bool BaseBot::queue_event(BotEvent event, int secs)
       {
          //  It's time to give up trying to connect to the server.
          //
-         report_exit("cannot connect to server");
+         report_exit("cannot connect to Diplomacy server");
          return true;
       }
       else if(reconnect_ || (secs >= 4))
@@ -1637,7 +1637,7 @@ bool BaseBot::queue_event(BotEvent event, int secs)
          //  Provide a status update.
          //
          std::ostringstream stream;
-         stream << "No connection to server" << CRLF;
+         stream << "No connection to Diplomacy server" << CRLF;
          stream << "Will try again in " << secs << " seconds" << CRLF;
          send_to_console(stream);
       }

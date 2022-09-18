@@ -55,6 +55,16 @@ MbModule::~MbModule()
 
 //------------------------------------------------------------------------------
 
+void MbModule::Enable()
+{
+   Debug::ft("MbModule.Enable");
+
+   Singleton<SbModule>::Instance()->Enable();
+   Module::Enable();
+}
+
+//------------------------------------------------------------------------------
+
 void MbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("MbModule.Shutdown");

@@ -63,6 +63,17 @@ CbModule::~CbModule()
 
 //------------------------------------------------------------------------------
 
+void CbModule::Enable()
+{
+   Debug::ft("CbModule.Enable");
+
+   Singleton<StModule>::Instance()->Enable();
+   Singleton<MbModule>::Instance()->Enable();
+   Module::Enable();
+}
+
+//------------------------------------------------------------------------------
+
 void CbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("CbModule.Shutdown");

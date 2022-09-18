@@ -36,7 +36,11 @@ namespace MediaBase
 class MbModule : public Module
 {
    friend class Singleton<MbModule>;
-
+public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+private:
    //  Private because this is a singleton.
    //
    MbModule();

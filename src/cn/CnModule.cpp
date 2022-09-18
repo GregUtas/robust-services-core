@@ -31,7 +31,7 @@ using namespace SessionBase;
 
 namespace ControlNode
 {
-CnModule::CnModule() : Module()
+CnModule::CnModule() : Module("cn")
 {
    Debug::ft("CnModule.ctor");
 
@@ -46,6 +46,16 @@ CnModule::CnModule() : Module()
 CnModule::~CnModule()
 {
    Debug::ftnt("CnModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void CnModule::Enable()
+{
+   Debug::ft("CnModule.Enable");
+
+   Singleton<SbModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

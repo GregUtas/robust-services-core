@@ -127,7 +127,7 @@ const string& CfgTuple::ValidValueChars()
 {
    //  Valid characters in a configuration tuple's value.
    //
-   static const string ValueChars(ValidKeyChars() + ":/\\");
+   static const string ValueChars(ValidKeyChars() + " :/\\");
 
    return ValueChars;
 }

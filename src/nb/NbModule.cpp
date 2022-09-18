@@ -157,5 +157,9 @@ void NbModule::Startup(RestartLevel level)
    Singleton<LogThread>::Instance()->Startup(level);
    Singleton<DeferredThread>::Instance()->Startup(level);
    Singleton<CliThread>::Instance()->Startup(level);
+
+   //  Enable optional modules.
+   //
+   Singleton<ModuleRegistry>::Instance()->EnableModules();
 }
 }

@@ -36,7 +36,11 @@ namespace CallBase
 class CbModule : public Module
 {
    friend class Singleton<CbModule>;
-
+public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+private:
    //  Private because this is a singleton.
    //
    CbModule();

@@ -170,27 +170,17 @@ static bool LoadNextTuple(string& key, string& value)
       auto valEnd =
          input.find_first_not_of(CfgTuple::ValidValueChars(), valBeg);
 
-      if(valEnd == string::npos)
-      {
-         value = input.substr(valBeg);  // value occupies rest of line
-         return true;
-      }
-
       if(valEnd == valBeg)
       {
          BadLine(ConfigValueInvalid, input);  // first character invalid
          continue;
       }
 
-      //  We have a value, but other stuff follows it.  That's OK as long
-      //  as the trailing stuff only consists of blanks or a comment.
+      //  Make the value the rest of the input line and strip trailing blanks.
       //
       value = input.substr(valBeg, valEnd - valBeg);
-
-      auto extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
-      if(extra == string::npos) return true;
-      if(input[extra] == CfgTuple::CommentChar) return true;
-      BadLine(ConfigExtraIgnored, input.substr(extra));
+      const auto& blanks = CfgTuple::ValidBlankChars();
+      while(blanks.find(value.back()) != string::npos) value.pop_back();
       return true;
    }
 

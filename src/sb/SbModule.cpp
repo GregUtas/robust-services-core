@@ -63,6 +63,16 @@ SbModule::~SbModule()
 
 //------------------------------------------------------------------------------
 
+void SbModule::Enable()
+{
+   Debug::ft("SbModule.Enable");
+
+   Singleton<NwModule>::Instance()->Enable();
+   Module::Enable();
+}
+
+//------------------------------------------------------------------------------
+
 void SbModule::Patch(sel_t selector, void* arguments)
 {
    Module::Patch(selector, arguments);

@@ -22,12 +22,10 @@
 #include "Module.h"
 #include <cstdint>
 #include <ostream>
-#include <string>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -40,9 +38,19 @@ const ModuleId Module::MaxId = 255;
 
 //------------------------------------------------------------------------------
 
-Module::Module()
+fn_name Module_ctor = "Module.ctor";
+
+Module::Module(c_string symbol) :
+   symbol_(symbol),
+   enabled_(false)
 {
-   Debug::ft("Module.ctor");
+   Debug::ft(Module_ctor);
+
+   if(symbol_.size() > 6)
+   {
+      string expl = "module symbol \"" + symbol_ + "\" too long";
+      Debug::SwLog(Module_ctor, expl, symbol_.size() - 6);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +81,18 @@ void Module::Display(ostream& stream,
 {
    Immutable::Display(stream, prefix, options);
 
-   stream << prefix << "mid : " << mid_.to_str() << CRLF;
+   stream << prefix << "mid     : " << mid_.to_str() << CRLF;
+   stream << prefix << "symbol  : " << symbol_ << CRLF;
+   stream << prefix << "enabled : " << enabled_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void Module::Enable()
+{
+   Debug::ft("Module.Enable");
+
+   enabled_ = true;
 }
 
 //------------------------------------------------------------------------------

@@ -34,68 +34,48 @@
 
 //------------------------------------------------------------------------------
 //
-//  CreateModules() determines what gets included in the build.  Each module
-//  resides in its own static library, and all the files that belong to that
-//  library reside in a folder with the same name.  The order of modules, from
-//  the lowest to the highest layer, is
-//                                              dependencies
+//  CreateModules() creates the module for each application that can be enabled,
+//  and each of those modules also creates the modules on which it depends.
+//    Each module resides in its own static library, and all the files that
+//  belong to that library reside in a folder with the same name.  The following
+//  table summarizes module dependencies (@ = an application)
+//
+//                                                dependencies
 //  namespace       module      library  nb nt ct nw sb st mb cb pb cn
 //  ---------       ------      -------  -----------------------------
-//  NodeBase        NbModule    nb
-//  NodeTools       NtModule    nt       **
-//  NetworkBase     NwModule    nw       **
-//  CodeTools       CtModule    ct       ** **
-//  SessionBase     SbModule    sb       **       **
-//  SessionTools    StModule    st       ** **    ** **
-//  MediaBase       MbModule    mb       **       ** **
-//  CallBase        CbModule    cb       ** **    ** ** ** **
-//  PotsBase        PbModule    pb       ** **    ** ** ** ** **
-//  ControlNode     CnModule    cn       **       ** **
-//  RoutingNode     RnModule    rn       **       ** **    ** **
-//  AccessNode      AnModule    an       **       ** **    ** ** **
-//  ServiceNode     SnModule    sn       **       ** **    ** ** **
-//  OperationsNode  OnModule    on       **       ** **    ** ** ** **
-//  Diplomacy       DipModule   dip      **       **
-//  none            main.cpp    none     the desired subset of the above
-//
-//  RootThread is defined in NodeBase, so a using directive for NodeBase must
-//  be included here.  To build only NodeBase, create NbModule.  To include
-//  additional layers, add a using directive for the namespace, and create
-//  only the module, for the uppermost layer (leaf library) that is required
-//  in the build.  That module's constructor will, in turn, create the modules
-//  that it requires, and so on transitively.
+//  NodeBase        NbModule      nb
+//  NodeTools       NtModule      nt     **
+//  NetworkBase     NwModule      nw     **
+//  CodeTools       CtModule    @ ct     ** **
+//  SessionBase     SbModule      sb     **       **
+//  SessionTools    StModule      st     ** **    ** **
+//  MediaBase       MbModule      mb     **       ** **
+//  CallBase        CbModule      cb     ** **    ** ** ** **
+//  PotsBase        PbModule      pb     ** **    ** ** ** ** **
+//  ControlNode     CnModule    @ cn     **       ** **
+//  RoutingNode     RnModule    @ rn     **       ** **    ** **
+//  AccessNode      AnModule    @ an     **       ** **    ** ** **
+//  ServiceNode     SnModule    @ sn     **       ** **    ** ** **
+//  OperationsNode  OnModule    @ on     **       ** **    ** ** ** **
+//  Diplomacy       DipModule   @ dip    **       **
+//  none            main.cpp      none   the desired subset of applications
 //
 #include "AnModule.h"
-//& #include "CbModule.h"
 #include "CnModule.h"
 #include "CtModule.h"
-//& #include "DipModule.h"
-//& #include "MbModule.h"
-//& #include "NbModule.h"
-//& #include "NwModule.h"
-//& #include "NtModule.h"
+#include "DipModule.h"
 #include "OnModule.h"
-//& #include "PbModule.h"
 #include "RnModule.h"
-//& #include "SbModule.h"
 #include "SnModule.h"
-//& #include "StModule.h"
 
 using namespace NodeBase;
-//& using namespace NodeTools;
 using namespace CodeTools;
-//& using namespace NetworkBase;
-//& using namespace SessionBase;
-//& using namespace MediaBase;
-//& using namespace CallBase;
-//& using namespace SessionTools;
-//& using namespace PotsBase;
 using namespace OperationsNode;
 using namespace ControlNode;
 using namespace RoutingNode;
 using namespace ServiceNode;
 using namespace AccessNode;
-//& using namespace Diplomacy;
+using namespace Diplomacy;
 
 //------------------------------------------------------------------------------
 
@@ -103,21 +83,13 @@ static void CreateModules()
 {
    Debug::ft("CreateModules");
 
-   //& Singleton<NbModule>::Instance();
-   //& Singleton<NtModule>::Instance();
    Singleton<CtModule>::Instance();
-   //& Singleton<NwModule>::Instance();
-   //& Singleton<SbModule>::Instance();
-   //& Singleton<StModule>::Instance();
-   //& Singleton<MbModule>::Instance();
-   //& Singleton<CbModule>::Instance();
-   //& Singleton<PbModule>::Instance();
    Singleton<OnModule>::Instance();
    Singleton<CnModule>::Instance();
    Singleton<RnModule>::Instance();
    Singleton<SnModule>::Instance();
    Singleton<AnModule>::Instance();
-   //& Singleton<DipModule>::Instance();
+   Singleton<DipModule>::Instance();
 }
 
 //------------------------------------------------------------------------------

@@ -30,7 +30,6 @@
 #include "Debug.h"
 #include "Library.h"
 #include "ModuleRegistry.h"
-#include "NbModule.h"
 #include "NtModule.h"
 #include "Singleton.h"
 
@@ -41,13 +40,12 @@ using namespace NodeTools;
 
 namespace CodeTools
 {
-CtModule::CtModule() : Module()
+CtModule::CtModule() : Module("ct")
 {
    Debug::ft("CtModule.ctor");
 
    //  Create the modules required by CodeTools.
    //
-   Singleton<NbModule>::Instance();
    Singleton<NtModule>::Instance();
    Singleton<ModuleRegistry>::Instance()->BindModule(*this);
 }
@@ -57,6 +55,16 @@ CtModule::CtModule() : Module()
 CtModule::~CtModule()
 {
    Debug::ftnt("CtModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void CtModule::Enable()
+{
+   Debug::ft("CtModule.Enable");
+
+   Singleton<NtModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

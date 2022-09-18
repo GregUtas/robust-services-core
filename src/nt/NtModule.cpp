@@ -33,7 +33,7 @@
 
 namespace NodeTools
 {
-NtModule::NtModule() : Module()
+NtModule::NtModule() : Module("nt")
 {
    Debug::ft("NtModule.ctor");
 
@@ -48,6 +48,16 @@ NtModule::NtModule() : Module()
 NtModule::~NtModule()
 {
    Debug::ftnt("NtModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void NtModule::Enable()
+{
+   Debug::ft("NtModule.Enable");
+
+   Singleton<NbModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

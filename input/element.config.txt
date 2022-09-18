@@ -1,22 +1,12 @@
 / Parameters that use default values are commented out.
 /
-/ HelpPath, InputPath, and OutputPath are obsolete.  Their
-/ directory names are now fixed, and the path to them is
-/ relative to the directory out of which the .exe was run.
-/ However, SourcePath still exists so that non-RSC software
-/ can be analyzed.
-/ ConsoleFileName is also obsolete, being fixed to "console"
-/ with the time when the system started appended as before.
-/
-/ BreakEnabled             F
+BreakEnabled             T
 CheckStack               T
 CipTcp                   T
 CipUdp                   T
 ElementIpAddr            127.0.0.1
 ElementName              Reigi
 / InitTimeoutMsecs         20000
-/ HelpPath [obsolete]      ../rsc/help
-/ InputPath [obsolete]     ../rsc/input
 LocalTestUdp             T
 / NoIngressMessageCount    100
 / NoIngressQueueLength     1200
@@ -41,7 +31,7 @@ NullifyObjectData        T
 / NumOfSmallBuffers        1
 / NumOfTimers              1
 / NumOfTinyBuffers         1
-/ OutputPath [obsolete]    ../rsc/excluded/output
+  OptionalModules          an sn ct
 ReinitOnSchedTimeout     F
 / RtcInterval              60
 / RtcLimit                 6

@@ -35,6 +35,10 @@ class SbModule : public NodeBase::Module
 {
    friend class NodeBase::Singleton<SbModule>;
 public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;

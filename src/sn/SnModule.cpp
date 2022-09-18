@@ -52,7 +52,7 @@ using namespace SessionBase;
 
 namespace ServiceNode
 {
-SnModule::SnModule() : Module()
+SnModule::SnModule() : Module("sn")
 {
    Debug::ft("SnModule.ctor");
 
@@ -67,6 +67,16 @@ SnModule::SnModule() : Module()
 SnModule::~SnModule()
 {
    Debug::ftnt("SnModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void SnModule::Enable()
+{
+   Debug::ft("SnModule.Enable");
+
+   Singleton<PbModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

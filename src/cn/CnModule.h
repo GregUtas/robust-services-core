@@ -36,7 +36,11 @@ namespace ControlNode
 class CnModule : public Module
 {
    friend class Singleton<CnModule>;
-
+public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+private:
    //  Private because this is a singleton.
    //
    CnModule();

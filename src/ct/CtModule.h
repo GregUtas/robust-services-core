@@ -35,6 +35,10 @@ class CtModule : public NodeBase::Module
 {
    friend class NodeBase::Singleton<CtModule>;
 public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+
    //  Overridden for restarts.
    //
    void Shutdown(NodeBase::RestartLevel level) override;

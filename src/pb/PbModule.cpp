@@ -67,6 +67,16 @@ PbModule::~PbModule()
 
 //------------------------------------------------------------------------------
 
+void PbModule::Enable()
+{
+   Debug::ft("PbModule.Enable");
+
+   Singleton<CbModule>::Instance()->Enable();
+   Module::Enable();
+}
+
+//------------------------------------------------------------------------------
+
 void PbModule::Shutdown(RestartLevel level)
 {
    Debug::ft("PbModule.Shutdown");

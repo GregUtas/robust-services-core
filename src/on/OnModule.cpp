@@ -33,7 +33,7 @@ using namespace PotsBase;
 
 namespace OperationsNode
 {
-OnModule::OnModule() : Module()
+OnModule::OnModule() : Module("on")
 {
    Debug::ft("OnModule.ctor");
 
@@ -49,6 +49,17 @@ OnModule::OnModule() : Module()
 OnModule::~OnModule()
 {
    Debug::ftnt("OnModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void OnModule::Enable()
+{
+   Debug::ft("OnModule.Enable");
+
+   Singleton<CnModule>::Instance()->Enable();
+   Singleton<PbModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

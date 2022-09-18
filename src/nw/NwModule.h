@@ -35,6 +35,10 @@ class NwModule : public NodeBase::Module
 {
    friend class NodeBase::Singleton<NwModule>;
 public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;

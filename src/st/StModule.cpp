@@ -57,6 +57,17 @@ StModule::~StModule()
 
 //------------------------------------------------------------------------------
 
+void StModule::Enable()
+{
+   Debug::ft("StModule.Enable");
+
+   Singleton<SbModule>::Instance()->Enable();
+   Singleton<NtModule>::Instance()->Enable();
+   Module::Enable();
+}
+
+//------------------------------------------------------------------------------
+
 void StModule::Shutdown(RestartLevel level)
 {
    Debug::ft("StModule.Shutdown");

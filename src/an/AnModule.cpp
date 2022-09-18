@@ -33,7 +33,7 @@ using namespace PotsBase;
 
 namespace AccessNode
 {
-AnModule::AnModule() : Module()
+AnModule::AnModule() : Module("an")
 {
    Debug::ft("AnModule.ctor");
 
@@ -48,6 +48,16 @@ AnModule::AnModule() : Module()
 AnModule::~AnModule()
 {
    Debug::ftnt("AnModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void AnModule::Enable()
+{
+   Debug::ft("AnModule.Enable");
+
+   Singleton<PbModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

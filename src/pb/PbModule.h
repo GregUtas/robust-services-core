@@ -36,7 +36,11 @@ namespace PotsBase
 class PbModule : public Module
 {
    friend class Singleton<PbModule>;
-
+public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+private:
    //  Private because this is a singleton.
    //
    PbModule();

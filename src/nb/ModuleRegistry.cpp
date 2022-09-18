@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ModuleRegistry.h"
+#include "CfgStrParm.h"
 #include "Deferred.h"
 #include <chrono>
 #include <cstddef>
@@ -30,7 +31,7 @@
 #include <ratio>
 #include <set>
 #include <sstream>
-#include <string>
+#include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
@@ -78,6 +79,27 @@ static const FactionFlags& AllFactions()
    }
 
    return AllFactions_;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Extracts the next symbol from the front of SYMBOLS and returns it after
+//  erasing it from SYMBOLS.
+//
+static string GetSymbol(string& symbols)
+{
+   auto begin = symbols.find_first_not_of(SPACE);
+   if(begin == string::npos) return EMPTY_STR;
+   symbols = symbols.substr(begin);
+   auto end = symbols.find_first_of(SPACE);
+   auto symbol = symbols.substr(0, end);
+
+   if(end != string::npos)
+      symbols = symbols.substr(end);
+   else
+      symbols.clear();
+
+   return symbol;
 }
 
 //------------------------------------------------------------------------------
@@ -188,6 +210,34 @@ void StopInitTracing::EventHasOccurred(Event event)
 }
 
 //==============================================================================
+//
+//  Configuration parameter for enabling optional components.
+//
+class ModulesCfg : public CfgStrParm
+{
+public:
+   ModulesCfg();
+   ~ModulesCfg();
+private:
+   RestartLevel RestartRequired() const override { return RestartReboot; }
+};
+
+//------------------------------------------------------------------------------
+
+ModulesCfg::ModulesCfg() : CfgStrParm("OptionalModules", EMPTY_STR,
+   "modules to enable (edit config file and reboot to change)")
+{
+   Debug::ft("ModulesCfg.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+ModulesCfg::~ModulesCfg()
+{
+   Debug::ftnt("ModulesCfg.dtor");
+}
+
+//==============================================================================
 
 ModuleRegistry::ModuleRegistry()
 {
@@ -200,6 +250,11 @@ ModuleRegistry::ModuleRegistry()
    //  in immutable memory.
    //
    Singleton<MainArgs>::Instance();
+
+   //  Create the configuration parameter for enabling optional components.
+   //
+   modulesCfg_.reset(new ModulesCfg);
+   Singleton<CfgParmRegistry>::Instance()->BindParm(*modulesCfg_);
 }
 
 //------------------------------------------------------------------------------
@@ -215,9 +270,19 @@ ModuleRegistry::~ModuleRegistry()
 
 //------------------------------------------------------------------------------
 
+fn_name ModuleRegistry_BindModule = "ModuleRegistry.BindModule";
+
 void ModuleRegistry::BindModule(Module& module)
 {
-   Debug::ft("ModuleRegistry.BindModule");
+   Debug::ft(ModuleRegistry_BindModule);
+
+   const auto& symbol = module.Symbol();
+
+   if(!symbol.empty() && (FindModule(symbol) != nullptr))
+   {
+      string expl = "module symbol \"" + symbol + "\" duplicated";
+      Debug::SwLog(ModuleRegistry_BindModule, expl, 0);
+   }
 
    modules_.Insert(module);
 }
@@ -255,6 +320,48 @@ void ModuleRegistry::Display(ostream& stream,
 
    stream << prefix << "modules [ModuleId]" << CRLF;
    modules_.Display(stream, prefix + spaces(2), options);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ModuleRegistry_EnableModules = "ModuleRegistry.EnableModules";
+
+void ModuleRegistry::EnableModules() const
+{
+   Debug::ft(ModuleRegistry_EnableModules);
+
+   if(Restart::GetLevel() != RestartReboot) return;
+
+   string enabled = modulesCfg_->CurrValue();
+
+   for(auto sym = GetSymbol(enabled); !sym.empty(); sym = GetSymbol(enabled))
+   {
+      auto mod = FindModule(sym);
+
+      if(mod != nullptr)
+      {
+         mod->Enable();
+      }
+      else
+      {
+         string expl = "module symbol \"" + sym + "\" not found";
+         Debug::SwLog(ModuleRegistry_EnableModules, expl, 0);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+Module* ModuleRegistry::FindModule(const string& symbol) const
+{
+   Debug::ft("ModuleRegistry.FindModule");
+
+   for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
+   {
+      if(m->Symbol() == symbol) return m;
+   }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -515,19 +622,24 @@ void ModuleRegistry::Startup(RestartLevel level)
 
    for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
    {
-      auto time = SystemTime::Now();
-      auto point = SteadyTime::Now();
-      auto name = strClass(m) + "...";
-      *Stream() << name << setw(52 - name.size());
-      *Stream() << to_string(time, LowAlpha) << CRLF;
-      Log::Submit(stream_);
+      auto id = m->Mid();
 
-      m->Startup(level);
+      if(m->IsEnabled() || (id == 1))
+      {
+         auto time = SystemTime::Now();
+         auto point = SteadyTime::Now();
+         auto name = strClass(m) + "...";
+         *Stream() << name << setw(52 - name.size());
+         *Stream() << to_string(time, LowAlpha) << CRLF;
+         Log::Submit(stream_);
 
-      nsecs_t elapsed = SteadyTime::Now() - point;
-      *Stream() << InitializedStr << setw(36 - strlen(InitializedStr));
-      *Stream() << elapsed.count() / NS_TO_MS << CRLF;
-      Log::Submit(stream_);
+         m->Startup(level);
+
+         nsecs_t elapsed = SteadyTime::Now() - point;
+         *Stream() << InitializedStr << setw(36 - strlen(InitializedStr));
+         *Stream() << elapsed.count() / NS_TO_MS << CRLF;
+         Log::Submit(stream_);
+      }
    }
 
    //  Write-protect memory segments that are read-only while in service.
@@ -553,8 +665,8 @@ void ModuleRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fixed_string ModuleHeader = " Id  Module";
-//                          |  3..<class>
+fixed_string ModuleHeader = " Id  Symbol  Enabled  Module";
+//                          |  3..     6..      7..<class>
 
 size_t ModuleRegistry::Summarize(ostream& stream, uint32_t selector) const
 {
@@ -563,6 +675,8 @@ size_t ModuleRegistry::Summarize(ostream& stream, uint32_t selector) const
    for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
    {
       stream << setw(3) << m->Mid();
+      stream << spaces(2) << setw(6) << m->Symbol();
+      stream << spaces(2) << setw(7) << m->IsEnabled();
       stream << spaces(2) << strClass(m) << CRLF;
    }
 

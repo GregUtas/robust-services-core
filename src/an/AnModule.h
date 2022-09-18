@@ -45,6 +45,10 @@ class AnModule : public Module
    //
    ~AnModule();
 
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;

@@ -36,7 +36,11 @@ namespace SessionTools
 class StModule : public Module
 {
    friend class Singleton<StModule>;
-
+public:
+   //  Overridden to enable modules that this one requires.
+   //
+   void Enable() override;
+private:
    //  Private because this is a singleton.
    //
    StModule();

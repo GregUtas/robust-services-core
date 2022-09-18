@@ -24,8 +24,10 @@
 
 #include "Immutable.h"
 #include <cstddef>
+#include <string>
 #include "NbTypes.h"
 #include "RegCell.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -77,6 +79,7 @@ namespace NodeBase
 //
 class Module : public Immutable
 {
+   friend class ModuleRegistry;
    friend class Registry<Module>;
 public:
    //  Deleted to prohibit copying.
@@ -91,9 +94,23 @@ public:
    //
    static const ModuleId MaxId;
 
+   //  Enables the module.  Overridden to invoke this function on modules
+   //  that this one requires, after which this version must be invoked.
+   //  May only be invoked during a RestartReboot (first initialization).
+   //
+   virtual void Enable();
+
    //  Returns the module's identifier.
    //
    ModuleId Mid() const { return mid_.GetId(); }
+
+   //  Returns the module's symbol.
+   //
+   const std::string& Symbol() const { return symbol_; }
+
+   //  Returns true if the module is enabled.
+   //
+   bool IsEnabled() const { return enabled_; }
 
    //  Returns the offset to mid_.
    //
@@ -120,18 +137,28 @@ public:
    //
    void Startup(RestartLevel level) override;
 protected:
-   //  Protected because this class is virtual.
+   //  Protected because this class is virtual.  SYMBOL is used by an optional
+   //  module so that the OptionalModules configuration parameter can specify
+   //  the subset of modules to enable in a build that includes all modules.
    //
-   Module();
+   Module(c_string symbol = EMPTY_STR);
 
    //  Removes the module from the global module registry.  Protected
    //  because subclasses should be singletons.
    //
    virtual ~Module();
 private:
-   //  The module's identifier.
+   //  The module's identifier (location in ModuleRegistry).
    //
    RegCell mid_;
+
+   //  The symbol for enabling the module if it is optional.
+   //
+   const std::string symbol_;
+
+   //  Set if the module is enabled.
+   //
+   bool enabled_;
 };
 }
 #endif

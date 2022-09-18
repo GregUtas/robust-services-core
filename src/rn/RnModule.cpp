@@ -31,7 +31,7 @@ using namespace CallBase;
 
 namespace RoutingNode
 {
-RnModule::RnModule() : Module()
+RnModule::RnModule() : Module("rn")
 {
    Debug::ft("RnModule.ctor");
 
@@ -46,6 +46,16 @@ RnModule::RnModule() : Module()
 RnModule::~RnModule()
 {
    Debug::ftnt("RnModule.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void RnModule::Enable()
+{
+   Debug::ft("RnModule.Enable");
+
+   Singleton<CbModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

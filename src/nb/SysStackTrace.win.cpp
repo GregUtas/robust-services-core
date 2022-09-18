@@ -195,6 +195,11 @@ void SysStackTrace::Demangle(std::string& name)
 
 void SysStackTrace::Display(ostream& stream) NO_FT
 {
+   //  Invoke this in case we haven't been initialized yet, which occurs
+   //  if RootThread::Main has not yet been invoked during bootup.
+   //
+   StackInfo::Startup();
+
    MutexGuard guard(&StackTraceLock_);
 
    StackFramesPtr frames = nullptr;

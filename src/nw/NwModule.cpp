@@ -59,6 +59,16 @@ NwModule::~NwModule()
 
 //------------------------------------------------------------------------------
 
+void NwModule::Enable()
+{
+   Debug::ft("NwModule.Enable");
+
+   Singleton<NbModule>::Instance()->Enable();
+   Module::Enable();
+}
+
+//------------------------------------------------------------------------------
+
 void NwModule::Patch(sel_t selector, void* arguments)
 {
    Module::Patch(selector, arguments);

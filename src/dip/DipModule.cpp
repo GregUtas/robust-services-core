@@ -37,7 +37,7 @@ using namespace NetworkBase;
 
 namespace Diplomacy
 {
-DipModule::DipModule() : Module()
+DipModule::DipModule() : Module("dip")
 {
    Debug::ft("DipModule.ctor");
 
@@ -45,6 +45,16 @@ DipModule::DipModule() : Module()
    //
    Singleton<NwModule>::Instance();
    Singleton<ModuleRegistry>::Instance()->BindModule(*this);
+}
+
+//------------------------------------------------------------------------------
+
+void DipModule::Enable()
+{
+   Debug::ft("DipModule.Enable");
+
+   Singleton<NwModule>::Instance()->Enable();
+   Module::Enable();
 }
 
 //------------------------------------------------------------------------------

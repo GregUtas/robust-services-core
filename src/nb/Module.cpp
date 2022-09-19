@@ -88,11 +88,16 @@ void Module::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name Module_Enable = "Module.Enable";
+
 void Module::Enable()
 {
-   Debug::ft("Module.Enable");
+   Debug::ft(Module_Enable);
 
-   enabled_ = true;
+   if(Restart::GetLevel() == RestartReboot)
+      enabled_ = true;
+   else
+      Debug::SwLog(Module_Enable, "reboot not in progress", 0);
 }
 
 //------------------------------------------------------------------------------

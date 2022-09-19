@@ -1,4 +1,17 @@
-/ Parameters that use default values are commented out.
+/ CONFIGURATION PARAMETERS.
+/
+/ This file contains key-value pairs, one pair per line.  A line with a /
+/ in the first column is treated as a comment.
+/
+/ Legal characters in a key are A-Z, a-z, 0-9 and period (.), hyphen (-),
+/ and underscore (_). Leading blanks on a line are ignored, after which the
+/ key is the first string containing those legal characters.
+/
+/ The rest of the characters on the line are taken as the value after erasing
+/ leading and trailing blanks.  Legal characters in a value are those in a
+/ key, plus colon (:), slash (/), backslash (\), and internal space ( ).
+/
+/ Parameters that use default values have been commented out.
 /
 BreakEnabled             T
 CheckStack               T
@@ -31,7 +44,7 @@ NullifyObjectData        T
 / NumOfSmallBuffers        1
 / NumOfTimers              1
 / NumOfTinyBuffers         1
-  OptionalModules          an sn ct
+  OptionalModules          nt an sn ct
 ReinitOnSchedTimeout     F
 / RtcInterval              60
 / RtcLimit                 6

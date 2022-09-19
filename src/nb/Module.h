@@ -33,11 +33,14 @@
 
 namespace NodeBase
 {
+//  The purpose of modules is to avoid the type of totally unstructured
+//  main() that plagues so many systems.
+//
 //  A module--the term as used here predates C++20 and is unrelated to its
 //  usage--consists of interrelated software that provides some logical
-//  capability.  It is implemented within its own namespace, which should
-//  consist of a separate .h/.cpp pair for each major class.  One of these
-//  pairs is a Module subclass that is invoked during restarts.  The term
+//  capability.  The capability is often implemented in its own namespace
+//  and should have a separate .h/.cpp pair for each major class.  One such
+//  pair is a Module subclass that is invoked during restarts.  The term
 //  "restart" refers to both system initialization (when the executable is
 //  first launched) and reinitialization (to recover from a serious error).
 //
@@ -51,7 +54,7 @@ namespace NodeBase
 //    private:
 //       SomeModule() : Module()
 //       {
-//          //  Modules 1 to N are the ones on which this module depends.
+//          //  Modules 1 to N are the ones that this module requires.
 //          //  Creating their singletons ensures that they will exist in
 //          //  the module registry when the system initializes.  Because
 //          //  each module creates the modules on which it depends before
@@ -65,17 +68,27 @@ namespace NodeBase
 //       }
 //
 //       ~SomeModule() = default;
+//
+//       void Enable() override
+//       {
+//          //  Enable the modules that this one requires, followed by this
+//          //  module.  This must be public if other modules require this
+//          //  one.  The outline is similar to the constructor.
+//          //
+//          Singleton<Module1>::Instance()->Enable();
+//          //  ...
+//          Singleton<ModuleN>::Instance()->Enable();
+//          Module::Enable();
+//       }
+//
 //       void Startup(RestartLevel level) override;
 //       void Shutdown(RestartLevel level) override;
 //    };
 //
-//  Later during initialization, ModuleRegistry::Startup handles most of
-//  the system's initialization by invoking Startup on each module.  The
-//  Startup function initializes the data required by the module when
-//  the system starts to run.
-//
-//  The purpose of modules is to avoid the type of totally unstructured
-//  main() that plagues so many systems.
+//  Later during initialization, ModuleRegistry::Startup handles most of the
+//  system's initialization by invoking Startup on each module that has been
+//  enabled (see the Enable function, below).  A Startup function initializes
+//  the data required by its module when the system initializes or restarts.
 //
 class Module : public Immutable
 {
@@ -95,8 +108,18 @@ public:
    static const ModuleId MaxId;
 
    //  Enables the module.  Overridden to invoke this function on modules
-   //  that this one requires, after which this version must be invoked.
-   //  May only be invoked during a RestartReboot (first initialization).
+   //  that this one requires (the same ones that its constructor created),
+   //  after which this version must be invoked.  Only invoked during a
+   //  RestartReboot (initial launch), when NodeBase (the lowest layer)
+   //  has initialized.  This function is invoked on each module whose
+   //  Symbol() appears in the configuration parameter OptionalModules,
+   //  which in turn causes it to enable the modules that it requires.
+   //  If a module is not enabled as the result of this procedure, its
+   //  Startup function is not invoked.  This allows a single executable
+   //  with various optiona capabilities to be built, and a subset of those
+   //  capabilities to be enabled by the OptionalModules parameter.  The
+   //  executable's capabilities can later be modified by editing that
+   //  parameter in the configuration file and performing a reboot restart.
    //
    virtual void Enable();
 

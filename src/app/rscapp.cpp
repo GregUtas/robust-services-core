@@ -67,7 +67,7 @@
 //  (a) create its module in CreateModules, below;
 //  (b) have its module pass a symbol to the base Module constructor; and
 //  (c) add that symbol to the OptionalModules configuration parameter in
-//      the configuration file rsc/input/element.config.txt
+//      the configuration file (by default, rsc/input/element.config.txt)
 //  (d) remove a symbol from OptionalModules if you don't create its module
 //
 //& #include "AnModule.h"

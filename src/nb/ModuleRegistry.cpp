@@ -43,6 +43,7 @@
 #include "Memory.h"
 #include "Module.h"
 #include "NbLogs.h"
+#include "NbModule.h"
 #include "NbSignals.h"
 #include "Restart.h"
 #include "RootThread.h"
@@ -331,6 +332,12 @@ void ModuleRegistry::EnableModules() const
    Debug::ft(ModuleRegistry_EnableModules);
 
    if(Restart::GetLevel() != RestartReboot) return;
+
+   //  NbModule is enabled by default, and its Startup function actually
+   //  invokes us.  Enable it explicitly for cosmetic purposes, so that
+   //  it will be marked enabled in the output of the >modules command.
+   //
+   Singleton<NbModule>::Instance()->Enable();
 
    string enabled = modulesCfg_->CurrValue();
 

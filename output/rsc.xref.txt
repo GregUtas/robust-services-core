@@ -276,6 +276,7 @@ NAMESPACES:
       dip/UnitOrder.h
       dip/WinterOrders.cpp
       dip/WinterOrders.h
+      rsc/main.cpp
    MediaBase
       an/PotsTrafficThread.cpp
       cb/BcProtocol.h
@@ -1105,6 +1106,8 @@ NAMESPACES:
       sb/TlvMessage.h
    NodeBase.SteadyTime
       an/PotsTrafficThread.cpp
+      dip/BotThread.cpp
+      dip/BotThread.h
       nb/Alarm.cpp
       nb/Gate.cpp
       nb/LeakyBucketCounter.cpp
@@ -2214,9 +2217,11 @@ an/AnModule.h
       rsc/main.cpp
    AccessNode.AnModule.AnModule: 42 [Function]
       an/AnModule.cpp
-   AccessNode.AnModule.Shutdown: 50 [Function]
+   AccessNode.AnModule.Enable: 50 [Function]
       an/AnModule.cpp
-   AccessNode.AnModule.Startup: 54 [Function]
+   AccessNode.AnModule.Shutdown: 54 [Function]
+      an/AnModule.cpp
+   AccessNode.AnModule.Startup: 58 [Function]
       an/AnModule.cpp
    AccessNode.AnModule.~AnModule: 46 [Function]
       an/AnModule.cpp
@@ -3503,8 +3508,8 @@ cb/BcProtocol.h
       cb/TestCallFactory.cpp
       sn/PotsBcSsm.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipPsm: 346 [Friend]
    CallBase.CipPsm: 301 [Friend]
+   CallBase.CipPsm: 346 [Friend]
    CallBase.CipPsm.CipPsm(): 274 [Function]
       cb/BcProtocol.cpp
    CallBase.CipPsm.CipPsm(FactoryId,ProtocolLayer&,bool): 279 [Function]
@@ -5401,13 +5406,17 @@ cb/CbModule.h
       cb/CbModule.cpp
       pb/PbModule.cpp
       rn/RnModule.cpp
-   CallBase.CbModule.CbModule: 42 [Function]
+   CallBase.CbModule.CbModule: 46 [Function]
       cb/CbModule.cpp
-   CallBase.CbModule.Shutdown: 50 [Function]
+   CallBase.CbModule.Enable: 42 [Function]
       cb/CbModule.cpp
-   CallBase.CbModule.Startup: 54 [Function]
+      pb/PbModule.cpp
+      rn/RnModule.cpp
+   CallBase.CbModule.Shutdown: 54 [Function]
       cb/CbModule.cpp
-   CallBase.CbModule.~CbModule: 46 [Function]
+   CallBase.CbModule.Startup: 58 [Function]
+      cb/CbModule.cpp
+   CallBase.CbModule.~CbModule: 50 [Function]
       cb/CbModule.cpp
    CBMODULE_H_INCLUDED: 23 [Define]
       cb/CbModule.h
@@ -5851,13 +5860,16 @@ cn/CnModule.h
       cn/CnModule.cpp
       on/OnModule.cpp
       rsc/main.cpp
-   ControlNode.CnModule.CnModule: 42 [Function]
+   ControlNode.CnModule.CnModule: 46 [Function]
       cn/CnModule.cpp
-   ControlNode.CnModule.Shutdown: 50 [Function]
+   ControlNode.CnModule.Enable: 42 [Function]
       cn/CnModule.cpp
-   ControlNode.CnModule.Startup: 54 [Function]
+      on/OnModule.cpp
+   ControlNode.CnModule.Shutdown: 54 [Function]
       cn/CnModule.cpp
-   ControlNode.CnModule.~CnModule: 46 [Function]
+   ControlNode.CnModule.Startup: 58 [Function]
+      cn/CnModule.cpp
+   ControlNode.CnModule.~CnModule: 50 [Function]
       cn/CnModule.cpp
    NodeBase.Singleton<CnModule>: 38 [Friend]
 ct/CodeCoverage.cpp
@@ -9064,13 +9076,15 @@ ct/CtModule.h
    CodeTools.CtModule: 34 [Class]
       ct/CtModule.cpp
       rsc/main.cpp
-   CodeTools.CtModule.CtModule: 48 [Function]
+   CodeTools.CtModule.CtModule: 52 [Function]
       ct/CtModule.cpp
-   CodeTools.CtModule.Shutdown: 40 [Function]
+   CodeTools.CtModule.Enable: 40 [Function]
       ct/CtModule.cpp
-   CodeTools.CtModule.Startup: 44 [Function]
+   CodeTools.CtModule.Shutdown: 44 [Function]
       ct/CtModule.cpp
-   CodeTools.CtModule.~CtModule: 52 [Function]
+   CodeTools.CtModule.Startup: 48 [Function]
+      ct/CtModule.cpp
+   CodeTools.CtModule.~CtModule: 56 [Function]
       ct/CtModule.cpp
    CTMODULE_H_INCLUDED: 23 [Define]
       ct/CtModule.h
@@ -22136,11 +22150,11 @@ dip/Adjudicator.cpp
    Diplomacy.MapAndUnits_move_to_next_turn: 1744 [SpaceData]
       dip/Adjudicator.cpp
 dip/BaseBot.cpp
-   Diplomacy.BaseBot_disconnect_from_server: 189 [SpaceData]
+   Diplomacy.BaseBot_disconnect_from_server: 190 [SpaceData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot_report_end: 1742 [SpaceData]
+   Diplomacy.BaseBot_report_end: 1739 [SpaceData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot_send_im_message: 2137 [SpaceData]
+   Diplomacy.BaseBot_send_im_message: 2134 [SpaceData]
       dip/BaseBot.cpp
 dip/BaseBot.h
    BASEBOT_H_INCLUDED: 15 [Define]
@@ -22157,44 +22171,44 @@ dip/BaseBot.h
       dip/BaseBot.cpp
    Diplomacy.BaseBot.BaseBot: 66 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.cancel_event: 178 [Function]
+   Diplomacy.BaseBot.cancel_event: 177 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.cd_powers: 570 [ClassData]
+   Diplomacy.BaseBot.cd_powers: 569 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.centres: 579 [ClassData]
+   Diplomacy.BaseBot.centres: 578 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.check_sent_press_for_inactive_power: 686 [Function]
+   Diplomacy.BaseBot.check_sent_press_for_inactive_power: 685 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.client_addr_: 737 [ClassData]
+   Diplomacy.BaseBot.client_addr_: 736 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.config_: 733 [ClassData]
+   Diplomacy.BaseBot.config_: 732 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.create_socket: 710 [Function]
+   Diplomacy.BaseBot.create_socket: 709 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.delete_socket: 720 [Function]
+   Diplomacy.BaseBot.delete_socket: 719 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.disconnect_from_server: 154 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.Display: 104 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.get_ipaddrs: 706 [Function]
+   Diplomacy.BaseBot.get_ipaddrs: 705 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.get_reconnect_details: 284 [Function]
+   Diplomacy.BaseBot.get_reconnect_details: 283 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.get_try_tokens: 216 [Function]
+   Diplomacy.BaseBot.get_try_tokens: 215 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.initialise(): 78 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
-   Diplomacy.BaseBot.initialise(const StartupParameters&): 190 [Function]
+   Diplomacy.BaseBot.initialise(const StartupParameters&): 189 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.initialised_: 729 [ClassData]
+   Diplomacy.BaseBot.initialised_: 728 [ClassData]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.instance: 74 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/StartupParameters.cpp
-   Diplomacy.BaseBot.map_and_units: 565 [ClassData]
+   Diplomacy.BaseBot.map_and_units: 564 [ClassData]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.map_message_: 788 [ClassData]
       dip/BaseBot.cpp
@@ -22208,224 +22222,224 @@ dip/BaseBot.h
       dip/BaseBot.cpp
    Diplomacy.BaseBot.ord_received_: 780 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.out_powers: 575 [ClassData]
+   Diplomacy.BaseBot.out_powers: 574 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_adm_message: 267 [Function]
+   Diplomacy.BaseBot.process_adm_message: 266 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_bm_message: 455 [Function]
+   Diplomacy.BaseBot.process_bm_message: 454 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_ccd: 631 [Function]
+   Diplomacy.BaseBot.process_ccd: 630 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_ccd_message: 205 [Function]
+   Diplomacy.BaseBot.process_ccd_message: 204 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.process_command_line_parameter: 90 [Function]
       dip/BaseBot.cpp
       dip/StartupParameters.cpp
-   Diplomacy.BaseBot.process_dm_message: 608 [Function]
+   Diplomacy.BaseBot.process_dm_message: 607 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_drw_message: 211 [Function]
+   Diplomacy.BaseBot.process_drw_message: 210 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_em_message: 616 [Function]
+   Diplomacy.BaseBot.process_em_message: 615 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_fm_message: 612 [Function]
+   Diplomacy.BaseBot.process_fm_message: 611 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_frm_message: 221 [Function]
+   Diplomacy.BaseBot.process_frm_message: 220 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_hlo_message: 466 [Function]
+   Diplomacy.BaseBot.process_hlo_message: 465 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_huh_message: 225 [Function]
+   Diplomacy.BaseBot.process_huh_message: 224 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_lod_message: 229 [Function]
+   Diplomacy.BaseBot.process_lod_message: 228 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_map_message: 471 [Function]
+   Diplomacy.BaseBot.process_map_message: 470 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_mdf: 627 [Function]
+   Diplomacy.BaseBot.process_mdf: 626 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_mdf_message: 475 [Function]
+   Diplomacy.BaseBot.process_mdf_message: 474 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.process_message: 82 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
-   Diplomacy.BaseBot.process_mis_message: 233 [Function]
+   Diplomacy.BaseBot.process_mis_message: 232 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_not: 637 [Function]
+   Diplomacy.BaseBot.process_not: 636 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_not_ccd: 632 [Function]
+   Diplomacy.BaseBot.process_not_ccd: 631 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_not_ccd_message: 272 [Function]
+   Diplomacy.BaseBot.process_not_ccd_message: 271 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_not_tme_message: 277 [Function]
+   Diplomacy.BaseBot.process_not_tme_message: 276 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_now: 629 [Function]
+   Diplomacy.BaseBot.process_now: 628 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_now_message: 487 [Function]
+   Diplomacy.BaseBot.process_now_message: 486 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_off_message: 237 [Function]
+   Diplomacy.BaseBot.process_off_message: 236 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_ord: 630 [Function]
+   Diplomacy.BaseBot.process_ord: 629 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_ord_message: 479 [Function]
+   Diplomacy.BaseBot.process_ord_message: 478 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_out: 634 [Function]
+   Diplomacy.BaseBot.process_out: 633 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_out_message: 242 [Function]
+   Diplomacy.BaseBot.process_out_message: 241 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_prn_message: 246 [Function]
+   Diplomacy.BaseBot.process_prn_message: 245 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej: 636 [Function]
+   Diplomacy.BaseBot.process_rej: 635 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_adm_message: 357 [Function]
+   Diplomacy.BaseBot.process_rej_adm_message: 356 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_drw_message: 347 [Function]
+   Diplomacy.BaseBot.process_rej_drw_message: 346 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_gof_message: 332 [Function]
+   Diplomacy.BaseBot.process_rej_gof_message: 331 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_hlo_message: 307 [Function]
+   Diplomacy.BaseBot.process_rej_hlo_message: 306 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_hst_message: 322 [Function]
+   Diplomacy.BaseBot.process_rej_hst_message: 321 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_iam_message: 302 [Function]
+   Diplomacy.BaseBot.process_rej_iam_message: 301 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_mis_message: 362 [Function]
+   Diplomacy.BaseBot.process_rej_mis_message: 361 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_nme_message: 297 [Function]
+   Diplomacy.BaseBot.process_rej_nme_message: 296 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_not: 640 [Function]
+   Diplomacy.BaseBot.process_rej_not: 639 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_not_drw_message: 372 [Function]
+   Diplomacy.BaseBot.process_rej_not_drw_message: 371 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_not_gof_message: 367 [Function]
+   Diplomacy.BaseBot.process_rej_not_gof_message: 366 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_now_message: 312 [Function]
+   Diplomacy.BaseBot.process_rej_now_message: 311 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_ord_message: 337 [Function]
+   Diplomacy.BaseBot.process_rej_ord_message: 336 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_sco_message: 317 [Function]
+   Diplomacy.BaseBot.process_rej_sco_message: 316 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_snd: 644 [Function]
+   Diplomacy.BaseBot.process_rej_snd: 643 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_snd_message: 352 [Function]
+   Diplomacy.BaseBot.process_rej_snd_message: 351 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_sub_message: 327 [Function]
+   Diplomacy.BaseBot.process_rej_sub_message: 326 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rej_tme_message: 342 [Function]
+   Diplomacy.BaseBot.process_rej_tme_message: 341 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_rm_message: 604 [Function]
+   Diplomacy.BaseBot.process_rm_message: 603 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_sco: 628 [Function]
+   Diplomacy.BaseBot.process_sco: 627 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_sco_message: 483 [Function]
+   Diplomacy.BaseBot.process_sco_message: 482 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_slo_message: 491 [Function]
+   Diplomacy.BaseBot.process_slo_message: 490 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_smr_message: 250 [Function]
+   Diplomacy.BaseBot.process_smr_message: 249 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_sve_message: 254 [Function]
+   Diplomacy.BaseBot.process_sve_message: 253 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_thx_message: 259 [Function]
+   Diplomacy.BaseBot.process_thx_message: 258 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_tme_message: 263 [Function]
+   Diplomacy.BaseBot.process_tme_message: 262 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_unexpected_not_message: 430 [Function]
+   Diplomacy.BaseBot.process_unexpected_not_message: 429 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_unexpected_rej_message: 435 [Function]
+   Diplomacy.BaseBot.process_unexpected_rej_message: 434 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_unexpected_rej_not_message: 440 [Function]
+   Diplomacy.BaseBot.process_unexpected_rej_not_message: 439 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_unexpected_yes_message: 445 [Function]
+   Diplomacy.BaseBot.process_unexpected_yes_message: 444 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_unexpected_yes_not_message: 450 [Function]
+   Diplomacy.BaseBot.process_unexpected_yes_not_message: 449 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes: 635 [Function]
+   Diplomacy.BaseBot.process_yes: 634 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_drw_message: 403 [Function]
+   Diplomacy.BaseBot.process_yes_drw_message: 402 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_gof_message: 393 [Function]
+   Diplomacy.BaseBot.process_yes_gof_message: 392 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_iam_message: 388 [Function]
+   Diplomacy.BaseBot.process_yes_iam_message: 387 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_nme_message: 377 [Function]
+   Diplomacy.BaseBot.process_yes_nme_message: 376 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_not: 638 [Function]
+   Diplomacy.BaseBot.process_yes_not: 637 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_not_drw_message: 419 [Function]
+   Diplomacy.BaseBot.process_yes_not_drw_message: 418 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_not_gof_message: 414 [Function]
+   Diplomacy.BaseBot.process_yes_not_gof_message: 413 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_not_sub_message: 424 [Function]
+   Diplomacy.BaseBot.process_yes_not_sub_message: 423 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_obs_message: 382 [Function]
+   Diplomacy.BaseBot.process_yes_obs_message: 381 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_snd: 642 [Function]
+   Diplomacy.BaseBot.process_yes_snd: 641 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_snd_message: 409 [Function]
+   Diplomacy.BaseBot.process_yes_snd_message: 408 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.process_yes_tme_message: 398 [Function]
+   Diplomacy.BaseBot.process_yes_tme_message: 397 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.ProtocolState: 587 [Enum]
+   Diplomacy.BaseBot.ProtocolState: 586 [Enum]
       dip/BaseBot.cpp
       dip/BaseBot.h
-   Diplomacy.BaseBot.ProtocolState.CONNECTED: 590 [Enumerator]
+   Diplomacy.BaseBot.ProtocolState.CONNECTED: 589 [Enumerator]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.ProtocolState.CONNECTING: 589 [Enumerator]
+   Diplomacy.BaseBot.ProtocolState.CONNECTING: 588 [Enumerator]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.ProtocolState.DISCONNECTED: 591 [Enumerator]
+   Diplomacy.BaseBot.ProtocolState.DISCONNECTED: 590 [Enumerator]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.queue_event: 173 [Function]
+   Diplomacy.BaseBot.queue_event: 172 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.reconnect: 724 [Function]
+   Diplomacy.BaseBot.reconnect: 723 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.reconnect_: 767 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.reconnection_delay: 292 [Function]
+   Diplomacy.BaseBot.reconnection_delay: 291 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.remove_sent_press: 697 [Function]
+   Diplomacy.BaseBot.remove_sent_press: 696 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.report_: 775 [ClassData]
       dip/BaseBot.cpp
       dip/BaseBot.h
-   Diplomacy.BaseBot.report_ccd: 523 [Function]
+   Diplomacy.BaseBot.report_ccd: 522 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_close: 512 [Function]
+   Diplomacy.BaseBot.report_close: 511 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.report_command_line_parameters: 96 [Function]
       dip/BaseBot.cpp
       dip/StartupParameters.cpp
-   Diplomacy.BaseBot.report_end: 527 [Function]
+   Diplomacy.BaseBot.report_end: 526 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_exit: 555 [Function]
+   Diplomacy.BaseBot.report_exit: 554 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_failed_connect: 507 [Function]
+   Diplomacy.BaseBot.report_failed_connect: 506 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_failed_press: 501 [Function]
+   Diplomacy.BaseBot.report_failed_press: 500 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_mdf: 531 [Function]
+   Diplomacy.BaseBot.report_mdf: 530 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_now: 535 [Function]
+   Diplomacy.BaseBot.report_now: 534 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_ords: 539 [Function]
+   Diplomacy.BaseBot.report_ords: 538 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_out: 543 [Function]
+   Diplomacy.BaseBot.report_out: 542 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_sco: 547 [Function]
+   Diplomacy.BaseBot.report_sco: 546 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.report_smr: 551 [Function]
+   Diplomacy.BaseBot.report_smr: 550 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.request_map: 129 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.retry_delay_: 750 [ClassData]
+   Diplomacy.BaseBot.retries_: 750 [ClassData]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.send_bm_message: 149 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.send_broadcast_to_server: 142 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.send_buff: 715 [Function]
+   Diplomacy.BaseBot.send_buff: 714 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.send_im_message: 600 [Function]
+   Diplomacy.BaseBot.send_im_message: 599 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.send_nme: 123 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.send_nme_or_obs: 200 [Function]
+   Diplomacy.BaseBot.send_nme_or_obs: 199 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.send_orders_to_server: 119 [Function]
       dip/BaseBot.cpp
@@ -22435,37 +22449,37 @@ dip/BaseBot.h
       dip/BaseBot.cpp
       dip/StartupParameters.cpp
       dip/TokenMessage.cpp
-   Diplomacy.BaseBot.send_to_reduced_powers: 691 [Function]
+   Diplomacy.BaseBot.send_to_reduced_powers: 690 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.send_to_server: 115 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.sent_press_: 792 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.SentPress: 678 [Typedef]
+   Diplomacy.BaseBot.SentPress: 677 [Typedef]
       dip/BaseBot.cpp
       dip/BaseBot.h
-   Diplomacy.BaseBot.SentPressInfo: 649 [Class]
+   Diplomacy.BaseBot.SentPressInfo: 648 [Class]
       dip/BaseBot.cpp
       dip/BaseBot.h
-   Diplomacy.BaseBot.SentPressInfo.is_broadcast: 669 [ClassData]
+   Diplomacy.BaseBot.SentPressInfo.is_broadcast: 668 [ClassData]
       dip/BaseBot.cpp
       dip/BaseBot.h
-   Diplomacy.BaseBot.SentPressInfo.message: 653 [ClassData]
+   Diplomacy.BaseBot.SentPressInfo.message: 652 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.SentPressInfo.original_receiving_powers: 657 [ClassData]
+   Diplomacy.BaseBot.SentPressInfo.original_receiving_powers: 656 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.SentPressInfo.receiving_powers: 661 [ClassData]
+   Diplomacy.BaseBot.SentPressInfo.receiving_powers: 660 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.SentPressInfo.resend_partial: 665 [ClassData]
+   Diplomacy.BaseBot.SentPressInfo.resend_partial: 664 [ClassData]
       dip/BaseBot.cpp
       dip/BaseBot.h
-   Diplomacy.BaseBot.SentPressInfo.SentPressInfo: 673 [Function]
-   Diplomacy.BaseBot.server_addr_: 742 [ClassData]
+   Diplomacy.BaseBot.SentPressInfo.SentPressInfo: 672 [Function]
+   Diplomacy.BaseBot.server_addr_: 741 [ClassData]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.set_report: 110 [Function]
-   Diplomacy.BaseBot.set_state: 596 [Function]
+   Diplomacy.BaseBot.set_state: 595 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.set_title: 195 [Function]
+   Diplomacy.BaseBot.set_title: 194 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.StartupResult: 54 [Enum]
       dip/BaseBot.cpp
@@ -22481,15 +22495,15 @@ dip/BaseBot.h
       dip/BaseBot.cpp
    Diplomacy.BaseBot.StartupResult.STARTUP_OK: 56 [Enumerator]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.state_: 746 [ClassData]
+   Diplomacy.BaseBot.state_: 745 [ClassData]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.surviving_powers: 168 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.title_: 754 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.units: 583 [ClassData]
+   Diplomacy.BaseBot.units: 582 [ClassData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot.update_out_powers: 701 [Function]
+   Diplomacy.BaseBot.update_out_powers: 700 [Function]
       dip/BaseBot.cpp
    Diplomacy.BaseBot.version_: 762 [ClassData]
       dip/BaseBot.cpp
@@ -22501,66 +22515,68 @@ dip/BaseBot.h
    Diplomacy.PowerUnits: 36 [Forward]
       dip/BaseBot.h
 dip/BotThread.cpp
-   Diplomacy.BotThread_Enter: 113 [SpaceData]
+   Diplomacy.BotThread_Enter: 143 [SpaceData]
+      dip/BotThread.cpp
+   Diplomacy.WakeupIsSorted: 66 [Function]
       dip/BotThread.cpp
 dip/BotThread.h
    BOTTHREAD_H_INCLUDED: 25 [Define]
       dip/BotThread.h
-   Diplomacy.BaseBot: 35 [Forward]
+   Diplomacy.BaseBot: 36 [Forward]
       dip/BotThread.h
-   Diplomacy.BotThread: 46 [Class]
+   Diplomacy.BotThread: 71 [Class]
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/DipModule.cpp
       dip/DipProtocol.cpp
-   Diplomacy.BotThread.AbbrName: 98 [Function]
+   Diplomacy.BotThread.AbbrName: 121 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.bot_: 129 [ClassData]
+   Diplomacy.BotThread.bot_: 133 [ClassData]
       dip/BotThread.cpp
-   Diplomacy.BotThread.BotThread: 82 [Function]
+   Diplomacy.BotThread.BotThread: 105 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.CancelEvent: 65 [Function]
+   Diplomacy.BotThread.CancelEvent: 88 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
-   Diplomacy.BotThread.Destroy: 102 [Function]
+   Diplomacy.BotThread.Destroy: 125 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.Display: 73 [Function]
+   Diplomacy.BotThread.Display: 96 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.Enter: 106 [Function]
+   Diplomacy.BotThread.Enter: 129 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.exit_: 133 [ClassData]
+   Diplomacy.BotThread.exit_: 137 [ClassData]
       dip/BotThread.cpp
       dip/BotThread.h
-   Diplomacy.BotThread.Patch: 78 [Function]
+   Diplomacy.BotThread.Patch: 101 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.ProcessEvent: 94 [Function]
+   Diplomacy.BotThread.ProcessEvents: 117 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.ProcessMsg: 90 [Function]
+   Diplomacy.BotThread.ProcessMsg: 113 [Function]
       dip/BotThread.cpp
-   Diplomacy.BotThread.QueueEvent: 60 [Function]
+   Diplomacy.BotThread.QueueEvent: 83 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
-   Diplomacy.BotThread.QueueMsg: 53 [Function]
+   Diplomacy.BotThread.QueueMsg: 78 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/DipProtocol.cpp
-   Diplomacy.BotThread.SetExit: 69 [Function]
+   Diplomacy.BotThread.SetExit: 92 [Function]
       dip/BaseBot.cpp
-   Diplomacy.BotThread.Wakeup: 110 [Class]
-      dip/BotThread.h
-   Diplomacy.BotThread.Wakeup.event: 112 [ClassData]
+   Diplomacy.BotThread.wakeups_: 141 [ClassData]
+      dip/BotThread.cpp
+   Diplomacy.BotThread.~BotThread: 109 [Function]
+   Diplomacy.BotWakeup: 47 [Class]
       dip/BotThread.cpp
       dip/BotThread.h
-   Diplomacy.BotThread.Wakeup.operator<: 117 [Function]
-   Diplomacy.BotThread.Wakeup.secs: 113 [ClassData]
+   Diplomacy.BotWakeup.BotWakeup: 51 [Function]
       dip/BotThread.cpp
-      dip/BotThread.h
-   Diplomacy.BotThread.Wakeup.Wakeup: 115 [Function]
+   Diplomacy.BotWakeup.event_: 60 [ClassData]
       dip/BotThread.cpp
-   Diplomacy.BotThread.wakeups_: 137 [ClassData]
+   Diplomacy.BotWakeup.expiry_: 64 [ClassData]
       dip/BotThread.cpp
-   Diplomacy.BotThread.~BotThread: 86 [Function]
-   NodeBase.Singleton<BotThread>: 48 [Friend]
+   Diplomacy.BotWakeup.TimeToExpiry: 56 [Function]
+      dip/BotThread.cpp
+   NodeBase.Singleton<BotThread>: 73 [Friend]
 dip/BotTrace.cpp
    Diplomacy.IcMsgEventStr: 110 [SpaceData]
       dip/BotTrace.cpp
@@ -22673,11 +22689,14 @@ dip/ConvoySubversion.h
 dip/DipModule.h
    Diplomacy.DipModule: 38 [Class]
       dip/DipModule.cpp
+      rsc/main.cpp
    Diplomacy.DipModule.DipModule: 44 [Function]
       dip/DipModule.cpp
-   Diplomacy.DipModule.Shutdown: 52 [Function]
+   Diplomacy.DipModule.Enable: 52 [Function]
       dip/DipModule.cpp
-   Diplomacy.DipModule.Startup: 56 [Function]
+   Diplomacy.DipModule.Shutdown: 56 [Function]
+      dip/DipModule.cpp
+   Diplomacy.DipModule.Startup: 60 [Function]
       dip/DipModule.cpp
    Diplomacy.DipModule.~DipModule: 48 [Function]
    DIPMODULE_H_INCLUDED: 25 [Define]
@@ -24931,13 +24950,16 @@ mb/MbModule.h
    MediaBase.MbModule: 36 [Class]
       cb/CbModule.cpp
       mb/MbModule.cpp
-   MediaBase.MbModule.MbModule: 42 [Function]
+   MediaBase.MbModule.Enable: 42 [Function]
+      cb/CbModule.cpp
       mb/MbModule.cpp
-   MediaBase.MbModule.Shutdown: 50 [Function]
+   MediaBase.MbModule.MbModule: 46 [Function]
       mb/MbModule.cpp
-   MediaBase.MbModule.Startup: 54 [Function]
+   MediaBase.MbModule.Shutdown: 54 [Function]
       mb/MbModule.cpp
-   MediaBase.MbModule.~MbModule: 46 [Function]
+   MediaBase.MbModule.Startup: 58 [Function]
+      mb/MbModule.cpp
+   MediaBase.MbModule.~MbModule: 50 [Function]
       mb/MbModule.cpp
    NodeBase.Singleton<MbModule>: 38 [Friend]
 mb/MbPools.cpp
@@ -26886,6 +26908,7 @@ nb/CfgParm.h
       nb/CfgStrParm.h
    NodeBase.CfgParm.RestartRequired: 128 [Function]
       nb/CfgParm.cpp
+      nb/ModuleRegistry.cpp
       nb/ObjectPool.cpp
       nw/IpPortRegistry.cpp
       nw/IpServiceCfg.h
@@ -26922,9 +26945,9 @@ nb/CfgParm.h
 nb/CfgParmRegistry.cpp
    NodeBase.BadLine: 59 [Function]
       nb/CfgParmRegistry.cpp
-   NodeBase.CfgParmRegistry_BindParm: 244 [SpaceData]
+   NodeBase.CfgParmRegistry_BindParm: 234 [SpaceData]
       nb/CfgParmRegistry.cpp
-   NodeBase.CfgParmRegistry_dtor: 233 [SpaceData]
+   NodeBase.CfgParmRegistry_dtor: 223 [SpaceData]
       nb/CfgParmRegistry.cpp
    NodeBase.ConfigFile: 103 [Function]
       nb/CfgParmRegistry.cpp
@@ -26936,7 +26959,7 @@ nb/CfgParmRegistry.cpp
       nb/CfgParmRegistry.cpp
    NodeBase.LoadNextTuple: 119 [Function]
       nb/CfgParmRegistry.cpp
-   NodeBase.OpenConfigFile: 204 [Function]
+   NodeBase.OpenConfigFile: 194 [Function]
       nb/CfgParmRegistry.cpp
    NodeBase.Stream_: 48 [SpaceData]
       nb/CfgParmRegistry.cpp
@@ -26957,6 +26980,7 @@ nb/CfgParmRegistry.h
       nb/CfgTuple.cpp
       nb/Element.cpp
       nb/LogThread.cpp
+      nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/NbModule.cpp
       nb/ObjectPool.cpp
@@ -26972,6 +26996,7 @@ nb/CfgParmRegistry.h
       nb/CfgParmRegistry.cpp
       nb/Element.cpp
       nb/LogThread.cpp
+      nb/ModuleRegistry.cpp
       nb/ObjectPool.cpp
       nb/ObjectPoolRegistry.cpp
       nb/ThreadAdmin.cpp
@@ -27033,10 +27058,12 @@ nb/CfgStrParm.h
       ct/Library.cpp
       nb/CfgStrParm.cpp
       nb/Element.cpp
+      nb/ModuleRegistry.cpp
       nb/NbTypes.h
       nw/IpPortRegistry.cpp
    NodeBase.CfgStrParm.CfgStrParm: 40 [Function]
       nb/CfgStrParm.cpp
+      nb/ModuleRegistry.cpp
       nw/IpPortRegistry.cpp
    NodeBase.CfgStrParm.curr_: 83 [ClassData]
       nb/CfgStrParm.cpp
@@ -27044,6 +27071,7 @@ nb/CfgStrParm.h
    NodeBase.CfgStrParm.CurrValue: 48 [Function]
       ct/Library.cpp
       nb/Element.cpp
+      nb/ModuleRegistry.cpp
    NodeBase.CfgStrParm.Display: 52 [Function]
       nb/CfgStrParm.cpp
    NodeBase.CfgStrParm.Explain: 65 [Function]
@@ -30876,6 +30904,7 @@ nb/Duration.h
       nw/UdpIoThread.cpp
       sb/TimerThread.cpp
    NodeBase.NS_TO_MS: 58 [SpaceData]
+      dip/BotThread.cpp
       nb/ModuleRegistry.cpp
       nb/StatisticsThread.cpp
       nb/SystemTime.cpp
@@ -30927,6 +30956,7 @@ nb/Duration.h
       nb/Duration.h
    NodeBase.SECS_TO_MS: 60 [SpaceData]
       an/PotsTrafficThread.cpp
+      dip/BotThread.cpp
       nb/LeakyBucketCounter.cpp
       nb/StatisticsThread.cpp
    NodeBase.TIMEOUT_IMMED: 50 [SpaceData]
@@ -33508,17 +33538,27 @@ nb/MemoryTrace.h
    NodeBase.MemoryTrace.type_: 61 [ClassData]
       nb/MemoryTrace.cpp
 nb/Module.cpp
-   NodeBase.Module_dtor: 50 [SpaceData]
+   NodeBase.Module_ctor: 42 [SpaceData]
+      nb/Module.cpp
+   NodeBase.Module_dtor: 59 [SpaceData]
+      nb/Module.cpp
+   NodeBase.Module_Enable: 92 [SpaceData]
       nb/Module.cpp
 nb/Module.h
    MODULE_H_INCLUDED: 23 [Define]
       nb/Module.h
-   NodeBase.Module: 78 [Class]
+   NodeBase.Module: 93 [Class]
+      an/AnModule.cpp
       an/AnModule.h
+      cb/CbModule.cpp
       cb/CbModule.h
+      cn/CnModule.cpp
       cn/CnModule.h
+      ct/CtModule.cpp
       ct/CtModule.h
+      dip/DipModule.cpp
       dip/DipModule.h
+      mb/MbModule.cpp
       mb/MbModule.h
       nb/Module.cpp
       nb/Module.h
@@ -33527,31 +33567,73 @@ nb/Module.h
       nb/NbCliParms.cpp
       nb/NbModule.cpp
       nb/NbModule.h
+      nt/NtModule.cpp
       nt/NtModule.h
       nw/NwModule.cpp
       nw/NwModule.h
+      on/OnModule.cpp
       on/OnModule.h
+      pb/PbModule.cpp
       pb/PbModule.h
+      rn/RnModule.cpp
       rn/RnModule.h
       sb/SbModule.cpp
       sb/SbModule.h
+      sn/SnModule.cpp
       sn/SnModule.h
+      st/StModule.cpp
       st/StModule.h
-   NodeBase.Module.CellDiff: 100 [Function]
+   NodeBase.Module.CellDiff: 140 [Function]
       nb/Module.cpp
       nb/ModuleRegistry.cpp
-   NodeBase.Module.Display: 104 [Function]
+   NodeBase.Module.Display: 144 [Function]
       nb/Module.cpp
-   NodeBase.Module.MaxId: 92 [ClassData]
+   NodeBase.Module.Enable: 124 [Function]
+      an/AnModule.cpp
+      an/AnModule.h
+      cb/CbModule.cpp
+      cb/CbModule.h
+      cn/CnModule.cpp
+      cn/CnModule.h
+      ct/CtModule.cpp
+      ct/CtModule.h
+      dip/DipModule.cpp
+      dip/DipModule.h
+      mb/MbModule.cpp
+      mb/MbModule.h
+      nb/Module.cpp
+      nb/ModuleRegistry.cpp
+      nt/NtModule.cpp
+      nt/NtModule.h
+      nw/NwModule.cpp
+      nw/NwModule.h
+      on/OnModule.cpp
+      on/OnModule.h
+      pb/PbModule.cpp
+      pb/PbModule.h
+      rn/RnModule.cpp
+      rn/RnModule.h
+      sb/SbModule.cpp
+      sb/SbModule.h
+      sn/SnModule.cpp
+      sn/SnModule.h
+      st/StModule.cpp
+      st/StModule.h
+   NodeBase.Module.enabled_: 184 [ClassData]
+      nb/Module.cpp
+      nb/Module.h
+   NodeBase.Module.IsEnabled: 136 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.Module.MaxId: 108 [ClassData]
       nb/Module.cpp
       nb/ModuleRegistry.cpp
       nb/NbCliParms.cpp
-   NodeBase.Module.Mid: 96 [Function]
+   NodeBase.Module.Mid: 128 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.Module.mid_: 134 [ClassData]
+   NodeBase.Module.mid_: 176 [ClassData]
       nb/Module.cpp
       nb/Module.h
-   NodeBase.Module.Module(): 125 [Function]
+   NodeBase.Module.Module(c_string): 167 [Function]
       an/AnModule.cpp
       cb/CbModule.cpp
       cn/CnModule.cpp
@@ -33568,9 +33650,9 @@ nb/Module.h
       sb/SbModule.cpp
       sn/SnModule.cpp
       st/StModule.cpp
-   NodeBase.Module.Module(const Module&): 84 [Function]
-   NodeBase.Module.operator=: 88 [Function]
-   NodeBase.Module.Patch: 109 [Function]
+   NodeBase.Module.Module(const Module&): 100 [Function]
+   NodeBase.Module.operator=: 104 [Function]
+   NodeBase.Module.Patch: 149 [Function]
       nb/Module.cpp
       nb/NbModule.cpp
       nb/NbModule.h
@@ -33578,7 +33660,7 @@ nb/Module.h
       nw/NwModule.h
       sb/SbModule.cpp
       sb/SbModule.h
-   NodeBase.Module.Shutdown: 114 [Function]
+   NodeBase.Module.Shutdown: 154 [Function]
       an/AnModule.h
       cb/CbModule.h
       cn/CnModule.h
@@ -33596,7 +33678,7 @@ nb/Module.h
       sb/SbModule.h
       sn/SnModule.h
       st/StModule.h
-   NodeBase.Module.Startup: 121 [Function]
+   NodeBase.Module.Startup: 161 [Function]
       an/AnModule.h
       cb/CbModule.h
       cn/CnModule.h
@@ -33614,64 +33696,85 @@ nb/Module.h
       sb/SbModule.h
       sn/SnModule.h
       st/StModule.h
-   NodeBase.Module.~Module: 130 [Function]
+   NodeBase.Module.Symbol: 132 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.Module.symbol_: 180 [ClassData]
       nb/Module.cpp
-   NodeBase.Registry<Module>: 80 [Friend]
+      nb/Module.h
+   NodeBase.Module.~Module: 172 [Function]
+      nb/Module.cpp
+   NodeBase.ModuleRegistry: 95 [Friend]
+   NodeBase.Registry<Module>: 96 [Friend]
 nb/ModuleRegistry.cpp
-   NodeBase.AllFactions: 68 [Function]
+   NodeBase.AllFactions: 69 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ExitedThreadsStr: 368 [SpaceData]
+   NodeBase.ExitedThreadsStr: 481 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.ExitingThreadsStr: 367 [SpaceData]
+   NodeBase.ExitingThreadsStr: 480 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.InitializedStr: 495 [SpaceData]
+   NodeBase.GetSymbol: 89 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.InstallationGuide: 85 [SpaceData]
+   NodeBase.InitializedStr: 608 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleHeader: 556 [SpaceData]
+   NodeBase.InstallationGuide: 107 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry_dtor: 207 [SpaceData]
+   NodeBase.ModuleHeader: 674 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.NoFactions: 64 [SpaceData]
+   NodeBase.ModuleRegistry_BindModule: 273 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.NotifyingThreadsStr: 366 [SpaceData]
+   NodeBase.ModuleRegistry_dtor: 262 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.OutputNodeRunningLog: 88 [Function]
+   NodeBase.ModuleRegistry_EnableModules: 327 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.PreModuleStr: 494 [SpaceData]
+   NodeBase.ModulesCfg: 216 [Class]
       nb/ModuleRegistry.cpp
-   NodeBase.ShutdownFactions: 110 [Function]
+      nb/ModuleRegistry.h
+   NodeBase.ModulesCfg.ModulesCfg: 219 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ShutdownHeader: 361 [SpaceData]
+   NodeBase.ModulesCfg.RestartRequired: 222 [Function]
+   NodeBase.ModulesCfg.~ModulesCfg: 220 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ShutdownStr: 369 [SpaceData]
+   NodeBase.NoFactions: 65 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.ShutdownTotalStr: 365 [SpaceData]
+   NodeBase.NotifyingThreadsStr: 479 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.StartupHeader: 489 [SpaceData]
+   NodeBase.OutputNodeRunningLog: 110 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.StartupTotalStr: 493 [SpaceData]
+   NodeBase.PreModuleStr: 607 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.StopInitTracing: 150 [Class]
+   NodeBase.ShutdownFactions: 132 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.StopInitTracing.EventHasOccurred: 163 [Function]
+   NodeBase.ShutdownHeader: 474 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.StopInitTracing.StopInitTracing: 155 [Function]
+   NodeBase.ShutdownStr: 482 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.StopInitTracing.~StopInitTracing: 159 [Function]
+   NodeBase.ShutdownTotalStr: 478 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.Stream: 134 [Function]
+   NodeBase.StartupHeader: 602 [SpaceData]
       nb/ModuleRegistry.cpp
-   NodeBase.stream_: 128 [SpaceData]
+   NodeBase.StartupTotalStr: 606 [SpaceData]
+      nb/ModuleRegistry.cpp
+   NodeBase.StopInitTracing: 172 [Class]
+      nb/ModuleRegistry.cpp
+   NodeBase.StopInitTracing.EventHasOccurred: 185 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.StopInitTracing.StopInitTracing: 177 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.StopInitTracing.~StopInitTracing: 181 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.Stream: 156 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.stream_: 150 [SpaceData]
       nb/ModuleRegistry.cpp
 nb/ModuleRegistry.h
    MODULEREGISTRY_H_INCLUDED: 23 [Define]
       nb/ModuleRegistry.h
-   NodeBase.InitThread: 45 [Friend]
-   NodeBase.Module: 32 [Forward]
+   NodeBase.InitThread: 49 [Friend]
+   NodeBase.Module: 34 [Forward]
+      nb/ModuleRegistry.cpp
       nb/ModuleRegistry.h
-   NodeBase.Module: 44 [Friend]
-   NodeBase.ModuleRegistry: 41 [Class]
+   NodeBase.Module: 47 [Friend]
+   NodeBase.ModuleRegistry: 44 [Class]
       an/AnModule.cpp
       cb/CbModule.cpp
       cn/CnModule.cpp
@@ -33681,6 +33784,7 @@ nb/ModuleRegistry.h
       nb/InitThread.cpp
       nb/InitThread.h
       nb/Module.cpp
+      nb/Module.h
       nb/ModuleRegistry.cpp
       nb/ModuleRegistry.h
       nb/NbIncrement.cpp
@@ -33697,7 +33801,7 @@ nb/ModuleRegistry.h
       sb/SbModule.cpp
       sn/SnModule.cpp
       st/StModule.cpp
-   NodeBase.ModuleRegistry.BindModule: 58 [Function]
+   NodeBase.ModuleRegistry.BindModule: 62 [Function]
       an/AnModule.cpp
       cb/CbModule.cpp
       cn/CnModule.cpp
@@ -33714,46 +33818,56 @@ nb/ModuleRegistry.h
       sb/SbModule.cpp
       sn/SnModule.cpp
       st/StModule.cpp
-   NodeBase.ModuleRegistry.CheckForExit: 107 [Function]
+   NodeBase.ModuleRegistry.CheckForExit: 111 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.Display: 66 [Function]
+   NodeBase.ModuleRegistry.Display: 70 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.GetLevel: 99 [Function]
+   NodeBase.ModuleRegistry.EnableModules: 116 [Function]
+      nb/ModuleRegistry.cpp
+      nb/NbModule.cpp
+   NodeBase.ModuleRegistry.FindModule: 120 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.ModuleRegistry.GetLevel: 103 [Function]
       nb/ModuleRegistry.cpp
       nb/RootThread.cpp
-   NodeBase.ModuleRegistry.ModuleRegistry(): 79 [Function]
+   NodeBase.ModuleRegistry.ModuleRegistry(): 83 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.ModuleRegistry(const ModuleRegistry&): 50 [Function]
-   NodeBase.ModuleRegistry.Modules: 62 [Function]
+   NodeBase.ModuleRegistry.ModuleRegistry(const ModuleRegistry&): 54 [Function]
+   NodeBase.ModuleRegistry.Modules: 66 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ModuleRegistry.modules_: 119 [ClassData]
+   NodeBase.ModuleRegistry.modules_: 132 [ClassData]
       nb/ModuleRegistry.cpp
       nb/ModuleRegistry.h
-   NodeBase.ModuleRegistry.NextLevel: 103 [Function]
+   NodeBase.ModuleRegistry.modulesCfg_: 136 [ClassData]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.operator=: 54 [Function]
-   NodeBase.ModuleRegistry.Patch: 71 [Function]
+   NodeBase.ModuleRegistry.NextLevel: 107 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.Restart: 91 [Function]
+   NodeBase.ModuleRegistry.operator=: 58 [Function]
+   NodeBase.ModuleRegistry.Patch: 75 [Function]
+      nb/ModuleRegistry.cpp
+   NodeBase.ModuleRegistry.Restart: 95 [Function]
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.SetLevel: 95 [Function]
+   NodeBase.ModuleRegistry.SetLevel: 99 [Function]
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.Shutdown: 111 [Function]
+   NodeBase.ModuleRegistry.Shutdown: 124 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.Startup: 115 [Function]
+   NodeBase.ModuleRegistry.Startup: 128 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.Summarize: 75 [Function]
+   NodeBase.ModuleRegistry.Summarize: 79 [Function]
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.ModuleRegistry.UnbindModule: 87 [Function]
+   NodeBase.ModuleRegistry.UnbindModule: 91 [Function]
       nb/Module.cpp
       nb/ModuleRegistry.cpp
-   NodeBase.ModuleRegistry.~ModuleRegistry: 83 [Function]
+   NodeBase.ModuleRegistry.~ModuleRegistry: 87 [Function]
       nb/ModuleRegistry.cpp
-   NodeBase.RootThread: 46 [Friend]
-   NodeBase.Singleton<ModuleRegistry>: 43 [Friend]
+   NodeBase.ModulesCfg: 35 [Forward]
+      nb/ModuleRegistry.h
+   NodeBase.NbModule: 48 [Friend]
+   NodeBase.RootThread: 50 [Friend]
+   NodeBase.Singleton<ModuleRegistry>: 46 [Friend]
 nb/MsgBuffer.h
    MSGBUFFER_H_INCLUDED: 23 [Define]
       nb/MsgBuffer.h
@@ -35872,7 +35986,6 @@ nb/NbLogs.h
    NBLOGS_H_INCLUDED: 23 [Define]
       nb/NbLogs.h
    NodeBase.ConfigExtraIgnored: 51 [SpaceData]
-      nb/CfgParmRegistry.cpp
       nb/NbLogs.cpp
    NodeBase.ConfigFileNotFound: 46 [SpaceData]
       nb/CfgParmRegistry.cpp
@@ -35997,7 +36110,8 @@ nb/NbModule.h
    NBMODULE_H_INCLUDED: 23 [Define]
       nb/NbModule.h
    NodeBase.NbModule: 34 [Class]
-      ct/CtModule.cpp
+      nb/ModuleRegistry.cpp
+      nb/ModuleRegistry.h
       nb/NbModule.cpp
       nt/NtModule.cpp
       nw/NwModule.cpp
@@ -38441,6 +38555,7 @@ nb/Protected.h
       nb/CfgParmRegistry.cpp
       nb/Element.cpp
       nb/LogThread.cpp
+      nb/ModuleRegistry.cpp
       nb/ObjectPool.cpp
       nb/ObjectPoolRegistry.cpp
       nb/Protected.cpp
@@ -39490,6 +39605,7 @@ nb/Restart.h
       nb/LogGroupRegistry.cpp
       nb/LogThread.cpp
       nb/Memory.cpp
+      nb/Module.cpp
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/ObjectPool.cpp
@@ -39538,6 +39654,8 @@ nb/Restart.h
    NodeBase.Restart.GetLevel: 85 [Function]
       an/PotsTrafficThread.cpp
       nb/LogBuffer.cpp
+      nb/Module.cpp
+      nb/ModuleRegistry.cpp
       nb/Restart.cpp
       nb/Thread.cpp
       nw/SysUdpSocket.win.cpp
@@ -41017,6 +41135,7 @@ nb/SteadyTime.h
       nb/Thread.cpp
    NodeBase.SteadyTime.Now: 41 [Function]
       an/PotsTrafficThread.cpp
+      dip/BotThread.cpp
       nb/Alarm.cpp
       nb/Gate.cpp
       nb/LeakyBucketCounter.cpp
@@ -41044,6 +41163,7 @@ nb/SteadyTime.h
       sb/Timer.cpp
    NodeBase.SteadyTime.Point: 37 [Typedef]
       an/PotsTrafficThread.cpp
+      dip/BotThread.h
       nb/Alarm.cpp
       nb/LeakyBucketCounter.h
       nb/MsgBuffer.h
@@ -41923,6 +42043,8 @@ nb/SysTypes.h
       nb/MainArgs.h
       nb/MemoryTrace.cpp
       nb/MemoryTrace.h
+      nb/Module.cpp
+      nb/Module.h
       nb/Mutex.cpp
       nb/Mutex.h
       nb/NbTracer.cpp
@@ -42355,6 +42477,8 @@ nb/SysTypes.h
       nb/Formatters.cpp
       nb/Log.cpp
       nb/MainArgs.cpp
+      nb/Module.h
+      nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/SoftwareException.cpp
       nb/SysTypes.cpp
@@ -43908,6 +44032,7 @@ nb/SysTypes.h
       sb/InvokerThread.cpp
    NodeBase.RestartLevel.RestartReboot: 216 [Enumerator]
       nb/LogBuffer.cpp
+      nb/Module.cpp
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/NbLogs.cpp
@@ -44003,6 +44128,7 @@ nb/SysTypes.h
       nb/LogBuffer.cpp
       nb/LogBufferRegistry.cpp
       nb/Memory.cpp
+      nb/ModuleRegistry.cpp
       nb/MutexRegistry.cpp
       nb/NbIncrement.cpp
       nb/ObjectPool.cpp
@@ -47807,13 +47933,17 @@ nt/NtModule.h
       ct/CtModule.cpp
       nt/NtModule.cpp
       st/StModule.cpp
-   NodeTools.NtModule.NtModule: 42 [Function]
+   NodeTools.NtModule.Enable: 42 [Function]
+      ct/CtModule.cpp
       nt/NtModule.cpp
-   NodeTools.NtModule.Shutdown: 50 [Function]
+      st/StModule.cpp
+   NodeTools.NtModule.NtModule: 46 [Function]
       nt/NtModule.cpp
-   NodeTools.NtModule.Startup: 54 [Function]
+   NodeTools.NtModule.Shutdown: 54 [Function]
       nt/NtModule.cpp
-   NodeTools.NtModule.~NtModule: 46 [Function]
+   NodeTools.NtModule.Startup: 58 [Function]
+      nt/NtModule.cpp
+   NodeTools.NtModule.~NtModule: 50 [Function]
       nt/NtModule.cpp
    NTMODULE_H_INCLUDED: 23 [Define]
       nt/NtModule.h
@@ -49758,15 +49888,19 @@ nw/NwModule.h
       dip/DipModule.cpp
       nw/NwModule.cpp
       sb/SbModule.cpp
-   NetworkBase.NwModule.NwModule: 44 [Function]
+   NetworkBase.NwModule.Enable: 40 [Function]
+      dip/DipModule.cpp
       nw/NwModule.cpp
-   NetworkBase.NwModule.Patch: 40 [Function]
+      sb/SbModule.cpp
+   NetworkBase.NwModule.NwModule: 48 [Function]
       nw/NwModule.cpp
-   NetworkBase.NwModule.Shutdown: 52 [Function]
+   NetworkBase.NwModule.Patch: 44 [Function]
       nw/NwModule.cpp
-   NetworkBase.NwModule.Startup: 56 [Function]
+   NetworkBase.NwModule.Shutdown: 56 [Function]
       nw/NwModule.cpp
-   NetworkBase.NwModule.~NwModule: 48 [Function]
+   NetworkBase.NwModule.Startup: 60 [Function]
+      nw/NwModule.cpp
+   NetworkBase.NwModule.~NwModule: 52 [Function]
       nw/NwModule.cpp
    NodeBase.Singleton<NwModule>: 36 [Friend]
    NWMODULE_H_INCLUDED: 23 [Define]
@@ -51379,11 +51513,13 @@ on/OnModule.h
    OperationsNode.OnModule: 36 [Class]
       on/OnModule.cpp
       rsc/main.cpp
+   OperationsNode.OnModule.Enable: 50 [Function]
+      on/OnModule.cpp
    OperationsNode.OnModule.OnModule: 42 [Function]
       on/OnModule.cpp
-   OperationsNode.OnModule.Shutdown: 50 [Function]
+   OperationsNode.OnModule.Shutdown: 54 [Function]
       on/OnModule.cpp
-   OperationsNode.OnModule.Startup: 54 [Function]
+   OperationsNode.OnModule.Startup: 58 [Function]
       on/OnModule.cpp
    OperationsNode.OnModule.~OnModule: 46 [Function]
       on/OnModule.cpp
@@ -51396,13 +51532,18 @@ pb/PbModule.h
       on/OnModule.cpp
       pb/PbModule.cpp
       sn/SnModule.cpp
-   PotsBase.PbModule.PbModule: 42 [Function]
+   PotsBase.PbModule.Enable: 42 [Function]
+      an/AnModule.cpp
+      on/OnModule.cpp
       pb/PbModule.cpp
-   PotsBase.PbModule.Shutdown: 50 [Function]
+      sn/SnModule.cpp
+   PotsBase.PbModule.PbModule: 46 [Function]
       pb/PbModule.cpp
-   PotsBase.PbModule.Startup: 54 [Function]
+   PotsBase.PbModule.Shutdown: 54 [Function]
       pb/PbModule.cpp
-   PotsBase.PbModule.~PbModule: 46 [Function]
+   PotsBase.PbModule.Startup: 58 [Function]
+      pb/PbModule.cpp
+   PotsBase.PbModule.~PbModule: 50 [Function]
       pb/PbModule.cpp
 pb/PotsBicFeature.cpp
    PotsBase.PotsBicAbbrName: 57 [SpaceData]
@@ -53656,18 +53797,20 @@ rn/RnModule.h
    RoutingNode.RnModule: 36 [Class]
       rn/RnModule.cpp
       rsc/main.cpp
+   RoutingNode.RnModule.Enable: 50 [Function]
+      rn/RnModule.cpp
    RoutingNode.RnModule.RnModule: 42 [Function]
       rn/RnModule.cpp
-   RoutingNode.RnModule.Shutdown: 50 [Function]
+   RoutingNode.RnModule.Shutdown: 54 [Function]
       rn/RnModule.cpp
-   RoutingNode.RnModule.Startup: 54 [Function]
+   RoutingNode.RnModule.Startup: 58 [Function]
       rn/RnModule.cpp
    RoutingNode.RnModule.~RnModule: 46 [Function]
       rn/RnModule.cpp
 rsc/main.cpp
-   CreateModules: 102 [Function]
+   CreateModules: 82 [Function]
       rsc/main.cpp
-   main: 125 [Function]
+   main: 97 [Function]
 sb/AnalyzeSapEvent.cpp
    SessionBase.AnalyzeSapEvent_FreeContext: 122 [SpaceData]
       sb/AnalyzeSapEvent.cpp
@@ -58936,15 +59079,20 @@ sb/SbModule.h
       mb/MbModule.cpp
       sb/SbModule.cpp
       st/StModule.cpp
-   SessionBase.SbModule.Patch: 40 [Function]
+   SessionBase.SbModule.Enable: 40 [Function]
+      cn/CnModule.cpp
+      mb/MbModule.cpp
       sb/SbModule.cpp
-   SessionBase.SbModule.SbModule: 44 [Function]
+      st/StModule.cpp
+   SessionBase.SbModule.Patch: 44 [Function]
       sb/SbModule.cpp
-   SessionBase.SbModule.Shutdown: 52 [Function]
+   SessionBase.SbModule.SbModule: 48 [Function]
       sb/SbModule.cpp
-   SessionBase.SbModule.Startup: 56 [Function]
+   SessionBase.SbModule.Shutdown: 56 [Function]
       sb/SbModule.cpp
-   SessionBase.SbModule.~SbModule: 48 [Function]
+   SessionBase.SbModule.Startup: 60 [Function]
+      sb/SbModule.cpp
+   SessionBase.SbModule.~SbModule: 52 [Function]
       sb/SbModule.cpp
 sb/SbPools.cpp
    SessionBase.BtIpBufferSize: 682 [SpaceData]
@@ -64948,11 +65096,13 @@ sn/SnModule.h
    ServiceNode.SnModule: 36 [Class]
       rsc/main.cpp
       sn/SnModule.cpp
-   ServiceNode.SnModule.Shutdown: 50 [Function]
+   ServiceNode.SnModule.Enable: 50 [Function]
+      sn/SnModule.cpp
+   ServiceNode.SnModule.Shutdown: 54 [Function]
       sn/SnModule.cpp
    ServiceNode.SnModule.SnModule: 42 [Function]
       sn/SnModule.cpp
-   ServiceNode.SnModule.Startup: 54 [Function]
+   ServiceNode.SnModule.Startup: 58 [Function]
       sn/SnModule.cpp
    ServiceNode.SnModule.~SnModule: 46 [Function]
       sn/SnModule.cpp
@@ -65379,13 +65529,16 @@ st/StModule.h
    SessionTools.StModule: 36 [Class]
       cb/CbModule.cpp
       st/StModule.cpp
-   SessionTools.StModule.Shutdown: 50 [Function]
+   SessionTools.StModule.Enable: 42 [Function]
+      cb/CbModule.cpp
       st/StModule.cpp
-   SessionTools.StModule.Startup: 54 [Function]
+   SessionTools.StModule.Shutdown: 54 [Function]
       st/StModule.cpp
-   SessionTools.StModule.StModule: 42 [Function]
+   SessionTools.StModule.Startup: 58 [Function]
       st/StModule.cpp
-   SessionTools.StModule.~StModule: 46 [Function]
+   SessionTools.StModule.StModule: 46 [Function]
+      st/StModule.cpp
+   SessionTools.StModule.~StModule: 50 [Function]
       st/StModule.cpp
    STMODULE_H_INCLUDED: 23 [Define]
       st/StModule.h
@@ -66016,6 +66169,7 @@ subs/chrono
       nb/Thread.cpp
    std.chrono.duration.count: 21 [Function]
       an/PotsTrafficThread.cpp
+      dip/BotThread.cpp
       nb/DeferredRegistry.cpp
       nb/Duration.cpp
       nb/FunctionTrace.cpp
@@ -66888,6 +67042,8 @@ subs/cstdint
       nb/SysTypes.h
    uint64_t: 18 [Typedef]
       ct/CxxToken.cpp
+      dip/BotThread.cpp
+      dip/BotThread.h
       nb/Algorithms.cpp
       nb/Algorithms.h
       nb/Formatters.cpp
@@ -68090,6 +68246,7 @@ subs/list
       ct/CxxFwd.h
       ct/Library.h
       dip/BaseBot.h
+      dip/BotThread.h
       dip/DipTypes.h
       nb/CliBuffer.cpp
       nb/CliBuffer.h
@@ -68100,6 +68257,7 @@ subs/list
    std.list.begin(): 22 [Function]
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
+      dip/BotThread.cpp
       dip/UnitOrder.cpp
    std.list.begin() const: 26 [Function]
       ct/Editor.cpp
@@ -68110,12 +68268,14 @@ subs/list
       ct/Editor.cpp
       ct/Library.cpp
       ct/LibraryVarSet.cpp
+      dip/BotThread.cpp
       nb/CliBuffer.cpp
    std.list.cend: 28 [Function]
       ct/CodeFile.cpp
       ct/Editor.cpp
       ct/Library.cpp
       ct/LibraryVarSet.cpp
+      dip/BotThread.cpp
       nb/CliBuffer.cpp
    std.list.clear: 34 [Function]
       dip/MapAndUnits.cpp
@@ -68126,10 +68286,12 @@ subs/list
    std.list.crend: 30 [Function]
    std.list.empty: 35 [Function]
       ct/CodeFile.cpp
+      dip/BotThread.cpp
       nb/CliBuffer.cpp
    std.list.end(): 23 [Function]
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
+      dip/BotThread.cpp
       dip/UnitOrder.cpp
    std.list.end() const: 31 [Function]
       ct/Editor.cpp
@@ -68139,8 +68301,10 @@ subs/list
       ct/CodeFile.cpp
       ct/Library.cpp
       dip/BaseBot.cpp
+      dip/BotThread.cpp
    std.list.erase(const_iterator,const_iterator): 45 [Function]
    std.list.front(): 43 [Function]
+      dip/BotThread.cpp
       nb/CliBuffer.cpp
    std.list.front() const: 42 [Function]
       nb/CliBuffer.cpp
@@ -68156,10 +68320,12 @@ subs/list
    std.list.pop_back: 51 [Function]
       ct/Library.cpp
    std.list.pop_front: 52 [Function]
+      dip/BotThread.cpp
       nb/CliBuffer.cpp
    std.list.push_back: 49 [Function]
       ct/CodeFile.cpp
       dip/BaseBot.cpp
+      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       dip/UnitOrder.cpp
       nb/CliBuffer.cpp
@@ -68179,6 +68345,7 @@ subs/list
    std.list.sort(): 53 [Function]
    std.list.sort(bool (*sorted)(T& first, T& second)): 54 [Function]
       ct/CodeFile.cpp
+      dip/BotThread.cpp
    std.list.swap: 39 [Function]
    std.list.~list: 21 [Function]
 subs/map
@@ -68436,6 +68603,7 @@ subs/memory
       nb/CliThread.h
       nb/Log.h
       nb/LogBufferRegistry.h
+      nb/ModuleRegistry.h
       nb/NbTypes.h
       nb/ObjectPool.h
       nb/Restart.h
@@ -68817,6 +68985,8 @@ subs/ostream
       nb/FileThread.cpp
       nb/Heap.cpp
       nb/InitThread.cpp
+      nb/Module.cpp
+      nb/ModuleRegistry.cpp
       nb/ObjectPool.cpp
       nb/Pooled.cpp
       nb/Registry.h
@@ -69709,6 +69879,7 @@ subs/ostream
       ct/LibrarySet.cpp
       ct/Parser.cpp
       dip/BaseBot.cpp
+      dip/BotThread.cpp
       dip/DipProtocol.cpp
       dip/WinterOrders.cpp
       nb/AlarmRegistry.cpp
@@ -69899,7 +70070,6 @@ subs/set
       ct/Lexer.cpp
       ct/LibraryItem.h
       dip/BaseBot.h
-      dip/BotThread.h
       dip/DipTypes.h
       dip/Location.h
       nb/Daemon.h
@@ -69913,7 +70083,6 @@ subs/set
       ct/CodeFileSet.cpp
       ct/SetOperations.cpp
       dip/Adjudicator.cpp
-      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       nb/ThreadRegistry.cpp
    std.set.begin() const: 27 [Function]
@@ -69939,7 +70108,6 @@ subs/set
       ct/LibrarySet.cpp
       ct/SetOperations.cpp
       dip/BaseBot.cpp
-      dip/BotThread.cpp
       nb/Daemon.cpp
       nb/ModuleRegistry.cpp
       nt/TestDatabase.cpp
@@ -69964,7 +70132,6 @@ subs/set
       ct/Parser.cpp
       ct/SetOperations.cpp
       dip/BaseBot.cpp
-      dip/BotThread.cpp
       nb/Daemon.cpp
       nb/ModuleRegistry.cpp
       nt/TestDatabase.cpp
@@ -69991,7 +70158,6 @@ subs/set
       ct/CxxScope.cpp
       ct/Editor.cpp
       dip/BaseBot.cpp
-      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       dip/Province.cpp
       nb/Daemon.cpp
@@ -70000,7 +70166,6 @@ subs/set
       ct/CodeFileSet.cpp
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
-      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       nb/Daemon.cpp
       nb/ThreadRegistry.cpp
@@ -70026,7 +70191,6 @@ subs/set
       ct/Cxx.cpp
       ct/Editor.cpp
       dip/Adjudicator.cpp
-      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       nb/Daemon.cpp
       nb/ThreadRegistry.cpp
@@ -70065,7 +70229,6 @@ subs/set
       ct/Library.cpp
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
-      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       dip/Province.cpp
       nb/Daemon.cpp
@@ -70226,6 +70389,7 @@ subs/string
       ct/Lexer.cpp
       ct/Parser.cpp
       dip/MapAndUnits.cpp
+      nb/CfgParmRegistry.cpp
       nb/CliBuffer.cpp
       nb/CliThread.cpp
       nb/FileSystem.cpp
@@ -70312,6 +70476,7 @@ subs/string
       nb/CliThread.cpp
       nb/Formatters.cpp
       nb/HeapCfg.cpp
+      nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nt/NtIncrement.cpp
       nt/NtTestData.cpp
@@ -70376,6 +70541,7 @@ subs/string
       nb/Formatters.cpp
       nb/Log.cpp
       nb/LogThread.cpp
+      nb/ModuleRegistry.cpp
       nb/NbCliParms.cpp
       nb/NbIncrement.cpp
       nb/SoftwareException.cpp
@@ -70427,6 +70593,7 @@ subs/string
       ct/Library.cpp
       ct/Parser.cpp
       dip/MapAndUnits.cpp
+      nb/CfgParmRegistry.cpp
       nb/CliTextParm.cpp
       nb/CliThread.cpp
       nb/FunctionTrace.cpp
@@ -70473,6 +70640,7 @@ subs/string
       ct/CodeWarning.cpp
       ct/Cxx.cpp
       nb/Formatters.cpp
+      nb/ModuleRegistry.cpp
       st/MscBuilder.cpp
    std.basic_string.find_first_not_of(const basic_string&,size_t) const: 58 [Function]
       ct/CodeTypes.cpp
@@ -70490,6 +70658,7 @@ subs/string
       ct/Lexer.cpp
       dip/BaseBot.cpp
       nb/Formatters.cpp
+      nb/ModuleRegistry.cpp
       nt/NtIncrement.cpp
    std.basic_string.find_first_of(const basic_string&,size_t) const: 61 [Function]
       ct/Interpreter.cpp
@@ -70582,6 +70751,7 @@ subs/string
       nb/Formatters.cpp
       nb/FunctionTrace.cpp
       nb/Log.cpp
+      nb/ModuleRegistry.cpp
       nb/NbCliParms.cpp
       nb/NbIncrement.cpp
       nb/StreamRequest.cpp
@@ -70612,6 +70782,7 @@ subs/string
       ct/Lexer.cpp
       ct/Parser.cpp
       dip/MapAndUnits.cpp
+      nb/CfgParmRegistry.cpp
       nb/CliBuffer.cpp
       nb/CliThread.cpp
       nb/FileSystem.cpp
@@ -70724,6 +70895,7 @@ subs/string
       nb/Log.cpp
       nb/LogBuffer.cpp
       nb/LogGroup.cpp
+      nb/Module.cpp
       nb/ModuleRegistry.cpp
       nb/NbCliParms.cpp
       nb/NbIncrement.cpp
@@ -70757,6 +70929,7 @@ subs/string
       nb/Formatters.cpp
       nb/Log.cpp
       nb/MainArgs.cpp
+      nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/StreamRequest.cpp
    std.basic_string.~basic_string: 28 [Function]
@@ -71509,7 +71682,6 @@ subs/utility
       ct/Lexer.cpp
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
-      dip/BotThread.cpp
       dip/MapAndUnits.cpp
       dip/Token.cpp
       dip/TokenMessage.cpp

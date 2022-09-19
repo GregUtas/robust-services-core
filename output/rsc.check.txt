@@ -10,7 +10,7 @@ WARNING COUNTS (* if supported by >fix)
 * W022   203  Add using statement
 * W023     1  Remove using statement
   W026    70  Unused argument
-  W027     6  Unused class
+  W027     5  Unused class
 * W028    39  Unused data
 * W029     1  Unused enum
 * W030    19  Unused enumerator
@@ -18,19 +18,18 @@ WARNING COUNTS (* if supported by >fix)
 * W033     1  Unused typedef
   W037    15  Member hides inherited name
   W038     1  Class could be namespace
-* W042   157  Member could be private
+* W042   161  Member could be private
 * W043    74  Member could be protected
   W044     8  Typedef of pointer type
 * W047     1  Data is init-only
 * W048     4  Data is write-only
   W050    26  Data is not private
-* W053    54  Data could be const
+* W053    55  Data could be const
 * W054     1  Data could be const pointer
-* W055     1  Data need not be mutable
   W056     5  Implicit constructor invoked: POD members not initialized
 * W060    58  Base class constructor is public
 * W065    10  Base class virtual destructor is not public
-  W075   407  Virtual function is public
+  W075   408  Virtual function is public
 * W077    58  Virtual function has no overrides
   W082   116  Adjacent arguments have the same type
 * W088    15  Argument could be const
@@ -40,7 +39,7 @@ WARNING COUNTS (* if supported by >fix)
 * W099   258  Line contains adjacent spaces
 * W100     1  Insertion of blank line recommended
   W102     4  Line length exceeds the standard maximum
-* W106   658  Function does not invoke Debug::ft
+* W106   660  Function does not invoke Debug::ft
   W107    16  Function does not invoke Debug::ft as first statement
   W110    38  Override of Base.Display not found
 * W111    11  Override of Object.Patch not found
@@ -267,17 +266,17 @@ W006 reinterpret_cast
   cb/BcCause.cpp(112):    reinterpret_cast<const CauseInfo*>(bytes)->Display(stream, prefix);
   cb/BcProgress.cpp(98):    reinterpret_cast<const ProgressInfo*>(bytes)->Display(stream, prefix);
   cb/BcProtocol.cpp(452):    reinterpret_cast<const RouteResult*>(bytes)->Display(stream, prefix);
-  dip/BaseBot.cpp(214):    auto em = reinterpret_cast<EM_Message*>(buff->PayloadPtr());
-  dip/BaseBot.cpp(513):    const auto& dm = reinterpret_cast<const DM_Message&>(message);
-  dip/BaseBot.cpp(514):    auto tokens = reinterpret_cast<const Token*>(&dm.tokens);
-  dip/BaseBot.cpp(640):    const auto& em = reinterpret_cast<const EM_Message&>(message);
-  dip/BaseBot.cpp(1293):       const auto& rm = reinterpret_cast<const RM_Message&>(message);
-  dip/BaseBot.cpp(2082):    auto bm = reinterpret_cast<DipMessage*>(buff->PayloadPtr());
-  dip/BaseBot.cpp(2154):    auto im = reinterpret_cast<IM_Message*>(buff->PayloadPtr());
-  dip/BaseBot.cpp(2295):    auto dm = reinterpret_cast<DM_Message*>(buff->PayloadPtr());
-  dip/BaseBot.cpp(2299):    message.get_tokens(reinterpret_cast<Token*>(&dm->tokens), count);
-  dip/BotThread.cpp(187):    auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
-  dip/BotThread.cpp(216):    auto message = reinterpret_cast<const DipMessage*>(ipb->HeaderPtr());
+  dip/BaseBot.cpp(215):    auto em = reinterpret_cast<EM_Message*>(buff->PayloadPtr());
+  dip/BaseBot.cpp(514):    const auto& dm = reinterpret_cast<const DM_Message&>(message);
+  dip/BaseBot.cpp(515):    auto tokens = reinterpret_cast<const Token*>(&dm.tokens);
+  dip/BaseBot.cpp(641):    const auto& em = reinterpret_cast<const EM_Message&>(message);
+  dip/BaseBot.cpp(1294):       const auto& rm = reinterpret_cast<const RM_Message&>(message);
+  dip/BaseBot.cpp(2079):    auto bm = reinterpret_cast<DipMessage*>(buff->PayloadPtr());
+  dip/BaseBot.cpp(2151):    auto im = reinterpret_cast<IM_Message*>(buff->PayloadPtr());
+  dip/BaseBot.cpp(2291):    auto dm = reinterpret_cast<DM_Message*>(buff->PayloadPtr());
+  dip/BaseBot.cpp(2295):    message.get_tokens(reinterpret_cast<Token*>(&dm->tokens), count);
+  dip/BotThread.cpp(211):       auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
+  dip/BotThread.cpp(241):    auto message = reinterpret_cast<const DipMessage*>(ipb->HeaderPtr());
   dip/BotTrace.cpp(100):       auto message = reinterpret_cast<const DipMessage*>(buff_->HeaderPtr());
   dip/BotTrace.cpp(129):    return reinterpret_cast<DipHeader*>(buff_->HeaderPtr());
   dip/DipProtocol.cpp(62):       reinterpret_cast<const IM_Message*>(this)->Display(stream);
@@ -320,7 +319,7 @@ W006 reinterpret_cast
   nb/LogBuffer.cpp(348):    SetNext(reinterpret_cast<Entry*>(after));
   nb/LogBuffer.cpp(385):          SetNext(reinterpret_cast<Entry*>(buff_));
   nb/LogGroup.cpp(123):    auto fake = reinterpret_cast<const LogGroup*>(&local);
-  nb/Module.cpp(65):    auto fake = reinterpret_cast<const Module*>(&local);
+  nb/Module.cpp(74):    auto fake = reinterpret_cast<const Module*>(&local);
   nb/Mutex.cpp(143):    auto fake = reinterpret_cast<const Mutex*>(&local);
   nb/Object.cpp(114):    auto obj = reinterpret_cast<ObjectStruct*>(this);
   nb/ObjectPool.cpp(557):    auto fake = reinterpret_cast<const ObjectPool*>(&local);
@@ -668,7 +667,7 @@ W007 Cast down the inheritance hierarchy
   ct/Parser.cpp(3553):    auto op = static_cast<Operation*>(token.get());
   ct/Parser.cpp(3845):    auto w = static_cast<While*>(statement.get());
   ct/Parser.cpp(4204):          auto op = static_cast<Operation*>(token)->Op();
-  dip/BotThread.cpp(203):    DipIpBufferPtr ipb(static_cast<DipIpBuffer*>(msg));
+  dip/BotThread.cpp(228):    DipIpBufferPtr ipb(static_cast<DipIpBuffer*>(msg));
   dip/DipProtocol.cpp(274):    auto dipbuff = static_cast<DipIpBuffer*>(&buff);
   dip/DipProtocol.cpp(327):    DipIpBufferPtr dipbuff(static_cast<DipIpBuffer*>(buff.release()));
   mb/MbPools.cpp(77):          auto mep = static_cast<const MediaEndpt*>(*obj);
@@ -1149,7 +1148,7 @@ W020 Using statement in header
   ct/Editor.h(48): using std::string;
   ct/Library.h(46): using namespace NodeBase;
   dip/BaseBot.h(39): using namespace NodeBase;
-  dip/BotThread.h(38): using namespace NodeBase;
+  dip/BotThread.h(39): using namespace NodeBase;
   dip/BotTrace.h(35): using namespace NodeBase;
   dip/BotTracer.h(30): using namespace NodeBase;
   dip/DipModule.h(30): using namespace NodeBase;
@@ -1565,7 +1564,6 @@ W026 Unused argument
 W027 Unused class
   cb/ProxyBcSessions.h(192): class ProxyBcDisconnecting : public BcDisconnecting
   ct/LibraryItem.h(77): struct LibItemSort
-  dip/DipModule.h(38): class DipModule : public Module
   mb/MediaFailureEvent.h(42): class MediaFailureEvent : public Event
   nb/PooledClass.h(39): class PooledClass : public Class
   sb/TextTlvMessage.h(37): class TextTlvMessage : public TlvMessage
@@ -1716,7 +1714,7 @@ W032 Unused function
   pb/PotsCircuit.h(97):    bool CanFlash() const { return flash_; }
   pb/PotsCircuit.h(102):    Cause::Ind GetCause() const { return cause_; }
   pb/PotsProtocol.h(287):    MediaInfo* AddMedia(const MediaInfo& media);
-  rsc/main.cpp(125): main_t main(int argc, char* argv[])
+  rsc/main.cpp(97): main_t main(int argc, char* argv[])
   sb/Context.cpp(75):    SbException(debug64_t errval, debug64_t offset);
   sb/Context.h(124):    static void Dump(NodeBase::fn_name_arg func,
   sb/Factory.h(230):    void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
@@ -1866,6 +1864,10 @@ W042 Member could be private
   nb/LogGroup.h(76):    id_t Gid() const { return gid_.GetId(); }
   nb/LogGroup.h(80):    bool Suppressed() const { return suppressed_; }
   nb/MainArgs.h(66):    static void PushBack(const std::string& arg);
+  nb/Module.h(128):    ModuleId Mid() const { return mid_.GetId(); }
+  nb/Module.h(132):    const std::string& Symbol() const { return symbol_; }
+  nb/Module.h(136):    bool IsEnabled() const { return enabled_; }
+  nb/Module.h(140):    static ptrdiff_t CellDiff();
   nb/MutexRegistry.h(56):    Mutex* Find(const std::string& name) const;
   nb/Object.h(106):    virtual InstanceId GetInstanceId() const;
   nb/ObjectPoolRegistry.h(61):    bool NullifyObjectData() const { return nullifyObjectDataCfg_->CurrValue(); }
@@ -2055,7 +2057,8 @@ W053 Data could be const
   cb/BcSessions.h(356):    Cause::Ind cause_;
   ct/Library.h(241):    LibraryVarSet* varSet_;
   ct/LibraryTypes.h(64):    size_t level;    // the file's level in the build
-  dip/BotThread.h(112):       BotEvent event;         // event
+  dip/BotThread.h(60):    BotEvent event_;
+  dip/BotThread.h(64):    SteadyTime::Point expiry_;
   dip/DipProtocol.h(144):    DipHeader header;  // no parameters (length = 0)
   dip/DipProtocol.h(202):    byte_t first_payload_byte;  // for creating a pointer to the first byte
   mb/Circuit.h(93):    RegCell port_;
@@ -2074,7 +2077,7 @@ W053 Data could be const
   nb/Deferred.h(105):    Base* const owner_;
   nb/Log.h(188):    RegCell lid_;
   nb/LogGroup.h(137):    RegCell gid_;
-  nb/Module.h(134):    RegCell mid_;
+  nb/Module.h(176):    RegCell mid_;
   nb/Mutex.h(149):    RegCell mid_;
   nb/PosixSignal.h(135):    RegCell sid_;
   nb/Singletons.cpp(41):    MemoryType type;    // the type of memory that the singleton uses
@@ -2106,8 +2109,6 @@ W053 Data could be const
   sn/PotsTreatments.h(205):    uint32_t secs_;
 W054 Data could be const pointer
   ct/LibraryTypes.h(63):    CodeFile* file;  // the file
-W055 Data need not be mutable
-  dip/BotThread.h(113):       mutable uint32_t secs;  // delay
 W056 Implicit constructor invoked: POD members not initialized
 i nb/SystemTime.cpp(101):    tm ymdhms;
   nw/ByteBuffer.h(63): class TinyBuffer : public ByteBuffer
@@ -2504,6 +2505,7 @@ W075 Virtual function is public
   nb/Heap.h(85):    virtual int SetPermissions(MemoryProtection attrs);
   nb/Heap.h(91):    virtual size_t CurrAvail() const = 0;
   nb/Heap.h(95):    virtual size_t Overhead() const = 0;
+  nb/Module.h(124):    virtual void Enable();
   nb/MsgBuffer.h(60):    virtual TraceStatus GetStatus() const;
   nb/Object.h(67):    virtual void Patch(sel_t selector, void* arguments) { }
   nb/Object.h(87):    virtual Class* GetClass() const;
@@ -2730,8 +2732,8 @@ W082 Adjacent arguments have the same type
   ct/SetOperations.h(42):    void SetIntersection
   ct/SetOperations.h(51):    void SetUnion
   dip/BaseBot.h(143):    void send_press_to_server(const TokenMessage& press_to,
-  dip/BaseBot.h(272):    virtual void process_not_ccd_message(const TokenMessage& message,
-  dip/BaseBot.h(501):    virtual void report_failed_press
+  dip/BaseBot.h(271):    virtual void process_not_ccd_message(const TokenMessage& message,
+  dip/BaseBot.h(500):    virtual void report_failed_press
   dip/MapAndUnits.h(183):    bool set_support_to_move_order
   dip/MapAndUnits.h(185):    bool set_convoy_order(ProvinceId unit, ProvinceId client, ProvinceId dest);
   dip/MapAndUnits.h(186):    bool set_move_by_convoy_order(ProvinceId unit,
@@ -2833,18 +2835,18 @@ W090 Function could be const
   ct/Library.h(80):    CodeFile* EnsureFile(const std::string& file, CodeDir* dir = nullptr);
   ct/Library.h(108):    NodeBase::word Assign(CliThread& cli, const std::string& name,
   ct/Library.h(129):    NodeBase::word Purge(const std::string& name, std::string& expl);
-  dip/BaseBot.h(205):    virtual void process_ccd_message
-  dip/BaseBot.h(211):    virtual void process_drw_message(const TokenMessage& message);
-  dip/BaseBot.h(242):    virtual void process_out_message(const TokenMessage& message);
-  dip/BaseBot.h(250):    virtual void process_smr_message(const TokenMessage& message);
-  dip/BaseBot.h(267):    virtual void process_adm_message(const TokenMessage& message);
-  dip/BaseBot.h(272):    virtual void process_not_ccd_message(const TokenMessage& message,
-  dip/BaseBot.h(466):    virtual void process_hlo_message(const TokenMessage& message);
-  dip/BaseBot.h(471):    virtual void process_map_message(const TokenMessage& message);
-  dip/BaseBot.h(475):    virtual void process_mdf_message(const TokenMessage& message);
-  dip/BaseBot.h(483):    virtual void process_sco_message(const TokenMessage& message);
-  dip/BaseBot.h(487):    virtual void process_now_message(const TokenMessage& message);
-  dip/BaseBot.h(491):    virtual void process_slo_message(const TokenMessage& message);
+  dip/BaseBot.h(204):    virtual void process_ccd_message
+  dip/BaseBot.h(210):    virtual void process_drw_message(const TokenMessage& message);
+  dip/BaseBot.h(241):    virtual void process_out_message(const TokenMessage& message);
+  dip/BaseBot.h(249):    virtual void process_smr_message(const TokenMessage& message);
+  dip/BaseBot.h(266):    virtual void process_adm_message(const TokenMessage& message);
+  dip/BaseBot.h(271):    virtual void process_not_ccd_message(const TokenMessage& message,
+  dip/BaseBot.h(465):    virtual void process_hlo_message(const TokenMessage& message);
+  dip/BaseBot.h(470):    virtual void process_map_message(const TokenMessage& message);
+  dip/BaseBot.h(474):    virtual void process_mdf_message(const TokenMessage& message);
+  dip/BaseBot.h(482):    virtual void process_sco_message(const TokenMessage& message);
+  dip/BaseBot.h(486):    virtual void process_now_message(const TokenMessage& message);
+  dip/BaseBot.h(490):    virtual void process_slo_message(const TokenMessage& message);
   nb/Alarm.h(117):    void SetStatus(AlarmStatus status);
   nb/CallbackRequest.h(44):    virtual void Callback() { }
   nb/Class.h(71):    virtual void Initialize();
@@ -2939,11 +2941,11 @@ W092 Function could be free
   ct/Editor.h(436):    word InsertArgument(const Function* func, word offset); // Editor.cpp
   ct/Editor.h(437):    word SplitVirtualFunction(const Function* func); // Editor.cpp
   ct/Parser.h(606):    static bool Backup(size_t cause); // Parser.cpp
-  dip/BaseBot.h(178):    void cancel_event(BotEvent event); // BaseBot.cpp
-  dip/BaseBot.h(523):    static void report_ccd(const Token& power, bool disorder); // BaseBot.cpp
-  dip/BaseBot.h(543):    static void report_out(const Token& power); // BaseBot.cpp
-  dip/BaseBot.h(555):    void report_exit(c_string reason); // BaseBot.cpp
-  dip/BaseBot.h(715):    static bool send_buff(DipIpBuffer& buff); // BaseBot.cpp
+  dip/BaseBot.h(177):    void cancel_event(BotEvent event); // BaseBot.cpp
+  dip/BaseBot.h(522):    static void report_ccd(const Token& power, bool disorder); // BaseBot.cpp
+  dip/BaseBot.h(542):    static void report_out(const Token& power); // BaseBot.cpp
+  dip/BaseBot.h(554):    void report_exit(c_string reason); // BaseBot.cpp
+  dip/BaseBot.h(714):    static bool send_buff(DipIpBuffer& buff); // BaseBot.cpp
   dip/MapAndUnits.h(162):    static void delete_clone(MapAndUnits*& clone); // MapAndUnits.cpp
   nb/MainArgs.h(66):    static void PushBack(const std::string& arg); // MainArgs.cpp
   nb/Object.h(118):    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid); // Object.cpp
@@ -3213,7 +3215,7 @@ W100 Insertion of blank line recommended
   nb/StatisticsGroup.cpp(47): //  --------------member name-----------------
 W102 Line length exceeds the standard maximum
   cb/BcSsm.cpp(286):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
-  nb/ModuleRegistry.cpp(86):    "https://github.com/GregUtas/robust-services-core/blob/master/docs/Installing.md";
+  nb/ModuleRegistry.cpp(108):    "https://github.com/GregUtas/robust-services-core/blob/master/docs/Installing.md";
   nb/NbIncrement.cpp(3284): "Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
   nb/NbIncrement.cpp(3285): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 W106 Function does not invoke Debug::ft
@@ -3529,8 +3531,10 @@ W106 Function does not invoke Debug::ft
   ct/LibrarySet.cpp(532): LibrarySet* LibrarySet::UsedBy(bool self) const
   ct/LibrarySet.cpp(539): LibrarySet* LibrarySet::Users(bool self) const
   ct/Parser.cpp(301): size_t Parser::CurrPos() const
-  dip/BaseBot.cpp(431): BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
-  dip/BaseBot.cpp(438): BaseBot* BaseBot::instance()
+  dip/BaseBot.cpp(432): BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
+  dip/BaseBot.cpp(439): BaseBot* BaseBot::instance()
+  dip/BotThread.cpp(56): uint64_t BotWakeup::TimeToExpiry() const
+  dip/BotThread.cpp(66): static bool WakeupIsSorted(const BotWakeup& item1, const BotWakeup& item2)
   dip/ConvoySubversion.cpp(29): void ConvoySubversion::clear()  // <b>
   dip/ConvoySubversion.cpp(37): void ConvoySubversion::decrement()
   dip/MapAndUnits.cpp(281): bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
@@ -3592,7 +3596,7 @@ W106 Function does not invoke Debug::ft
   nb/CfgFlagParm.cpp(55): bool CfgFlagParm::CurrValue() const
   nb/CfgFlagParm.cpp(74): bool CfgFlagParm::NextValue() const
   nb/CfgIntParm.cpp(68): void CfgIntParm::Explain(string& expl) const
-  nb/CfgParmRegistry.cpp(385): void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
+  nb/CfgParmRegistry.cpp(375): void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
   nb/CfgStrParm.cpp(60): void CfgStrParm::Explain(string& expl) const
   nb/CinThread.cpp(66): void CinThread::ClearClient(const Thread* client)
   nb/ClassRegistry.cpp(89): Class* ClassRegistry::Lookup(ClassId cid) const
@@ -3636,9 +3640,9 @@ W106 Function does not invoke Debug::ft
   nb/Memory.cpp(429): bool Memory::Protect(MemoryType type)
   nb/Memory.cpp(556): bool Memory::Unprotect(MemoryType type)
   nb/Memory.cpp(586): size_t Memory::Words(size_t size)
-  nb/ModuleRegistry.cpp(68): static const FactionFlags& AllFactions()
-  nb/ModuleRegistry.cpp(110): static const FactionFlags& ShutdownFactions()
-  nb/ModuleRegistry.cpp(262): RestartLevel ModuleRegistry::GetLevel()
+  nb/ModuleRegistry.cpp(69): static const FactionFlags& AllFactions()
+  nb/ModuleRegistry.cpp(132): static const FactionFlags& ShutdownFactions()
+  nb/ModuleRegistry.cpp(375): RestartLevel ModuleRegistry::GetLevel()
   nb/MsgBuffer.cpp(63): TraceStatus MsgBuffer::GetStatus() const
   nb/Mutex.cpp(164): Thread* Mutex::Owner() const
   nb/NbCliParms.cpp(132): word ExplainTraceRc(const CliThread& cli, TraceRc rc)
@@ -3700,8 +3704,8 @@ W106 Function does not invoke Debug::ft
   nb/SysStackTrace.win.cpp(145): void StackInfo::Shutdown()
   nb/SysStackTrace.win.cpp(154): DWORD StackInfo::Startup()
   nb/SysStackTrace.win.cpp(189): void SysStackTrace::Demangle(std::string& name)
-  nb/SysStackTrace.win.cpp(279): fn_depth SysStackTrace::FuncDepth()
-  nb/SysStackTrace.win.cpp(324): bool SysStackTrace::TrapIsOk() NO_FT
+  nb/SysStackTrace.win.cpp(284): fn_depth SysStackTrace::FuncDepth()
+  nb/SysStackTrace.win.cpp(329): bool SysStackTrace::TrapIsOk() NO_FT
   nb/SysThread.cpp(149): bool SysThread::ReportError(fn_name function, fixed_string expl, int error)
   nb/SysThread.win.cpp(51): static signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
   nb/SysThread.win.cpp(232): bool SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
@@ -3932,7 +3936,7 @@ W110 Override of Base.Display not found
   sb/SbPools.h(183): class TimerPool : public NodeBase::ObjectPool
   sb/SbTracer.h(113): class SbTracer : public NodeBase::Permanent
 W111 Override of Object.Patch not found
-  nb/ModuleRegistry.cpp(150): class StopInitTracing : public Deferred
+  nb/ModuleRegistry.cpp(172): class StopInitTracing : public Deferred
   nb/Thread.cpp(352): class ContextSwitches : public Permanent
   nb/Thread.cpp(780): class ThreadPriv : public Permanent
   nw/ByteBuffer.h(35): class ByteBuffer : public NodeBase::Pooled
@@ -3951,7 +3955,7 @@ W117 Line can merge with the next line and be under the length limit
   ct/CxxArea.cpp(723):          attrs.test(HasInstantiations) ||
   ct/CxxToken.cpp(2803):    auto sName = (del ?
   ct/CxxToken.cpp(2813):          auto vName = (del ?
-  dip/BaseBot.cpp(1707):          (press->message == contents))
+  dip/BaseBot.cpp(1704):          (press->message == contents))
   nb/CliStack.h(68):    const CliCommand* FindCommand
   nb/LogBuffer.cpp(189):       stream << fileName_ << SPACE
   nb/NbIncrement.cpp(1156):    BindText(*new CliText
@@ -6069,20 +6073,20 @@ ct/SetOperations.h
     51:    void SetUnion
 dip/BaseBot.cpp
   W006 reinterpret_cast
-    214:    auto em = reinterpret_cast<EM_Message*>(buff->PayloadPtr());
-    513:    const auto& dm = reinterpret_cast<const DM_Message&>(message);
-    514:    auto tokens = reinterpret_cast<const Token*>(&dm.tokens);
-    640:    const auto& em = reinterpret_cast<const EM_Message&>(message);
-    1293:       const auto& rm = reinterpret_cast<const RM_Message&>(message);
-    2082:    auto bm = reinterpret_cast<DipMessage*>(buff->PayloadPtr());
-    2154:    auto im = reinterpret_cast<IM_Message*>(buff->PayloadPtr());
-    2295:    auto dm = reinterpret_cast<DM_Message*>(buff->PayloadPtr());
-    2299:    message.get_tokens(reinterpret_cast<Token*>(&dm->tokens), count);
+    215:    auto em = reinterpret_cast<EM_Message*>(buff->PayloadPtr());
+    514:    const auto& dm = reinterpret_cast<const DM_Message&>(message);
+    515:    auto tokens = reinterpret_cast<const Token*>(&dm.tokens);
+    641:    const auto& em = reinterpret_cast<const EM_Message&>(message);
+    1294:       const auto& rm = reinterpret_cast<const RM_Message&>(message);
+    2079:    auto bm = reinterpret_cast<DipMessage*>(buff->PayloadPtr());
+    2151:    auto im = reinterpret_cast<IM_Message*>(buff->PayloadPtr());
+    2291:    auto dm = reinterpret_cast<DM_Message*>(buff->PayloadPtr());
+    2295:    message.get_tokens(reinterpret_cast<Token*>(&dm->tokens), count);
 * W106 Function does not invoke Debug::ft
-    431: BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
-    438: BaseBot* BaseBot::instance()
+    432: BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
+    439: BaseBot* BaseBot::instance()
 * W117 Line can merge with the next line and be under the length limit
-    1707:          (press->message == contents))
+    1704:          (press->message == contents))
 dip/BaseBot.h
 * W020 Using statement in header
     39: using namespace NodeBase;
@@ -6093,40 +6097,42 @@ dip/BaseBot.h
     96:    virtual std::string report_command_line_parameters();
   W082 Adjacent arguments have the same type
     143:    void send_press_to_server(const TokenMessage& press_to,
-    272:    virtual void process_not_ccd_message(const TokenMessage& message,
-    501:    virtual void report_failed_press
+    271:    virtual void process_not_ccd_message(const TokenMessage& message,
+    500:    virtual void report_failed_press
 * W090 Function could be const
-    205:    virtual void process_ccd_message
-    211:    virtual void process_drw_message(const TokenMessage& message);
-    242:    virtual void process_out_message(const TokenMessage& message);
-    250:    virtual void process_smr_message(const TokenMessage& message);
-    267:    virtual void process_adm_message(const TokenMessage& message);
-    272:    virtual void process_not_ccd_message(const TokenMessage& message,
-    466:    virtual void process_hlo_message(const TokenMessage& message);
-    471:    virtual void process_map_message(const TokenMessage& message);
-    475:    virtual void process_mdf_message(const TokenMessage& message);
-    483:    virtual void process_sco_message(const TokenMessage& message);
-    487:    virtual void process_now_message(const TokenMessage& message);
-    491:    virtual void process_slo_message(const TokenMessage& message);
+    204:    virtual void process_ccd_message
+    210:    virtual void process_drw_message(const TokenMessage& message);
+    241:    virtual void process_out_message(const TokenMessage& message);
+    249:    virtual void process_smr_message(const TokenMessage& message);
+    266:    virtual void process_adm_message(const TokenMessage& message);
+    271:    virtual void process_not_ccd_message(const TokenMessage& message,
+    465:    virtual void process_hlo_message(const TokenMessage& message);
+    470:    virtual void process_map_message(const TokenMessage& message);
+    474:    virtual void process_mdf_message(const TokenMessage& message);
+    482:    virtual void process_sco_message(const TokenMessage& message);
+    486:    virtual void process_now_message(const TokenMessage& message);
+    490:    virtual void process_slo_message(const TokenMessage& message);
 * W092 Function could be free
-    178:    void cancel_event(BotEvent event); // BaseBot.cpp
-    523:    static void report_ccd(const Token& power, bool disorder); // BaseBot.cpp
-    543:    static void report_out(const Token& power); // BaseBot.cpp
-    555:    void report_exit(c_string reason); // BaseBot.cpp
-    715:    static bool send_buff(DipIpBuffer& buff); // BaseBot.cpp
+    177:    void cancel_event(BotEvent event); // BaseBot.cpp
+    522:    static void report_ccd(const Token& power, bool disorder); // BaseBot.cpp
+    542:    static void report_out(const Token& power); // BaseBot.cpp
+    554:    void report_exit(c_string reason); // BaseBot.cpp
+    714:    static bool send_buff(DipIpBuffer& buff); // BaseBot.cpp
 dip/BotThread.cpp
   W006 reinterpret_cast
-    187:    auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
-    216:    auto message = reinterpret_cast<const DipMessage*>(ipb->HeaderPtr());
+    211:       auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
+    241:    auto message = reinterpret_cast<const DipMessage*>(ipb->HeaderPtr());
   W007 Cast down the inheritance hierarchy
-    203:    DipIpBufferPtr ipb(static_cast<DipIpBuffer*>(msg));
+    228:    DipIpBufferPtr ipb(static_cast<DipIpBuffer*>(msg));
+* W106 Function does not invoke Debug::ft
+    56: uint64_t BotWakeup::TimeToExpiry() const
+    66: static bool WakeupIsSorted(const BotWakeup& item1, const BotWakeup& item2)
 dip/BotThread.h
 * W020 Using statement in header
-    38: using namespace NodeBase;
+    39: using namespace NodeBase;
 * W053 Data could be const
-    112:       BotEvent event;         // event
-* W055 Data need not be mutable
-    113:       mutable uint32_t secs;  // delay
+    60:    BotEvent event_;
+    64:    SteadyTime::Point expiry_;
 dip/BotTrace.cpp
   W006 reinterpret_cast
     100:       auto message = reinterpret_cast<const DipMessage*>(buff_->HeaderPtr());
@@ -6148,8 +6154,6 @@ dip/ConvoySubversion.cpp
 dip/DipModule.h
 * W020 Using statement in header
     30: using namespace NodeBase;
-  W027 Unused class
-    38: class DipModule : public Module
 dip/DipProtocol.cpp
   W006 reinterpret_cast
     62:       reinterpret_cast<const IM_Message*>(this)->Display(stream);
@@ -6637,7 +6641,7 @@ nb/CfgParm.h
     94:    CfgParm(c_string key, c_string def, c_string expl);
 nb/CfgParmRegistry.cpp
 * W106 Function does not invoke Debug::ft
-    385: void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
+    375: void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
 nb/CfgParmRegistry.h
 * W042 Member could be private
     60:    CfgTuple* FindTuple(const std::string& key) const;
@@ -7084,19 +7088,26 @@ nb/MemoryTrace.cpp
     89:       auto curr = static_cast<MemoryTrace*>(rec);
 nb/Module.cpp
   W006 reinterpret_cast
-    65:    auto fake = reinterpret_cast<const Module*>(&local);
+    74:    auto fake = reinterpret_cast<const Module*>(&local);
 nb/Module.h
+* W042 Member could be private
+    128:    ModuleId Mid() const { return mid_.GetId(); }
+    132:    const std::string& Symbol() const { return symbol_; }
+    136:    bool IsEnabled() const { return enabled_; }
+    140:    static ptrdiff_t CellDiff();
 * W053 Data could be const
-    134:    RegCell mid_;
+    176:    RegCell mid_;
+  W075 Virtual function is public
+    124:    virtual void Enable();
 nb/ModuleRegistry.cpp
   W102 Line length exceeds the standard maximum
-    86:    "https://github.com/GregUtas/robust-services-core/blob/master/docs/Installing.md";
+    108:    "https://github.com/GregUtas/robust-services-core/blob/master/docs/Installing.md";
 * W106 Function does not invoke Debug::ft
-    68: static const FactionFlags& AllFactions()
-    110: static const FactionFlags& ShutdownFactions()
-    262: RestartLevel ModuleRegistry::GetLevel()
+    69: static const FactionFlags& AllFactions()
+    132: static const FactionFlags& ShutdownFactions()
+    375: RestartLevel ModuleRegistry::GetLevel()
 * W111 Override of Object.Patch not found
-    150: class StopInitTracing : public Deferred
+    172: class StopInitTracing : public Deferred
 nb/MsgBuffer.cpp
 * W106 Function does not invoke Debug::ft
     63: TraceStatus MsgBuffer::GetStatus() const
@@ -7520,8 +7531,8 @@ nb/SysStackTrace.win.cpp
     145: void StackInfo::Shutdown()
     154: DWORD StackInfo::Startup()
     189: void SysStackTrace::Demangle(std::string& name)
-    279: fn_depth SysStackTrace::FuncDepth()
-    324: bool SysStackTrace::TrapIsOk() NO_FT
+    284: fn_depth SysStackTrace::FuncDepth()
+    329: bool SysStackTrace::TrapIsOk() NO_FT
 nb/SystemTime.cpp
   W056 Implicit constructor invoked: POD members not initialized
   i 101:    tm ymdhms;
@@ -8596,7 +8607,7 @@ rsc/main.cpp
 * W015 #include not sorted in standard order
     33: #include "SysTypes.h"
 * W032 Unused function
-    125: main_t main(int argc, char* argv[])
+    97: main_t main(int argc, char* argv[])
 sb/AnalyzeSapEvent.cpp
 * W106 Function does not invoke Debug::ft
     86: void AnalyzeSapEvent::Capture

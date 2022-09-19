@@ -22,10 +22,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "BotThread.h"
+#include <chrono>
 #include <ostream>
 #include <ratio>
 #include <string>
-#include <utility>
 #include "BaseBot.h"
 #include "BotTrace.h"
 #include "Debug.h"
@@ -44,6 +44,36 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
+BotWakeup::BotWakeup(BotEvent event, uint32_t secs) :
+   event_(event),
+   expiry_(SteadyTime::Now() + msecs_t(secs * SECS_TO_MS))
+{
+   Debug::ft("BotWakeup.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+uint64_t BotWakeup::TimeToExpiry() const
+{
+   auto now = SteadyTime::Now();
+   if(now > expiry_) return 0;
+   auto togo = expiry_ - now;
+   return (togo.count() / NS_TO_MS);
+}
+
+//------------------------------------------------------------------------------
+
+static bool WakeupIsSorted(const BotWakeup& item1, const BotWakeup& item2)
+{
+   if(item1.expiry_ < item2.expiry_) return true;
+   if(item1.expiry_ > item2.expiry_) return false;
+   if(item1.event_ < item2.event_) return true;
+   if(item1.event_ > item2.event_) return false;
+   return(&item1 < &item2);
+}
+
+//==============================================================================
+
 BotThread::BotThread() : Thread(PayloadFaction),
    bot_(nullptr),
    exit_(false)
@@ -68,7 +98,7 @@ void BotThread::CancelEvent(BotEvent event)
 
    for(auto w = wakeups_.begin(); w != wakeups_.end(); ++w)
    {
-      if(w->event == event)
+      if(w->event_ == event)
       {
          wakeups_.erase(w);
          return;
@@ -103,8 +133,8 @@ void BotThread::Display(ostream& stream,
 
    for(auto item = wakeups_.cbegin(); item != wakeups_.cend(); ++item)
    {
-      stream << lead << "event : " << int(item->event);
-      stream << "  secs : " << int(item->secs) << CRLF;
+      stream << lead << "event : " << int(item->event_);
+      stream << "  expiry (ms): " << item->TimeToExpiry() << CRLF;
    }
 }
 
@@ -138,14 +168,16 @@ void BotThread::Enter()
       if(wakeups_.empty())
          delay = TIMEOUT_NEVER;
       else
-         delay = msecs_t(wakeups_.cbegin()->secs * ONE_SEC);
+         delay = msecs_t(wakeups_.front().TimeToExpiry());
 
       auto msg = DeqMsg(delay);
 
       if(msg != nullptr)
+      {
          ProcessMsg(msg);
-      else
-         ProcessEvent();
+      }
+
+      ProcessEvents();
 
       if(exit_) return;
    }
@@ -160,35 +192,28 @@ void BotThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void BotThread::ProcessEvent()
+void BotThread::ProcessEvents()
 {
-   Debug::ft("BotThread.ProcessEvent");
+   Debug::ft("BotThread.ProcessEvents");
 
-   //  The event to be processed is at the front of wakeups_.  Before
-   //  injecting a BM_Message containing the event, adjust the timeouts
-   //  of the remaining events.  The elements of a set are sorted, so
-   //  they're normally read-only.  But .secs is marked mutable as a
-   //  hack so that we don't have to delete and reinsert each item.
-   //  Because all are adjusted by the same amount, they stay sorted.
+   //  Run through the events in wakeups_ and process those that have expired
+   //  by injecting a BM_Message that contains the event.  They are sorted by
+   //  the time when they will expire, so return when one that hasn't expired
+   //  is reached.
    //
-   if(wakeups_.empty()) return;
-   auto first = wakeups_.begin();
-   auto event = first->event;
-   auto elapsed = first->secs;
-
-   for(auto item = wakeups_.begin(); item != wakeups_.end(); ++item)
+   while(!wakeups_.empty() && (wakeups_.front().TimeToExpiry() == 0))
    {
-      item->secs -= elapsed;
+      auto event = wakeups_.front().event_;
+
+      wakeups_.pop_front();
+
+      DipIpBufferPtr buff(new DipIpBuffer(MsgIncoming, DipHeaderSize));
+      auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
+      msg->header.signal = BM_MESSAGE;
+      msg->header.spare = event;
+      msg->header.length = 0;
+      ProcessMsg(buff.release());
    }
-
-   wakeups_.erase(first);
-
-   DipIpBufferPtr buff(new DipIpBuffer(MsgIncoming, DipHeaderSize));
-   auto msg = reinterpret_cast<BM_Message*>(buff->PayloadPtr());
-   msg->header.signal = BM_MESSAGE;
-   msg->header.spare = event;
-   msg->header.length = 0;
-   ProcessMsg(buff.release());
 }
 
 //------------------------------------------------------------------------------
@@ -219,12 +244,13 @@ void BotThread::ProcessMsg(MsgBuffer* msg) const
 
 //------------------------------------------------------------------------------
 
-bool BotThread::QueueEvent(BotEvent event, uint32_t secs)
+void BotThread::QueueEvent(BotEvent event, uint32_t secs)
 {
    Debug::ft("BotThread.QueueEvent");
 
-   auto item = wakeups_.insert(Wakeup(event, secs));
-   return item.second;
+   BotWakeup item(event, secs);
+   wakeups_.push_back(item);
+   wakeups_.sort(WakeupIsSorted);
 }
 
 //------------------------------------------------------------------------------

@@ -41,7 +41,6 @@
 #include "Log.h"
 #include "MainArgs.h"
 #include "Memory.h"
-#include "Module.h"
 #include "NbLogs.h"
 #include "NbModule.h"
 #include "NbSignals.h"

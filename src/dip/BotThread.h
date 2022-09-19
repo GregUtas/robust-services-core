@@ -26,9 +26,10 @@
 
 #include "Thread.h"
 #include <cstdint>
-#include <set>
+#include <list>
 #include "DipTypes.h"
 #include "NbTypes.h"
+#include "SteadyTime.h"
 
 namespace Diplomacy
 {
@@ -41,6 +42,30 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
+//  An event that will occur after a delay.
+//
+struct BotWakeup
+{
+   //  Creates an item that will raise EVENT in SECS.
+   //
+   BotWakeup(BotEvent event, uint32_t secs);
+
+   //  Returns the number of milliseconds until the wakeup will occur.
+   //  Returns 0 if the event is past due.
+   //
+   uint64_t TimeToExpiry() const;
+
+   //  The event.
+   //
+   BotEvent event_;
+
+   //  The time when the event will occur.
+   //
+   SteadyTime::Point expiry_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  Thread for Diplomacy bot.
 //
 class BotThread : public Thread
@@ -53,11 +78,9 @@ public:
    void QueueMsg(DipIpBufferPtr& buff);
 
    //  Invoked when the client wants to receive a BM_Message that
-   //  contains EVENT in SECS seconds.  Returns false if there is
-   //  already an instance of the same event set to expire at the
-   //  same time.
+   //  contains EVENT in SECS seconds.
    //
-   bool QueueEvent(BotEvent event, uint32_t secs);
+   void QueueEvent(BotEvent event, uint32_t secs);
 
    //  Cancels EVENT if it exists.  If more than one such event is
    //  pending, only the one that would occur first is cancelled.
@@ -89,9 +112,9 @@ private:
    //
    void ProcessMsg(MsgBuffer* msg) const;
 
-   //  Injects an event that was to be processed after a delay.
+   //  Injects the event(s) to be processed after a delay.
    //
-   void ProcessEvent();
+   void ProcessEvents();
 
    //  Overridden to return a name for the thread.
    //
@@ -105,25 +128,6 @@ private:
    //
    void Enter() override;
 
-   //  An event that will occur after a delay.
-   //
-   struct Wakeup
-   {
-      BotEvent event;         // event
-      mutable uint32_t secs;  // delay
-
-      Wakeup(BotEvent e, uint32_t s) : event(e), secs(s) { }
-
-      bool operator<(const Wakeup& that) const
-      {
-         if(this->secs < that.secs) return true;
-         if(this->secs > that.secs) return false;
-         if(this->event < that.event) return true;
-         if(this->event > that.event) return false;
-         return(this < &that);
-      }
-   };
-
    //  The Diplomacy bot.
    //
    BaseBot* bot_;
@@ -132,9 +136,9 @@ private:
    //
    bool exit_;
 
-   //  The set of pending events.
+   //  Pending events.
    //
-   std::set<Wakeup> wakeups_;
+   std::list<BotWakeup> wakeups_;
 };
 }
 #endif

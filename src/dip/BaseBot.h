@@ -167,10 +167,9 @@ protected:
    //
    TokenMessage surviving_powers(bool self = false) const;
 
-   //  Queues an EVENT that will arrive in SECS.  Returns false if the same
-   //  event is already pending at the same time.
+   //  Queues an EVENT that will arrive in SECS.
    //
-   bool queue_event(BotEvent event, int secs);
+   void queue_event(BotEvent event, int secs);
 
    //  Cancels EVENT if it exists.  If more than one such event is pending,
    //  only the one that would occur first is cancelled.
@@ -283,11 +282,11 @@ protected:
    //
    virtual bool get_reconnect_details(Token& power, int& passcode) const;
 
-   //  Invoked when the connection to the server is closed during the
-   //  game.  It returns the number of seconds until reconnection should
-   //  be attempted.  Returning 0 means that the bot should exit instead
-   //  of reconnecting.  The default tries to reconnect after a socket
-   //  failure, using a backoff strategy that eventually gives up.
+   //  Invoked when the connection to the server either could not be
+   //  established or was closed during the game.  Returns the number of
+   //  seconds until reconnection should be attempted.  Returns 0 if the
+   //  bot should exit instead of reconnecting, which occurs after many
+   //  connection attempts have failed.
    //
    virtual uint8_t reconnection_delay();
 
@@ -745,9 +744,10 @@ private:
    //
    ProtocolState state_;
 
-   //  How long to wait to attempt reconnection.
+   //  How many reconnection attempts have been made, either initially
+   //  or after losing the connection to the server.
    //
-   uint8_t retry_delay_;
+   uint8_t retries_;
 
    //  The title currently displayed on the console.
    //

@@ -25,6 +25,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
+#include "Restart.h"
 #include "Singleton.h"
 
 using std::ostream;

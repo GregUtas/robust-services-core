@@ -60,7 +60,7 @@ BaseBot::BaseBot() :
    map_and_units(MapAndUnits::instance()),
    initialised_(false),
    state_(DISCONNECTED),
-   retry_delay_(1),
+   retries_(0),
    name_("BaseBot"),
    version_("1.0"),
    reconnect_(false),
@@ -175,6 +175,7 @@ void BaseBot::delete_socket(ProtocolError error)
    //
    if(error == SOCKET_FAILED)
    {
+      cancel_event(RECONNECT_EVENT);
       queue_event(RECONNECT_EVENT, reconnection_delay());
       return;
    }
@@ -263,7 +264,7 @@ void BaseBot::Display(ostream& stream,
    stream << prefix << "client_addr    : " << client_addr_.to_str(true) << CRLF;
    stream << prefix << "server_addr    : " << server_addr_.to_str(true) << CRLF;
    stream << prefix << "state          : " << state_ << CRLF;
-   stream << prefix << "retry_delay    : " << retry_delay_ << CRLF;
+   stream << prefix << "retries        : " << retries_ << CRLF;
    stream << prefix << "title          : " << title_ << CRLF;
    stream << prefix << "name           : " << name_ << CRLF;
    stream << prefix << "version        : " << version_ << CRLF;
@@ -1268,7 +1269,7 @@ void BaseBot::process_rm_message(const DipMessage& message)
    //
    reconnect_ = true;
    cancel_event(RECONNECT_EVENT);
-   retry_delay_ = 1;
+   retries_ = 0;
 
    if(state_ != CONNECTING)
    {
@@ -1617,7 +1618,7 @@ void BaseBot::process_yes_tme_message
 
 //------------------------------------------------------------------------------
 
-bool BaseBot::queue_event(BotEvent event, int secs)
+void BaseBot::queue_event(BotEvent event, int secs)
 {
    Debug::ft("BaseBot.queue_event");
 
@@ -1630,20 +1631,19 @@ bool BaseBot::queue_event(BotEvent event, int secs)
          //  It's time to give up trying to connect to the server.
          //
          report_exit("cannot connect to Diplomacy server");
-         return true;
+         return;
       }
-      else if(reconnect_ || (secs >= 4))
+      else if(reconnect_ || (retries_ > 0))
       {
          //  Provide a status update.
          //
          std::ostringstream stream;
-         stream << "No connection to Diplomacy server" << CRLF;
-         stream << "Will try again in " << secs << " seconds" << CRLF;
+         stream << "No connection to Diplomacy server: will retry" << CRLF;
          send_to_console(stream);
       }
    }
 
-   return thread->QueueEvent(event, secs);
+   thread->QueueEvent(event, secs);
 }
 
 //------------------------------------------------------------------------------
@@ -1681,14 +1681,11 @@ uint8_t BaseBot::reconnection_delay()
 {
    Debug::ft("BaseBot.reconnection_delay");
 
-   //  The initial delay is 1 second.  Each time we try to reconnect, double
-   //  it (which means that we wait 2 seconds the first time).  After we wait
-   //  for 128 seconds, give up the next time.  That will allow 7 reconnect
-   //  attempts during the course of just over 4 minutes.
+   //  Retry after 6 seconds and give up after 30 failures.
    //
-   if(retry_delay_ > 128) return 0;
-   retry_delay_ <<= 1;
-   return retry_delay_;
+   if(retries_ >= 30) return 0;
+   ++retries_;
+   return 6;
 }
 
 //------------------------------------------------------------------------------
@@ -1804,7 +1801,7 @@ void BaseBot::report_exit(c_string reason)
    Debug::ft("BaseBot.report_exit");
 
    std::ostringstream stream;
-   stream << "EXITING: " << reason << CRLF;
+   stream << "DIPLOMACY BOT EXITING: " << reason << CRLF;
    send_to_console(stream);
    Singleton<BotThread>::Instance()->SetExit();
 }
@@ -2169,7 +2166,6 @@ void BaseBot::send_im_message()
    }
 
    buff.reset();
-   queue_event(RECONNECT_EVENT, reconnection_delay());
    set_state(CONNECTING);
 }
 

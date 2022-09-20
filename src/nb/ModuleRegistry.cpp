@@ -574,19 +574,22 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    //
    for(auto m = modules_.Last(); m != nullptr; modules_.Prev(m))
    {
-      auto time = SystemTime::Now();
-      auto point = SteadyTime::Now();
-      auto name = strClass(m) + "...";
-      *Stream() << name << setw(52 - name.size());
-      *Stream() << to_string(time, LowAlpha) << CRLF;
-      Log::Submit(stream_);
+      if(m->IsEnabled() || (m->Mid() == 1))
+      {
+         auto time = SystemTime::Now();
+         auto point = SteadyTime::Now();
+         auto name = strClass(m) + "...";
+         *Stream() << name << setw(52 - name.size());
+         *Stream() << to_string(time, LowAlpha) << CRLF;
+         Log::Submit(stream_);
 
-      m->Shutdown(level);
+         m->Shutdown(level);
 
-      *Stream() << ShutdownStr << setw(36 - strlen(ShutdownStr));
-      elapsed = SteadyTime::Now() - point;
-      *Stream() << elapsed.count() / NS_TO_MS << CRLF;
-      Log::Submit(stream_);
+         *Stream() << ShutdownStr << setw(36 - strlen(ShutdownStr));
+         elapsed = SteadyTime::Now() - point;
+         *Stream() << elapsed.count() / NS_TO_MS << CRLF;
+         Log::Submit(stream_);
+      }
    }
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
@@ -628,9 +631,7 @@ void ModuleRegistry::Startup(RestartLevel level)
 
    for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
    {
-      auto id = m->Mid();
-
-      if(m->IsEnabled() || (id == 1))
+      if(m->IsEnabled() || (m->Mid() == 1))
       {
          auto time = SystemTime::Now();
          auto point = SteadyTime::Now();

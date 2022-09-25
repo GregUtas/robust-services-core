@@ -116,7 +116,7 @@ public:
    //  which in turn causes it to enable the modules that it requires.
    //  If a module is not enabled as the result of this procedure, its
    //  Startup function is not invoked.  This allows a single executable
-   //  with various optiona capabilities to be built, and a subset of those
+   //  with various optional capabilities to be built, and a subset of those
    //  capabilities to be enabled by the OptionalModules parameter.  The
    //  executable's capabilities can later be modified by editing that
    //  parameter in the configuration file and performing a reboot restart.

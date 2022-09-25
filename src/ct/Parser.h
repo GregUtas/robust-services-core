@@ -514,7 +514,7 @@ private:
    //  parentheses.  It tries, in order,
    //  o GetArgList to handle a function call,
    //  o GetCast to handle a C-style cast, and
-   //  o GetPrecedence to handle parentheses that the order of evaluation.
+   //  o GetPrecedence to handle parentheses that control evaluation order.
    //
    bool HandleParentheses(const ExprPtr& expr);
    bool GetArgList(TokenPtr& call);

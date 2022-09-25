@@ -38,7 +38,7 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string DefaultElementName = "Unnamed Element";
+fixed_string DefaultElementName = "UnnamedElement";
 
 //------------------------------------------------------------------------------
 

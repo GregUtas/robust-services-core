@@ -107,8 +107,7 @@ LogBuffer::LogBuffer(size_t size) :
 
    //  During a boot/reboot, the name of the log file includes the system's
    //  startup time.  During a restart, its name contains the time at which
-   //  the log buffer was created.  The '.' before the final msecs value is
-   //  replaced within a '-'.
+   //  the log buffer was created.
    //
    if(Restart::GetLevel() == RestartReboot)
       fileName_ = "logs" + to_string(SystemTime::TimeZero(), FullNumeric);

@@ -12,8 +12,7 @@ Before submitting code or documentation, please email your copyright assignment 
 
 ## Mailing address
 If you need to send a hard copy of something, please address it to
-<p>Pentennea
-<br>11-300 Earl Grey Dr, Suite 203
-<br>Kanata, Ontario
-<br>Canada
-<br>K2T 1C1
+<p>Greg Utas
+<br>1527 W State Hwy 114 Ste 500-450
+<br>Grapevine, TX  76051
+<br>USA

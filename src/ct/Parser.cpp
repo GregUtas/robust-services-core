@@ -3920,7 +3920,6 @@ bool Parser::HandleDirective(DirectivePtr& dir)
       return HandlePragma(dir);
    case Cxx::HASH_UNDEF:
       return HandleUndef(dir);
-      break;
    }
 
    return lexer_.Skip();

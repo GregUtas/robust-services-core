@@ -145,18 +145,17 @@ struct AvailInfo
 //
 constexpr size_t SlabSize = 8 * MBs;
 
-//  Types of corruption that can be detected.  The number of enumerators
-//  will increase when Validate is implemented.
+//  Types of corruption that can be detected.
 //
 enum SlabCorruptionReason
 {
-   AreaMisaligned,        // area's addr != previous area's addr + size
-   AvailNotFoundInAreas,  // found in avail but not found in areas
-   FreeNotFoundInAvail,   // marked FREE in areas but not found in avail
-   NotFreeFoundInAvail,   // not marked FREE in areas but found in avail
-   SlabAddrNotInAreas,    // slab's addr not found in areas
-   TooFewAreas,           // areas exhausted before all slabs accounted for
-   TooManyAreas           // slabs exhausted before all areas accounted for
+   AreaMisaligned,        // area's addr_ != previous area's addr_ + size_
+   AvailNotFoundInAreas,  // found in avail_ but not found in areas_
+   FreeNotFoundInAvail,   // marked FREE in areas_ but not found in avail_
+   NotFreeFoundInAvail,   // not marked FREE in areas_ but found in avail_
+   SlabAddrNotInAreas,    // slab's addr_ not found in areas_
+   TooFewAreas,           // areas_ exhausted before all slabs accounted for
+   TooManyAreas           // slabs_ exhausted before all areas accounted for
 };
 
 //==============================================================================
@@ -167,7 +166,7 @@ enum SlabCorruptionReason
 //  ====  it should reside in the same MemoryType as that managed by the heap.
 //        This would be important for a write-protected heap, but it would mean
 //        using the corresponding custom allocator (e.g. ProtectedAllocator)
-//        for std::vector, std::map, and std::multimap.
+//        for this class's std::vector, std::map, and std::multimap data.
 //
 class SlabPriv
 {
@@ -580,7 +579,7 @@ bool SlabPriv::Free(const void* addr)
 
    //  We now have the address and size of the available area, which may
    //  have merged with its predecessor and successor.  If MERGED is not
-   //  set, CURR wasn't erase, so just update its state.
+   //  set, CURR wasn't erased, so just update its state.
    //
    if(!merged)
       curr->second.state_ = FREE;

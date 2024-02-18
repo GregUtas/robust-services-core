@@ -255,39 +255,34 @@ Message* TestSession::NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip)
    else if(appFid_ != fid)
       return nullptr;
 
-   while(true)
+   lastMsg_ = BuffTrace::NextIcMsg(lastMsg_, appFid_, sid, skip);
+
+   if(lastMsg_ == nullptr) return nullptr;
+
+   if(appBid_ == NIL_ID)
+      appBid_ = lastMsg_->Header()->rxAddr.bid;
+   else if(lastMsg_->Header()->rxAddr.bid != appBid_)
+      return nullptr;
+
+   if(testPsm_ == nullptr)
    {
-      lastMsg_ = BuffTrace::NextIcMsg(lastMsg_, appFid_, sid, skip);
+      auto psm = MsgPort::Find(lastMsg_->Header()->rxAddr);
 
-      if(lastMsg_ == nullptr) return nullptr;
-
-      if(appBid_ == NIL_ID)
-         appBid_ = lastMsg_->Header()->rxAddr.bid;
-      else if(lastMsg_->Header()->rxAddr.bid != appBid_)
-         return nullptr;
-
-      if(testPsm_ == nullptr)
+      //  If the PSM wasn't found, it has probably idled.
+      //  Continue to verify its messages.
+      //
+      if(psm != nullptr)
       {
-         auto psm = MsgPort::Find(lastMsg_->Header()->rxAddr);
+         testPsm_ = TestPsm::Find(*psm);
 
-         //  If the PSM wasn't found, it has probably idled.
-         //  Continue to verify its messages.
-         //
-         if(psm != nullptr)
-         {
-            testPsm_ = TestPsm::Find(*psm);
-
-            if(testPsm_ == nullptr)
-               Debug::SwLog(TestSession_NextIcMsg, "PSM not found", appFid_);
-            else
-               testPsm_->SetCliId(*sbData_->Cli(), tid_);
-         }
+         if(testPsm_ == nullptr)
+            Debug::SwLog(TestSession_NextIcMsg, "PSM not found", appFid_);
+         else
+            testPsm_->SetCliId(*sbData_->Cli(), tid_);
       }
-
-      return lastMsg_->Rewrap();
    }
 
-   return nullptr;
+   return lastMsg_->Rewrap();
 }
 
 //------------------------------------------------------------------------------

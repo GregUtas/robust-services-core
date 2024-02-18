@@ -330,7 +330,6 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
          if(stat_) return order + 16;
          return order + 15;
       }
-      break;
    }
 
    case Cxx::Data:

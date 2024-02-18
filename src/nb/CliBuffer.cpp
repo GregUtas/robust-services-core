@@ -210,6 +210,8 @@ void CliBuffer::Echo()
    }
 }
 
+//------------------------------------------------------------------------------
+
 void CliBuffer::ErrorAtPos
    (const CliThread& cli, const string& expl, std::streamsize p)
 {

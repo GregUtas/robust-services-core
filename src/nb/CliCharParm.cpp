@@ -150,7 +150,7 @@ bool CliCharParm::ShowValues(string& values) const
 
    auto last = strlen(chars_) - 1;
 
-   for(col_t i = 0; i <= last; ++i)
+   for(size_t i = 0; i <= last; ++i)
    {
       values += chars_[i];
       if(i < last) values += CharSeparator;

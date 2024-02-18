@@ -302,9 +302,9 @@ bool TcpIoThread::EnsureListener()
    Debug::ft(TcpIoThread_EnsureListener);
 
    //  This is invoked to
-   //  o to find the listener registered with our port
-   //  o to allocate a listener if one is not registered with our port
-   //  o to replace the listener if it has failed
+   //  o find the listener registered with our port
+   //  o allocate a listener if one is not registered with our port
+   //  o replace the listener if it has failed
    //
    if(!listen_) return true;
    auto registrant = static_cast<SysTcpSocket*>(ipPort_->GetSocket());

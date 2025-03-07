@@ -22,6 +22,7 @@ Document | Description
 ![CodeProject](images/cp100x30.gif) [Robust C++: Singletons](https://www.codeproject.com/Articles/5286932/Robust-Cplusplus-Singletons) | article on the `Singleton` template
 ![CodeProject](images/cp100x30.gif) [A Wrapper for `std::vector`](https://www.codeproject.com/Tips/5271013/A-Wrapper-for-std-vector) | article on the `Array` template
 ![CodeProject](images/cp100x30.gif) [Porting a Large Project from Windows to Linux](https://www.codeproject.com/Articles/5336369/Porting-a-Large-Project-from-Windows-to-Linux) | article on how RSC was ported to Linux
+![CodeProject](images/cp100x30.gif)<img src="images/new.png" alt="new" height="30"> [The Software Rewrite](https://www.codeproject.com/Articles/5283862/The-Software-Rewrite) | article on how to rewrite a large code base
 <img src="images/md.png" alt="markdown" height="30"> [Executables](/docs/RSC-Executables.md) | executables provided with each release
 <img src="images/md.png" alt="markdown" height="30"> [Building Using CMake](/docs/RSC-Building-Using-CMake.md) | how to build RSC using CMake
 <img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2022

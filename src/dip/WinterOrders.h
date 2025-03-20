@@ -5,7 +5,7 @@
 //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 //
 //  (C) David Norman 2002 david@ellought.demon.co.uk
-//  (C) Greg Utas 2019-2022 greg@pentennea.com
+//  (C) Greg Utas 2019-2025 greg@pentennea.com
 //
 //  This software may be reused for non-commercial purposes without charge,
 //  and without notifying the authors.  Use of any part of this software for

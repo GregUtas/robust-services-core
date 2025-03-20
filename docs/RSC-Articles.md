@@ -60,7 +60,7 @@ but some [documents](/docs/README.md) discuss them.
 ## Modifying RSC
 
 If you don't want to build on RSC, you can copy and modify its code to meet
-your needs, subject to the terms of its GPL-3.0 license. But because RSC is
+your needs, subject to the terms of its LGPL-3.0 license. But because RSC is
 an integrated _framework_, you'll have some work to do. Unlike a library,
 RSC's classes collaborate freely rather than being designed for standalone
 use.

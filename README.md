@@ -198,16 +198,11 @@ commands). It provides commands for testing functions in the
 
 ## Licensing
 
-RSC is freely available under the terms of the [GNU General Public License,
-version 3](LICENSE.txt), which basically says that you must also publish your
-own software, as well as your changes to RSC. If you are developing commercial
-software that you want to keep proprietary, the GPLv3 license also allows RSC
-to be licensed under the terms of another license approved by the
-[Free Software Foundation](https://www.gnu.org/licenses/license-list.html).
-Some of those
-licenses allow your software to remain proprietary. However, compensation
-would be required, and any changes that you make to RSC itself (bug fixes
-and enhancements) would still have to be published.
+RSC is freely available under the terms of the [Lesser GNU General Public
+License, version 3](LICENSE.md), which basically says that you must also
+publish your changes to RSC, such as bug fixes and enhancements. If you
+are developing commercial software that you want to keep proprietary, the
+LGPLv3 license allows this.
 
 ## Contributing
 

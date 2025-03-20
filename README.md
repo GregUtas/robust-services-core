@@ -196,7 +196,7 @@ commands). It provides commands for testing functions in the
 [`Q1Way`](src/nb/Q1Way.h), [`Q2Way`](src/nb/Q2Way.h), and
 [`Registry`](src/nb/Registry.h) interfaces.
 
-## Licensing
+## :new: Licensing
 
 RSC is freely available under the terms of the [Lesser GNU General Public
 License, version 3](LICENSE.md), which basically says that you must also

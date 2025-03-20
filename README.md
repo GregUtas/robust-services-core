@@ -81,9 +81,9 @@ Code committed since the latest release is work in progress and may be unstable
 or incomplete, so downloading from the **Code&#9662;** dropdown menu on the
 main page is not recommended.
 
-> **Warning**
->
-> For proper operation, RSC must be launched from a directory below
+:warning:
+
+For proper operation, RSC must be launched from a directory below
 its [_src_](src) directory. See the [installation guide](docs/Installing.md).
 
 ## Building an executable

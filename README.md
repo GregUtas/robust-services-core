@@ -202,7 +202,7 @@ RSC is freely available under the terms of the [Lesser GNU General Public
 License, version 3](LICENSE.md), which basically says that you must also
 publish your changes to RSC, such as bug fixes and enhancements. If you
 are developing commercial software that you want to keep proprietary, the
-LGPLv3 license allows this.
+LGPLv3 license allows applications built on RSC to be proprietary.
 
 ## Contributing
 
